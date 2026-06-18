@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>GitHub Actions CI/CD with Playwright TypeScript | Complete Course (10 Sessions)</title>
+  <style>
+    /* ===== CSS VARIABLES (Light Theme) – Fully defined ===== */
+    :root {
+      --color-text-primary: #1e293b;
+      --color-text-secondary: #475569;
+      --color-text-tertiary: #64748b;
+      --color-text-info: #185FA5;
+      --color-text-success: #0F6E56;
+      --color-text-warning: #BA7517;
+      --color-text-danger: #A32D2D;
+      
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f8fafc;
+      --color-background-tertiary: #f1f5f9;
+      --color-background-info: #E6F1FB;
+      --color-background-success: #E1F5EE;
+      --color-background-warning: #FAEEDA;
+      --color-background-danger: #FCEBEB;
+      
+      --color-border-primary: #e2e8f0;
+      --color-border-secondary: #cbd5e1;
+      --color-border-tertiary: #e2e8f0;
+      --color-border-info: #185FA5;
+      --color-border-success: #0F6E56;
+      --color-border-warning: #BA7517;
+      --color-border-danger: #A32D2D;
+      
+      --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', monospace;
+      --border-radius-md: 8px;
+      --border-radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      padding: 1rem;
+    }
+
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      background: var(--color-background-primary);
+      border-radius: var(--border-radius-lg);
+      border: 0.5px solid var(--color-border-tertiary);
+      overflow: hidden;
+      padding: 1rem;
+    }
+
+    /* Phase row */
+    .phase-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .ph {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .ph-f {
+      background: var(--color-background-info);
+      color: var(--color-text-info);
+    }
+    .ph-i {
+      background: var(--color-background-success);
+      color: var(--color-text-success);
+    }
+
+    /* Tab grid – fully responsive */
+    .tab-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .tb {
+      flex: 1 0 calc(20% - 0.4rem);
+      min-width: 130px;
+      padding: 0.5rem 0.3rem;
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md);
+      background: var(--color-background-secondary);
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+      color: var(--color-text-secondary);
+    }
+    .tb:hover {
+      background: var(--color-background-primary);
+      color: var(--color-text-primary);
+    }
+    .tb.act {
+      background: var(--color-background-primary);
+      color: var(--color-text-primary);
+      border-color: var(--color-border-primary);
+      font-weight: 600;
+    }
+    .tb.ph-f-tab {
+      border-top: 2px solid var(--color-text-info);
+    }
+    .tb.ph-i-tab {
+      border-top: 2px solid var(--color-text-success);
+    }
+    @media (max-width: 768px) {
+      .tb { flex: 1 0 calc(33% - 0.4rem); min-width: 100px; }
+    }
+    @media (max-width: 480px) {
+      .tb { flex: 1 0 calc(50% - 0.4rem); min-width: 80px; }
+    }
+
+    /* Progress bar */
+    .prog {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .pt {
+      flex: 1;
+      height: 6px;
+      background: var(--color-border-tertiary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .pf {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-text-info), var(--color-text-success));
+      width: 0;
+      transition: width 0.3s ease;
+    }
+    .pl {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+    }
+
+    /* Panel content */
+    .panel {
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      padding: 1.25rem;
+    }
+    .sh {
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .st {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0.25rem 0 0.2rem;
+    }
+    .ss {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+    }
+    .bdg {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    .bdg-f { background: var(--color-background-info); color: var(--color-text-info); }
+    .bdg-i { background: var(--color-background-success); color: var(--color-text-success); }
+
+    /* Sections */
+    .sec { margin-bottom: 1.5rem; }
+    .sl {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-left: 3px solid var(--color-text-info);
+      background: var(--color-background-secondary);
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 0.75rem;
+    }
+    .sl.g { border-left-color: var(--color-text-success); }
+    .sl.a { border-left-color: var(--color-text-warning); }
+    .sl.p { border-left-color: #534AB7; }
+    .sl.c { border-left-color: var(--color-text-danger); }
+
+    .card {
+      background: var(--color-background-secondary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-md);
+      padding: 0.8rem 1rem;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+    .ol-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .ol-item {
+      display: flex;
+      gap: 0.7rem;
+      align-items: flex-start;
+      font-size: 0.85rem;
+    }
+    .ol-n {
+      background: var(--color-background-info);
+      color: var(--color-text-info);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .cb {
+      background: var(--color-background-secondary);
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md);
+      padding: 0.8rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      line-height: 1.65;
+      overflow-x: auto;
+      white-space: pre;
+      margin-bottom: 0.75rem;
+    }
+    .cl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.25rem;
+    }
+    .qa-wrap {
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-md);
+      overflow: hidden;
+      margin-bottom: 0.7rem;
+    }
+    .qa-q {
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--color-background-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.15s;
+    }
+    .qa-q:hover {
+      background: var(--color-background-primary);
+    }
+    .qa-a {
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      border-top: 0.5px solid var(--color-border-tertiary);
+      display: none;
+    }
+    .qa-a.op {
+      display: block;
+    }
+    .bp-ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .bp-ul li {
+      font-size: 0.85rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .bp-ul li::before {
+      content: "✓";
+      color: var(--color-text-success);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .kw {
+      background: var(--color-background-info);
+      color: var(--color-text-info);
+      padding: 0.1rem 0.3rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+    .nav {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .nbtn {
+      padding: 0.5rem 1.2rem;
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md);
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: var(--color-background-primary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .nbtn:hover {
+      background: var(--color-background-secondary);
+    }
+    .done {
+      background: var(--color-background-success);
+      border: 0.5px solid var(--color-border-success);
+      border-radius: var(--border-radius-md);
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      color: var(--color-text-success);
+    }
+    .diag {
+      background: var(--color-background-secondary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-md);
+      padding: 0.8rem;
+      overflow-x: auto;
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+    .diag svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 640px) {
+      .app { padding: 0.75rem; }
+      .st { font-size: 1.1rem; }
+      .panel { padding: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h2 class="sr-only" style="position:absolute; width:1px;height:1px;overflow:hidden">GitHub Actions CI/CD with Playwright TypeScript — complete 10-session course</h2>
+
+  <div class="phase-row">
+    <span class="ph ph-f">Phase 1: Fundamentals — S1 to S5</span>
+    <span class="ph ph-i">Phase 2: Intermediate — S6 to S10</span>
+  </div>
+
+  <div class="tab-grid" id="tabGrid"></div>
+
+  <div class="prog">
+    <span class="pl" id="progLabel">S1 / 10</span>
+    <div class="pt"><div class="pf" id="progBar" style="width:10%"></div></div>
+    <span class="pl" id="progPct">10%</span>
+  </div>
+
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+// ====== COMPLETE DATA (10 SESSIONS) – ORIGINAL CONTENT FULLY PRESERVED ======
+const D = [
+{t:"GitHub Actions — What & Why",sub:"CI/CD foundations, core vocabulary, your first workflow",ph:"f",
+ov:`<strong>What is GitHub Actions?</strong> An automation platform built into GitHub that runs code automatically when events happen in your repo — pushing code, opening a PR, or on a schedule.<br><br>
+<strong>CI/CD:</strong> CI = Continuous Integration (test every code change). CD = Continuous Delivery (automatically ship working code).<br><br>
+<strong>Why Playwright + TypeScript?</strong> Playwright is Microsoft's browser-testing framework. TypeScript adds type safety and catches bugs at compile time — essential for team-scale test suites.<br><br>
+<span class="kw">Workflow</span> — YAML file in .github/workflows/ that defines your automation<br>
+<span class="kw">Trigger</span> — Event that starts the workflow (push, schedule, manual)<br>
+<span class="kw">Job</span> — Group of steps running on the same machine<br>
+<span class="kw">Step</span> — Single task inside a job (run a command, use an action)<br>
+<span class="kw">Runner</span> — The virtual machine (ubuntu-latest) that executes your job<br>
+<span class="kw">Action</span> — Reusable plugin from GitHub Marketplace (e.g. actions/checkout)<br>
+<span class="kw">YAML</span> — Human-readable config format using indentation (spaces, NOT tabs)`,
+ol:["GitHub Actions is an automation engine inside GitHub that runs tests and deployments automatically.",
+"A workflow is a YAML file telling GitHub what to do and when to do it.",
+"CI means every code push is automatically built and tested before merging.",
+"A runner is a cloud VM GitHub provides to execute your jobs.",
+"Playwright lets us automate real browser interactions across Chrome, Firefox, and Edge.",
+"TypeScript is JavaScript with types — it catches mistakes before your code runs.",
+"A step is the smallest unit of work inside a GitHub Actions job."],
+diag:`<svg width="100%" viewBox="0 0 640 180" role="img"><title>GitHub Actions basic flow</title><desc>Push triggers workflow on runner producing pass or fail result</desc><defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="10" y="65" width="110" height="50" rx="8" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="65" y="87" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">Developer</text><text x="65" y="104" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">git push</text>
+<line x1="120" y1="90" x2="162" y2="90" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#a)"/>
+<rect x="164" y="65" width="120" height="50" rx="8" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="224" y="87" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-info)">Trigger</text><text x="224" y="104" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-info)">on: push / schedule</text>
+<line x1="284" y1="90" x2="326" y2="90" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#a)"/>
+<rect x="328" y="45" width="140" height="90" rx="8" fill="var(--color-background-secondary)" stroke="var(--color-border-primary)" stroke-width="1"/><text x="398" y="72" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">Workflow</text><text x="398" y="90" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Job on ubuntu runner</text><text x="398" y="107" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Steps: checkout, npm</text><text x="398" y="124" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">playwright test</text>
+<line x1="468" y1="78" x2="508" y2="65" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#a)"/>
+<line x1="468" y1="102" x2="508" y2="118" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#a)"/>
+<rect x="510" y="48" width="110" height="38" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="565" y="72" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-success)">Pass</text>
+<rect x="510" y="100" width="110" height="38" rx="6" fill="var(--color-background-danger)" stroke="var(--color-border-danger)" stroke-width="0.5"/><text x="565" y="124" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-danger)">Fail</text></svg>`,
+codes:[
+{l:"Example 1 — Simplest workflow file",c:`# .github/workflows/hello.yml
+# Every workflow needs: name, on (trigger), jobs
+
+name: My First Workflow      # shown in GitHub Actions tab
+
+on:
+  push:                      # TRIGGER: runs on every git push
+    branches: [main]         # only for 'main' branch
+
+jobs:
+  say-hello:                 # job id — no spaces allowed
+    runs-on: ubuntu-latest   # RUNNER: which OS virtual machine
+
+    steps:
+      - name: Print message  # step display name (optional but helpful)
+        run: echo "Hello from GitHub Actions!"`},
+{l:"Example 2 — Checkout + Node + Playwright",c:`# .github/workflows/playwright.yml
+name: Playwright E2E Tests
+
+on:
+  push:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # 'uses' — calls a pre-built Marketplace action (like importing a library)
+      - name: Checkout repository
+        uses: actions/checkout@v4     # downloads your repo code onto the runner
+
+      # 'with' — passes parameters to the action
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'               # caches node_modules — faster builds
+
+      # 'run' — executes a shell command directly
+      - name: Install dependencies
+        run: npm ci                  # clean install from package-lock.json
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test     # reads playwright.config.ts automatically`},
+{l:"Example 3 — 'uses' vs 'run' explained",c:`jobs:
+  explain:
+    runs-on: ubuntu-latest
+    steps:
+      # USES — downloads and runs a pre-built action from GitHub Marketplace
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # RUN — your own shell commands (bash by default on Ubuntu)
+      - name: Show Node version
+        run: node --version
+
+      # Multi-line run using pipe '|'
+      - name: Multiple commands
+        run: |
+          echo "Line 1"
+          npm --version
+          echo "Line 3"`},
+{l:"Example 4 — Understanding 'on' triggers",c:`on:
+  push:
+    branches: [main]
+    paths:                   # only when these files change
+      - 'tests/**'           # ** = any subfolder/file
+
+  pull_request:
+    branches: [main]
+
+  workflow_dispatch:         # MANUAL — adds Run Workflow button in UI
+
+  schedule:
+    - cron: '0 0 * * *'     # daily at midnight UTC
+    - cron: '0 0 * * 0'     # every Sunday (weekly)
+    - cron: '0 0 1 * *'     # 1st of every month
+# CRON format: minute hour day-of-month month day-of-week`},
+{l:"Example 5 — Secrets and environment variables",c:`name: Playwright with Secrets
+on: [push]
+
+env:                           # global env vars (readable in all jobs)
+  BASE_URL: 'https://staging.myapp.com'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use env variable
+        run: echo "Testing \$BASE_URL"
+
+      - name: Use a GitHub Secret
+        env:
+          # secrets — stored in Repo Settings > Secrets and Variables
+          # NEVER hardcode passwords in YAML
+          API_KEY: \${{ secrets.API_KEY }}
+        run: echo "Key is set (GitHub hides the value in logs)"`},
+],
+bp:["Pin action versions with @v4, never @latest — prevents surprise breaking changes","Store all credentials in GitHub Secrets — never hardcode passwords in YAML","Use npm ci instead of npm install in CI — reproducible, faster","Always run npx playwright install --with-deps to get OS-level browser libraries","Name every step clearly — you'll thank yourself debugging failures at 2 AM","Use ubuntu-latest as your default runner — cheapest, fastest, most compatible","Set branch filters on push triggers to avoid running on every branch"],
+qa:[{q:"Q1. What is a GitHub Actions workflow?",a:"A YAML file in .github/workflows/ that defines automation rules — what triggers it (on:), where it runs (runs-on:), and what steps to execute. It is the blueprint for your CI/CD pipeline."},
+{q:"Q2. Difference between 'uses' and 'run' in a step?",a:"'uses' calls a pre-built action from GitHub Marketplace (like actions/checkout@v4) — it's importing a reusable plugin. 'run' executes raw shell commands directly on the runner VM, like typing in a terminal."},
+{q:"Q3. Why 'npm ci' instead of 'npm install' in CI?",a:"npm ci does a clean install strictly from package-lock.json ensuring identical dependencies every run. npm install may update packages and is slower. Consistency and reproducibility are critical in CI environments."},
+{q:"Q4. What does actions/checkout@v4 do and why is it needed?",a:"It downloads (clones) your repository code onto the runner VM. Without it the runner has an empty workspace and cannot find your test files. It must be the very first step in almost every job."},
+{q:"Q5. How do you securely use passwords or API keys in a workflow?",a:"Store them in GitHub > Repository > Settings > Secrets and Variables > Actions. Reference them as ${{ secrets.YOUR_SECRET_NAME }} in YAML. GitHub automatically masks secret values in all log output so they are never exposed."}]
+},
+{t:"Trigger Strategies",sub:"Manual, Daily, Weekly, Monthly — complete schedule control",ph:"f",
+ov:`<strong>Triggers</strong> (under <span class="kw">on:</span>) tell GitHub when to start your workflow.<br><br>
+<span class="kw">workflow_dispatch</span> — Manual trigger. Adds a "Run workflow" button in GitHub UI. Supports user inputs (dropdowns, text).<br>
+<span class="kw">schedule</span> — Time-based using cron syntax. Runs even without a code push.<br>
+<span class="kw">push</span> — Runs when code is pushed to specified branches.<br>
+<span class="kw">pull_request</span> — Runs when a PR is opened/updated.<br><br>
+<strong>Cron Syntax (5 fields):</strong><br>
+minute  hour  day-of-month  month  day-of-week<br>
+<code>0 2 * * *</code> → every day at 2:00 AM UTC<br>
+<code>0 0 * * 0</code> → every Sunday midnight (weekly)<br>
+<code>0 0 1 * *</code> → 1st of every month (monthly)`,
+ol:["workflow_dispatch adds a manual 'Run workflow' button with optional dropdown inputs in the GitHub UI.",
+"Cron '0 2 * * *' means run every day at 2 AM UTC — great for nightly regression runs.",
+"Schedule triggers run independently of code pushes — perfect for health-check tests on stable environments.",
+"You can combine multiple triggers (push + schedule + workflow_dispatch) in one workflow file.",
+"workflow_dispatch inputs let testers pick browser, environment, or test pack at runtime without code changes.",
+"'0 0 * * 0' is the cron expression for every Sunday — ideal for weekly regression suites.",
+"GitHub always uses UTC timezone for all schedule triggers — convert your local time accordingly."],
+diag:`<svg width="100%" viewBox="0 0 640 210" role="img"><title>Trigger types</title><desc>Four trigger sources feeding into one workflow</desc><defs><marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="10" y="20" width="135" height="40" rx="6" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="77" y="45" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-info)">workflow_dispatch (manual)</text>
+<rect x="10" y="72" width="135" height="40" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="77" y="90" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-success)">schedule (cron)</text><text x="77" y="106" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-success)">daily / weekly / monthly</text>
+<rect x="10" y="124" width="135" height="40" rx="6" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="0.5"/><text x="77" y="148" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-warning)">push</text>
+<rect x="10" y="176" width="135" height="30" rx="6" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="77" y="195" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">pull_request</text>
+<line x1="145" y1="40" x2="240" y2="105" stroke="var(--color-text-info)" stroke-width="1" marker-end="url(#b)"/>
+<line x1="145" y1="92" x2="240" y2="110" stroke="var(--color-text-success)" stroke-width="1" marker-end="url(#b)"/>
+<line x1="145" y1="144" x2="240" y2="118" stroke="var(--color-text-warning)" stroke-width="1" marker-end="url(#b)"/>
+<line x1="145" y1="191" x2="240" y2="125" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#b)"/>
+<rect x="242" y="80" width="150" height="80" rx="10" fill="var(--color-background-secondary)" stroke="var(--color-border-primary)" stroke-width="1"/><text x="317" y="110" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="500" fill="var(--color-text-primary)">Workflow</text><text x="317" y="128" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Jobs + Steps</text><text x="317" y="146" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Playwright Tests</text>
+<line x1="392" y1="120" x2="440" y2="95" stroke="var(--color-text-success)" stroke-width="1" marker-end="url(#b)"/>
+<line x1="392" y1="120" x2="440" y2="150" stroke="var(--color-text-danger)" stroke-width="1" marker-end="url(#b)"/>
+<rect x="442" y="72" width="100" height="38" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="492" y="96" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-success)">Tests Pass</text>
+<rect x="442" y="130" width="100" height="38" rx="6" fill="var(--color-background-danger)" stroke="var(--color-border-danger)" stroke-width="0.5"/><text x="492" y="154" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-danger)">Tests Fail</text></svg>`,
+codes:[
+{l:"Example 1 — Manual trigger with dropdown inputs",c:`on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'qa'
+        type: choice
+        options: [dev, qa, uat, staging]
+      browser:
+        description: 'Browser to test'
+        type: choice
+        options: [chromium, firefox, webkit]
+        default: chromium
+      test_pack:
+        description: 'Test suite to run'
+        type: choice
+        options: [smoke, sanity, regression]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show selected inputs
+        # \${{ github.event.inputs.FIELD }} reads user selection
+        run: |
+          echo "Env:  \${{ github.event.inputs.environment }}"
+          echo "Pack: \${{ github.event.inputs.test_pack }}"`},
+{l:"Example 2 — Daily, Weekly, Monthly schedule",c:`on:
+  schedule:
+    # DAILY — every day at 2:00 AM UTC
+    - cron: '0 2 * * *'
+
+    # WEEKLY — every Sunday midnight
+    - cron: '0 0 * * 0'
+
+    # MONTHLY — 1st day of each month at midnight
+    - cron: '0 0 1 * *'
+
+# Cron reading:  minute hour day month weekday
+# '0 2 * * *'  = at minute 0, hour 2, every day/month/weekday
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Triggered by: \${{ github.event_name }}"`},
+{l:"Example 3 — Combining all triggers",c:`on:
+  workflow_dispatch:           # manual button
+    inputs:
+      test_pack:
+        type: choice
+        options: [smoke, sanity, regression]
+        default: smoke
+
+  push:                        # auto on push
+    branches: [main, develop]
+    paths: ['tests/**']        # only when test files change
+
+  pull_request:
+    branches: [main]
+
+  schedule:
+    - cron: '0 1 * * *'       # nightly
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine test pack by trigger
+        run: |
+          if [ "\${{ github.event_name }}" == "schedule" ]; then
+            echo "Running regression (nightly)"
+            npx playwright test --grep "@regression"
+          elif [ "\${{ github.event_name }}" == "workflow_dispatch" ]; then
+            npx playwright test --grep "@\${{ github.event.inputs.test_pack }}"
+          else
+            echo "Running smoke (push/PR)"
+            npx playwright test --grep "@smoke"
+          fi`},
+{l:"Example 4 — github.event_name conditional routing",c:`jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+
+      # 'if' at step level — step is SKIPPED when condition is false
+      - name: Full regression (schedule only)
+        if: github.event_name == 'schedule'
+        run: npx playwright test --grep "@regression"
+
+      - name: Smoke (push only)
+        if: github.event_name == 'push'
+        run: npx playwright test --grep "@smoke"
+
+      - name: Sanity (manual dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: npx playwright test --grep "@\${{ github.event.inputs.test_pack }}"
+
+      - name: Log context info
+        if: always()
+        run: |
+          echo "Event:  \${{ github.event_name }}"
+          echo "Branch: \${{ github.ref_name }}"
+          echo "Actor:  \${{ github.actor }}"
+          echo "Run #:  \${{ github.run_number }}"`},
+{l:"Example 5 — Playwright test tags for trigger routing",c:`// tests/login.spec.ts
+import { test, expect } from '@playwright/test';
+
+// @smoke — critical path, runs on every push (fast, under 5 min)
+test('@smoke Login with valid credentials', async ({ page }) => {
+  await page.goto('/login');
+  await page.fill('#email', 'user@test.com');
+  await page.fill('#password', 'secret');
+  await page.click('button[type=submit]');
+  await expect(page).toHaveURL('/dashboard');
+});
+
+// @sanity — post-deploy core feature check
+test('@sanity Homepage loads and has title', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('h1')).toBeVisible();
+});
+
+// @regression — nightly comprehensive edge case
+test('@regression Complete checkout flow', async ({ page }) => {
+  await page.goto('/shop');
+  await page.click('.add-to-cart');
+  await page.click('.checkout');
+  await expect(page.locator('.order-confirmed')).toBeVisible();
+});
+
+// CLI: npx playwright test --grep "@smoke"
+// CLI: npx playwright test --grep "@regression"`},
+],
+bp:["Always use UTC timezone for cron — GitHub Actions runs UTC regardless of your location","Schedule heavy regression at night — smoke should be on every push","Include workflow_dispatch alongside schedule so you can trigger manually anytime","Use --grep tags to route Smoke/Sanity/Regression to the right trigger type","Filter push triggers by paths (tests/**) to skip documentation-only changes","Use github.event_name conditional logic to run different packs per trigger","Keep daily smoke fast (under 10 min) — slow nightly runs are okay"],
+qa:[{q:"Q1. What is workflow_dispatch and why do SDETs use it?",a:"workflow_dispatch adds a manual 'Run workflow' button in the GitHub Actions tab. SDETs use it to run specific test packs on demand without pushing code — useful before a release, debugging flaky tests, or running against a specific environment."},
+{q:"Q2. Explain cron syntax '0 2 * * 1-5'",a:"Runs at 2:00 AM UTC every weekday (Monday through Friday). Field breakdown: 0=minute, 2=2 AM, *=any day-of-month, *=any month, 1-5=Mon to Fri. The dash creates a range."},
+{q:"Q3. How do you run different test packs per trigger type?",a:"Use github.event_name in step-level if: conditions. 'if: github.event_name == schedule' runs regression nightly. 'if: github.event_name == push' runs smoke on every commit. Combined with --grep tags, each trigger runs the appropriate suite."},
+{q:"Q4. Difference between schedule and push triggers?",a:"Push runs immediately when code is pushed — event-driven, linked to a specific commit. Schedule runs on a time basis (cron) even without code changes — ideal for health checks and nightly regression against a stable environment."},
+{q:"Q5. How do workflow_dispatch inputs work?",a:"Inputs define a form shown before manual runs. Types: choice (dropdown), string (text), boolean (checkbox), number. Values are accessed at runtime via ${{ github.event.inputs.INPUT_NAME }}. The 'required' field prevents running with empty values."}]
+},
+{t:"Playwright TypeScript Setup",sub:"playwright.config.ts deep-dive, project structure, multi-browser config",ph:"f",
+ov:`<span class="kw">playwright.config.ts</span> — The single config file controlling every aspect of your test suite.<br><br>
+<span class="kw">projects</span> — One entry per browser. Each project runs your whole test suite independently.<br>
+<span class="kw">use</span> — Shared options for all tests (baseURL, headless, screenshots, video).<br>
+<span class="kw">reporter</span> — How results are displayed: html, json, junit, list.<br>
+<span class="kw">retries</span> — Auto-retry failed tests. Set 0 locally, 2 in CI.<br>
+<span class="kw">workers</span> — Number of parallel test threads. 1 in CI, CPU count locally.<br>
+<span class="kw">testDir</span> — Which folder contains your test files.<br>
+<span class="kw">baseURL</span> — URL prepended to every page.goto('/path') call.<br>
+<span class="kw">headless</span> — Run without a visible browser window (required in CI).`,
+ol:["playwright.config.ts is the single source of truth for all Playwright settings — browsers, timeouts, reporters.",
+"Each 'project' in the config runs your entire test suite in a specific browser independently.",
+"Setting baseURL lets you write page.goto('/login') instead of hardcoding the full URL in every test.",
+"retries: 2 makes Playwright rerun a failed test up to 2 times before marking it truly failed.",
+"workers controls parallelism — set to 1 in CI for stability, use cpu count locally for speed.",
+"The html reporter generates a visual report you can attach as a GitHub artifact.",
+"TypeScript's defineConfig wrapper gives IntelliSense autocomplete for every config property."],
+diag:`<svg width="100%" viewBox="0 0 640 200" role="img"><title>playwright config structure</title><desc>Config feeds into three browser projects producing test results</desc><defs><marker id="c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="10" y="60" width="175" height="80" rx="10" fill="var(--color-background-secondary)" stroke="var(--color-border-primary)" stroke-width="1"/><text x="97" y="90" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">playwright.config.ts</text><text x="97" y="108" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">baseURL, retries, workers</text><text x="97" y="124" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">reporter, projects[ ]</text>
+<line x1="185" y1="82" x2="250" y2="48" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#c)"/>
+<line x1="185" y1="100" x2="250" y2="100" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#c)"/>
+<line x1="185" y1="118" x2="250" y2="154" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#c)"/>
+<rect x="252" y="24" width="115" height="40" rx="6" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="309" y="42" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-info)">Chromium</text><text x="309" y="58" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-info)">Chrome / Edge</text>
+<rect x="252" y="80" width="115" height="40" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="309" y="98" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-success)">Firefox</text><text x="309" y="114" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-success)">Gecko engine</text>
+<rect x="252" y="136" width="115" height="40" rx="6" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="0.5"/><text x="309" y="154" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-warning)">WebKit</text><text x="309" y="170" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-warning)">Safari engine</text>
+<line x1="367" y1="44" x2="430" y2="98" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#c)"/>
+<line x1="367" y1="100" x2="430" y2="100" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#c)"/>
+<line x1="367" y1="156" x2="430" y2="104" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#c)"/>
+<rect x="432" y="76" width="130" height="48" rx="8" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="497" y="97" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">Test Results</text><text x="497" y="115" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">HTML Report</text></svg>`,
+codes:[
+{l:"Example 1 — Full playwright.config.ts",c:`import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests',          // where test files live
+  testMatch: '**/*.spec.ts',   // file naming pattern
+
+  timeout: 30000,              // 30 sec max per test
+  expect: { timeout: 10000 }, // 10 sec per assertion
+
+  // retries: 0 locally (see failures), 2 in CI (handle flakiness)
+  retries: process.env.CI ? 2 : 0,
+
+  // workers: 1 in CI (stable), all cores locally (fast)
+  workers: process.env.CI ? 1 : undefined,
+
+  reporter: [
+    ['list'],                  // console output
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['junit', { outputFile: 'test-results/junit.xml' }],
+  ],
+
+  use: {
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    headless: true,
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    trace: 'on-first-retry',   // record trace on first retry
+  },
+
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit',   use: { ...devices['Desktop Safari'] } },
+    { name: 'edge',     use: { ...devices['Desktop Edge'], channel: 'msedge' } },
+  ],
+});`},
+{l:"Example 2 — Dynamic baseURL per environment",c:`import { defineConfig } from '@playwright/test';
+
+function getBaseURL(env: string): string {
+  const urls: Record<string, string> = {
+    dev:     'https://dev.myapp.com',
+    qa:      'https://qa.myapp.com',
+    uat:     'https://uat.myapp.com',
+    staging: 'https://staging.myapp.com',
+  };
+  return urls[env] || 'http://localhost:3000';
+}
+
+const env = process.env.TEST_ENV || 'qa';
+
+export default defineConfig({
+  use: {
+    baseURL: getBaseURL(env),   // dynamically set
+  },
+  // page.goto('/login') now resolves to https://qa.myapp.com/login
+});`},
+{l:"Example 3 — Simple test using baseURL and TypeScript",c:`// tests/login.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('user can login successfully', async ({ page }) => {
+  // With baseURL set, '/login' becomes 'https://qa.myapp.com/login'
+  await page.goto('/login');
+
+  await page.locator('#email').fill('testuser@example.com');
+  await page.locator('#password').fill('Password123');
+  await page.locator('button[type="submit"]').click();
+
+  await expect(page).toHaveURL('/dashboard');
+  await expect(page.locator('h1')).toBeVisible();
+});
+
+test.describe('Login error states', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/login');   // runs before each test in this group
+  });
+
+  test('shows error on wrong password', async ({ page }) => {
+    await page.locator('#email').fill('user@test.com');
+    await page.locator('#password').fill('wrong');
+    await page.locator('button[type="submit"]').click();
+    await expect(page.locator('.error-message')).toBeVisible();
+  });
+});`},
+{l:"Example 4 — Project folder structure",c:`# .github/
+#   workflows/
+#     playwright.yml
+# tests/
+#   smoke/
+#     login.smoke.spec.ts
+#     homepage.smoke.spec.ts
+#   sanity/
+#     checkout.sanity.spec.ts
+#   regression/
+#     full-flow.spec.ts
+# pages/                   <- Page Object Model classes
+#   LoginPage.ts
+#   DashboardPage.ts
+# fixtures/                <- Reusable test setup
+#   auth.fixture.ts
+# test-data/
+#   users.json
+# playwright.config.ts
+# tsconfig.json
+# package.json`},
+{l:"Example 5 — tsconfig.json for Playwright TypeScript",c:`{
+  "compilerOptions": {
+    "target": "ES2022",        // compile to modern JS
+    "module": "commonjs",
+    "strict": true,            // catches ALL type errors at compile time
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "paths": {
+      "@pages/*": ["./pages/*"],
+      "@fixtures/*": ["./fixtures/*"]
+    }
+  },
+  "include": ["tests/**/*.ts", "pages/**/*.ts", "fixtures/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}`},
+],
+bp:["Always use process.env.CI ? 2 : 0 for retries — never retry locally, always retry in CI","Set screenshot: 'only-on-failure' and video: 'retain-on-failure' — saves storage","trace: 'on-first-retry' lets you replay exactly what happened in any flaky test","Keep baseURL in an environment variable — never hardcode URLs in config","Use devices[] presets for correct viewport and user-agent per browser","Set workers: 1 in CI initially — scale after confirming test isolation","Upload playwright-report/ as a GitHub artifact for visual failure review"],
+qa:[{q:"Q1. What is playwright.config.ts and its most important fields?",a:"The central TypeScript config file for Playwright. Key fields: testDir (where tests live), projects (which browsers), use (shared options like baseURL, screenshot), retries (auto-retry), workers (parallelism), reporter (output format). defineConfig wrapper provides full IntelliSense autocomplete."},
+{q:"Q2. Difference between timeout and expect.timeout?",a:"timeout is the maximum time an entire test can run before being killed (e.g. 30 seconds). expect.timeout is how long a single assertion waits for a condition (e.g. waiting for an element). Both need separate tuning — test timeout handles slow pages, expect timeout handles slow rendering."},
+{q:"Q3. How do retries work in CI?",a:"When retries: 2 is set and a test fails, Playwright reruns it up to 2 more times. If it passes on retry, it is marked 'flaky' — not failed. trace: 'on-first-retry' records a trace file on the first retry for detailed debugging."},
+{q:"Q4. What is the projects array?",a:"Each entry defines a browser to run your tests against. You name it (name: 'chromium') and specify settings using devices[] presets from @playwright/test. Running npx playwright test executes all tests once per project — 3 projects means 3 browser runs."},
+{q:"Q5. How do you dynamically set baseURL for different environments?",a:"Read process.env.TEST_ENV and map it to the correct URL using a lookup object. Set TEST_ENV in the GitHub Actions workflow env: block. The same test files then run against dev, qa, uat, or staging without any code changes."}]
+},
+{t:"Cross-Browser & Multi-Environment",sub:"Chrome, Firefox, Edge, WebKit × Dev, QA, UAT, Staging",ph:"f",
+ov:`<strong>Cross-Browser:</strong> Different browsers use different rendering engines.<br>
+<span class="kw">Chromium</span> — Powers Chrome and Edge. Blink engine. ~65% of users.<br>
+<span class="kw">Firefox</span> — Independent open-source. Gecko engine. Important for enterprise.<br>
+<span class="kw">WebKit</span> — Powers Safari / iOS. Required for iOS testing.<br>
+<span class="kw">msedge</span> — Real Edge binary (Chromium-based with Microsoft extensions).<br><br>
+<strong>Multi-Environment:</strong> Same test code, different server URLs.<br>
+<span class="kw">dev</span> — Unstable, frequently changing. Run smoke tests only.<br>
+<span class="kw">qa</span> — Stable for testers. Run sanity + regression.<br>
+<span class="kw">uat</span> — Client-facing. Run before client demos.<br>
+<span class="kw">staging</span> — Production mirror. Final gate before go-live. Run full regression.`,
+ol:["Cross-browser testing runs your suite in Chromium, Firefox, and WebKit to catch browser-specific bugs.",
+"Playwright's projects array is how you configure each browser — one object per browser.",
+"Environment variables like TEST_ENV='qa' let the same YAML run against any server.",
+"A matrix strategy in GitHub Actions auto-generates all browser × environment combinations.",
+"WebKit tests Safari behavior — critical even without a Mac or iPhone.",
+"Each Playwright project is independent — a Firefox bug won't stop Chrome tests running.",
+"Use process.env.CI to automatically switch settings between local dev and the pipeline."],
+diag:`<svg width="100%" viewBox="0 0 640 220" role="img"><title>Cross-browser multi-environment matrix</title><desc>Three browsers times four environments equals twelve combinations</desc><defs><marker id="d" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text x="320" y="18" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">Test Matrix: 3 browsers × 4 environments = 12 jobs</text>
+<text x="175" y="40" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-info)">Dev</text>
+<text x="290" y="40" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-success)">QA</text>
+<text x="405" y="40" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-warning)">UAT</text>
+<text x="520" y="40" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-danger)">Staging</text>
+<text x="60" y="80" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">Chrome</text>
+<text x="60" y="135" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">Firefox</text>
+<text x="60" y="190" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">Edge</text>
+<rect x="115" y="54" width="120" height="40" rx="5" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="175" y="79" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-info)">Smoke / Chrome / Dev</text>
+<rect x="230" y="54" width="120" height="40" rx="5" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="290" y="79" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-success)">Sanity / Chrome / QA</text>
+<rect x="345" y="54" width="120" height="40" rx="5" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="0.5"/><text x="405" y="79" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-warning)">Regression / UAT</text>
+<rect x="460" y="54" width="120" height="40" rx="5" fill="var(--color-background-danger)" stroke="var(--color-border-danger)" stroke-width="0.5"/><text x="520" y="79" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-danger)">Regression / Staging</text>
+<rect x="115" y="108" width="120" height="40" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="0.5"/><text x="175" y="133" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Smoke / Firefox / Dev</text>
+<rect x="230" y="108" width="120" height="40" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="0.5"/><text x="290" y="133" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Sanity / Firefox / QA</text>
+<rect x="345" y="108" width="120" height="40" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="0.5"/><text x="405" y="133" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Regression / Firefox</text>
+<rect x="460" y="108" width="120" height="40" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="0.5"/><text x="520" y="133" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Regression / Firefox</text>
+<rect x="115" y="162" width="120" height="40" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="0.5"/><text x="175" y="187" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Smoke / Edge / Dev</text>
+<rect x="230" y="162" width="120" height="40" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="0.5"/><text x="290" y="187" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Sanity / Edge / QA</text>
+<rect x="345" y="162" width="120" height="40" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="0.5"/><text x="405" y="187" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Regression / Edge</text>
+<rect x="460" y="162" width="120" height="40" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="0.5"/><text x="520" y="187" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Regression / Edge</text></svg>`,
+codes:[
+{l:"Example 1 — All 4 browsers in playwright.config.ts",c:`import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  use: {
+    baseURL: process.env.BASE_URL || 'https://qa.myapp.com',
+    headless: true,
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    // Chromium = Chrome engine
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // Firefox = Gecko engine
+    { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
+    // WebKit = Safari / iOS engine
+    { name: 'webkit',   use: { ...devices['Desktop Safari'] } },
+    // Edge = real Edge binary
+    { name: 'edge', use: { ...devices['Desktop Edge'], channel: 'msedge' } },
+  ],
+});
+// Run single browser: npx playwright test --project=firefox
+// Run all browsers:   npx playwright test`},
+{l:"Example 2 — Set BASE_URL per environment in GitHub Actions",c:`jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npx playwright install \${{ github.event.inputs.browser }} --with-deps
+
+      - name: Set BASE_URL from environment input
+        run: |
+          ENV="\${{ github.event.inputs.environment }}"
+          case \$ENV in
+            dev)     echo "BASE_URL=https://dev.myapp.com"     >> \$GITHUB_ENV ;;
+            qa)      echo "BASE_URL=https://qa.myapp.com"      >> \$GITHUB_ENV ;;
+            uat)     echo "BASE_URL=https://uat.myapp.com"     >> \$GITHUB_ENV ;;
+            staging) echo "BASE_URL=https://staging.myapp.com" >> \$GITHUB_ENV ;;
+          esac
+
+      - name: Run tests
+        run: npx playwright test --project=\${{ github.event.inputs.browser }}`},
+{l:"Example 3 — Centralized environment config TypeScript",c:`// fixtures/env-config.ts
+interface EnvConfig { baseURL: string; apiURL: string; adminEmail: string; }
+
+const envConfigs: Record<string, EnvConfig> = {
+  dev:     { baseURL:'https://dev.myapp.com',     apiURL:'https://api-dev.myapp.com',     adminEmail:'admin@dev.myapp.com' },
+  qa:      { baseURL:'https://qa.myapp.com',      apiURL:'https://api-qa.myapp.com',      adminEmail:'admin@qa.myapp.com' },
+  uat:     { baseURL:'https://uat.myapp.com',     apiURL:'https://api-uat.myapp.com',     adminEmail:'admin@uat.myapp.com' },
+  staging: { baseURL:'https://staging.myapp.com', apiURL:'https://api-staging.myapp.com', adminEmail:'admin@staging.myapp.com' },
+};
+
+export const config = envConfigs[process.env.TEST_ENV || 'qa'];
+// Usage: import { config } from '../fixtures/env-config';
+//        await page.goto(config.apiURL + '/health');`},
+{l:"Example 4 — Skip tests for specific environments",c:`// tests/payment.spec.ts
+const env = process.env.TEST_ENV || 'qa';
+
+test.describe('Payment tests', () => {
+
+  test('Credit card payment', async ({ page }) => {
+    // test.skip(condition, reason) — marks as skipped in report
+    test.skip(env === 'dev', 'Payment gateway not available in DEV');
+    await page.goto('/checkout');
+    // ... payment steps
+  });
+
+  // Only declare the test in UAT and Staging
+  if (env === 'uat' || env === 'staging') {
+    test('Full payment + refund flow', async ({ page }) => {
+      await page.goto('/checkout');
+      // ... complete flow
+    });
+  }
+});`},
+{l:"Example 5 — Check browserName inside a test",c:`import { test, expect } from '@playwright/test';
+
+test('adaptive test', async ({ page, browserName }) => {
+  // 'browserName' is a built-in fixture: 'chromium' | 'firefox' | 'webkit'
+  console.log('Running in: ' + browserName);
+
+  await page.goto('/');
+
+  if (browserName === 'webkit') {
+    // Safari-specific file upload
+    await page.locator('.safari-upload').setInputFiles('test.txt');
+  } else {
+    await page.locator('.drag-zone').dispatchEvent('drop');
+  }
+
+  await expect(page.locator('h1')).toBeVisible();
+});
+
+// Skip entire test for webkit
+test('Chrome-only feature', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Chrome-only feature');
+  await page.goto('/chrome-feature');
+  await expect(page.locator('.chrome-badge')).toBeVisible();
+});`},
+],
+bp:["Run smoke on all 4 browsers — run full regression only on Chromium (saves 3x time)",
+"Use --project flag to run a single browser: npx playwright test --project=firefox",
+"Never hardcode environment URLs in test files — always read from process.env.BASE_URL",
+"Use test.skip(env==='dev', 'reason') to skip tests on environments where features don't exist",
+"Store environment secrets per-environment in GitHub repo secrets",
+"Test mobile via devices[]: devices['iPhone 13'] or devices['Pixel 5']",
+"Run cross-browser in parallel with matrix strategy to keep total pipeline time manageable"],
+qa:[{q:"Q1. Why is cross-browser testing important for SDETs?",a:"Different browsers use different rendering engines (Blink for Chrome/Edge, Gecko for Firefox, WebKit for Safari). CSS rendering, JS APIs, and form behavior can differ. A bug only in Firefox could affect millions of users — cross-browser testing catches these before release."},
+{q:"Q2. How does Playwright handle cross-browser without installing many browsers?",a:"Playwright's projects array defines each browser. npx playwright install downloads custom builds of Chromium, Firefox, and WebKit — no separate browser installations needed. Each project runs the full test suite independently."},
+{q:"Q3. How do you run tests against a specific environment in CI?",a:"Set the BASE_URL environment variable in the workflow (env: BASE_URL: https://uat.myapp.com) or use a mapping script reading TEST_ENV to set BASE_URL. playwright.config.ts reads process.env.BASE_URL so all tests point to the correct server."},
+{q:"Q4. Difference between dev, qa, uat, and staging environments?",a:"Dev is for developers — unstable, run smoke only. QA is stable for testers — run sanity and regression. UAT is client-facing for acceptance sign-off. Staging mirrors production exactly — final gate before release, full regression."},
+{q:"Q5. How do you handle a test that should only run in specific environments?",a:"Use test.skip(condition, 'reason') at the start of a test with process.env.TEST_ENV === 'dev' as the condition. Alternatively use if(env === 'staging') blocks to conditionally declare tests. Both show skipped tests in the report so they remain visible."}]
+},
+{t:"Test Packs: Smoke, Sanity, Regression",sub:"Organising, tagging, and running isolated packs on CI",ph:"f",
+ov:`<span class="kw">Smoke Tests</span> — "Is the app alive?" Fast critical-path checks (5-10 tests, under 5 min). Run on every push.<br>
+<span class="kw">Sanity Tests</span> — "Did the deployment break core features?" (20-50 tests, 10-20 min). Run after every deploy.<br>
+<span class="kw">Regression Tests</span> — "Did our changes break anything that used to work?" (100+ tests, 30-60 min). Run nightly.<br><br>
+<strong>Tagging Strategy:</strong> Add <span class="kw">@smoke</span>, <span class="kw">@sanity</span>, or <span class="kw">@regression</span> in the test name string, then use <span class="kw">--grep</span> to run only matching tests.<br><br>
+<strong>Test Isolation:</strong> Each Playwright test gets a fresh browser context by default (cookies cleared, localStorage empty) — tests never affect each other.`,
+ol:["Smoke tests answer 'Is the app alive?' — run on every push, keep under 5 minutes total.",
+"Sanity tests verify core features after a deployment — if sanity fails, rollback immediately.",
+"Regression tests are comprehensive — run nightly to catch bugs introduced by recent changes.",
+"Use --grep '@smoke' to run only tests tagged @smoke in their name — no separate files needed.",
+"Each test pack is a separate workflow job — a failing smoke gate blocks sanity from starting.",
+"Test tagging with @smoke/@sanity/@regression is the industry-standard Playwright organization.",
+"A smoke test that takes 30 minutes is NOT a smoke test — keep critical checks fast."],
+diag:`<svg width="100%" viewBox="0 0 640 190" role="img"><title>Test pack pyramid</title><desc>Smoke at base fast and few, sanity middle, regression at top slow and many</desc><defs><marker id="e" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="180" y="130" width="280" height="46" rx="8" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="320" y="150" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="500" fill="var(--color-text-success)">SMOKE</text><text x="320" y="168" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-success)">5-10 tests — under 5 min — every push</text>
+<rect x="110" y="78" width="420" height="46" rx="8" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="0.5"/><text x="320" y="98" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="500" fill="var(--color-text-warning)">SANITY</text><text x="320" y="116" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-warning)">20-50 tests — 10-20 min — after every deploy</text>
+<rect x="30" y="26" width="580" height="46" rx="8" fill="var(--color-background-danger)" stroke="var(--color-border-danger)" stroke-width="0.5"/><text x="320" y="46" text-anchor="middle" font-family="var(--font-sans)" font-size="13" font-weight="500" fill="var(--color-text-danger)">REGRESSION</text><text x="320" y="64" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-danger)">100+ tests — 30-60 min — nightly / pre-release</text>
+<text x="18" y="155" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Fast</text>
+<text x="18" y="50" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Slow</text>
+<line x1="22" y1="145" x2="22" y2="65" stroke="var(--color-text-secondary)" stroke-width="0.5" marker-end="url(#e)"/></svg>`,
+codes:[
+{l:"Example 1 — Tagging tests with @smoke @sanity @regression",c:`// tests/auth/login.spec.ts
+import { test, expect } from '@playwright/test';
+
+// Tag is part of the test name string
+// CLI: npx playwright test --grep "@smoke"
+
+test('@smoke User can log in', async ({ page }) => {
+  await page.goto('/login');
+  await page.fill('#email', 'user@test.com');
+  await page.fill('#password', 'Pass123!');
+  await page.click('[type=submit]');
+  await expect(page).toHaveURL('/dashboard');
+});
+
+test('@sanity Login error shows on wrong password', async ({ page }) => {
+  await page.goto('/login');
+  await page.fill('#email', 'bad@user.com');
+  await page.fill('#password', 'wrong');
+  await page.click('[type=submit]');
+  await expect(page.locator('[data-testid="error-msg"]'))
+    .toHaveText('Invalid email or password');
+});
+
+test('@sanity Forgot password link navigates correctly', async ({ page }) => {
+  await page.goto('/login');
+  await page.click('a[href="/forgot-password"]');
+  await expect(page).toHaveURL('/forgot-password');
+});
+
+test('@regression SQL injection attempt is blocked', async ({ page }) => {
+  await page.goto('/login');
+  await page.fill('#email', "'; DROP TABLE users; --");
+  await page.fill('#password', 'Pass123!');
+  await page.click('[type=submit]');
+  await expect(page.locator('.error-message')).toBeVisible();
+});`},
+{l:"Example 2 — Run a single isolated test pack",c:`# .github/workflows/run-testpack.yml
+name: Run Test Pack
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_pack:
+        type: choice
+        options: [smoke, sanity, regression]
+        default: smoke
+      environment:
+        type: choice
+        options: [dev, qa, uat, staging]
+        default: qa
+
+jobs:
+  run-pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+
+      - name: Run selected pack
+        env:
+          TEST_ENV: \${{ github.event.inputs.environment }}
+        run: |
+          npx playwright test \\
+            --grep "@\${{ github.event.inputs.test_pack }}" \\
+            --project=chromium
+
+      - uses: actions/upload-artifact@v4
+        if: always()          # upload even if tests fail
+        with:
+          name: report-\${{ github.event.inputs.test_pack }}
+          path: playwright-report/
+          retention-days: 7`},
+{l:"Example 3 — Sequential gate: smoke then sanity then regression",c:`# needs: makes a job wait for another job to pass first
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --grep "@smoke" --project=chromium
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: smoke-report, path: playwright-report/ }
+
+  sanity:
+    runs-on: ubuntu-latest
+    needs: smoke              # only starts if smoke PASSED
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --grep "@sanity" --project=chromium
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: sanity-report, path: playwright-report/ }
+
+  regression:
+    runs-on: ubuntu-latest
+    needs: sanity             # only starts if sanity PASSED
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install --with-deps
+      - run: npx playwright test --grep "@regression"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: regression-report, path: playwright-report/ }`},
+{l:"Example 4 — --grep patterns for test pack control",c:`# Run only smoke tests
+npx playwright test --grep "@smoke"
+
+# Run only sanity
+npx playwright test --grep "@sanity"
+
+# Run smoke + sanity (pipe = OR)
+npx playwright test --grep "@smoke|@sanity"
+
+# Run everything EXCEPT regression (--grep-invert inverts)
+npx playwright test --grep-invert "@regression"
+
+# Smoke in Firefox only
+npx playwright test --grep "@smoke" --project=firefox
+
+# Smoke headed (visible browser) for debugging
+npx playwright test --grep "@smoke" --headed
+
+# Open HTML report after run
+npx playwright show-report`},
+{l:"Example 5 — Page Object Model basics",c:`// pages/LoginPage.ts — Page Object Model
+import { Page, Locator } from '@playwright/test';
+
+export class LoginPage {
+  readonly page: Page;
+  readonly emailInput: Locator;
+  readonly passwordInput: Locator;
+  readonly submitButton: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.emailInput    = page.locator('#email');
+    this.passwordInput = page.locator('#password');
+    this.submitButton  = page.locator('button[type="submit"]');
+  }
+
+  async goto() { await this.page.goto('/login'); }
+
+  async login(email: string, password: string) {
+    await this.emailInput.fill(email);
+    await this.passwordInput.fill(password);
+    await this.submitButton.click();
+  }
+}
+
+// tests/login.spec.ts — clean test using POM
+import { test, expect } from '@playwright/test';
+import { LoginPage } from '../../pages/LoginPage';
+
+test('@smoke Login works', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login('user@test.com', 'Pass123!');
+  await expect(page).toHaveURL('/dashboard');
+});`},
+],
+bp:["Tag ALL tests with exactly one pack tag — untagged tests are forgotten tests",
+"Keep smoke tests under 5 minutes total — if they grow, split into sanity",
+"Use needs: to chain jobs sequentially — never run regression if smoke fails",
+"Upload reports as GitHub artifacts on every run — use if: always()",
+"Write smoke tests completely independent — no test should depend on another test's state",
+"Use Page Object Model from day one — selectors in page classes, assertions in tests",
+"Maintain a test coverage doc mapping each feature to its pack coverage level"],
+qa:[{q:"Q1. Difference between Smoke, Sanity, and Regression testing?",a:"Smoke (5-10 fast tests) verifies the app is alive — every push. Sanity (20-50 tests) verifies core features after deploy — post-deploy. Regression (100+ tests) verifies nothing is broken by recent changes — nightly or pre-release. Different scope, speed, and triggering conditions."},
+{q:"Q2. How do you run only the Smoke test pack in Playwright?",a:"Add '@smoke' in the test name string. Run: npx playwright test --grep '@smoke'. The --grep flag accepts regex so '@smoke' matches any test with '@smoke' in its name. No separate files are needed."},
+{q:"Q3. How do you make Regression run only after Sanity passes?",a:"Use 'needs: sanity' in the regression job. GitHub Actions ensures regression only starts when sanity completes successfully. If sanity fails, regression is automatically skipped — saving compute time and cost."},
+{q:"Q4. What is the Page Object Model and why use it?",a:"POM is a design pattern where each page gets a TypeScript class containing all locators and interaction methods. Tests use these classes instead of raw selectors. If a selector changes, you fix it in one class rather than every test file."},
+{q:"Q5. How do you upload Playwright test reports in GitHub Actions?",a:"Use actions/upload-artifact@v4 with 'if: always()' after the test step. Point path to playwright-report/. Reports appear in the GitHub Actions run summary under Artifacts. Always use 'if: always()' so the report uploads even when tests fail."}]
+},
+{t:"Matrix Strategy",sub:"Auto-generate all browser × environment combinations with strategy.matrix",ph:"i",
+ov:`<span class="kw">strategy.matrix</span> — Defines axes of your matrix. GitHub auto-creates one parallel job per combination.<br>
+<span class="kw">fail-fast: false</span> — Keep all matrix jobs running even if one combination fails.<br>
+<span class="kw">matrix.exclude</span> — Remove specific combinations (e.g. skip webkit on dev).<br>
+<span class="kw">matrix.include</span> — Add specific combinations not in the default cross-product (e.g. mobile Safari).<br>
+<span class="kw">max-parallel</span> — Limit concurrent jobs to control cost and server load.<br>
+<span class="kw">\${{ matrix.VAR }}</span> — Reference a matrix variable anywhere in your job.<br><br>
+3 browsers × 4 environments = <strong>12 parallel jobs from 7 lines of YAML.</strong>`,
+ol:["Matrix strategy auto-generates all browser × environment combinations from two simple lists.",
+"fail-fast: false means one failing combination doesn't cancel all other parallel jobs.",
+"matrix.exclude removes specific unwanted combinations like webkit on a Windows runner.",
+"matrix.include adds extra combinations not in the default cross-product.",
+"Each matrix cell is an independent job — they all run in parallel on separate runner VMs.",
+"Reference matrix values with ${{ matrix.browser }} anywhere in your job definition.",
+"A 3×4 matrix creates 12 parallel jobs from 7 lines of YAML — massive efficiency gain."],
+diag:`<svg width="100%" viewBox="0 0 640 220" role="img"><title>Matrix strategy expansion</title><desc>One matrix definition expands into six parallel jobs</desc><defs><marker id="f" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="10" y="70" width="160" height="80" rx="10" fill="var(--color-background-secondary)" stroke="var(--color-border-primary)" stroke-width="1"/><text x="90" y="100" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">strategy.matrix</text><text x="90" y="118" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">browser: [chrome,firefox]</text><text x="90" y="134" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">env: [qa,staging]</text>
+<line x1="170" y1="100" x2="210" y2="55" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#f)"/>
+<line x1="170" y1="105" x2="210" y2="90" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#f)"/>
+<line x1="170" y1="110" x2="210" y2="125" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#f)"/>
+<line x1="170" y1="115" x2="210" y2="160" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#f)"/>
+<rect x="212" y="34" width="130" height="32" rx="6" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="277" y="55" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-info)">chrome + qa</text>
+<rect x="212" y="74" width="130" height="32" rx="6" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="277" y="95" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-info)">chrome + staging</text>
+<rect x="212" y="110" width="130" height="32" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="277" y="131" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-success)">firefox + qa</text>
+<rect x="212" y="146" width="130" height="32" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="277" y="167" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-success)">firefox + staging</text>
+<line x1="342" y1="110" x2="400" y2="110" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#f)"/>
+<rect x="402" y="84" width="130" height="52" rx="8" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="467" y="108" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">All run</text><text x="467" y="126" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">in parallel</text>
+<text x="320" y="200" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">2 browsers × 2 envs = 4 jobs simultaneously — total time = slowest individual job</text></svg>`,
+codes:[
+{l:"Example 1 — Basic matrix strategy",c:`jobs:
+  playwright-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false          # if one combo fails, others keep running
+      matrix:
+        browser: [chromium, firefox, edge]      # 3 values
+        environment: [dev, qa, uat, staging]    # 4 values
+        # GitHub creates 3 × 4 = 12 parallel jobs automatically
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci
+      - run: npx playwright install \${{ matrix.browser }} --with-deps
+      - name: Run tests
+        env:
+          TEST_ENV: \${{ matrix.environment }}   # matrix var as env variable
+        run: npx playwright test --project=\${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-\${{ matrix.browser }}-\${{ matrix.environment }}
+          path: playwright-report/`},
+{l:"Example 2 — exclude and include",c:`strategy:
+  fail-fast: false
+  matrix:
+    browser: [chromium, firefox, webkit]
+    environment: [dev, qa, staging]
+
+    exclude:
+      - browser: webkit       # safari not ready in dev
+        environment: dev
+      - browser: firefox      # not priority for staging
+        environment: staging
+    # 9 - 2 = 7 actual jobs
+
+    include:                  # ADD extra combinations
+      - browser: mobile-chrome
+        environment: staging
+        device: 'Pixel 5'     # extra variable available only in this row
+      - browser: mobile-safari
+        environment: staging
+        device: 'iPhone 13'`},
+{l:"Example 3 — Conditional steps inside matrix",c:`jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+        environment: [qa, staging]
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install \${{ matrix.browser }} --with-deps
+
+      # Run full regression on staging, smoke on qa
+      - name: Run tests
+        env: { TEST_ENV: \${{ matrix.environment }} }
+        run: |
+          if [ "\${{ matrix.environment }}" == "staging" ]; then
+            npx playwright test --grep "@regression" --project=\${{ matrix.browser }}
+          else
+            npx playwright test --grep "@smoke" --project=\${{ matrix.browser }}
+          fi
+
+      # Step-level if — only for specific matrix values
+      - name: Extra checks (staging only)
+        if: matrix.environment == 'staging'
+        run: echo "Running extra staging checks..."
+
+      - name: Slack critical alert
+        if: failure() && matrix.browser == 'chromium' && matrix.environment == 'staging'
+        run: echo "CRITICAL staging chromium failure!"`},
+{l:"Example 4 — max-parallel to limit concurrent jobs",c:`strategy:
+  fail-fast: false
+  max-parallel: 4             # only 4 jobs run at once (rest queue)
+  matrix:
+    browser: [chromium, firefox, webkit, edge]
+    environment: [dev, qa, uat, staging]
+    # = 16 total jobs, but max 4 at a time
+
+# WHY USE max-parallel?
+# 1. Cost control — each parallel job uses compute hours
+# 2. Server load — prevents overwhelming QA server with connections
+# 3. GitHub free tier limits concurrent jobs
+# 4. Stability — fewer concurrent DB/API connections`},
+{l:"Example 5 — Summary job after all matrix jobs",c:`jobs:
+  matrix-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
+        environment: [qa, staging]
+    outputs:
+      status: \${{ steps.result.outputs.status }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install \${{ matrix.browser }} --with-deps
+      - id: result
+        run: |
+          npx playwright test --project=\${{ matrix.browser }} && \\
+            echo "status=passed" >> \$GITHUB_OUTPUT || \\
+            echo "status=failed" >> \$GITHUB_OUTPUT
+
+  report-summary:
+    runs-on: ubuntu-latest
+    needs: matrix-tests       # waits for ALL matrix combinations
+    if: always()              # run even if some matrix jobs failed
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: report-*   # download all matrix artifacts
+          merge-multiple: true
+      - name: Write summary
+        run: |
+          echo "# Matrix Test Summary" >> \$GITHUB_STEP_SUMMARY
+          echo "All \${{ matrix.browser }} combinations complete" >> \$GITHUB_STEP_SUMMARY`},
+],
+bp:["Always set fail-fast: false — one browser failure shouldn't cancel all others","Use matrix.exclude to skip combinations that are not meaningful","Name artifacts with matrix vars to prevent overwriting: report-${{ matrix.browser }}-${{ matrix.environment }}","Use max-parallel to avoid overwhelming your test server with simultaneous requests","Run regression only in Chromium — add Firefox/WebKit for smoke/sanity only","Add a summary job with needs and if: always() to aggregate all matrix results","Keep total pipeline under 20 minutes for PR checks — offload heavy regression to nightly"],
+qa:[{q:"Q1. What is strategy.matrix and why use it?",a:"strategy.matrix defines axes of values and GitHub automatically generates one parallel job per combination. 3 browsers × 4 environments = 12 parallel jobs from one job definition. Adding a new browser or environment is a one-line change."},
+{q:"Q2. What does fail-fast: false do?",a:"fail-fast: false means if one matrix combination fails (e.g. firefox+qa), all other running and queued jobs continue. Default fail-fast: true cancels everything when any combination fails. Always use false in cross-browser testing — you want all browser results."},
+{q:"Q3. How do matrix.include and matrix.exclude work?",a:"exclude removes specific combinations from the default cross-product (e.g. webkit on dev). include adds specific combinations not generated by the cross-product (e.g. a mobile browser with a specific device). Both use a list of objects matching the matrix variables."},
+{q:"Q4. How do you reference a matrix value inside a job step?",a:"Use the expression syntax: ${{ matrix.VARIABLE_NAME }}. Examples: --project=${{ matrix.browser }}, env: TEST_ENV=${{ matrix.environment }}, and name: report-${{ matrix.browser }}-${{ matrix.environment }} for artifact naming."},
+{q:"Q5. How do you collect results from all matrix jobs in a final summary job?",a:"Create a separate job with 'needs: matrix-job-name' and 'if: always()'. Use actions/download-artifact with pattern: 'report-*' to download all matrix artifacts. Write to $GITHUB_STEP_SUMMARY to create a visible summary in the GitHub Actions run UI."}]
+},
+{t:"Parallel vs Sequential Execution",sub:"jobs.needs, parallel jobs, and when to use each",ph:"i",
+ov:`<strong>Parallel:</strong> Multiple jobs run simultaneously on different runner VMs. Total time = longest job. Use for independent workloads (different browsers, different environments).<br><br>
+<strong>Sequential:</strong> Jobs run one after another using <span class="kw">needs:</span>. Total time = sum of all jobs. Use when job B depends on job A, or when you want fast-fail gating.<br><br>
+<span class="kw">needs:</span> — Makes a job wait for another to complete successfully<br>
+<span class="kw">needs: [job1, job2]</span> — Wait for MULTIPLE jobs (all must succeed)<br>
+<span class="kw">if: always()</span> — Run regardless of previous job result<br>
+<span class="kw">if: success()</span> — Run only if all needed jobs passed (default)<br>
+<span class="kw">if: failure()</span> — Run only if any needed job failed<br><br>
+<strong>SDET pattern:</strong> Smoke (sequential gate) → Sanity (parallel browsers) → Regression (parallel matrix) → Report (always).`,
+ol:["Parallel jobs run simultaneously — a 3-browser test suite takes the time of ONE browser run.",
+"The 'needs' keyword creates sequential dependency — job B starts only when job A succeeds.",
+"if: always() makes a job run regardless of upstream failures — essential for report collection.",
+"workers: 4 in playwright.config.ts runs 4 tests in parallel WITHIN a single job.",
+"Parallel jobs are independent VMs — they cannot share files directly (use artifacts instead).",
+"Sequential gating with 'needs: smoke' saves time on regression if smoke already failed.",
+"Total parallel time = max(durations). Total sequential time = sum(durations)."],
+diag:`<svg width="100%" viewBox="0 0 640 200" role="img"><title>Parallel vs sequential timing</title><desc>Parallel three jobs takes ten minutes, sequential thirty minutes</desc>
+<text x="20" y="22" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">Parallel (3 jobs) — Total: 10 min</text>
+<rect x="20" y="34" width="200" height="30" rx="5" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="120" y="54" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-info)">Chrome tests (10 min)</text>
+<rect x="20" y="70" width="200" height="30" rx="5" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="120" y="90" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-success)">Firefox tests (10 min)</text>
+<rect x="20" y="106" width="200" height="30" rx="5" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="0.5"/><text x="120" y="126" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-warning)">Edge tests (10 min)</text>
+<text x="240" y="85" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-success)">Done in 10 min</text>
+<text x="20" y="162" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">Sequential (3 jobs) — Total: 30 min</text>
+<rect x="20" y="174" width="80" height="20" rx="4" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="60" y="189" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-info)">Smoke 3min</text>
+<rect x="106" y="174" width="120" height="20" rx="4" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="166" y="189" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-success)">Sanity 7min</text>
+<rect x="232" y="174" width="180" height="20" rx="4" fill="var(--color-background-danger)" stroke="var(--color-border-danger)" stroke-width="0.5"/><text x="322" y="189" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-danger)">Regression 20min</text></svg>`,
+codes:[
+{l:"Example 1 — Pure parallel jobs (no dependencies)",c:`# All 3 jobs start simultaneously
+jobs:
+  test-chrome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --project=chromium
+
+  test-firefox:               # starts at SAME TIME as chrome
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install firefox --with-deps
+      - run: npx playwright test --project=firefox
+
+  test-edge:                  # also starts simultaneously
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install msedge --with-deps
+      - run: npx playwright test --project=edge
+# Each job runs on its own VM
+# If each takes 10 min → total pipeline = 10 min (not 30!)`},
+{l:"Example 2 — Sequential with needs for gating",c:`jobs:
+  smoke:                      # runs first
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --grep "@smoke" --project=chromium
+    # if this FAILS, all downstream jobs are SKIPPED
+
+  sanity:
+    runs-on: ubuntu-latest
+    needs: smoke              # wait for smoke to PASS
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --grep "@sanity" --project=chromium
+
+  regression:
+    runs-on: ubuntu-latest
+    needs: sanity             # wait for sanity to PASS
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install --with-deps
+      - run: npx playwright test --grep "@regression"
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [smoke, sanity, regression]  # wait for ALL three
+    if: always()                        # run whether they passed or failed
+    steps:
+      - run: echo "Pipeline finished"`},
+{l:"Example 3 — Hybrid: sequential gate + parallel browsers",c:`jobs:
+  smoke-gate:                 # sequential first
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --grep "@smoke" --project=chromium
+        env: { TEST_ENV: qa }
+
+  sanity-chrome:              # both start at same time after smoke
+    runs-on: ubuntu-latest
+    needs: smoke-gate
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --grep "@sanity" --project=chromium
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: sanity-chrome, path: playwright-report/ }
+
+  sanity-firefox:
+    runs-on: ubuntu-latest
+    needs: smoke-gate         # also depends on smoke (parallel with chrome)
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install firefox --with-deps
+      - run: npx playwright test --grep "@sanity" --project=firefox
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: sanity-firefox, path: playwright-report/ }`},
+{l:"Example 4 — workers for within-job parallelism",c:`// playwright.config.ts — parallel tests WITHIN a single job
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  workers: process.env.CI ? 2 : 4,
+  // CI: 2 workers — conservative for shared CI runners
+  // Local: 4 workers — uses more CPU cores
+
+  // fullyParallel: true — all tests across all files run in parallel
+  // fullyParallel: false (default) — files run sequentially
+  fullyParallel: true,
+
+  // Each worker gets a fresh browser context (isolated state)
+});
+
+// To force SEQUENTIAL within a specific test file:
+// Add at top of spec file:
+// test.describe.configure({ mode: 'serial' });`},
+{l:"Example 5 — if conditions: always, failure, success",c:`jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install --with-deps
+      - run: npx playwright test --grep "@regression"
+        continue-on-error: true   # don't fail job if tests fail
+      - uses: actions/upload-artifact@v4
+        if: always()              # upload ALWAYS including on failure
+        with: { name: report, path: playwright-report/ }
+
+  notify-failure:
+    runs-on: ubuntu-latest
+    needs: tests
+    if: failure()               # ONLY if 'tests' job FAILED
+    steps:
+      - run: echo "Send Slack failure alert"
+
+  notify-success:
+    runs-on: ubuntu-latest
+    needs: tests
+    if: success()               # ONLY if 'tests' job PASSED
+    steps:
+      - run: echo "All tests passed"
+
+# if: CONDITIONS
+# success()   — all needed jobs passed (DEFAULT)
+# failure()   — any needed job failed
+# always()    — run no matter what
+# cancelled() — only if workflow was cancelled`},
+],
+bp:["Use sequential needs for test pack gating (smoke → sanity → regression) to fail fast","Use parallel jobs for browser combinations at the same test pack level","Always use if: always() on report collection — you need reports most when tests fail","Set workers: 2 in CI — more workers means more memory and potential flakiness","Don't share state between parallel jobs — use artifacts for files, outputs for small values","Log parallel job start/end times to profile where your pipeline is slowest","Use matrix + fail-fast: false instead of manually writing parallel browser jobs"],
+qa:[{q:"Q1. Difference between parallel jobs and parallel workers?",a:"Parallel jobs are separate runner VMs running simultaneously but cannot share memory. Workers (set in playwright.config.ts) are threads within a single job on one VM running multiple tests in parallel browser contexts. Jobs-level parallelism scales across cloud VMs; workers-level parallelism scales across CPU cores."},
+{q:"Q2. When should you use sequential instead of parallel?",a:"When job B genuinely depends on job A's success. Main patterns: gating (run regression only if smoke passes), dependency (deploy only after build), and resource protection (avoid overloading a test server). If jobs are independent, always prefer parallel for speed."},
+{q:"Q3. What does if: always() do and why is it critical for reports?",a:"'if: always()' makes a job or step run regardless of whether upstream jobs passed or failed. Without it, a report-collection job would be skipped when tests fail — exactly when you need the report most."},
+{q:"Q4. How do you pass data between parallel jobs?",a:"Use artifacts for files (upload in one job, download in another). Use job outputs for small values: set 'outputs:' on the source job, reference ${{ needs.JOB_NAME.outputs.OUTPUT_NAME }} in downstream jobs. Jobs cannot share memory — they run on separate VMs."},
+{q:"Q5. What is fullyParallel in playwright.config.ts?",a:"fullyParallel: true makes Playwright run every test across every file in parallel simultaneously (limited by workers count). fullyParallel: false (default) runs test files sequentially. Use fullyParallel: true for maximum speed in CI when tests are truly isolated."}]
+},
+{t:"Advanced Triggers & Conditions",sub:"Approval gates, concurrency, reusable workflows, PR labels",ph:"i",
+ov:`<span class="kw">environment:</span> — Named deployment environment with protection rules (required reviewers, wait timers).<br>
+<span class="kw">concurrency:</span> — Prevents multiple workflow runs for the same branch overlapping.<br>
+<span class="kw">cancel-in-progress:</span> — New push cancels the old in-progress run for the same group.<br>
+<span class="kw">outputs:</span> — Pass small values between jobs without needing file artifacts.<br>
+<span class="kw">workflow_call</span> — Enables one workflow to be called by another (reusable workflows).<br>
+<span class="kw">github.event</span> — Full payload of the triggering event (PR title, labels, commit info).<br><br>
+<strong>Environment protection rules</strong> are GitHub's built-in approval gate — a job targeting the 'staging' environment can require a human to click Approve before it proceeds.`,
+ol:["Environment protection rules require a human approval click before a job targeting 'staging' runs.",
+"concurrency: prevents two runs of the same workflow on the same branch from overlapping.",
+"Job outputs pass small string values between jobs without needing file artifacts.",
+"github.event contains the full payload — PR title, labels, commit message, author.",
+"workflow_call trigger allows one workflow to be called by another — foundation of reusable workflows.",
+"Conditional steps with contains(github.event.pull_request.labels.*.name, 'run-tests') trigger on PR labels.",
+"cancel-in-progress: true means a new push cancels the old in-progress run for the same branch."],
+diag:`<svg width="100%" viewBox="0 0 640 210" role="img"><title>Advanced pipeline with approval gate and concurrency</title><desc>Push triggers smoke then approval gate then regression</desc><defs><marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="10" y="80" width="90" height="40" rx="6" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="55" y="104" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-info)">Push to main</text>
+<line x1="100" y1="100" x2="130" y2="100" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#g)"/>
+<rect x="132" y="78" width="100" height="44" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="182" y="97" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-success)">Smoke Gate</text><text x="182" y="114" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-success)">auto-run</text>
+<line x1="232" y1="100" x2="262" y2="100" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#g)"/>
+<rect x="264" y="64" width="130" height="72" rx="8" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="1"/><text x="329" y="90" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-warning)">Environment Gate</text><text x="329" y="108" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-warning)">Awaiting approval</text><text x="329" y="126" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-warning)">environment: staging</text>
+<line x1="394" y1="90" x2="440" y2="72" stroke="var(--color-text-success)" stroke-width="1" marker-end="url(#g)"/>
+<line x1="394" y1="112" x2="440" y2="132" stroke="var(--color-text-danger)" stroke-width="1" marker-end="url(#g)"/>
+<rect x="442" y="52" width="130" height="36" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="507" y="75" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-success)">Approved — Run</text>
+<rect x="442" y="114" width="130" height="36" rx="6" fill="var(--color-background-danger)" stroke="var(--color-border-danger)" stroke-width="0.5"/><text x="507" y="137" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-danger)">Rejected — Stop</text>
+<rect x="10" y="28" width="320" height="26" rx="6" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="170" y="45" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">concurrency: cancel in-progress on new push</text></svg>`,
+codes:[
+{l:"Example 1 — Environment protection and approval gates",c:`# Job targets 'staging' environment — GitHub pauses for required reviewer
+# Set up: Repo Settings > Environments > staging > Required reviewers
+
+jobs:
+  pre-check:                  # runs without approval
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --grep "@smoke" --project=chromium
+        env: { TEST_ENV: staging }
+
+  regression-on-staging:
+    runs-on: ubuntu-latest
+    needs: pre-check
+
+    # This causes GitHub to PAUSE and wait for human approval
+    environment:
+      name: staging                      # matches name in Settings > Environments
+      url: https://staging.myapp.com     # displayed in GitHub UI
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install --with-deps
+      - run: npx playwright test --grep "@regression"
+        env: { TEST_ENV: staging }`},
+{l:"Example 2 — concurrency to prevent overlapping runs",c:`name: Playwright Tests
+on:
+  push:
+    branches: [main, develop]
+
+concurrency:
+  # GROUP KEY: same workflow + same branch = same group
+  group: \${{ github.workflow }}-\${{ github.ref }}
+  # If a new push comes in for the same branch while tests are running:
+  cancel-in-progress: true    # new run cancels the old one
+
+# WITHOUT concurrency: 5 rapid commits = 5 simultaneous runs
+# WITH concurrency: only the LATEST push ever runs
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --project=chromium`},
+{l:"Example 3 — Job outputs for conditional downstream logic",c:`jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    outputs:                            # expose values to other jobs
+      test-status: \${{ steps.result.outputs.status }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - id: result                      # give step an ID to read its outputs
+        run: |
+          npx playwright test --project=chromium && \\
+            echo "status=passed" >> \$GITHUB_OUTPUT || \\
+            echo "status=failed" >> \$GITHUB_OUTPUT
+        continue-on-error: true
+
+  route-result:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: always()
+    steps:
+      - name: Read job outputs
+        run: |
+          # \${{ needs.JOB_ID.outputs.OUTPUT_NAME }} reads upstream outputs
+          echo "Status: \${{ needs.run-tests.outputs.test-status }}"
+          if [ "\${{ needs.run-tests.outputs.test-status }}" == "failed" ]; then
+            echo "::error::Tests failed!"
+          fi`},
+{l:"Example 4 — Trigger on PR labels",c:`on:
+  pull_request:
+    types: [opened, synchronize, labeled, unlabeled]
+
+jobs:
+  smoke-always:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install chromium --with-deps
+      - run: npx playwright test --grep "@smoke" --project=chromium
+
+  regression-on-label:
+    runs-on: ubuntu-latest
+    needs: smoke-always
+    # contains() checks if a list contains a value
+    # github.event.pull_request.labels — array of label objects
+    # *.name — extracts the 'name' field from each label object
+    if: contains(github.event.pull_request.labels.*.name, 'run-regression')
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install --with-deps
+      - run: npx playwright test --grep "@regression"
+  
+  cross-browser-on-label:
+    runs-on: ubuntu-latest
+    needs: smoke-always
+    if: contains(github.event.pull_request.labels.*.name, 'cross-browser')
+    strategy:
+      matrix:
+        browser: [firefox, webkit, edge]
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install \${{ matrix.browser }} --with-deps
+      - run: npx playwright test --project=\${{ matrix.browser }} --grep "@sanity"`},
+{l:"Example 5 — Reusable workflow (workflow_call)",c:`# .github/workflows/reusable-playwright.yml
+name: Reusable Playwright Runner
+
+on:
+  workflow_call:                        # enables calling from other workflows
+    inputs:
+      test-pack:
+        type: string
+        required: true
+      browser:
+        type: string
+        default: 'chromium'
+      environment:
+        type: string
+        default: 'qa'
+    secrets:
+      TEST_USER_PASSWORD:
+        required: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci
+      - run: npx playwright install \${{ inputs.browser }} --with-deps
+      - run: npx playwright test --grep "@\${{ inputs.test-pack }}" --project=\${{ inputs.browser }}
+        env: { TEST_ENV: \${{ inputs.environment }}, TEST_PASS: \${{ secrets.TEST_USER_PASSWORD }} }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-\${{ inputs.browser }}-\${{ inputs.test-pack }}
+          path: playwright-report/
+
+---
+# .github/workflows/nightly.yml — CALLS the reusable workflow
+name: Nightly Tests
+on:
+  schedule: [{ cron: '0 1 * * *' }]
+jobs:
+  call-smoke:
+    uses: ./.github/workflows/reusable-playwright.yml
+    with: { test-pack: smoke, browser: chromium, environment: staging }
+    secrets: { TEST_USER_PASSWORD: \${{ secrets.TEST_USER_PASSWORD }} }`},
+],
+bp:["Set up GitHub Environment protection for staging and UAT — require team lead approval","Always use concurrency: cancel-in-progress: true for push triggers to prevent stale run queues","Build reusable workflows for your Playwright steps to eliminate copy-paste YAML","Use job outputs instead of artifacts for small values (pass/fail, count) — faster","Gate staging regression behind environment approval — prevent accidental test data creation","Use PR labels ('run-regression', 'cross-browser') for developer-controlled extended runs","Log github.event_name, github.ref, github.actor in every run — makes debugging easier"],
+qa:[{q:"Q1. What are GitHub Environment protection rules and how do SDETs use them?",a:"Configured in Repo > Settings > Environments. You can require specific reviewers to approve before a job targeting that environment runs. SDETs use this as a human gate before running tests against staging or UAT — prevents accidental test data creation in client-facing environments."},
+{q:"Q2. What is concurrency in GitHub Actions and why is it important?",a:"concurrency groups workflows — if a new run starts for the same group key, it either cancels the in-progress run or queues. With cancel-in-progress: true, rapid commits don't pile up parallel runs. Ensures only the latest code version is being tested and saves compute cost."},
+{q:"Q3. What is a reusable workflow and how does it differ from a regular workflow?",a:"A reusable workflow uses on: workflow_call. Other workflows call it with uses: ./path/reusable.yml and pass inputs and secrets. It's like a function — define test steps once, call with different parameters from nightly, PR, and release workflows. Eliminates copy-paste YAML."},
+{q:"Q4. How do you trigger tests only when a specific PR label is added?",a:"Set on: pull_request: types: [labeled] and add if: contains(github.event.pull_request.labels.*.name, 'your-label'). The *.name extracts the name field from every label object in the array. Lets developers control extended test runs without modifying workflow files."},
+{q:"Q5. What is the github.event object and what useful data does it contain?",a:"github.event is the full payload of the triggering event. For push: github.event.commits, github.event.pusher.name. For pull_request: github.event.pull_request.title, .labels, .base.ref. For schedule: github.event.schedule. Access with ${{ github.event.FIELD }} in YAML."}]
+},
+{t:"Reporting, Artifacts & Notifications",sub:"HTML reports, GitHub summaries, Slack alerts, trace files",ph:"i",
+ov:`<span class="kw">playwright-report/</span> — Folder containing the HTML reporter output (visual results).<br>
+<span class="kw">actions/upload-artifact</span> — Uploads files from the runner to GitHub for download.<br>
+<span class="kw">$GITHUB_STEP_SUMMARY</span> — Markdown file that renders in the GitHub Actions run summary tab.<br>
+<span class="kw">junit.xml</span> — XML format consumed by Jenkins, Azure DevOps, Jira Xray.<br>
+<span class="kw">trace viewer</span> — Replays a failed test step-by-step: every action, network call, console log, screenshot.<br>
+<span class="kw">retention-days</span> — How long GitHub stores the artifact before auto-deleting.<br><br>
+<strong>Trace files</strong> are Playwright's most powerful debugging tool — download the zip and open it at <code>playwright.dev/trace-viewer</code> or locally with <code>npx playwright show-trace trace.zip</code>.`,
+ol:["Upload playwright-report/ as an artifact after every run — attach to PRs so team can see failures.",
+"if: always() on artifact upload is non-negotiable — you need the report most when tests fail.",
+"Playwright trace files capture every action, network call, and console log — replay locally to debug CI failures.",
+"$GITHUB_STEP_SUMMARY renders a markdown table visible in the GitHub Actions run page.",
+"The junit reporter generates XML consumed by Jira Xray, Jenkins, Azure DevOps for trend tracking.",
+"Slack webhooks push test results to team channels — zero-login visibility for the whole team.",
+"Use different retention-days: 30 for failures, 7 for success — optimises storage cost."],
+diag:`<svg width="100%" viewBox="0 0 640 190" role="img"><title>Reporting pipeline</title><desc>Tests generate three report types feeding into four delivery channels</desc><defs><marker id="h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="10" y="70" width="120" height="50" rx="8" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="70" y="92" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-info)">Playwright Run</text><text x="70" y="110" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-info)">generates reports</text>
+<line x1="130" y1="85" x2="182" y2="55" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#h)"/>
+<line x1="130" y1="95" x2="182" y2="95" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#h)"/>
+<line x1="130" y1="108" x2="182" y2="138" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#h)"/>
+<rect x="184" y="34" width="110" height="34" rx="6" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="239" y="56" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-primary)">HTML Report</text>
+<rect x="184" y="78" width="110" height="34" rx="6" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="239" y="100" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-primary)">JUnit XML</text>
+<rect x="184" y="122" width="110" height="34" rx="6" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="239" y="144" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-primary)">Trace Files</text>
+<line x1="294" y1="70" x2="350" y2="48" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#h)"/>
+<line x1="294" y1="95" x2="350" y2="82" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#h)"/>
+<line x1="294" y1="130" x2="350" y2="118" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#h)"/>
+<line x1="294" y1="140" x2="350" y2="156" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#h)"/>
+<rect x="352" y="30" width="120" height="30" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="412" y="50" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-success)">GitHub Artifact</text>
+<rect x="352" y="68" width="120" height="30" rx="6" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="412" y="88" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-info)">Step Summary</text>
+<rect x="352" y="104" width="120" height="30" rx="6" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="0.5"/><text x="412" y="124" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-warning)">Slack / Teams</text>
+<rect x="352" y="140" width="120" height="30" rx="6" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="412" y="160" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">Jira Xray</text></svg>`,
+codes:[
+{l:"Example 1 — All reporters in playwright.config.ts",c:`import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  reporter: [
+    ['list'],                          // console: prints each test as it runs
+    ['html', {
+      outputFolder: 'playwright-report',
+      open: 'never'                    // never auto-open browser in CI
+    }],
+    ['junit', {
+      outputFile: 'test-results/junit.xml',
+      suiteName: 'Playwright E2E Tests'
+    }],
+    ['json', { outputFile: 'test-results/results.json' }],
+    // GitHub reporter — adds inline PR annotations
+    ...(process.env.CI ? [['github'] as [string]] : []),
+  ],
+  use: {
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    trace: 'on-first-retry',           // record trace on first retry
+  },
+  outputDir: 'test-results/',          // screenshots, videos, traces
+});`},
+{l:"Example 2 — Upload artifacts with correct conditions",c:`jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npx playwright install --with-deps
+      - name: Run tests
+        continue-on-error: true       # don't fail job — still upload report
+        run: npx playwright test
+
+      # HTML report — ALWAYS upload (most important)
+      - uses: actions/upload-artifact@v4
+        if: always()                  # non-negotiable
+        with:
+          name: playwright-html-report-\${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 30
+
+      # JUnit XML — for CI dashboards integration
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: junit-\${{ github.run_number }}
+          path: test-results/junit.xml
+          retention-days: 90          # keep longer for trend analysis
+
+      # Trace files — ONLY on failure (large files, saves storage)
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: traces-\${{ github.run_number }}
+          path: test-results/**/trace.zip
+          retention-days: 14`},
+{l:"Example 3 — GitHub Step Summary table",c:`steps:
+  - name: Generate Step Summary
+    if: always()
+    run: |
+      # Parse results.json generated by json reporter
+      PASSED=\$(cat playwright-report/results.json | \\
+        python3 -c "import json,sys; d=json.load(sys.stdin); print(d['stats']['expected'])")
+      FAILED=\$(cat playwright-report/results.json | \\
+        python3 -c "import json,sys; d=json.load(sys.stdin); print(d['stats']['unexpected'])")
+      
+      # Write markdown to GITHUB_STEP_SUMMARY
+      # Renders in GitHub Actions > run > Summary tab
+      cat >> \$GITHUB_STEP_SUMMARY << EOF
+      # Test Results — Run #\${{ github.run_number }}
+      | Metric | Value |
+      |--------|-------|
+      | Total | \$((\$PASSED + \$FAILED)) |
+      | Passed | \$PASSED |
+      | Failed | \$FAILED |
+      | Branch | \${{ github.ref_name }} |
+      | Triggered by | \${{ github.actor }} |
+      EOF`},
+{l:"Example 4 — Slack notification with test result details",c:`jobs:
+  notify:
+    runs-on: ubuntu-latest
+    needs: tests
+    if: always()
+    steps:
+      - name: Slack notification
+        run: |
+          RESULT="\${{ needs.tests.result }}"
+          RUN_URL="https://github.com/\${{ github.repository }}/actions/runs/\${{ github.run_id }}"
+          
+          if [ "\$RESULT" == "success" ]; then
+            ICON="passed"; COLOR="good"
+          else
+            ICON="FAILED"; COLOR="danger"
+          fi
+
+          curl -X POST \${{ secrets.SLACK_WEBHOOK_URL }} \\
+            -H 'Content-Type: application/json' \\
+            -d "{
+              \\"attachments\\": [{
+                \\"color\\": \\"\$COLOR\\",
+                \\"text\\": \\"Tests \$ICON on \${{ github.ref_name }}\\",
+                \\"fields\\": [
+                  {\\"title\\": \\"Run #\\",     \\"value\\": \\"\${{ github.run_number }}\\", \\"short\\": true},
+                  {\\"title\\": \\"Triggered by\\", \\"value\\": \\"\${{ github.actor }}\\",    \\"short\\": true}
+                ],
+                \\"actions\\": [{\\"type\\": \\"button\\", \\"text\\": \\"View Report\\", \\"url\\": \\"\$RUN_URL\\"}]
+              }]
+            }"`},
+{l:"Example 5 — Playwright trace files explained",c:`# playwright.config.ts — enable traces
+# trace: 'on-first-retry'      records on 1st retry of any failed test
+# trace: 'retain-on-failure'   records always, deletes if test passes
+
+# --- Uploading traces ---
+# - uses: actions/upload-artifact@v4
+#   if: failure()
+#   with:
+#     name: traces
+#     path: test-results/**/trace.zip
+
+# --- Viewing a trace ---
+# 1. Download artifact from GitHub Actions
+# 2. npx playwright show-trace path/to/trace.zip
+#    OR drag the zip to: https://playwright.dev/trace-viewer
+
+# --- What a trace contains ---
+# - Timeline of every test action (click, fill, navigate)
+# - Screenshot at each step
+# - Network requests + responses
+# - Console logs (console.log, errors)
+# - DOM snapshots (inspect DOM at any point)
+# - Action timing (how long each step took)
+
+// Manual trace in a test:
+import { test } from '@playwright/test';
+test('debug test', async ({ page, context }) => {
+  await context.tracing.start({ screenshots: true, snapshots: true });
+  await page.goto('/login');
+  await context.tracing.stop({ path: 'trace.zip' });
+});`},
+],
+bp:["Always add if: always() to every artifact upload step — you need reports most when tests fail","Use run_number in artifact names to prevent overwriting: report-${{ github.run_number }}","Keep HTML reports 30 days, JUnit 90 days, traces 14 days — storage cost optimisation","Write a GitHub Step Summary with a results table — visible without downloading any file","Set trace: 'on-first-retry' not 'always' — traces are large files","Send Slack notifications only for failures on main/staging — avoid alert fatigue on PRs","Include the GitHub run URL in Slack messages so team can click directly to the report"],
+qa:[{q:"Q1. What is a Playwright trace file and how is it used for debugging?",a:"A trace file (.zip) is a complete recording — every action, screenshot, DOM snapshot, network request, and console log, timestamped. When a test fails in CI you download it and open with 'npx playwright show-trace trace.zip' to replay the failure step-by-step."},
+{q:"Q2. What is $GITHUB_STEP_SUMMARY?",a:"$GITHUB_STEP_SUMMARY is a special file path in GitHub Actions. Anything appended to it with 'echo >> $GITHUB_STEP_SUMMARY' renders as Markdown in the Actions run Summary tab. Shows test result tables and links directly in the GitHub UI without downloading any file."},
+{q:"Q3. Why is if: always() critical on artifact upload steps?",a:"By default steps are skipped when a previous step fails. If tests fail and the upload has no if: condition, the report is never uploaded — making the failure undebuggable. if: always() overrides this to upload regardless of upstream step results."},
+{q:"Q4. What reporters does Playwright support and when is each used?",a:"list (console output — always on), html (visual report with screenshots/videos — human review), json (machine-readable — custom dashboards), junit (XML — Jenkins/Jira Xray/Azure DevOps), github (PR annotations — CI only). Multiple reporters run simultaneously in the reporter array."},
+{q:"Q5. How do you integrate Playwright results with Jira Xray?",a:"Configure the junit reporter to output junit.xml. Upload as artifact. Use the Jira Xray REST API or official Xray GitHub Action to import junit.xml into a Jira Test Execution ticket. Test names become test cases in Xray with pass/fail status automatically synced."}]
+},
+{t:"Full Production Workflow",sub:"Complete pipeline: matrix + environments + packs + reports + notifications",ph:"i",
+ov:`<strong>Everything combined into one production-grade pipeline.</strong><br><br>
+1. <strong>Trigger layer</strong> — manual dispatch, scheduled cron, push/PR auto-trigger<br>
+2. <strong>Smoke gate</strong> — fast sequential gate, fails fast, blocks downstream<br>
+3. <strong>Parallel browser matrix</strong> — sanity across all browsers simultaneously<br>
+4. <strong>Environment protection gate</strong> — human approval before staging regression<br>
+5. <strong>Full regression</strong> — nightly comprehensive coverage with retry logic<br>
+6. <strong>Report collection</strong> — always runs, collects all artifacts, writes step summary<br>
+7. <strong>Notification</strong> — Slack alert on failure with direct link to report<br><br>
+This is the workflow an experienced SDET would deliver for a real product team.`,
+ol:["A production workflow combines every layer: triggers, gating, matrix, environments, reports, notifications.",
+"The gate pattern (smoke → sanity → regression) saves the most pipeline cost and catches failures early.",
+"Reusable workflows DRY up your YAML — one definition called by nightly, PR, and release pipelines.",
+"Always test your workflow in a feature branch first — broken YAML is not caught until runtime.",
+"Keep the smoke-to-report pipeline under 15 minutes for PR checks — developers wait for these.",
+"A complete workflow file documents your entire quality strategy — it's living documentation.",
+"Every job should have a clear meaningful name — the GitHub Actions UI is read by your whole team."],
+diag:`<svg width="100%" viewBox="0 0 640 250" role="img"><title>Full production pipeline flow</title><desc>Trigger to smoke gate to parallel sanity to approval gate to regression to report and notification</desc><defs><marker id="i" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text x="320" y="18" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">Production CI/CD Pipeline</text>
+<rect x="10" y="35" width="80" height="36" rx="6" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="50" y="58" text-anchor="middle" font-family="var(--font-sans)" font-size="10" font-weight="500" fill="var(--color-text-info)">Trigger</text>
+<line x1="90" y1="53" x2="118" y2="53" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#i)"/>
+<rect x="120" y="35" width="90" height="36" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="165" y="58" text-anchor="middle" font-family="var(--font-sans)" font-size="10" font-weight="500" fill="var(--color-text-success)">Smoke Gate</text>
+<line x1="210" y1="53" x2="238" y2="38" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#i)"/>
+<line x1="210" y1="53" x2="238" y2="53" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#i)"/>
+<line x1="210" y1="53" x2="238" y2="70" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#i)"/>
+<rect x="240" y="22" width="105" height="26" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="292" y="40" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Chrome / Sanity</text>
+<rect x="240" y="40" width="105" height="26" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="292" y="58" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Firefox / Sanity</text>
+<rect x="240" y="58" width="105" height="26" rx="5" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="292" y="76" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Edge / Sanity</text>
+<line x1="345" y1="53" x2="380" y2="53" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#i)"/>
+<rect x="382" y="30" width="100" height="50" rx="6" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="1"/><text x="432" y="50" text-anchor="middle" font-family="var(--font-sans)" font-size="10" font-weight="500" fill="var(--color-text-warning)">Approval Gate</text><text x="432" y="68" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--color-text-warning)">env: staging</text>
+<line x1="482" y1="55" x2="516" y2="55" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#i)"/>
+<rect x="518" y="30" width="100" height="50" rx="6" fill="var(--color-background-danger)" stroke="var(--color-border-danger)" stroke-width="0.5"/><text x="568" y="50" text-anchor="middle" font-family="var(--font-sans)" font-size="10" font-weight="500" fill="var(--color-text-danger)">Regression</text><text x="568" y="68" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="var(--color-text-danger)">matrix</text>
+<line x1="320" y1="100" x2="320" y2="128" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#i)"/>
+<rect x="180" y="130" width="280" height="46" rx="8" fill="var(--color-background-secondary)" stroke="var(--color-border-primary)" stroke-width="0.5"/><text x="320" y="150" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-primary)">Report Collection (if: always)</text><text x="320" y="168" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Artifacts + Step Summary</text>
+<line x1="260" y1="176" x2="210" y2="206" stroke="var(--color-text-success)" stroke-width="1" marker-end="url(#i)"/>
+<line x1="380" y1="176" x2="430" y2="206" stroke="var(--color-text-danger)" stroke-width="1" marker-end="url(#i)"/>
+<rect x="100" y="208" width="140" height="34" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="170" y="230" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-success)">Slack: Passed</text>
+<rect x="400" y="208" width="140" height="34" rx="6" fill="var(--color-background-danger)" stroke="var(--color-border-danger)" stroke-width="0.5"/><text x="470" y="230" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="500" fill="var(--color-text-danger)">Slack: Failed</text></svg>`,
+codes:[
+{l:"Example 1 — Complete workflow: triggers + concurrency",c:`# .github/workflows/production-e2e.yml
+name: E2E Playwright Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        options: [dev, qa, uat, staging]
+        default: qa
+      test_pack:
+        type: choice
+        options: [smoke, sanity, regression, all]
+        default: sanity
+      browser:
+        type: choice
+        options: [chromium, firefox, webkit, all]
+        default: chromium
+
+  push:
+    branches: [main, develop]
+    paths: ['tests/**', 'pages/**', 'playwright.config.ts']
+
+  schedule:
+    - cron: '0 1 * * *'       # 1 AM UTC nightly
+    - cron: '0 0 * * 0'       # Sunday midnight — full cross-browser
+
+concurrency:
+  group: \${{ github.workflow }}-\${{ github.ref }}
+  cancel-in-progress: \${{ github.event_name == 'push' }}
+
+env:
+  NODE_VERSION: '20'
+  ENV: \${{ github.event.inputs.environment || 'qa' }}`},
+{l:"Example 2 — Smoke gate + sanity matrix",c:`jobs:
+  smoke-gate:
+    name: Smoke Gate — \${{ github.event.inputs.environment || 'qa' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      - run: npx playwright test --grep "@smoke" --project=chromium
+        env: { TEST_ENV: \${{ env.ENV }} }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-\${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 7
+
+  sanity-matrix:
+    name: Sanity — \${{ matrix.browser }}
+    runs-on: ubuntu-latest
+    needs: smoke-gate           # only starts after smoke passes
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci
+      - run: npx playwright install \${{ matrix.browser }} --with-deps
+      - run: npx playwright test --grep "@sanity" --project=\${{ matrix.browser }}
+        env: { TEST_ENV: \${{ env.ENV }} }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sanity-\${{ matrix.browser }}-\${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 14`},
+{l:"Example 3 — Regression gate + report collection + notification",c:`  regression:
+    name: Regression — Staging (requires approval)
+    runs-on: ubuntu-latest
+    needs: sanity-matrix
+    if: |
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' &&
+       github.event.inputs.test_pack == 'regression')
+    environment:
+      name: staging
+      url: https://staging.myapp.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci && npx playwright install --with-deps
+      - run: npx playwright test --grep "@regression"
+        env: { TEST_ENV: staging }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regression-\${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 30
+
+  collect-reports:
+    name: Collect Reports + Summary
+    runs-on: ubuntu-latest
+    needs: [smoke-gate, sanity-matrix, regression]
+    if: always()
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { pattern: '*-\${{ github.run_number }}', merge-multiple: true, path: all-reports/ }
+      - run: |
+          cat >> \$GITHUB_STEP_SUMMARY << EOF
+          # Pipeline Run #\${{ github.run_number }}
+          | Job | Status |
+          |-----|--------|
+          | Smoke | \${{ needs.smoke-gate.result }} |
+          | Sanity | \${{ needs.sanity-matrix.result }} |
+          | Regression | \${{ needs.regression.result }} |
+          **Branch:** \${{ github.ref_name }} — **By:** \${{ github.actor }}
+          EOF
+
+  notify-failure:
+    runs-on: ubuntu-latest
+    needs: [smoke-gate, sanity-matrix]
+    if: failure()
+    steps:
+      - run: |
+          curl -s -X POST \${{ secrets.SLACK_WEBHOOK_URL }} \\
+            -H 'Content-Type: application/json' \\
+            -d "{\"text\":\"E2E Tests Failed on \${{ github.ref_name }} — Run #\${{ github.run_number }}\",\"attachments\":[{\"color\":\"danger\",\"actions\":[{\"type\":\"button\",\"text\":\"View Report\",\"url\":\"https://github.com/\${{ github.repository }}/actions/runs/\${{ github.run_id }}\"}]}]}"`},
+{l:"Example 4 — Production-quality test with POM",c:`// tests/checkout/checkout.spec.ts
+import { test, expect } from '@playwright/test';
+import { LoginPage } from '../../pages/LoginPage';
+import { CheckoutPage } from '../../pages/CheckoutPage';
+
+test.describe('Checkout flow', () => {
+  test.describe.configure({ mode: 'parallel' });
+
+  test.beforeEach(async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login('user@test.com', process.env.TEST_PASS || 'Pass123!');
+  });
+
+  test('@smoke can add item to cart', async ({ page }) => {
+    const checkout = new CheckoutPage(page);
+    await checkout.addItemToCart('Product A');
+    await expect(checkout.cartCount).toHaveText('1');
+  });
+
+  test('@sanity full checkout completes successfully', async ({ page }) => {
+    const checkout = new CheckoutPage(page);
+    await checkout.addItemToCart('Product A');
+    await checkout.proceedToCheckout();
+    await checkout.fillShipping({ name: 'Test User', address: '123 Test St' });
+    await checkout.submitOrder();
+    await expect(checkout.confirmationMessage).toContainText('Order confirmed');
+  });
+
+  test('@regression cart persists after page refresh', async ({ page }) => {
+    const checkout = new CheckoutPage(page);
+    await checkout.addItemToCart('Product B');
+    await page.reload();              // edge case: survives refresh
+    await expect(checkout.cartCount).toHaveText('1');
+  });
+});`},
+{l:"Example 5 — package.json scripts for all scenarios",c:`{
+  "scripts": {
+    "test":                   "playwright test",
+    "test:headed":            "playwright test --headed",
+    "test:debug":             "playwright test --debug",
+
+    "test:smoke":             "playwright test --grep @smoke",
+    "test:sanity":            "playwright test --grep @sanity",
+    "test:regression":        "playwright test --grep @regression",
+
+    "test:chrome":            "playwright test --project=chromium",
+    "test:firefox":           "playwright test --project=firefox",
+    "test:edge":              "playwright test --project=edge",
+    "test:webkit":            "playwright test --project=webkit",
+
+    "test:smoke:chrome":      "playwright test --grep @smoke --project=chromium",
+    "test:sanity:chrome":     "playwright test --grep @sanity --project=chromium",
+
+    "test:dev:smoke":         "cross-env TEST_ENV=dev playwright test --grep @smoke",
+    "test:qa:smoke":          "cross-env TEST_ENV=qa playwright test --grep @smoke",
+    "test:staging:smoke":     "cross-env TEST_ENV=staging playwright test --grep @smoke",
+    "test:staging:regression":"cross-env TEST_ENV=staging playwright test --grep @regression",
+
+    "report":                 "playwright show-report",
+    "codegen":                "playwright codegen",
+    "trace":                  "playwright show-trace test-results/**/trace.zip"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "typescript": "^5.4.0",
+    "cross-env": "^7.0.3"
+  }
+}`},
+],
+bp:["Keep your production workflow in a single well-commented YAML file — it is documentation for your whole team","Test the workflow in a feature branch with workflow_dispatch before merging to main","Use concurrency with cancel-in-progress for push triggers — never queue stale runs on main","Gate staging regression behind environment protection to prevent accidental client data creation","Separate notification severity: #critical for staging failures, #tests for PR failures","Document the pipeline in your team wiki — which job runs where and why","Review pipeline costs monthly — optimise slow jobs, remove unnecessary matrix combinations"],
+qa:[{q:"Q1. How do you explain this pipeline in an SDET interview?",a:"We have a 5-stage pipeline: (1) Trigger layer supporting manual dispatch, scheduled cron, and push/PR auto-triggers. (2) Sequential smoke gate validating the app is alive. (3) Parallel sanity matrix running all browsers simultaneously after smoke passes. (4) Environment-protected regression requiring human approval before staging. (5) Report collection and notification layer that always runs to capture results and alert the team."},
+{q:"Q2. Why sequential smoke gate instead of everything parallel?",a:"Fail-fast principle: if the app is down, smoke fails in 3 minutes and saves 30 minutes of sanity+regression from running. In parallel, all jobs waste compute time on a broken environment. The gate ensures you get smoke results first, giving the fastest possible feedback on critical path functionality."},
+{q:"Q3. How do you add a new environment (e.g. performance) to this pipeline?",a:"Add 'performance' to the workflow_dispatch inputs options list. Add a URL mapping in the environment config. Add a GitHub Environment named 'performance' in Repo Settings if approval gates are needed. The matrix and smoke gate jobs automatically support new environments through the TEST_ENV variable — no other YAML changes required."},
+{q:"Q4. What happens when a nightly schedule triggers this workflow?",a:"github.event_name = 'schedule'. Default ENV (qa) and PACK (smoke) apply. Smoke gate runs → passes → sanity matrix runs across all browsers → regression job runs (the if: condition passes for schedule) → report collection always runs → if anything failed, Slack notification fires."},
+{q:"Q5. How do you debug a test that passes locally but fails only in CI?",a:"Download the trace artifact from the failed GitHub Actions run. Open with 'npx playwright show-trace trace.zip' — shows exact screenshots, network calls, console logs at each step. Common CI causes: different base URL (check BASE_URL), headless differences, timing issues (CI is slower — increase timeouts), missing test data (database not seeded). Adding DEBUG=pw:api to the run step also shows detailed Playwright logs."}]
+},
+{t:"Best Practices & Interview Prep",sub:"Industry standards, SDET-level Q&A, and your career path forward",ph:"i",
+ov:`<strong>The SDET Mindset — 4 non-negotiables:</strong><br>
+Tests must be <strong>reliable</strong> — flaky tests erode team trust faster than no tests.<br>
+Tests must be <strong>maintainable</strong> — Page Object Model keeps tests clean as the app grows.<br>
+Tests must be <strong>fast</strong> — slow test suites get skipped by developers.<br>
+Tests must be <strong>informative</strong> — a failing test must clearly show WHAT and WHERE failed.<br><br>
+<strong>Industry Toolchain (2025):</strong> Playwright + TypeScript → GitHub Actions → HTML Reports → Slack → Jira Xray<br><br>
+<strong>Career progression:</strong> Junior SDET → Senior SDET → QA Architect → Quality Engineering Lead<br><br>
+The GitHub Actions + Playwright TypeScript combination is one of the most in-demand SDET skill sets in 2025. You now know everything needed to build, maintain, and extend a production-grade quality pipeline.`,
+ol:["Flaky tests are a team liability — a test that sometimes passes and sometimes fails is worse than no test.",
+"Your test suite is documentation — a passing test proves a feature works; a failing test proves a bug exists.",
+"Never merge a PR that breaks existing tests — the main branch must always be green.",
+"A CI pipeline is a safety net — it should give developers confidence to ship, not slow them down.",
+"data-testid attributes are the SDET's best friend — collaborate with developers to add them.",
+"Test parallelism requires test isolation — tests that share state are a time bomb waiting to fail.",
+"The best SDET writes tests that developers WANT to run — clear names, fast feedback, useful failure messages."],
+diag:`<svg width="100%" viewBox="0 0 640 200" role="img"><title>SDET career progression</title><desc>From fundamentals to intermediate to next steps to senior SDET</desc><defs><marker id="j" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="10" y="40" width="130" height="80" rx="8" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="0.5"/><text x="75" y="64" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-success)">Fundamentals</text><text x="75" y="82" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-success)">Sessions 1-5</text><text x="75" y="98" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-success)">Workflows, triggers</text><text x="75" y="114" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-success)">Config, test packs</text>
+<line x1="140" y1="80" x2="176" y2="80" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#j)"/>
+<rect x="178" y="40" width="130" height="80" rx="8" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="0.5"/><text x="243" y="64" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-info)">Intermediate</text><text x="243" y="82" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-info)">Sessions 6-10</text><text x="243" y="98" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-info)">Matrix, parallel</text><text x="243" y="114" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-info)">Full production pipe</text>
+<line x1="308" y1="80" x2="344" y2="80" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#j)"/>
+<rect x="346" y="40" width="130" height="80" rx="8" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="0.5"/><text x="411" y="64" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-warning)">Next Steps</text><text x="411" y="82" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-warning)">API testing</text><text x="411" y="98" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-warning)">Docker CI / K8s</text><text x="411" y="114" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-warning)">Performance testing</text>
+<line x1="476" y1="80" x2="512" y2="80" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#j)"/>
+<rect x="514" y="40" width="110" height="80" rx="8" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/><text x="569" y="64" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">Senior SDET</text><text x="569" y="82" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">QA Architecture</text><text x="569" y="98" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Shift-left quality</text><text x="569" y="114" text-anchor="middle" font-family="var(--font-sans)" font-size="10" fill="var(--color-text-secondary)">Team leadership</text>
+<text x="320" y="165" text-anchor="middle" font-family="var(--font-sans)" font-size="12" font-weight="500" fill="var(--color-text-primary)">Skills mastered in this course:</text>
+<text x="100" y="188" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">GitHub Actions YAML</text>
+<text x="290" y="188" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">Playwright TypeScript</text>
+<text x="480" y="188" text-anchor="middle" font-family="var(--font-sans)" font-size="11" fill="var(--color-text-secondary)">CI/CD Pipeline Design</text></svg>`,
+codes:[
+{l:"Example 1 — Flaky test fixes: proper waits",c:`// NEVER use arbitrary sleeps
+await page.waitForTimeout(2000);        // BAD — hardcoded wait
+
+// GOOD — wait for the actual condition
+await page.waitForLoadState('networkidle');    // all network requests done
+await page.waitForSelector('#dashboard');      // element appears
+await expect(page.locator('#result')).toBeVisible();  // built-in auto-wait
+
+// GOOD — truly isolated test (creates own data)
+test('@regression isolated test', async ({ page, request }) => {
+  // Create test data via API BEFORE UI test
+  const res = await request.post('/api/users', {
+    data: { name: 'Test User', email: \`user_\${Date.now()}@test.com\` }
+  });
+  const user = await res.json();
+
+  await page.goto(\`/users/\${user.id}\`);
+  await expect(page.locator('.user-name')).toHaveText('Test User');
+
+  // Cleanup: delete after test
+  await request.delete(\`/api/users/\${user.id}\`);
+});`},
+{l:"Example 2 — data-testid best practice",c:`// WHY data-testid matters:
+// CSS classes change (.btn-primary → .cta)
+// Text changes (button copy updated)
+// XPath breaks with DOM restructure
+// data-testid is added FOR testing — it's stable
+
+// BAD selectors (fragile)
+await page.locator('.btn-primary-cta').click();
+await page.locator('button:has-text("Submit")').click();
+await page.locator('div > form > button').click();
+
+// GOOD selectors (stable)
+await page.locator('[data-testid="submit-button"]').click();
+await page.locator('[data-testid="email-input"]').fill('user@test.com');
+
+// ARIA-based selectors (accessibility-driven — best practice)
+await page.getByRole('button', { name: 'Submit' }).click();
+await page.getByLabel('Email address').fill('user@test.com');
+await page.getByPlaceholder('Enter your email').fill('user@test.com');
+
+// Ask developers to add in HTML/React:
+// <button data-testid="submit-button" type="submit">Submit</button>
+// <input  data-testid="email-input"   type="email" />`},
+{l:"Example 3 — Stored auth state (speed optimisation)",c:`// auth.setup.ts — logs in ONCE and saves session
+// All tests reuse the saved state — skip login every time
+import { test as setup } from '@playwright/test';
+
+const authFile = '.auth/user.json';
+
+setup('Authenticate', async ({ page }) => {
+  await page.goto('/login');
+  await page.fill('#email', 'testuser@example.com');
+  await page.fill('#password', process.env.TEST_PASS!);
+  await page.click('[type=submit]');
+  await page.waitForURL('/dashboard');
+  // Save: cookies + localStorage
+  await page.context().storageState({ path: authFile });
+});
+
+// playwright.config.ts — wire it up:
+// projects: [
+//   { name: 'setup', testMatch: /auth.setup.ts/ },
+//   {
+//     name: 'chromium',
+//     dependencies: ['setup'],         // run setup first
+//     use: {
+//       storageState: '.auth/user.json', // start every test logged in!
+//     },
+//   },
+// ]
+// Saves 3 sec × 100 tests = 5 minutes per pipeline run`},
+{l:"Example 4 — API request interception for edge cases",c:`import { test, expect } from '@playwright/test';
+
+test('@regression shows error when API fails', async ({ page }) => {
+  // page.route() — intercept requests matching the pattern
+  await page.route('/api/users', async route => {
+    await route.fulfill({
+      status: 500,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'Internal Server Error' }),
+    });
+  });
+
+  await page.goto('/users');
+  await expect(page.locator('[data-testid="error-banner"]'))
+    .toHaveText('Failed to load users. Please try again.');
+});
+
+test('@regression empty state displays correctly', async ({ page }) => {
+  await page.route('/api/users', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ users: [], total: 0 }),
+    });
+  });
+
+  await page.goto('/users');
+  await expect(page.locator('[data-testid="empty-state"]')).toBeVisible();
+});
+
+// Block ALL API calls to test offline behavior
+test('@smoke handles network failure', async ({ page }) => {
+  await page.route('/api/**', route => route.abort());
+  await page.goto('/');
+  await expect(page.locator('[data-testid="offline-banner"]')).toBeVisible();
+});`},
+{l:"Example 5 — Debugging GitHub Actions workflows",c:`# TECHNIQUE 1: Enable debug logging
+# Add these to GitHub Repo Secrets:
+# ACTIONS_RUNNER_DEBUG  = true
+# ACTIONS_STEP_DEBUG    = true
+# OR: Re-run workflow with 'Enable debug logging' checkbox
+
+# TECHNIQUE 2: SSH into runner on failure (use sparingly!)
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - name: SSH debug on failure
+        uses: mxschmitt/action-tmate@v3
+        if: failure()           # only open SSH if previous step failed
+
+# TECHNIQUE 3: Log all environment context
+      - name: Debug environment
+        run: |
+          echo "Node: \$(node --version)"
+          echo "npm:  \$(npm --version)"
+          echo "CI:   \$CI"
+          echo "REF:  \$GITHUB_REF"
+          ls -la
+          cat package.json
+
+# TECHNIQUE 4: Validate YAML locally
+# Install: npm install -g @action-validator/cli
+# Run:     action-validator .github/workflows/playwright.yml
+
+# TECHNIQUE 5: Test locally with act
+# Install: brew install act
+# Run:     act push
+# Simulates GitHub Actions environment on your machine`},
+],
+bp:["Never use page.waitForTimeout() — it creates slow brittle tests; use event-based waits","Agree data-testid conventions with your dev team and enforce in PR reviews","Use stored authentication state to avoid logging in before every test","Write test names that describe failure clearly: '@smoke Login fails shows error message'","Keep test files focused — one file per feature, one describe per scenario","Run 'npx playwright codegen URL' to record interactions as a starting point (not final code)","Review Playwright release notes monthly — major features are added every quarter"],
+qa:[{q:"Q1. What makes a test flaky and how do you prevent it?",a:"A flaky test sometimes passes and sometimes fails without code changes. Causes: hardcoded sleeps (use event-based waits), shared state between tests (use isolated data), timing dependencies (increase expect timeouts), environment inconsistency. Prevention: strict test isolation, data-testid selectors, proper async/await usage, and Playwright's built-in auto-waiting."},
+{q:"Q2. How do you handle authentication in a large Playwright test suite?",a:"Use Playwright's storageState. Create a setup project that logs in once and saves cookies/localStorage to .auth/user.json. All test projects set 'use: { storageState: .auth/user.json }' to start every test already authenticated. Saves 2-5 seconds per test — for 100 tests that's 5-8 minutes of pipeline time saved."},
+{q:"Q3. How do you test error states without breaking the real API?",a:"Use page.route() to intercept requests and return custom responses — simulate 500 errors, empty responses, slow responses, and network failures. Gives full control over edge cases hard to reproduce with real data, and tests run faster because they don't make real network calls."},
+{q:"Q4. What would you improve first in a slow unreliable CI pipeline?",a:"First: identify flaky tests by looking at high retry rates in the report — fix root causes. Second: measure which jobs take longest and optimise the slowest. Third: add stored auth state to skip repeated logins. Fourth: review the matrix — are all combinations justified? Fifth: check workers setting for parallelism. Sixth: cache node_modules with actions/setup-node cache."},
+{q:"Q5. How would you introduce Playwright CI to a team with no existing automation?",a:"Start with a proof of concept: 3-5 smoke tests for critical user journeys. Set up GitHub Actions with a simple push trigger. Show the team the HTML report after a run. Gradually add sanity tests as confidence grows. Add browser matrix after smoke+sanity are stable. Introduce schedule triggers and environment gates last. Key: start small, show value early, expand incrementally."}]
+}
+];
+
+let cur = 0;
+
+function buildTabs(){
+  const grid = document.getElementById('tabGrid');
+  if(!grid) return;
+  grid.innerHTML = D.map((s,i)=>`
+    <button class="tb ${i===cur?'act':''} ${s.ph==='f'?'ph-f-tab':'ph-i-tab'}" onclick="go(${i})">
+      <div style="font-size:10px;color:var(--color-text-tertiary);margin-bottom:2px">${s.ph==='f'?'S'+(i+1)+' Fund.':'S'+(i+1)+' Inter.'}</div>
+      ${s.t.split('—')[0].trim().substring(0,22)}
+    </button>
+  `).join('');
+}
+
+function buildProg(){
+  const pct=Math.round(((cur+1)/D.length)*100);
+  const progBar = document.getElementById('progBar');
+  if(progBar) progBar.style.width=pct+'%';
+  const progLabel = document.getElementById('progLabel');
+  if(progLabel) progLabel.textContent='S'+(cur+1)+' / '+D.length;
+  const progPct = document.getElementById('progPct');
+  if(progPct) progPct.textContent=pct+'%';
+}
+
+window.toggle = function(id){
+  const el=document.getElementById('qa'+cur+'_'+id);
+  if(el) el.classList.toggle('op');
+};
+
+function go(i){
+  if(i<0 || i>=D.length) return;
+  cur=i;
+  buildTabs();
+  buildProg();
+  buildPanel();
+}
+
+function buildPanel(){
+  const s=D[cur];
+  const ph=s.ph==='f'?'<span class="bdg bdg-f">Phase 1: Fundamentals</span>':'<span class="bdg bdg-i">Phase 2: Intermediate</span>';
+  const panel = document.getElementById('panel');
+  if(!panel) return;
+  panel.innerHTML=`
+    <div class="sh">
+      ${ph}
+      <div class="st">${s.t}</div>
+      <div class="ss">${s.sub}</div>
+    </div>
+
+    <div class="sec">
+      <div class="sl">Overview — What / Why / When / How</div>
+      <div class="card">${s.ov}</div>
+    </div>
+
+    <div class="sec">
+      <div class="sl g">Interview One-Liners — memorise these</div>
+      <div class="ol-list">${s.ol.map((l,i)=>`<div class="ol-item"><span class="ol-n">${i+1}</span><span>${l}</span></div>`).join('')}</div>
+    </div>
+
+    <div class="sec">
+      <div class="sl a">Architecture / Flow Diagram</div>
+      <div class="diag">${s.diag}</div>
+    </div>
+
+    <div class="sec">
+      <div class="sl p">Code Examples — ${s.codes.length} commented runnable examples</div>
+      ${s.codes.map((c,i)=>`<div class="cl">${c.l}</div><div class="cb">${c.c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`).join('')}
+    </div>
+
+    <div class="sec">
+      <div class="sl g">Best Practices — industry checklist</div>
+      <ul class="bp-ul">${s.bp.map(b=>`<li>${b}</li>`).join('')}</ul>
+    </div>
+
+    <div class="sec">
+      <div class="sl c">Interview Q&A — SDET style</div>
+      ${s.qa.map((q,i)=>`
+        <div class="qa-wrap">
+          <div class="qa-q" onclick="toggle(${i})">${q.q} <i class="ti ti-chevron-down" aria-hidden="true" style="font-size:13px;flex-shrink:0">▼</i></div>
+          <div class="qa-a" id="qa${cur}_${i}">${q.a}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="nav">
+      ${cur>0?`<button class="nbtn" onclick="go(${cur-1})">Previous</button>`:''}
+      ${cur<D.length-1?`<button class="nbtn" onclick="go(${cur+1})">Next Session</button>`:'<div class="done">Course complete! All 10 sessions covered. You have mastered GitHub Actions CI/CD with Playwright TypeScript.</div>'}
+    </div>`;
+}
+
+// Ensure default functions exist
+window.go = go;
+
+buildTabs();
+buildProg();
+buildPanel();
+</script>
+</body>
+</html>

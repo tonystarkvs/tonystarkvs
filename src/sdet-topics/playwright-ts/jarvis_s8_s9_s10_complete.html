@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jarvis Playwright-TypeScript Sessions 8, 9, and 10: Assertions, Waiting Strategies, and Full Suite Integration with 10 code examples each</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+/* ===== VIKRANT VISUAL ENHANCEMENT LAYER v2.0 ===== */
+h1,h2{font-weight:700 !important;border-left:4px solid #6C5CE7 !important;padding-left:12px !important;background:rgba(108,92,231,0.07) !important;border-radius:0 8px 8px 0 !important;margin-top:1.2em !important;margin-bottom:0.6em !important;padding-top:6px !important;padding-bottom:6px !important}
+h3,h4{font-weight:700 !important;border-left:3px solid #00b894 !important;padding-left:10px !important;background:rgba(0,184,148,0.06) !important;border-radius:0 6px 6px 0 !important;margin-top:1em !important;margin-bottom:0.5em !important;padding-top:4px !important;padding-bottom:4px !important}
+h5,h6{font-weight:600 !important;border-left:2px solid #fdcb6e !important;padding-left:8px !important;background:rgba(253,203,110,0.08) !important;border-radius:0 4px 4px 0 !important}
+.section-title,.card-title,.topic-title,[class*="title"],[class*="heading"],.card h3,.card h4,summary,.panel-title,.accordion-header{font-weight:700 !important}
+pre,.code-block,.code-example,.code-container,[class*="code-block"],[class*="codeblock"]{background:#1e1e2e !important;color:#cdd6f4 !important;border-radius:10px !important;padding:16px 18px !important;overflow-x:auto !important;font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace !important;font-size:0.82rem !important;border-left:4px solid #6C5CE7 !important;line-height:1.7 !important;white-space:pre-wrap !important;word-wrap:break-word !important;margin:12px 0 !important;box-shadow:0 2px 12px rgba(0,0,0,0.15) !important;position:relative !important}
+pre code,.code-block code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border:none !important;font-size:inherit !important;border-left:none !important}
+code{background:rgba(108,92,231,0.12) !important;color:#6C5CE7 !important;padding:2px 6px !important;border-radius:4px !important;font-family:'JetBrains Mono','Fira Code',monospace !important;font-size:0.85em !important}
+pre code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border-left:none !important}
+.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{display:flex !important;flex-wrap:wrap !important;gap:8px !important;padding:8px !important}
+.tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"],.tab-button{padding:8px 18px !important;border-radius:20px !important;border:1.5px solid #ddd !important;background:#f8f9fa !important;color:#2d3436 !important;font-weight:600 !important;font-size:0.85rem !important;cursor:pointer !important;transition:all 0.25s ease !important;min-width:fit-content !important;text-align:center !important}
+.tab-btn:hover,.session-tab:hover,[class*="tab-btn"]:hover,button[class*="tab"]:hover{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;transform:translateY(-1px) !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.tab-btn.active,.session-tab.active,[class*="tab-btn"].active,button[class*="tab"].active{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.card,.section,.panel,[class*="card"]{border-radius:12px !important;box-shadow:0 2px 8px rgba(0,0,0,0.06) !important;border-top:3px solid #6C5CE7 !important;margin-bottom:16px !important;padding:16px !important}
+details{border-left:3px solid #00b894 !important;border-radius:8px !important;margin-bottom:12px !important;padding:8px 12px !important;box-shadow:0 1px 4px rgba(0,0,0,0.05) !important}
+details summary{font-weight:700 !important;cursor:pointer !important;padding:10px 12px !important;background:rgba(0,184,148,0.06) !important;border-radius:8px !important;transition:background 0.2s !important}
+details summary:hover{background:rgba(0,184,148,0.12) !important}
+table{width:100% !important;border-collapse:collapse !important;margin:12px 0 !important;border-radius:8px !important;overflow:hidden !important;box-shadow:0 1px 6px rgba(0,0,0,0.08) !important}
+thead th,table thead td{background:#6C5CE7 !important;color:#fff !important;font-weight:700 !important;padding:10px 14px !important;text-align:left !important}
+tbody td{padding:10px 14px !important;border-bottom:1px solid #eee !important}
+tbody tr:hover{background:rgba(108,92,231,0.04) !important}
+.toggle-btn,.accordion-btn,[class*="toggle"],[class*="collapsible"]{cursor:pointer !important;transition:all 0.3s ease !important}
+.toggle-content,.accordion-content,.collapsible-content{overflow:hidden !important;transition:max-height 0.4s ease,opacity 0.3s ease !important}
+@media(max-width:768px){
+  .tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{flex-wrap:wrap !important;justify-content:center !important}
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{font-size:0.78rem !important;padding:6px 14px !important;flex:1 1 auto !important;min-width:80px !important}
+  pre,.code-block,[class*="code-block"]{font-size:0.75rem !important;padding:12px !important}
+  h1{font-size:1.4rem !important}h2{font-size:1.2rem !important}h3{font-size:1.05rem !important}
+  .card,.section,.panel,[class*="card"]{padding:12px !important}
+  body{padding:8px !important}
+}
+@media(max-width:480px){
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{flex:1 1 100% !important;font-size:0.75rem !important;padding:8px 10px !important;border-radius:8px !important}
+  pre,.code-block{font-size:0.7rem !important;padding:10px !important;overflow-x:scroll !important}
+  h1{font-size:1.2rem !important}h2{font-size:1.05rem !important}h3{font-size:0.95rem !important}
+  table{font-size:0.8rem !important;display:block !important;overflow-x:auto !important}
+  body{padding:4px !important}
+}
+pre::-webkit-scrollbar{height:6px}pre::-webkit-scrollbar-track{background:#2a2a3e;border-radius:3px}pre::-webkit-scrollbar-thumb{background:#6C5CE7;border-radius:3px}
+/* ===== END ENHANCEMENT LAYER v2.0 ===== */
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary);font-size:13px}
+.topbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-wrap:wrap}
+.jpill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--color-text-success);background:var(--color-background-success);border:0.5px solid var(--color-border-success);border-radius:20px;padding:3px 10px}
+.jdot{width:5px;height:5px;border-radius:50%;background:var(--color-text-success);animation:bl 2s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.ttl{font-size:14px;font-weight:500}.tsub{font-size:11px;color:var(--color-text-secondary);margin-left:auto}
+.snav{display:flex;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);overflow-x:auto;scrollbar-width:none}
+.snav::-webkit-scrollbar{display:none}
+.sbtn{padding:11px 22px;font-size:12px;font-weight:500;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;white-space:nowrap;background:none;border-left:none;border-right:none;border-top:none;transition:all .18s;display:flex;align-items:center;gap:7px}
+.sbtn:hover{color:var(--color-text-primary);background:var(--color-background-secondary)}
+.sbtn.active{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary)}
+.badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.b-p2{background:var(--color-background-info);color:var(--color-text-info)}
+.sc{display:none}.sc.active{display:block}
+.sectabs{display:flex;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);overflow-x:auto;scrollbar-width:none;padding:0 12px}
+.sectabs::-webkit-scrollbar{display:none}
+.secbtn{padding:9px 14px;font-size:11px;font-weight:500;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;white-space:nowrap;background:none;border-left:none;border-right:none;border-top:none;transition:all .15s}
+.secbtn:hover{color:var(--color-text-primary)}.secbtn.active{color:var(--color-text-success);border-bottom-color:var(--color-text-success)}
+.pan{display:none;padding:15px 17px}.pan.active{display:block}
+.dcard{border-left:3px solid var(--color-border-info);background:var(--color-background-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:12px 15px;margin-bottom:13px}
+.dcard .dl{font-size:10px;font-weight:500;color:var(--color-text-info);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.dcard p{font-size:13px;color:var(--color-text-primary);line-height:1.7}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.gcard{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px}
+.gcard h4{font-size:10px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.gcard h4::before{content:'';width:3px;height:10px;border-radius:0;background:var(--color-text-info);display:inline-block}
+.gcard p{font-size:12px;color:var(--color-text-primary);line-height:1.6}
+.fc{grid-column:1/-1}
+.gi{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.gi:last-child{border-bottom:none}
+.gk{font-family:var(--font-mono);font-size:11px;color:var(--color-text-warning);background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);padding:2px 7px;border-radius:4px;white-space:nowrap;height:fit-content;margin-top:1px;flex-shrink:0}
+.gd{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.ols{display:flex;flex-direction:column;gap:7px}
+.oli{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-left:3px solid var(--color-text-success);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:9px 13px;font-size:12px;color:var(--color-text-primary);line-height:1.55;font-style:italic}
+.oli .olab{color:var(--color-text-success);font-weight:500;font-style:normal;font-size:10px;display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+.cb{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;overflow:hidden}
+.cb h4{background:var(--color-background-secondary);padding:9px 13px;font-size:12px;font-weight:500;color:var(--color-text-info);border-bottom:0.5px solid var(--color-border-tertiary)}
+.cbb{padding:12px 13px}
+.cbb p{font-size:12px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:7px}
+.cbb p:last-child{margin-bottom:0}
+.fbox{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;margin-top:8px;font-family:var(--font-mono);font-size:11px}
+.fr{display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap}
+.fb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:4px;padding:4px 8px;font-size:10px;white-space:nowrap}
+.fbi{color:var(--color-text-info);background:var(--color-background-info);border-color:var(--color-border-info)}
+.fbg{color:var(--color-text-success);background:var(--color-background-success);border-color:var(--color-border-success)}
+.fbw{color:var(--color-text-warning);background:var(--color-background-warning);border-color:var(--color-border-warning)}
+.fbr{color:var(--color-text-danger);background:var(--color-background-danger);border-color:var(--color-border-danger)}
+.fbn{color:var(--color-text-secondary)}
+.arr{color:var(--color-text-secondary);font-size:12px}
+.bpl{list-style:none}
+.bpi{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;color:var(--color-text-primary)}
+.bpi:last-child{border-bottom:none}
+.bpic{width:17px;height:17px;border-radius:50%;background:var(--color-background-success);border:0.5px solid var(--color-border-success);color:var(--color-text-success);font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.qa{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:8px;overflow:hidden}
+.qaq{background:var(--color-background-secondary);padding:10px 13px;font-size:12px;font-weight:500;color:var(--color-text-primary);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.qaa{background:var(--color-background-primary);padding:11px 13px;font-size:12px;color:var(--color-text-secondary);line-height:1.6;display:none;border-top:0.5px solid var(--color-border-tertiary)}
+.qaa.open{display:block}
+.qtg{color:var(--color-text-secondary);font-size:14px;transition:transform .18s;flex-shrink:0}
+.qa.open .qtg{transform:rotate(90deg)}
+.ctabs{display:flex;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);overflow-x:auto;scrollbar-width:none;padding:0 12px}
+.ctabs::-webkit-scrollbar{display:none}
+.ctb{padding:7px 11px;font-size:11px;font-family:var(--font-mono);cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;white-space:nowrap;background:none;border-left:none;border-right:none;border-top:none;transition:all .15s;display:flex;align-items:center;gap:4px}
+.ctb:hover{color:var(--color-text-primary)}.ctb.active{color:var(--color-text-warning);border-bottom-color:var(--color-text-warning)}
+.fx{font-size:9px;padding:1px 4px;border-radius:3px;background:var(--color-background-warning);color:var(--color-text-warning)}
+.cpan{display:none}.cpan.active{display:block}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:7px 13px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.cfn{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);display:flex;align-items:center;gap:6px}
+.cfn i{font-size:13px;color:var(--color-text-warning)}
+.cpbtn{font-size:11px;padding:3px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-sans);transition:all .15s}
+.cpbtn:hover{color:var(--color-text-primary);border-color:var(--color-border-primary)}
+pre{margin:0;padding:13px;overflow-x:auto;font-size:11.5px;line-height:1.75;font-family:var(--font-mono);background:var(--color-background-secondary);color:var(--color-text-primary)}
+.kw{color:#e06c75}.fn{color:#c678dd}.str{color:#98c379}.cm{color:#5c6370;font-style:italic}
+.num{color:#d19a66}.cls{color:#e5c07b}.prop{color:#61afef}.val{color:#98c379}.type{color:#e5c07b}
+.tsec{font-size:10px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.8px;text-transform:uppercase;margin-bottom:9px;margin-top:14px;display:flex;align-items:center;gap:8px}
+.tsec::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+</style>
+</head>
+<body>
+  <h2 class="sr-only">Jarvis Playwright-TypeScript Sessions 8, 9, and 10: Assertions, Waiting Strategies, and Full Suite Integration with 10 code examples each</h2>
+
+
+<div class="topbar">
+  <div class="jpill"><div class="jdot"></div>JARVIS ONLINE</div>
+  <span class="ttl">Playwright-TS — Sessions 8 · 9 · 10</span>
+  <span class="tsub">10 code examples per session · Click a tab to begin</span>
+</div>
+
+<div class="snav" id="snav">
+  <button class="sbtn active" data-s="s8">S8 <span class="badge b-p2">P2</span> Assertions</button>
+  <button class="sbtn" data-s="s9">S9 <span class="badge b-p2">P2</span> Waiting</button>
+  <button class="sbtn" data-s="s10">S10 <span class="badge b-p2">P2</span> Full Suite</button>
+</div>
+
+<!-- ════════════════ S8 ════════════════ -->
+<div class="sc active" id="sc-s8">
+<div class="sectabs" id="st-s8">
+  <button class="secbtn active" data-p="ov">Overview</button>
+  <button class="secbtn" data-p="gl">Glossary</button>
+  <button class="secbtn" data-p="ol">1-Liners</button>
+  <button class="secbtn" data-p="con">Concepts</button>
+  <button class="secbtn" data-p="bp">Best Practices</button>
+  <button class="secbtn" data-p="qa">Interview</button>
+  <button class="secbtn" data-p="cd">Code ×10</button>
+</div>
+<div class="pan active" id="s8-ov">
+  <div class="dcard"><div class="dl">Session 8 · Assertions</div><p>Playwright's <code>expect()</code> function provides auto-retrying assertions that poll the condition repeatedly (every ~100ms) until it passes or the timeout expires. This makes tests resilient to async DOM updates, loading states, and animations without explicit waits.</p></div>
+  <div class="g2">
+    <div class="gcard"><h4>Two Categories</h4><p>Locator assertions: <code>expect(locator).toBeVisible()</code> — async, auto-retrying, for DOM checks. Value assertions: <code>expect(value).toBe()</code> — sync, one-shot snapshot. Always prefer locator assertions for DOM state.</p></div>
+    <div class="gcard"><h4>Soft Assertions</h4><p><code>expect.soft()</code> records a failure but continues the test. All soft failures are reported at the end. Perfect for checking multiple fields at once without stopping at the first failure.</p></div>
+    <div class="gcard"><h4>Custom Messages</h4><p>Pass a string to <code>expect(locator, 'message')</code>. The message appears in test reports, making CI failures self-documenting without reading test code.</p></div>
+    <div class="gcard"><h4>Negation</h4><p>Any assertion can be negated with <code>.not</code>: <code>expect(el).not.toBeVisible()</code>. The <code>.not</code> form also auto-retries — waits until the element disappears.</p></div>
+  </div>
+</div>
+<div class="pan" id="s8-gl">
+  <div class="tsec">Glossary</div>
+  <div class="gi"><span class="gk">toBeVisible()</span><span class="gd">Element is rendered and visible — attached, not hidden by CSS. Auto-retries. Most common assertion.</span></div>
+  <div class="gi"><span class="gk">toBeHidden()</span><span class="gd">Element is CSS-hidden or detached from DOM. Opposite of toBeVisible. Retries until hidden or timeout.</span></div>
+  <div class="gi"><span class="gk">toHaveText()</span><span class="gd">Full text match (trimmed). Accepts string or regex. Strict — entire visible text must match.</span></div>
+  <div class="gi"><span class="gk">toContainText()</span><span class="gd">Substring match. Passes if element text includes the expected string. Accepts array for multiple elements.</span></div>
+  <div class="gi"><span class="gk">toHaveValue()</span><span class="gd">Asserts .value of input/select/textarea. For checkboxes use toBeChecked() instead.</span></div>
+  <div class="gi"><span class="gk">toBeChecked()</span><span class="gd">Checkbox/radio is checked. Accepts {checked:false} for inverse. More semantic than toHaveValue.</span></div>
+  <div class="gi"><span class="gk">toBeEnabled()</span><span class="gd">Element does not have the disabled attribute. Inverse: toBeDisabled().</span></div>
+  <div class="gi"><span class="gk">toHaveCount()</span><span class="gd">Locator matches exactly N elements. Auto-retries until count matches. Never use await locator.count() === N without expect.</span></div>
+  <div class="gi"><span class="gk">toHaveURL()</span><span class="gd">Page URL matches string glob, regex, or exact URL. Called on page object: expect(page).toHaveURL().</span></div>
+  <div class="gi"><span class="gk">toHaveTitle()</span><span class="gd">document.title matches string or regex. Called on page: expect(page).toHaveTitle().</span></div>
+  <div class="gi"><span class="gk">toHaveAttribute()</span><span class="gd">HTML attribute equals expected value. e.g. expect(link).toHaveAttribute('href', '/home'). Accepts regex for value.</span></div>
+  <div class="gi"><span class="gk">toHaveClass()</span><span class="gd">Element has the specified CSS class. Accepts string or regex. Useful for state changes via class names.</span></div>
+  <div class="gi"><span class="gk">toHaveCSS()</span><span class="gd">Computed CSS property equals expected value. e.g. toHaveCSS('color','rgb(255,0,0)'). Always use computed values.</span></div>
+  <div class="gi"><span class="gk">expect.soft()</span><span class="gd">Non-stopping assertion. Records failure, continues test. All soft failures surface at test end. Perfect for batch field checks.</span></div>
+  <div class="gi"><span class="gk">toBeFocused()</span><span class="gd">Element is the current document.activeElement. Use after Tab navigation or .focus() calls.</span></div>
+  <div class="gi"><span class="gk">toHaveScreenshot()</span><span class="gd">Visual regression assertion. Compares against a stored baseline PNG. Fails if pixel diff exceeds threshold.</span></div>
+</div>
+<div class="pan" id="s8-ol">
+  <div class="tsec">Interview 1-Liners</div>
+  <div class="ols">
+    <div class="oli"><span class="olab">Auto-retry</span>"Playwright's expect() auto-retries until the condition passes or timeout expires — I never need a waitForSelector before an assertion because the assertion itself is the wait."</div>
+    <div class="oli"><span class="olab">Locator vs value</span>"Using expect(await locator.textContent()).toBe('x') is an anti-pattern — it snapshots the value once with no retry. The correct form is expect(locator).toHaveText('x') which retries on every async DOM update."</div>
+    <div class="oli"><span class="olab">Soft assertions</span>"I use expect.soft() when I want to collect ALL validation failures in one test run instead of stopping at the first. It's essential for form validation tests where multiple fields can be wrong simultaneously."</div>
+    <div class="oli"><span class="olab">Custom message</span>"I always add a descriptive string to complex assertions: expect(locator, 'Cart badge should increment after add-to-cart click') — it makes CI failure reports self-explanatory without reading test code."</div>
+    <div class="oli"><span class="olab">toHaveText array</span>"expect(page.locator('li')).toHaveText(['Home','About','Contact']) asserts all three list items in order — a single call replaces three separate assertions and checks count implicitly."</div>
+    <div class="oli"><span class="olab">Screenshot</span>"toHaveScreenshot() is Playwright's built-in visual regression tool — on first run it creates a baseline PNG, on subsequent runs it diffs pixel-by-pixel and fails if the difference exceeds the configured threshold."</div>
+    <div class="oli"><span class="olab">Negative</span>"expect(locator).not.toBeVisible() also auto-retries — it waits until the element disappears from view, which is exactly what you need to assert a modal closes or a spinner is gone."</div>
+  </div>
+</div>
+<div class="pan" id="s8-con">
+  <div class="tsec">Core Concepts</div>
+  <div class="cb"><h4>Locator assertions vs value assertions</h4>
+    <div class="cbb">
+      <div class="fbox">
+        <div class="fr"><span class="fb fbg">✅ Locator (auto-retrying)</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb fbg">await expect(page.locator('.status')).toHaveText('Saved')</span></div>
+        <div class="fr" style="margin-left:10px"><span class="arr">→</span><span class="fb fbn">retries ~100ms until text='Saved' or 30s timeout</span></div>
+        <div class="fr" style="margin-top:6px"><span class="fb fbr">❌ Value snapshot (no retry)</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb fbr">expect(await locator.textContent()).toBe('Saved')</span></div>
+        <div class="fr" style="margin-left:10px"><span class="arr">→</span><span class="fb fbr">reads once — race condition on async updates</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb"><h4>Assertion priority order</h4>
+    <div class="cbb">
+      <div class="fbox">
+        <div class="fr"><span class="fb fbg">1st</span><span class="fb fbn">toBeVisible / toBeHidden</span><span class="arr">→</span><span class="fb fbn">element presence</span></div>
+        <div class="fr"><span class="fb fbg">2nd</span><span class="fb fbn">toHaveText / toContainText</span><span class="arr">→</span><span class="fb fbn">content</span></div>
+        <div class="fr"><span class="fb fbg">3rd</span><span class="fb fbn">toHaveURL / toHaveTitle</span><span class="arr">→</span><span class="fb fbn">navigation</span></div>
+        <div class="fr"><span class="fb fbw">4th</span><span class="fb fbn">toHaveValue / toBeChecked</span><span class="arr">→</span><span class="fb fbn">form state</span></div>
+        <div class="fr"><span class="fb fbw">5th</span><span class="fb fbn">toHaveAttribute / toHaveClass</span><span class="arr">→</span><span class="fb fbn">DOM properties</span></div>
+        <div class="fr"><span class="fb fbr">last</span><span class="fb fbn">toHaveScreenshot</span><span class="arr">→</span><span class="fb fbn">visual regression</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pan" id="s8-bp">
+  <div class="tsec">Best Practices</div>
+  <ul class="bpl">
+    <li class="bpi"><div class="bpic">✓</div><div>Always use locator assertions (<code>expect(locator).toXxx()</code>) for DOM checks — never snapshot values with <code>await locator.textContent()</code> then compare.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>expect.soft()</code> for form validation, profile field checks, and any multi-field verification — collect all failures in one run.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Always add custom failure messages to business-critical assertions: <code>expect(el, 'Price must update after coupon').toHaveText('₹450')</code>.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Prefer <code>toContainText()</code> over <code>toHaveText()</code> when text includes dynamic values (user names, timestamps, counts).</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>expect(page).toHaveURL()</code> after navigation — it auto-retries through redirect chains. Never use <code>expect(page.url()).toBe()</code>.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Update visual regression baselines intentionally: run <code>npx playwright test --update-snapshots</code> after deliberate UI changes, not on every test run.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>For list order assertions, use <code>expect(locator).toHaveText(['a','b','c'])</code> — one call checks count AND content AND order simultaneously.</div></li>
+  </ul>
+</div>
+<div class="pan" id="s8-qa">
+  <div class="tsec">Interview Prep — 5 SDET Q&A</div>
+  <div class="qa" id="q8-1"><div class="qaq" onclick="tq(this)">Q1: Why should you use expect(locator).toHaveText() instead of expect(await locator.textContent()).toBe()? <span class="qtg">▶</span></div><div class="qaa">The locator assertion form auto-retries every ~100ms until the text matches or the timeout expires — it handles all async DOM updates automatically. The value snapshot form reads the text once at that exact moment; if React hasn't re-rendered or the API hasn't responded yet, it reads the old value and fails. This is a race condition baked into the test. The rule: any value that might change asynchronously must be asserted via a locator assertion, never via an awaited value compared with expect().toBe().</div></div>
+  <div class="qa" id="q8-2"><div class="qaq" onclick="tq(this)">Q2: When do you choose toHaveText() vs toContainText()? <span class="qtg">▶</span></div><div class="qaa">toHaveText() does a full text match after trimming whitespace — the element's entire text content must equal the expected value exactly. If the element says "3 items in cart" and you assert toHaveText('items in cart'), it fails. toContainText() checks if the text includes the expected as a substring — toContainText('items in cart') passes. I use toHaveText() when I know the complete static text (e.g. heading text, button labels). I use toContainText() when the text includes dynamic parts like user names, numbers, timestamps, or when I'm checking error messages that may have prefixes.</div></div>
+  <div class="qa" id="q8-3"><div class="qaq" onclick="tq(this)">Q3: How do soft assertions help in SDET interviews and real projects? <span class="qtg">▶</span></div><div class="qaa">In real projects: form validation tests benefit most — if a registration form has 8 required fields and all fail validation, a hard expect stops at field 1. With expect.soft() all 8 failures are collected and reported in one test run, making the bug report complete. In interviews: SDETs who know expect.soft() demonstrate awareness of test efficiency and report quality. The pattern — run all soft assertions, then optionally add a hard assertion at the end that checks test.info().errors.length === 0 — shows mature test design thinking.</div></div>
+  <div class="qa" id="q8-4"><div class="qaq" onclick="tq(this)">Q4: How does visual regression testing work with toHaveScreenshot()? <span class="qtg">▶</span></div><div class="qaa">On the first run, toHaveScreenshot() captures a PNG and saves it as the baseline in a __screenshots__ folder. On subsequent runs, it captures a new screenshot and diffs it pixel-by-pixel against the baseline. If the pixel difference percentage exceeds the threshold, the test fails and saves a diff image. Configuration: you can set maxDiffPixels (absolute count) or maxDiffPixelRatio (percentage). To update baselines after intentional UI changes: npx playwright test --update-snapshots. Best practice: only run visual tests on specific components, not full pages — full-page screenshots are fragile due to font rendering differences across OSes.</div></div>
+  <div class="qa" id="q8-5"><div class="qaq" onclick="tq(this)">Q5: How do you assert multiple items in a list are in correct order? <span class="qtg">▶</span></div><div class="qaa">Single call: await expect(page.locator('ul li')).toHaveText(['First','Second','Third']) — asserts count, content, and order simultaneously. For partial text per item: .toContainText(['item1', 'item2', 'item3']). For order verification when items are sorted dynamically: const texts = await page.locator('li').allTextContents(); const sorted = [...texts].sort(); expect(texts).toEqual(sorted) — compares the actual array to its sorted copy. For count only: expect(locator).toHaveCount(N). The key principle: always use the locator assertion form (which retries) rather than collecting values into a variable and comparing statically.</div></div>
+</div>
+<div class="pan" id="s8-cd">
+  <div class="ctabs" id="ct-s8">
+    <button class="ctb active" data-c="c8-1"><span class="fx">.ts</span>visibility.ts</button>
+    <button class="ctb" data-c="c8-2"><span class="fx">.ts</span>text-assert.ts</button>
+    <button class="ctb" data-c="c8-3"><span class="fx">.ts</span>page-assert.ts</button>
+    <button class="ctb" data-c="c8-4"><span class="fx">.ts</span>form-assert.ts</button>
+    <button class="ctb" data-c="c8-5"><span class="fx">.ts</span>count-list.ts</button>
+    <button class="ctb" data-c="c8-6"><span class="fx">.ts</span>attr-class.ts</button>
+    <button class="ctb" data-c="c8-7"><span class="fx">.ts</span>soft-assert.ts</button>
+    <button class="ctb" data-c="c8-8"><span class="fx">.ts</span>screenshot.ts</button>
+    <button class="ctb" data-c="c8-9"><span class="fx">.ts</span>negative-assert.ts</button>
+    <button class="ctb" data-c="c8-10"><span class="fx">.ts</span>custom-expect.ts</button>
+  </div>
+  <div id="c8-1" class="cpan active"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>visibility.ts</span><button class="cpbtn" onclick="doCopy('c8-1')">Copy</button></div>
+<pre><span class="cm">// visibility.ts — toBeVisible, toBeHidden, toBeAttached</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'visibility assertions'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/dashboard'</span>);
+
+  <span class="cm">// toBeVisible — element must be visible in the viewport (not hidden via CSS)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.welcome-banner'</span>)).<span class="fn">toBeVisible</span>();
+
+  <span class="cm">// toBeHidden — element exists in DOM but is CSS-hidden</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.loading-overlay'</span>)).<span class="fn">toBeHidden</span>();
+
+  <span class="cm">// Visible after an async action (auto-retry handles the wait)</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#open-modal-btn'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'dialog'</span>)).<span class="fn">toBeVisible</span>();
+
+  <span class="cm">// Hidden after dismiss</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">keyboard</span>.<span class="fn">press</span>(<span class="str">'Escape'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'dialog'</span>)).<span class="fn">not</span>.<span class="fn">toBeVisible</span>();
+
+  <span class="cm">// toBeAttached — element is in DOM (even if visibility:hidden)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'#hidden-form'</span>)).<span class="fn">toBeAttached</span>();
+
+  <span class="cm">// not.toBeAttached — element removed from DOM entirely</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#delete-widget'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.widget-card'</span>)).<span class="fn">not</span>.<span class="fn">toBeAttached</span>();
+
+  <span class="cm">// toBeInViewport — element is inside the browser viewport</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'h1'</span>)).<span class="fn">toBeInViewport</span>();
+});</pre></div>
+  <div id="c8-2" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>text-assert.ts</span><button class="cpbtn" onclick="doCopy('c8-2')">Copy</button></div>
+<pre><span class="cm">// text-assert.ts — toHaveText, toContainText, regex, arrays</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'text content assertions'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/products'</span>);
+
+  <span class="cm">// Exact text match (trimmed)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'h1'</span>)).<span class="fn">toHaveText</span>(<span class="str">'All Products'</span>);
+
+  <span class="cm">// Regex match — dynamic content</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.result-count'</span>)).<span class="fn">toHaveText</span>(<span class="str">/\d+ products found/</span>);
+
+  <span class="cm">// Substring match — ignore surrounding text</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.promo-banner'</span>)).<span class="fn">toContainText</span>(<span class="str">'Free delivery'</span>);
+
+  <span class="cm">// Array form — checks all list items in ORDER</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.breadcrumb span'</span>))
+    .<span class="fn">toHaveText</span>([<span class="str">'Home'</span>, <span class="str">'Products'</span>, <span class="str">'Laptops'</span>]);
+
+  <span class="cm">// toContainText array — each item must contain its substring</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.price-tag'</span>))
+    .<span class="fn">toContainText</span>([<span class="str">'₹'</span>, <span class="str">'₹'</span>, <span class="str">'₹'</span>]);
+
+  <span class="cm">// After dynamic update — cart counter</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'.add-to-cart'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.cart-count'</span>)).<span class="fn">toHaveText</span>(<span class="str">'1'</span>);
+
+  <span class="cm">// Ignore whitespace differences — normalize:true</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.desc'</span>))
+    .<span class="fn">toHaveText</span>(<span class="str">'A   spaced   text'</span>, { <span class="prop">normalizeWhitespace</span>: <span class="val">true</span> });
+
+  <span class="cm">// Inner text only (ignores hidden child text)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.label'</span>)).<span class="fn">toHaveText</span>(<span class="str">'Sale'</span>, { <span class="prop">useInnerText</span>: <span class="val">true</span> });
+});</pre></div>
+  <div id="c8-3" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>page-assert.ts</span><button class="cpbtn" onclick="doCopy('c8-3')">Copy</button></div>
+<pre><span class="cm">// page-assert.ts — toHaveURL, toHaveTitle, toHaveScreenshot (page)</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'page-level assertions'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/login'</span>);
+
+  <span class="cm">// Title — string and regex</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveTitle</span>(<span class="str">'Login | MyApp'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveTitle</span>(<span class="str">/Login/i</span>);
+
+  <span class="cm">// URL — glob, regex, exact</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveURL</span>(<span class="str">'**/login'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveURL</span>(<span class="str">/login/</span>);
+
+  <span class="cm">// After login redirect</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">fill</span>(<span class="str">'#email'</span>, <span class="str">'test@example.com'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">fill</span>(<span class="str">'#password'</span>, <span class="str">'Pass123!'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'button[type="submit"]'</span>);
+
+  <span class="cm">// Waits for redirect to complete — auto-retrying</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveURL</span>(<span class="str">/dashboard/</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveTitle</span>(<span class="str">/Dashboard/</span>);
+
+  <span class="cm">// Not on login page</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">not</span>.<span class="fn">toHaveURL</span>(<span class="str">/login/</span>);
+
+  <span class="cm">// Page-level screenshot — full viewport capture</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveScreenshot</span>(<span class="str">'dashboard-full.png'</span>);
+
+  <span class="cm">// With threshold for minor rendering differences</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveScreenshot</span>(<span class="str">'dashboard-threshold.png'</span>, {
+    <span class="prop">maxDiffPixelRatio</span>: <span class="num">0.02</span>,  <span class="cm">// 2% pixel diff tolerance</span>
+  });
+});</pre></div>
+  <div id="c8-4" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>form-assert.ts</span><button class="cpbtn" onclick="doCopy('c8-4')">Copy</button></div>
+<pre><span class="cm">// form-assert.ts — toHaveValue, toBeChecked, toBeEnabled, toBeFocused</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'form element assertions'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/profile/edit'</span>);
+
+  <span class="cm">// toHaveValue — input field content</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Username'</span>)).<span class="fn">toHaveValue</span>(<span class="str">'alice_dev'</span>);
+
+  <span class="cm">// Select element value</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Country'</span>)).<span class="fn">toHaveValue</span>(<span class="str">'IN'</span>);
+
+  <span class="cm">// toHaveValues — multi-select</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Skills'</span>)).<span class="fn">toHaveValues</span>([<span class="str">'js'</span>, <span class="str">'ts'</span>]);
+
+  <span class="cm">// toBeChecked — checkbox state</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'checkbox'</span>, { <span class="prop">name</span>: <span class="str">'Email notifications'</span> }))
+    .<span class="fn">toBeChecked</span>();
+
+  <span class="cm">// Not checked</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'checkbox'</span>, { <span class="prop">name</span>: <span class="str">'Marketing'</span> }))
+    .<span class="fn">not</span>.<span class="fn">toBeChecked</span>();
+
+  <span class="cm">// toBeEnabled / toBeDisabled</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { <span class="prop">name</span>: <span class="str">'Save'</span> })).<span class="fn">toBeEnabled</span>();
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'#readonly-field'</span>)).<span class="fn">toBeDisabled</span>();
+
+  <span class="cm">// toBeEditable — not readonly and not disabled</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Bio'</span>)).<span class="fn">toBeEditable</span>();
+
+  <span class="cm">// toBeFocused — keyboard focus</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Email'</span>).<span class="fn">focus</span>();
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Email'</span>)).<span class="fn">toBeFocused</span>();
+});</pre></div>
+  <div id="c8-5" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>count-list.ts</span><button class="cpbtn" onclick="doCopy('c8-5')">Copy</button></div>
+<pre><span class="cm">// count-list.ts — toHaveCount, list order, allTextContents</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'count and list assertions'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/users'</span>);
+
+  <span class="cm">// Exact count — auto-retrying</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.user-card'</span>)).<span class="fn">toHaveCount</span>(<span class="num">10</span>);
+
+  <span class="cm">// After deleting one item</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.user-card'</span>).<span class="fn">first</span>().<span class="fn">getByRole</span>(<span class="str">'button'</span>, { <span class="prop">name</span>: <span class="str">'Delete'</span> }).<span class="fn">click</span>();
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.user-card'</span>)).<span class="fn">toHaveCount</span>(<span class="num">9</span>);
+
+  <span class="cm">// Zero items after clear</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#clear-all'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.user-card'</span>)).<span class="fn">toHaveCount</span>(<span class="num">0</span>);
+
+  <span class="cm">// List items in correct ORDER — single call checks count + content + order</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/nav'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.nav-item'</span>))
+    .<span class="fn">toHaveText</span>([<span class="str">'Home'</span>, <span class="str">'Products'</span>, <span class="str">'About'</span>, <span class="str">'Contact'</span>]);
+
+  <span class="cm">// Verify alphabetical sort</span>
+  <span class="kw">const</span> <span class="prop">names</span> = <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.product-name'</span>).<span class="fn">allTextContents</span>();
+  <span class="fn">expect</span>(<span class="prop">names</span>).<span class="fn">toEqual</span>([...<span class="prop">names</span>].<span class="fn">sort</span>());
+
+  <span class="cm">// At least N items — no built-in, use count() with toBeGreaterThanOrEqual</span>
+  <span class="kw">const</span> <span class="prop">cnt</span> = <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.result'</span>).<span class="fn">count</span>();
+  <span class="fn">expect</span>(<span class="prop">cnt</span>).<span class="fn">toBeGreaterThanOrEqual</span>(<span class="num">1</span>);
+});</pre></div>
+  <div id="c8-6" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>attr-class.ts</span><button class="cpbtn" onclick="doCopy('c8-6')">Copy</button></div>
+<pre><span class="cm">// attr-class.ts — toHaveAttribute, toHaveClass, toHaveCSS, toHaveId</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'attribute, class and CSS assertions'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com'</span>);
+
+  <span class="cm">// toHaveAttribute — exact value</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'a.logo'</span>)).<span class="fn">toHaveAttribute</span>(<span class="str">'href'</span>, <span class="str">'/'</span>);
+
+  <span class="cm">// Regex value match</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'img.avatar'</span>))
+    .<span class="fn">toHaveAttribute</span>(<span class="str">'src'</span>, <span class="str">/\/images\//</span>);
+
+  <span class="cm">// ARIA attribute</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'#menu-btn'</span>))
+    .<span class="fn">toHaveAttribute</span>(<span class="str">'aria-expanded'</span>, <span class="str">'false'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#menu-btn'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'#menu-btn'</span>))
+    .<span class="fn">toHaveAttribute</span>(<span class="str">'aria-expanded'</span>, <span class="str">'true'</span>);
+
+  <span class="cm">// toHaveClass — regex match within classList</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.status-badge'</span>)).<span class="fn">toHaveClass</span>(<span class="str">/active/</span>);
+
+  <span class="cm">// Dark mode class toggle</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#dark-toggle'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'body'</span>)).<span class="fn">toHaveClass</span>(<span class="str">/dark/</span>);
+
+  <span class="cm">// toHaveCSS — computed CSS property</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.hero'</span>)).<span class="fn">toHaveCSS</span>(<span class="str">'display'</span>, <span class="str">'flex'</span>);
+
+  <span class="cm">// Color in RGB format (always use computed value)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.error-msg'</span>))
+    .<span class="fn">toHaveCSS</span>(<span class="str">'color'</span>, <span class="str">'rgb(220, 38, 38)'</span>);
+
+  <span class="cm">// toHaveId — element's id attribute</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'main section:first-child'</span>)).<span class="fn">toHaveId</span>(<span class="str">'hero-section'</span>);
+});</pre></div>
+  <div id="c8-7" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>soft-assert.ts</span><button class="cpbtn" onclick="doCopy('c8-7')">Copy</button></div>
+<pre><span class="cm">// soft-assert.ts — expect.soft() pattern — collect all failures</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'validate all profile fields — soft assertions'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/profile'</span>);
+
+  <span class="cm">// Each soft assertion records failure but continues</span>
+  <span class="kw">await</span> <span class="fn">expect</span>.<span class="fn">soft</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Full Name'</span>), <span class="str">'Name must be pre-filled'</span>)
+    .<span class="fn">toHaveValue</span>(<span class="str">'Alice Kumar'</span>);
+
+  <span class="kw">await</span> <span class="fn">expect</span>.<span class="fn">soft</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Email'</span>), <span class="str">'Email must be pre-filled'</span>)
+    .<span class="fn">toHaveValue</span>(<span class="str">'alice@example.com'</span>);
+
+  <span class="kw">await</span> <span class="fn">expect</span>.<span class="fn">soft</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Phone'</span>), <span class="str">'Phone must be pre-filled'</span>)
+    .<span class="fn">toHaveValue</span>(<span class="str">'+91-9876543210'</span>);
+
+  <span class="kw">await</span> <span class="fn">expect</span>.<span class="fn">soft</span>(
+    <span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'checkbox'</span>, { <span class="prop">name</span>: <span class="str">'Newsletter'</span> }),
+    <span class="str">'Newsletter must be unchecked by default'</span>
+  ).<span class="fn">not</span>.<span class="fn">toBeChecked</span>();
+
+  <span class="kw">await</span> <span class="fn">expect</span>.<span class="fn">soft</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Country'</span>), <span class="str">'Default country is India'</span>)
+    .<span class="fn">toHaveValue</span>(<span class="str">'IN'</span>);
+
+  <span class="cm">// Hard assertion at the end — stops if ANY soft failed</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { <span class="prop">name</span>: <span class="str">'Save Changes'</span> }))
+    .<span class="fn">toBeVisible</span>(); <span class="cm">// critical — must always be present</span>
+
+  <span class="cm">// Log total soft failures (zero = all passed)</span>
+  <span class="kw">const</span> <span class="prop">softFails</span> = <span class="prop">test</span>.<span class="fn">info</span>().<span class="prop">errors</span>.<span class="prop">length</span>;
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`Soft failures: <span class="kw">${</span><span class="prop">softFails</span><span class="kw">}</span>`</span>);
+  <span class="fn">expect</span>(<span class="prop">softFails</span>, <span class="str">'All profile fields must be correct'</span>).<span class="fn">toBe</span>(<span class="num">0</span>);
+});</pre></div>
+  <div id="c8-8" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>screenshot.ts</span><button class="cpbtn" onclick="doCopy('c8-8')">Copy</button></div>
+<pre><span class="cm">// screenshot.ts — toHaveScreenshot, element & page visual regression</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'visual regression with screenshots'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/components'</span>);
+
+  <span class="cm">// Element-level screenshot (scoped to just the component)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.button-group'</span>))
+    .<span class="fn">toHaveScreenshot</span>(<span class="str">'button-group.png'</span>);
+
+  <span class="cm">// With pixel ratio tolerance (2% diff allowed)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.hero-card'</span>))
+    .<span class="fn">toHaveScreenshot</span>(<span class="str">'hero-card.png'</span>, { <span class="prop">maxDiffPixelRatio</span>: <span class="num">0.02</span> });
+
+  <span class="cm">// Absolute pixel count tolerance</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.chart'</span>))
+    .<span class="fn">toHaveScreenshot</span>(<span class="str">'chart.png'</span>, { <span class="prop">maxDiffPixels</span>: <span class="num">50</span> });
+
+  <span class="cm">// Mask dynamic areas (timestamps, avatars, ad zones)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.dashboard'</span>))
+    .<span class="fn">toHaveScreenshot</span>(<span class="str">'dashboard-masked.png'</span>, {
+      <span class="prop">mask</span>: [
+        <span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.timestamp'</span>),
+        <span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.live-count'</span>),
+      ],
+    });
+
+  <span class="cm">// Full-page screenshot</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveScreenshot</span>(<span class="str">'full-page.png'</span>, {
+    <span class="prop">fullPage</span>: <span class="val">true</span>, <span class="cm">// captures scrollable content beyond viewport</span>
+  });
+
+  <span class="cm">// Update baselines: npx playwright test --update-snapshots</span>
+});</pre></div>
+  <div id="c8-9" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>negative-assert.ts</span><button class="cpbtn" onclick="doCopy('c8-9')">Copy</button></div>
+<pre><span class="cm">// negative-assert.ts — .not modifier, absence checking</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'negative assertions — .not modifier'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/dashboard'</span>);
+
+  <span class="cm">// Element is not visible (also auto-retries — waits for disappear)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.error-toast'</span>)).<span class="fn">not</span>.<span class="fn">toBeVisible</span>();
+
+  <span class="cm">// Button is not disabled</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { <span class="prop">name</span>: <span class="str">'Submit'</span> })).<span class="fn">not</span>.<span class="fn">toBeDisabled</span>();
+
+  <span class="cm">// URL does NOT contain login path after auth</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">not</span>.<span class="fn">toHaveURL</span>(<span class="str">/login/</span>);
+
+  <span class="cm">// Text does NOT contain error message</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.form-feedback'</span>)).<span class="fn">not</span>.<span class="fn">toContainText</span>(<span class="str">'Error'</span>);
+
+  <span class="cm">// Element removed from DOM entirely (not just hidden)</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#delete-notification'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.notification-item'</span>)).<span class="fn">not</span>.<span class="fn">toBeAttached</span>();
+
+  <span class="cm">// Count is not zero (at least one result)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.search-result'</span>)).<span class="fn">not</span>.<span class="fn">toHaveCount</span>(<span class="num">0</span>);
+
+  <span class="cm">// Checkbox is not checked after uncheck</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'checkbox'</span>, { <span class="prop">name</span>: <span class="str">'Accept Terms'</span> }).<span class="fn">uncheck</span>();
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'checkbox'</span>, { <span class="prop">name</span>: <span class="str">'Accept Terms'</span> }))
+    .<span class="fn">not</span>.<span class="fn">toBeChecked</span>();
+
+  <span class="cm">// Element does not have a specific class</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.status-badge'</span>)).<span class="fn">not</span>.<span class="fn">toHaveClass</span>(<span class="str">/error/</span>);
+});</pre></div>
+  <div id="c8-10" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>custom-expect.ts</span><button class="cpbtn" onclick="doCopy('c8-10')">Copy</button></div>
+<pre><span class="cm">// custom-expect.ts — extending expect with custom matchers</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span>, <span class="cls">Locator</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cm">// Extend expect with a custom matcher</span>
+<span class="fn">expect</span>.<span class="fn">extend</span>({
+  <span class="kw">async</span> <span class="fn">toBeValidEmail</span>(<span class="prop">locator</span>: <span class="type">Locator</span>) {
+    <span class="kw">const</span> <span class="prop">value</span> = <span class="kw">await</span> <span class="prop">locator</span>.<span class="fn">inputValue</span>();
+    <span class="kw">const</span> <span class="prop">emailRegex</span> = <span class="str">/^[^\s@]+@[^\s@]+\.[^\s@]+$/</span>;
+    <span class="kw">const</span> <span class="prop">pass</span> = <span class="prop">emailRegex</span>.<span class="fn">test</span>(<span class="prop">value</span>);
+    <span class="kw">return</span> {
+      <span class="prop">message</span>: () => <span class="str">`Expected "<span class="kw">${</span><span class="prop">value</span><span class="kw">}</span>" to be a valid email address`</span>,
+      <span class="prop">pass</span>,
+    };
+  },
+  <span class="kw">async</span> <span class="fn">toBePriceFormat</span>(<span class="prop">locator</span>: <span class="type">Locator</span>, <span class="prop">currency</span>: <span class="type">string</span> = <span class="str">'₹'</span>) {
+    <span class="kw">const</span> <span class="prop">text</span> = <span class="kw">await</span> <span class="prop">locator</span>.<span class="fn">textContent</span>() ?? <span class="str">''</span>;
+    <span class="kw">const</span> <span class="prop">pass</span> = <span class="kw">new</span> <span class="cls">RegExp</span>(<span class="str">`^\\<span class="kw">${</span><span class="prop">currency</span><span class="kw">}</span>\\d+(\\.\\d{2})?$`</span>).<span class="fn">test</span>(<span class="prop">text</span>.<span class="fn">trim</span>());
+    <span class="kw">return</span> {
+      <span class="prop">message</span>: () => <span class="str">`Expected "<span class="kw">${</span><span class="prop">text</span><span class="kw">}</span>" to be a price in format <span class="kw">${</span><span class="prop">currency</span><span class="kw">}</span>XXX.XX`</span>,
+      <span class="prop">pass</span>,
+    };
+  },
+});
+
+<span class="cm">// Extend type declarations</span>
+<span class="kw">declare module</span> <span class="str">'@playwright/test'</span> {
+  <span class="kw">interface</span> <span class="cls">Matchers</span>&lt;<span class="type">R</span>, <span class="type">T</span>&gt; {
+    <span class="fn">toBeValidEmail</span>(): <span class="type">Promise</span>&lt;<span class="type">R</span>&gt;;
+    <span class="fn">toBePriceFormat</span>(<span class="prop">currency</span>?: <span class="type">string</span>): <span class="type">Promise</span>&lt;<span class="type">R</span>&gt;;
+  }
+}
+
+<span class="cls">test</span>(<span class="str">'use custom matchers'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/checkout'</span>);
+
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Email'</span>)).<span class="fn">toBeValidEmail</span>();
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.total-price'</span>)).<span class="fn">toBePriceFormat</span>(<span class="str">'₹'</span>);
+});</pre></div>
+</div>
+</div>
+
+<!-- ════════════════ S9 ════════════════ -->
+<div class="sc" id="sc-s9">
+<div class="sectabs" id="st-s9">
+  <button class="secbtn active" data-p="ov">Overview</button>
+  <button class="secbtn" data-p="gl">Glossary</button>
+  <button class="secbtn" data-p="ol">1-Liners</button>
+  <button class="secbtn" data-p="con">Concepts</button>
+  <button class="secbtn" data-p="bp">Best Practices</button>
+  <button class="secbtn" data-p="qa">Interview</button>
+  <button class="secbtn" data-p="cd">Code ×10</button>
+</div>
+<div class="pan active" id="s9-ov">
+  <div class="dcard"><div class="dl">Session 9 · Waiting Strategies</div><p>Playwright auto-waits for actionability on every action — but sometimes you need explicit waits for specific conditions: network responses, URL changes, element states, JS conditions, or custom events. Knowing when and how to wait is what separates flaky tests from reliable ones.</p></div>
+  <div class="g2">
+    <div class="gcard"><h4>Auto-waiting</h4><p>Every action (click, fill, hover) auto-waits for: attached, visible, stable, enabled, receives-events. No explicit wait needed before most interactions. Powered by the locator retry mechanism.</p></div>
+    <div class="gcard"><h4>waitForResponse</h4><p><code>page.waitForResponse(urlPattern)</code> waits for a specific network response. Use after form submits or search actions to wait for the API call to complete before asserting on results.</p></div>
+    <div class="gcard"><h4>waitForFunction</h4><p><code>page.waitForFunction(fn)</code> polls a JavaScript expression inside the browser until it returns truthy. Use for complex JS state conditions that no DOM-based locator can check.</p></div>
+    <div class="gcard"><h4>Never use timeout</h4><p><code>page.waitForTimeout(2000)</code> is an anti-pattern — it always waits the full duration even if the condition is met sooner. It makes tests slow and still flaky. Always use condition-based waits.</p></div>
+  </div>
+</div>
+<div class="pan" id="s9-gl">
+  <div class="tsec">Glossary</div>
+  <div class="gi"><span class="gk">Auto-waiting</span><span class="gd">Built-in mechanism on every action. Retries until element is actionable (attached, visible, stable, enabled, receives events) or timeout expires. No code needed.</span></div>
+  <div class="gi"><span class="gk">waitForSelector()</span><span class="gd">Waits for element matching selector to be present and match state option: 'attached','detached','visible','hidden'. Returns ElementHandle. Legacy — prefer expect(locator).toBeVisible().</span></div>
+  <div class="gi"><span class="gk">waitForURL()</span><span class="gd">Waits until page.url() matches string glob, regex, or predicate. After clicks that trigger redirects. Faster than waitForNavigation.</span></div>
+  <div class="gi"><span class="gk">waitForLoadState()</span><span class="gd">Waits for 'load', 'domcontentloaded', or 'networkidle'. Use after navigation actions when you need explicit load confirmation.</span></div>
+  <div class="gi"><span class="gk">waitForResponse()</span><span class="gd">Waits for a network response matching URL string/regex/predicate. Returns the Response object. Use to wait for API calls to complete before asserting.</span></div>
+  <div class="gi"><span class="gk">waitForRequest()</span><span class="gd">Waits for a network request to be sent matching URL. Use to verify the correct API was called with the right parameters.</span></div>
+  <div class="gi"><span class="gk">waitForFunction()</span><span class="gd">Polls a JS function in the browser context until it returns truthy. Use for complex JS state: animation complete, window property set, third-party SDK initialized.</span></div>
+  <div class="gi"><span class="gk">waitForEvent()</span><span class="gd">Waits for a page/context event: 'popup', 'dialog', 'download', 'filechooser', 'console', 'pageerror'. Returns a Promise resolving with the event data.</span></div>
+  <div class="gi"><span class="gk">waitForTimeout()</span><span class="gd">Hard sleep in ms. Anti-pattern — always waits the full duration. Only acceptable for debugging or very rare third-party timing issues with no observable state change.</span></div>
+  <div class="gi"><span class="gk">page.route()</span><span class="gd">Intercepts network requests matching a URL pattern. Can fulfill, abort, or continue them. Use to mock API responses or block tracking scripts.</span></div>
+  <div class="gi"><span class="gk">expect(locator).toBeVisible()</span><span class="gd">The correct replacement for most explicit waits. Auto-retries until visible or timeout. Combines waiting AND assertion in one call.</span></div>
+  <div class="gi"><span class="gk">networkidle</span><span class="gd">Load state where no network connections have fired for ≥500ms. Best for SPAs. Caution: long-polling apps never reach networkidle.</span></div>
+</div>
+<div class="pan" id="s9-ol">
+  <div class="tsec">Interview 1-Liners</div>
+  <div class="ols">
+    <div class="oli"><span class="olab">No explicit waits</span>"Playwright's auto-waiting means I rarely write explicit waits — every action retries until the element is actionable, and every expect() retries until the condition passes. The locator IS the wait."</div>
+    <div class="oli"><span class="olab">waitForResponse</span>"After clicking a search button, I use await page.waitForResponse(resp => resp.url().includes('/api/search') and resp.status() === 200) to ensure the API responded successfully before asserting on the results grid."</div>
+    <div class="oli"><span class="olab">Anti-pattern</span>"waitForTimeout is the biggest red flag in a Playwright codebase — it always sleeps the full duration even if the condition is met at 100ms, and it's still flaky on slow CI. I replace every hard sleep with a condition-based wait."</div>
+    <div class="oli"><span class="olab">waitForFunction</span>"I use waitForFunction when the condition I need to check lives in JavaScript state that has no DOM representation — things like a third-party analytics SDK being initialized, or a complex animation completing via a flag on window."</div>
+    <div class="oli"><span class="olab">Promise.all pattern</span>"The correct pattern for popup/dialog detection is Promise.all([page.waitForEvent('popup'), page.click('#open-btn')]) — both start simultaneously, preventing the race condition where the event fires before the listener is registered."</div>
+    <div class="oli"><span class="olab">page.route</span>"I use page.route() to mock slow API responses in waiting tests — this lets me control timing precisely and test loading states without depending on real server latency."</div>
+    <div class="oli"><span class="olab">networkidle caveat</span>"waitForLoadState('networkidle') fails on apps with long-polling or WebSocket connections because the browser is never truly idle. I use 'domcontentloaded' and explicit element assertions instead."</div>
+  </div>
+</div>
+<div class="pan" id="s9-con">
+  <div class="tsec">Core Concepts</div>
+  <div class="cb"><h4>Waiting strategy decision tree</h4>
+    <div class="cbb">
+      <div class="fbox">
+        <div class="fr"><span class="fb fbi">Need to wait for...</span></div>
+        <div class="fr"><span class="fb fbg">DOM element visible/hidden</span><span class="arr">→</span><span class="fb fbn">expect(locator).toBeVisible/Hidden()</span></div>
+        <div class="fr"><span class="fb fbg">URL to change</span><span class="arr">→</span><span class="fb fbn">page.waitForURL() or expect(page).toHaveURL()</span></div>
+        <div class="fr"><span class="fb fbg">API response</span><span class="arr">→</span><span class="fb fbn">page.waitForResponse(urlPattern)</span></div>
+        <div class="fr"><span class="fb fbg">Page to load</span><span class="arr">→</span><span class="fb fbn">page.waitForLoadState('networkidle')</span></div>
+        <div class="fr"><span class="fb fbg">JS condition</span><span class="arr">→</span><span class="fb fbn">page.waitForFunction(() => window.flag === true)</span></div>
+        <div class="fr"><span class="fb fbg">Popup/dialog</span><span class="arr">→</span><span class="fb fbn">page.waitForEvent('popup'/'dialog')</span></div>
+        <div class="fr"><span class="fb fbr">Hard sleep</span><span class="arr">→</span><span class="fb fbr">NEVER use waitForTimeout in production</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb"><h4>Promise.all — race-condition-safe waiting</h4>
+    <div class="cbb">
+      <div class="fbox">
+        <div class="fr"><span class="fb fbr">❌ Wrong — action before listener</span></div>
+        <div class="fr" style="margin-left:8px"><span class="fb fbr">await page.click('#open')  ← popup fires here</span></div>
+        <div class="fr" style="margin-left:8px"><span class="fb fbr">await page.waitForEvent('popup')  ← too late!</span></div>
+        <div class="fr" style="margin-top:6px"><span class="fb fbg">✅ Correct — both start simultaneously</span></div>
+        <div class="fr" style="margin-left:8px"><span class="fb fbg">const [popup] = await Promise.all([</span></div>
+        <div class="fr" style="margin-left:16px"><span class="fb fbg">page.waitForEvent('popup'),</span></div>
+        <div class="fr" style="margin-left:16px"><span class="fb fbg">page.click('#open'),</span></div>
+        <div class="fr" style="margin-left:8px"><span class="fb fbg">]);</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pan" id="s9-bp">
+  <div class="tsec">Best Practices</div>
+  <ul class="bpl">
+    <li class="bpi"><div class="bpic">✓</div><div>Never use <code>waitForTimeout()</code> in production tests. Replace with condition-based waits — <code>expect(locator).toBeVisible()</code> for DOM, <code>waitForResponse()</code> for network, <code>waitForFunction()</code> for JS state.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>Promise.all()</code> pattern for event-based waits (popup, dialog, download) — start the listener and trigger action simultaneously to prevent race conditions.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>waitForResponse()</code> with a status check: <code>resp.status() === 200</code> — waiting for ANY response to a URL catches error responses that still technically complete the wait.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Avoid <code>networkidle</code> on apps with WebSockets, Server-Sent Events, or long-polling — the page never becomes idle. Use element-based assertions instead.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Set specific timeouts on waits that can legitimately take longer: <code>waitForResponse(url, { timeout: 60_000 })</code> — better than increasing the global timeout for everything.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>page.route()</code> to mock slow API responses in tests that verify loading states — controls timing deterministically without real server delays.</div></li>
+  </ul>
+</div>
+<div class="pan" id="s9-qa">
+  <div class="tsec">Interview Prep</div>
+  <div class="qa" id="q9-1"><div class="qaq" onclick="tq(this)">Q1: What is auto-waiting in Playwright and why does it reduce flakiness? <span class="qtg">▶</span></div><div class="qaa">Auto-waiting means every Playwright action (click, fill, hover, check) automatically retries until the target element meets 5 actionability conditions: attached to DOM, visible (not hidden by CSS), stable (not animating), receives pointer events (not covered by overlay), and enabled (not disabled). This eliminates the most common source of test flakiness — clicking elements that are loading, animating, or behind a spinner. Before auto-waiting, you'd write waitForSelector + click in Selenium. In Playwright, locator.click() handles both. The same applies to assertions — expect(locator).toBeVisible() retries until visible, so there's no need to wait then assert separately.</div></div>
+  <div class="qa" id="q9-2"><div class="qaq" onclick="tq(this)">Q2: How do you wait for an API call to complete after a form submit? <span class="qtg">▶</span></div><div class="qaa">I use waitForResponse() — it resolves the moment a response matching the URL pattern is received. The critical pattern: set up the wait BEFORE the action, then trigger the action, then await the wait. Example: const responsePromise = page.waitForResponse(resp => resp.url().includes('/api/users') && resp.status() === 200); await page.click('#create-user-btn'); const response = await responsePromise; expect(response.ok()).toBeTruthy(). I also check response.status() === 200 in the predicate to avoid resolving on error responses. After the response, I assert on the DOM changes that the API call triggered.</div></div>
+  <div class="qa" id="q9-3"><div class="qaq" onclick="tq(this)">Q3: When would you use waitForFunction()? <span class="qtg">▶</span></div><div class="qaa">waitForFunction() evaluates a JavaScript expression in the browser context and retries until it returns truthy. I use it for conditions that have no DOM representation: (1) Third-party SDK initialization — await page.waitForFunction(() => window.analytics !== undefined && window.analytics.ready === true). (2) Complex animation state — await page.waitForFunction(() => document.querySelector('.chart').getAttribute('data-rendered') === 'true'). (3) Local storage/session state — await page.waitForFunction(() => localStorage.getItem('auth_token') !== null). (4) Custom application events — await page.waitForFunction(() => window.appState.initialized === true). It's the escape hatch for anything that can't be expressed as a locator or URL condition.</div></div>
+  <div class="qa" id="q9-4"><div class="qaq" onclick="tq(this)">Q4: Why is waitForTimeout() considered an anti-pattern? <span class="qtg">▶</span></div><div class="qaa">Two fundamental problems: (1) It always sleeps the full duration — if the condition is met at 50ms, waitForTimeout(3000) still waits the full 3 seconds. In a suite with 200 tests, if each has one sleep, that's 600 seconds of dead time. (2) It's still flaky on slow CI — if you pick 3000ms because the app usually takes 2500ms, it fails when CI is slower than usual. A properly written condition-based wait never has this problem. Every waitForTimeout can be replaced: waiting for a DOM change → expect(locator).toBeVisible(). Waiting for a network response → waitForResponse(). Waiting for JS state → waitForFunction(). The only acceptable use: a deliberate pause to observe a visual effect during local debugging, always removed before committing.</div></div>
+  <div class="qa" id="q9-5"><div class="qaq" onclick="tq(this)">Q5: How do you handle tests that need to mock a slow API to test loading states? <span class="qtg">▶</span></div><div class="qaa">I use page.route() to intercept the API request and add a delay before responding. Example: await page.route('**/api/products', async route => { await new Promise(r => setTimeout(r, 2000)); // 2s delay await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ products: [] }) }); }). Then: await page.click('#load-products'). await expect(page.locator('.loading-spinner')).toBeVisible(); // assert spinner shows. await expect(page.locator('.loading-spinner')).toBeHidden(); // waits for spinner to disappear. await expect(page.locator('.products-grid')).toBeVisible(); // grid appears. This approach is deterministic — the delay is exact, not dependent on server speed.</div></div>
+</div>
+<div class="pan" id="s9-cd">
+  <div class="ctabs" id="ct-s9">
+    <button class="ctb active" data-c="c9-1"><span class="fx">.ts</span>auto-wait.ts</button>
+    <button class="ctb" data-c="c9-2"><span class="fx">.ts</span>waitForURL.ts</button>
+    <button class="ctb" data-c="c9-3"><span class="fx">.ts</span>waitForResponse.ts</button>
+    <button class="ctb" data-c="c9-4"><span class="fx">.ts</span>waitForRequest.ts</button>
+    <button class="ctb" data-c="c9-5"><span class="fx">.ts</span>waitForFunction.ts</button>
+    <button class="ctb" data-c="c9-6"><span class="fx">.ts</span>waitForEvent.ts</button>
+    <button class="ctb" data-c="c9-7"><span class="fx">.ts</span>waitForLoadState.ts</button>
+    <button class="ctb" data-c="c9-8"><span class="fx">.ts</span>route-mock-wait.ts</button>
+    <button class="ctb" data-c="c9-9"><span class="fx">.ts</span>wait-download.ts</button>
+    <button class="ctb" data-c="c9-10"><span class="fx">.ts</span>polling-custom.ts</button>
+  </div>
+  <div id="c9-1" class="cpan active"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>auto-wait.ts</span><button class="cpbtn" onclick="doCopy('c9-1')">Copy</button></div>
+<pre><span class="cm">// auto-wait.ts — Playwright's built-in auto-waiting (no explicit wait needed)</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'auto-waiting in action — no explicit waits'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/products'</span>);
+
+  <span class="cm">// click() auto-waits until button is: attached, visible, stable, enabled</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { <span class="prop">name</span>: <span class="str">'Load More'</span> }).<span class="fn">click</span>();
+  <span class="cm">// ↑ No waitForSelector needed — locator retries until actionable</span>
+
+  <span class="cm">// expect().toBeVisible() auto-retries until visible or timeout</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.product-card'</span>).<span class="fn">nth</span>(<span class="num">12</span>)).<span class="fn">toBeVisible</span>();
+  <span class="cm">// ↑ No sleep needed — assertion IS the wait</span>
+
+  <span class="cm">// fill() waits until input is visible + enabled</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Search'</span>).<span class="fn">fill</span>(<span class="str">'laptop'</span>);
+
+  <span class="cm">// expect after async action — retries until count updates</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.product-card'</span>))
+    .<span class="fn">toHaveCount</span>(<span class="num">5</span>); <span class="cm">// waits for filter to complete</span>
+
+  <span class="cm">// Not visible — waits until modal DISAPPEARS (auto-retry on .not too)</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">keyboard</span>.<span class="fn">press</span>(<span class="str">'Escape'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'dialog'</span>)).<span class="fn">not</span>.<span class="fn">toBeVisible</span>();
+});</pre></div>
+  <div id="c9-2" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>waitForURL.ts</span><button class="cpbtn" onclick="doCopy('c9-2')">Copy</button></div>
+<pre><span class="cm">// waitForURL.ts — all patterns for URL-based waiting</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'waitForURL patterns'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/login'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">fill</span>(<span class="str">'#email'</span>, <span class="str">'admin@test.com'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">fill</span>(<span class="str">'#password'</span>, <span class="str">'Admin123!'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'button[type="submit"]'</span>);
+
+  <span class="cm">// 1. Glob pattern — ** matches any prefix</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForURL</span>(<span class="str">'**/dashboard'</span>, { <span class="prop">timeout</span>: <span class="num">15_000</span> });
+
+  <span class="cm">// 2. Regex — dynamic order IDs, UUIDs etc.</span>
+  <span class="cm">// await page.waitForURL(/\/order\/[a-z0-9-]+/);</span>
+
+  <span class="cm">// 3. Predicate — custom logic</span>
+  <span class="cm">// await page.waitForURL(url => {</span>
+  <span class="cm">//   return url.includes('dashboard') && !url.includes('error');</span>
+  <span class="cm">// });</span>
+
+  <span class="cm">// Equivalent assertion form (also retries)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveURL</span>(<span class="str">/dashboard/</span>);
+
+  <span class="cm">// After client-side routing (React Router / Next.js)</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'a[href="/settings"]'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForURL</span>(<span class="str">'**/settings'</span>);
+
+  <span class="cm">// Hash routing</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'a[href="#profile"]'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForURL</span>(<span class="str">/#profile/</span>);
+
+  <span class="cm">// With waitUntil to also wait for page load</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForURL</span>(<span class="str">'**/profile'</span>, { <span class="prop">waitUntil</span>: <span class="str">'networkidle'</span> });
+});</pre></div>
+  <div id="c9-3" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>waitForResponse.ts</span><button class="cpbtn" onclick="doCopy('c9-3')">Copy</button></div>
+<pre><span class="cm">// waitForResponse.ts — wait for specific API responses</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'waitForResponse — API call completion'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/users'</span>);
+
+  <span class="cm">// Register BEFORE the action that triggers the request</span>
+  <span class="kw">const</span> <span class="prop">responsePromise</span> = <span class="prop">page</span>.<span class="fn">waitForResponse</span>(
+    <span class="prop">resp</span> => <span class="prop">resp</span>.<span class="fn">url</span>().<span class="fn">includes</span>(<span class="str">'/api/users'</span>) && <span class="prop">resp</span>.<span class="fn">status</span>() === <span class="num">200</span>
+  );
+
+  <span class="cm">// Trigger the action that fires the API request</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#create-user-btn'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">fill</span>(<span class="str">'#name'</span>, <span class="str">'Bob Smith'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#submit-user'</span>);
+
+  <span class="cm">// Await the response — blocks until API call completes</span>
+  <span class="kw">const</span> <span class="prop">response</span> = <span class="kw">await</span> <span class="prop">responsePromise</span>;
+  <span class="fn">expect</span>(<span class="prop">response</span>.<span class="fn">ok</span>()).<span class="fn">toBeTruthy</span>(); <span class="cm">// status 200-299</span>
+
+  <span class="cm">// Parse response body</span>
+  <span class="kw">const</span> <span class="prop">body</span> = <span class="kw">await</span> <span class="prop">response</span>.<span class="fn">json</span>();
+  <span class="fn">expect</span>(<span class="prop">body</span>.<span class="prop">name</span>).<span class="fn">toBe</span>(<span class="str">'Bob Smith'</span>);
+
+  <span class="cm">// Simple URL string form</span>
+  <span class="kw">const</span> <span class="prop">simpleResp</span> = <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForResponse</span>(<span class="str">'**/api/users'</span>);
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`Status: <span class="kw">${</span><span class="prop">simpleResp</span>.<span class="fn">status</span>()<span class="kw">}</span>`</span>);
+
+  <span class="cm">// Assert DOM after API completes (no extra wait needed)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.user-list'</span>)).<span class="fn">toContainText</span>(<span class="str">'Bob Smith'</span>);
+});</pre></div>
+  <div id="c9-4" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>waitForRequest.ts</span><button class="cpbtn" onclick="doCopy('c9-4')">Copy</button></div>
+<pre><span class="cm">// waitForRequest.ts — verify correct API request was sent</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'waitForRequest — verify request payload'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/checkout'</span>);
+
+  <span class="cm">// Set up request listener BEFORE triggering the action</span>
+  <span class="kw">const</span> <span class="prop">requestPromise</span> = <span class="prop">page</span>.<span class="fn">waitForRequest</span>(
+    <span class="prop">req</span> => <span class="prop">req</span>.<span class="fn">url</span>().<span class="fn">includes</span>(<span class="str">'/api/order'</span>) && <span class="prop">req</span>.<span class="fn">method</span>() === <span class="str">'POST'</span>
+  );
+
+  <span class="cm">// Fill and submit order</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">fill</span>(<span class="str">'#quantity'</span>, <span class="str">'3'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#place-order-btn'</span>);
+
+  <span class="cm">// Verify request was sent</span>
+  <span class="kw">const</span> <span class="prop">request</span> = <span class="kw">await</span> <span class="prop">requestPromise</span>;
+  <span class="fn">expect</span>(<span class="prop">request</span>.<span class="fn">method</span>()).<span class="fn">toBe</span>(<span class="str">'POST'</span>);
+
+  <span class="cm">// Parse request body to verify payload correctness</span>
+  <span class="kw">const</span> <span class="prop">body</span> = <span class="prop">request</span>.<span class="fn">postDataJSON</span>();
+  <span class="fn">expect</span>(<span class="prop">body</span>.<span class="prop">quantity</span>).<span class="fn">toBe</span>(<span class="num">3</span>);
+  <span class="fn">expect</span>(<span class="prop">body</span>).<span class="fn">toHaveProperty</span>(<span class="str">'productId'</span>);
+
+  <span class="cm">// Verify request headers</span>
+  <span class="kw">const</span> <span class="prop">authHeader</span> = <span class="prop">request</span>.<span class="fn">headers</span>()[<span class="str">'authorization'</span>];
+  <span class="fn">expect</span>(<span class="prop">authHeader</span>).<span class="fn">toMatch</span>(<span class="str">/^Bearer /</span>);
+
+  <span class="cm">// Simple URL string variant</span>
+  <span class="cm">// const req = await page.waitForRequest('**/api/order');</span>
+});</pre></div>
+  <div id="c9-5" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>waitForFunction.ts</span><button class="cpbtn" onclick="doCopy('c9-5')">Copy</button></div>
+<pre><span class="cm">// waitForFunction.ts — JS expression polling in browser context</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'waitForFunction — JS state polling'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com'</span>);
+
+  <span class="cm">// 1. Third-party SDK initialization</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForFunction</span>(
+    () => <span class="kw">typeof</span> (<span class="prop">window</span> <span class="kw">as</span> <span class="kw">any</span>).<span class="prop">analytics</span> !== <span class="str">'undefined'</span>
+  );
+
+  <span class="cm">// 2. Complex app state flag</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForFunction</span>(
+    () => (<span class="prop">window</span> <span class="kw">as</span> <span class="kw">any</span>).<span class="prop">appState</span>?.<span class="prop">initialized</span> === <span class="val">true</span>,
+    { <span class="prop">timeout</span>: <span class="num">10_000</span>, <span class="prop">polling</span>: <span class="num">500</span> } <span class="cm">// poll every 500ms</span>
+  );
+
+  <span class="cm">// 3. localStorage token present</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForFunction</span>(
+    () => <span class="prop">window</span>.<span class="prop">localStorage</span>.<span class="fn">getItem</span>(<span class="str">'auth_token'</span>) !== <span class="val">null</span>
+  );
+
+  <span class="cm">// 4. Custom animation complete via data attribute</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForFunction</span>(
+    () => <span class="prop">document</span>.<span class="fn">querySelector</span>(<span class="str">'.chart-container'</span>)
+      ?.<span class="fn">getAttribute</span>(<span class="str">'data-rendered'</span>) === <span class="str">'true'</span>
+  );
+
+  <span class="cm">// 5. Pass data from Node.js to browser function</span>
+  <span class="kw">const</span> <span class="prop">expectedCount</span> = <span class="num">5</span>;
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForFunction</span>(
+    (<span class="prop">n</span>) => <span class="prop">document</span>.<span class="fn">querySelectorAll</span>(<span class="str">'.product-card'</span>).<span class="prop">length</span> >= <span class="prop">n</span>,
+    <span class="prop">expectedCount</span>
+  );
+
+  <span class="cm">// 6. Return value used in test</span>
+  <span class="kw">const</span> <span class="prop">result</span> = <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForFunction</span>(() => {
+    <span class="kw">const</span> <span class="prop">el</span> = <span class="prop">document</span>.<span class="fn">querySelector</span>(<span class="str">'.cart-count'</span>);
+    <span class="kw">const</span> <span class="prop">count</span> = <span class="cls">parseInt</span>(<span class="prop">el</span>?.<span class="prop">textContent</span> ?? <span class="str">'0'</span>);
+    <span class="kw">return</span> <span class="prop">count</span> > <span class="num">0</span> ? <span class="prop">count</span> : <span class="val">null</span>; <span class="cm">// null = keep retrying</span>
+  });
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`Cart has <span class="kw">${</span><span class="kw">await</span> <span class="prop">result</span>.<span class="fn">jsonValue</span>()<span class="kw">}</span> items`</span>);
+});</pre></div>
+  <div id="c9-6" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>waitForEvent.ts</span><button class="cpbtn" onclick="doCopy('c9-6')">Copy</button></div>
+<pre><span class="cm">// waitForEvent.ts — popup, dialog, download, console, pageerror</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'waitForEvent — all event types'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com'</span>);
+
+  <span class="cm">// POPUP — MUST start listener before triggering</span>
+  <span class="kw">const</span> [<span class="prop">popup</span>] = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">all</span>([
+    <span class="prop">page</span>.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+    <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'a[target="_blank"]'</span>),
+  ]);
+  <span class="kw">await</span> <span class="prop">popup</span>.<span class="fn">waitForLoadState</span>(<span class="str">'domcontentloaded'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">popup</span>).<span class="fn">toHaveURL</span>(<span class="str">/external/</span>);
+  <span class="kw">await</span> <span class="prop">popup</span>.<span class="fn">close</span>();
+
+  <span class="cm">// DOWNLOAD — wait for file download to start</span>
+  <span class="kw">const</span> [<span class="prop">download</span>] = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">all</span>([
+    <span class="prop">page</span>.<span class="fn">waitForEvent</span>(<span class="str">'download'</span>),
+    <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#export-csv-btn'</span>),
+  ]);
+  <span class="fn">expect</span>(<span class="prop">download</span>.<span class="fn">suggestedFilename</span>()).<span class="fn">toMatch</span>(<span class="str">/\.csv$/</span>);
+  <span class="kw">await</span> <span class="prop">download</span>.<span class="fn">saveAs</span>(<span class="str">'./tmp/export.csv'</span>);
+
+  <span class="cm">// FILE CHOOSER — custom upload button</span>
+  <span class="kw">const</span> [<span class="prop">fileChooser</span>] = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">all</span>([
+    <span class="prop">page</span>.<span class="fn">waitForEvent</span>(<span class="str">'filechooser'</span>),
+    <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#upload-btn'</span>),
+  ]);
+  <span class="kw">await</span> <span class="prop">fileChooser</span>.<span class="fn">setFiles</span>(<span class="str">'fixtures/test.pdf'</span>);
+
+  <span class="cm">// CONSOLE — capture browser console messages</span>
+  <span class="prop">page</span>.<span class="fn">on</span>(<span class="str">'console'</span>, <span class="prop">msg</span> => {
+    <span class="kw">if</span> (<span class="prop">msg</span>.<span class="fn">type</span>() === <span class="str">'error'</span>)
+      <span class="cls">console</span>.<span class="fn">error</span>(<span class="str">`Browser error: <span class="kw">${</span><span class="prop">msg</span>.<span class="fn">text</span>()<span class="kw">}</span>`</span>);
+  });
+
+  <span class="cm">// PAGEERROR — uncaught JS exceptions</span>
+  <span class="kw">const</span> <span class="prop">errors</span>: <span class="type">Error</span>[] = [];
+  <span class="prop">page</span>.<span class="fn">on</span>(<span class="str">'pageerror'</span>, <span class="prop">err</span> => <span class="prop">errors</span>.<span class="fn">push</span>(<span class="prop">err</span>));
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/dashboard'</span>);
+  <span class="fn">expect</span>(<span class="prop">errors</span>).<span class="fn">toHaveLength</span>(<span class="num">0</span>); <span class="cm">// no JS errors on page</span>
+});</pre></div>
+  <div id="c9-7" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>waitForLoadState.ts</span><button class="cpbtn" onclick="doCopy('c9-7')">Copy</button></div>
+<pre><span class="cm">// waitForLoadState.ts — all load states with use-cases</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'waitForLoadState — choosing the right state'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+
+  <span class="cm">// 'commit' — fastest: response headers received, content streaming</span>
+  <span class="kw">const</span> <span class="prop">r</span> = <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com'</span>, { <span class="prop">waitUntil</span>: <span class="str">'commit'</span> });
+  <span class="fn">expect</span>(<span class="prop">r</span>?.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">200</span>);
+
+  <span class="cm">// 'domcontentloaded' — HTML parsed, scripts run, no images waited</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/about'</span>, { <span class="prop">waitUntil</span>: <span class="str">'domcontentloaded'</span> });
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'h1'</span>)).<span class="fn">toBeVisible</span>();
+
+  <span class="cm">// 'load' — all resources loaded (default)</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/products'</span>); <span class="cm">// 'load' by default</span>
+
+  <span class="cm">// 'networkidle' — no requests for 500ms, best for SPAs with data fetch</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/analytics'</span>, { <span class="prop">waitUntil</span>: <span class="str">'networkidle'</span> });
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.chart'</span>)).<span class="fn">toBeVisible</span>();
+
+  <span class="cm">// waitForLoadState AFTER already being on a page (e.g. after AJAX)</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#load-more'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForLoadState</span>(<span class="str">'networkidle'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.result-item'</span>)).<span class="fn">toHaveCount</span>(<span class="num">20</span>);
+
+  <span class="cm">// After popup captured — wait for popup to load</span>
+  <span class="kw">const</span> [<span class="prop">popup</span>] = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">all</span>([
+    <span class="prop">page</span>.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+    <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#open-popup'</span>),
+  ]);
+  <span class="kw">await</span> <span class="prop">popup</span>.<span class="fn">waitForLoadState</span>(<span class="str">'domcontentloaded'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">popup</span>.<span class="fn">locator</span>(<span class="str">'h1'</span>)).<span class="fn">toBeVisible</span>();
+});</pre></div>
+  <div id="c9-8" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>route-mock-wait.ts</span><button class="cpbtn" onclick="doCopy('c9-8')">Copy</button></div>
+<pre><span class="cm">// route-mock-wait.ts — mock network requests to control timing</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'mock slow API to test loading states'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="cm">// Intercept and delay the products API</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">route</span>(<span class="str">'**/api/products'</span>, <span class="kw">async</span> (<span class="prop">route</span>) => {
+    <span class="kw">await</span> <span class="kw">new</span> <span class="cls">Promise</span>(<span class="prop">r</span> => <span class="fn">setTimeout</span>(<span class="prop">r</span>, <span class="num">2000</span>)); <span class="cm">// 2s artificial delay</span>
+    <span class="kw">await</span> <span class="prop">route</span>.<span class="fn">fulfill</span>({
+      <span class="prop">status</span>: <span class="num">200</span>,
+      <span class="prop">contentType</span>: <span class="str">'application/json'</span>,
+      <span class="prop">body</span>: <span class="cls">JSON</span>.<span class="fn">stringify</span>({ <span class="prop">products</span>: [{ <span class="prop">id</span>: <span class="num">1</span>, <span class="prop">name</span>: <span class="str">'Laptop'</span> }] }),
+    });
+  });
+
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/products'</span>);
+
+  <span class="cm">// Spinner should appear immediately during the 2s delay</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.loading-spinner'</span>)).<span class="fn">toBeVisible</span>();
+
+  <span class="cm">// Products grid hidden during loading</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.products-grid'</span>)).<span class="fn">toBeHidden</span>();
+
+  <span class="cm">// After 2s — spinner gone, grid visible</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.loading-spinner'</span>)).<span class="fn">toBeHidden</span>();
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.products-grid'</span>)).<span class="fn">toBeVisible</span>();
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.product-card'</span>)).<span class="fn">toContainText</span>(<span class="str">'Laptop'</span>);
+});</pre></div>
+  <div id="c9-9" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>wait-download.ts</span><button class="cpbtn" onclick="doCopy('c9-9')">Copy</button></div>
+<pre><span class="cm">// wait-download.ts — waitForEvent('download') + download assertions</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+<span class="kw">import</span> <span class="prop">fs</span> <span class="kw">from</span> <span class="str">'fs'</span>;
+<span class="kw">import</span> <span class="prop">path</span> <span class="kw">from</span> <span class="str">'path'</span>;
+
+<span class="cls">test</span>(<span class="str">'file download — verify filename and content'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/reports'</span>);
+
+  <span class="cm">// Must register BEFORE click that triggers download</span>
+  <span class="kw">const</span> [<span class="prop">download</span>] = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">all</span>([
+    <span class="prop">page</span>.<span class="fn">waitForEvent</span>(<span class="str">'download'</span>),
+    <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#export-report-btn'</span>),
+  ]);
+
+  <span class="cm">// Verify filename</span>
+  <span class="fn">expect</span>(<span class="prop">download</span>.<span class="fn">suggestedFilename</span>()).<span class="fn">toMatch</span>(<span class="str">/report-\d{4}-\d{2}-\d{2}\.csv/</span>);
+
+  <span class="cm">// Save to temp location</span>
+  <span class="kw">const</span> <span class="prop">savePath</span> = <span class="prop">path</span>.<span class="fn">join</span>(<span class="str">'./tmp'</span>, <span class="prop">download</span>.<span class="fn">suggestedFilename</span>());
+  <span class="kw">await</span> <span class="prop">download</span>.<span class="fn">saveAs</span>(<span class="prop">savePath</span>);
+
+  <span class="cm">// Verify file exists on disk</span>
+  <span class="fn">expect</span>(<span class="prop">fs</span>.<span class="fn">existsSync</span>(<span class="prop">savePath</span>)).<span class="fn">toBe</span>(<span class="val">true</span>);
+
+  <span class="cm">// Verify content (CSV headers)</span>
+  <span class="kw">const</span> <span class="prop">content</span> = <span class="prop">fs</span>.<span class="fn">readFileSync</span>(<span class="prop">savePath</span>, <span class="str">'utf-8'</span>);
+  <span class="fn">expect</span>(<span class="prop">content</span>).<span class="fn">toContain</span>(<span class="str">'Name,Email,Date'</span>); <span class="cm">// CSV headers present</span>
+
+  <span class="cm">// Check download has no failure</span>
+  <span class="fn">expect</span>(<span class="kw">await</span> <span class="prop">download</span>.<span class="fn">failure</span>()).<span class="fn">toBeNull</span>(); <span class="cm">// null = success</span>
+});</pre></div>
+  <div id="c9-10" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>polling-custom.ts</span><button class="cpbtn" onclick="doCopy('c9-10')">Copy</button></div>
+<pre><span class="cm">// polling-custom.ts — custom polling + waitForCondition helper</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span>, <span class="cls">Page</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cm">// Custom helper: poll until condition or timeout</span>
+<span class="kw">async function</span> <span class="fn">waitUntilTrue</span>(
+  <span class="prop">page</span>: <span class="type">Page</span>,
+  <span class="prop">condition</span>: () => <span class="type">Promise</span>&lt;<span class="type">boolean</span>&gt;,
+  <span class="prop">opts</span>: { <span class="prop">timeout</span>?: <span class="type">number</span>; <span class="prop">interval</span>?: <span class="type">number</span> } = {}
+): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+  <span class="kw">const</span> { <span class="prop">timeout</span> = <span class="num">30_000</span>, <span class="prop">interval</span> = <span class="num">500</span> } = <span class="prop">opts</span>;
+  <span class="kw">const</span> <span class="prop">deadline</span> = <span class="cls">Date</span>.<span class="fn">now</span>() + <span class="prop">timeout</span>;
+  <span class="kw">while</span> (<span class="cls">Date</span>.<span class="fn">now</span>() < <span class="prop">deadline</span>) {
+    <span class="kw">if</span> (<span class="kw">await</span> <span class="fn">condition</span>()) <span class="kw">return</span>;
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForTimeout</span>(<span class="prop">interval</span>);
+  }
+  <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">`Condition not met within <span class="kw">${</span><span class="prop">timeout</span><span class="kw">}</span>ms`</span>);
+}
+
+<span class="cls">test</span>(<span class="str">'custom polling for complex conditions'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/batch-job'</span>);
+
+  <span class="cm">// Start a long-running job</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#start-job-btn'</span>);
+
+  <span class="cm">// Poll status every 2s until job completes</span>
+  <span class="kw">await</span> <span class="fn">waitUntilTrue</span>(<span class="prop">page</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> <span class="prop">status</span> = <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.job-status'</span>).<span class="fn">textContent</span>();
+    <span class="kw">return</span> <span class="prop">status</span>?..<span class="fn">includes</span>(<span class="str">'Completed'</span>) ?? <span class="val">false</span>;
+  }, { <span class="prop">timeout</span>: <span class="num">60_000</span>, <span class="prop">interval</span>: <span class="num">2000</span> });
+
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.job-status'</span>)).<span class="fn">toContainText</span>(<span class="str">'Completed'</span>);
+
+  <span class="cm">// waitForFunction with polling option (Playwright built-in)</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForFunction</span>(
+    () => <span class="prop">document</span>.<span class="fn">querySelector</span>(<span class="str">'.progress-bar'</span>)
+      ?.<span class="fn">getAttribute</span>(<span class="str">'aria-valuenow'</span>) === <span class="str">'100'</span>,
+    { <span class="prop">polling</span>: <span class="num">1000</span>, <span class="prop">timeout</span>: <span class="num">30_000</span> }
+  );
+});</pre></div>
+</div>
+</div>
+
+<!-- ════════════════ S10 ════════════════ -->
+<div class="sc" id="sc-s10">
+<div class="sectabs" id="st-s10">
+  <button class="secbtn active" data-p="ov">Overview</button>
+  <button class="secbtn" data-p="gl">Glossary</button>
+  <button class="secbtn" data-p="ol">1-Liners</button>
+  <button class="secbtn" data-p="con">Concepts</button>
+  <button class="secbtn" data-p="bp">Best Practices</button>
+  <button class="secbtn" data-p="qa">Interview</button>
+  <button class="secbtn" data-p="cd">Code ×10</button>
+</div>
+<div class="pan active" id="s10-ov">
+  <div class="dcard"><div class="dl">Session 10 · Full Suite Integration</div><p>Capstone session — combining everything: Page Object Model, fixtures, parallel execution, CI/CD config, tracing, video, Allure reporting, global setup/teardown, and API testing alongside UI testing. This is what a production-grade Playwright project looks like.</p></div>
+  <div class="g2">
+    <div class="gcard"><h4>Page Object Model</h4><p>Encapsulate page interactions in classes. Each page has its own class with locators as properties and actions as methods. Tests call page objects — not raw Playwright APIs. Reduces duplication, centralizes selectors.</p></div>
+    <div class="gcard"><h4>Fixtures</h4><p>Playwright Test fixtures provide setup/teardown with dependency injection. Built-in: page, context, browser. Custom fixtures: logged-in pages, pre-seeded data, API clients. Composable and type-safe.</p></div>
+    <div class="gcard"><h4>Parallel Execution</h4><p>Tests run in parallel by default across workers. Use <code>test.describe.configure({mode:'parallel'})</code> within a file. <code>fullyParallel: true</code> in config runs ALL tests in parallel. Use <code>test.use</code> for per-test config.</p></div>
+    <div class="gcard"><h4>CI/CD</h4><p>GitHub Actions / GitLab CI run Playwright in headed mode with Xvfb or headless. Use <code>playwright install --with-deps</code> in CI. Enable retries for flaky tests. Store traces and videos as artifacts.</p></div>
+  </div>
+</div>
+<div class="pan" id="s10-gl">
+  <div class="tsec">Glossary</div>
+  <div class="gi"><span class="gk">Page Object Model</span><span class="gd">Design pattern where each page/component is a class encapsulating its locators and actions. Tests interact through POM methods, not raw Playwright APIs.</span></div>
+  <div class="gi"><span class="gk">fixtures</span><span class="gd">Playwright's DI system for test setup/teardown. Built-in: page, browser, context, browserName. Custom: extend test with your own fixtures. Auto-used and auto-cleaned.</span></div>
+  <div class="gi"><span class="gk">test.extend()</span><span class="gd">Creates a new test object with custom fixtures. Merge multiple fixture definitions. Use for page objects, auth, API clients, seeded data.</span></div>
+  <div class="gi"><span class="gk">globalSetup</span><span class="gd">Runs once before all tests. Used for: login and save storageState, seed test database, launch test servers. Configured in playwright.config.ts.</span></div>
+  <div class="gi"><span class="gk">globalTeardown</span><span class="gd">Runs once after all tests. Used for: clean up test data, close test servers, aggregate results.</span></div>
+  <div class="gi"><span class="gk">playwright.config.ts</span><span class="gd">Central config file. Sets: baseURL, timeout, retries, workers, reporter, use (browser options, storageState, viewport), projects (multi-browser).</span></div>
+  <div class="gi"><span class="gk">trace</span><span class="gd">Playwright trace records full test execution: actions, network, screenshots, DOM snapshots. Viewable in trace viewer. Enable with trace:'on' or 'on-first-retry'.</span></div>
+  <div class="gi"><span class="gk">retries</span><span class="gd">Automatically re-runs failed tests. Set in config: retries: 2 (CI), retries: 0 (local). On retry, Playwright captures trace for debugging.</span></div>
+  <div class="gi"><span class="gk">workers</span><span class="gd">Number of parallel test workers. Set in config or via --workers CLI flag. Each worker gets its own browser. Default: half CPU cores.</span></div>
+  <div class="gi"><span class="gk">projects</span><span class="gd">Run tests across multiple browsers/configurations. Each project has name, use (browserName, viewport, storageState). E.g. chromium, firefox, webkit, mobile-chrome.</span></div>
+  <div class="gi"><span class="gk">reporter</span><span class="gd">Output format: 'html' (rich HTML report), 'dot' (CI-friendly), 'list', 'json', 'junit' (for CI XML), 'allure-playwright' (Allure integration).</span></div>
+  <div class="gi"><span class="gk">test.info()</span><span class="gd">Provides test metadata: title, status, errors, attachments, retry count. Use to add attachments, custom annotations, or conditional logic based on retry.</span></div>
+</div>
+<div class="pan" id="s10-ol">
+  <div class="tsec">Interview 1-Liners</div>
+  <div class="ols">
+    <div class="oli"><span class="olab">POM</span>"I implement Page Object Model by making each page class extend a BasePage with the page reference and common utilities. Locators are getters so they're always fresh — never stored as resolved handles."</div>
+    <div class="oli"><span class="olab">Fixtures</span>"Custom fixtures in Playwright are more powerful than POM alone — a loggedInPage fixture handles auth setup and teardown automatically for every test that uses it, with full TypeScript type safety and zero boilerplate per test."</div>
+    <div class="oli"><span class="olab">Parallel safety</span>"Tests in Playwright are parallel by default across workers, so I design them to be completely independent — each test creates its own BrowserContext with fresh data, never sharing state with sibling tests."</div>
+    <div class="oli"><span class="olab">CI config</span>"In GitHub Actions I use playwright install --with-deps to get browser binaries, set retries:2 for CI stability, and store playwright-report and test-results as artifacts so failed test screenshots and traces are always available."</div>
+    <div class="oli"><span class="olab">Trace viewer</span>"The Playwright trace viewer is my first debugging tool for CI failures — trace:'on-first-retry' captures a full recording of the failed test including every action, network call, and DOM snapshot that I can replay locally."</div>
+    <div class="oli"><span class="olab">API + UI</span>"I combine API testing with UI in Playwright using request fixture — I create test data via API (fast, reliable), then verify it via UI (user-facing correctness). This gives me both speed and end-to-end coverage."</div>
+    <div class="oli"><span class="olab">Projects</span>"Playwright's projects allow me to run the same suite across Chromium, Firefox, and WebKit with one config file. I also add mobile projects — mobile-chrome with iPhone viewport — without writing a single extra test."</div>
+  </div>
+</div>
+<div class="pan" id="s10-con">
+  <div class="tsec">Core Concepts</div>
+  <div class="cb"><h4>Full project architecture</h4>
+    <div class="cbb">
+      <div class="fbox">
+        <div class="fr"><span class="fb fbi">playwright.config.ts</span><span class="arr">→</span><span class="fb fbn">global config, projects, reporters</span></div>
+        <div class="fr"><span class="fb fbi">globalSetup.ts</span><span class="arr">→</span><span class="fb fbn">login once → save storageState</span></div>
+        <div class="fr"><span class="fb fbg">pages/</span><span class="arr">→</span><span class="fb fbn">LoginPage, DashboardPage, CartPage (POM)</span></div>
+        <div class="fr"><span class="fb fbg">fixtures/</span><span class="arr">→</span><span class="fb fbn">auth.fixture.ts, api.fixture.ts</span></div>
+        <div class="fr"><span class="fb fbw">tests/</span><span class="arr">→</span><span class="fb fbn">login.spec.ts, checkout.spec.ts</span></div>
+        <div class="fr"><span class="fb fbw">utils/</span><span class="arr">→</span><span class="fb fbn">test-data, helpers, API client</span></div>
+        <div class="fr"><span class="fb fbi">playwright-report/</span><span class="arr">→</span><span class="fb fbn">HTML report, traces, videos</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb"><h4>Test execution flow</h4>
+    <div class="cbb">
+      <div class="fbox">
+        <div class="fr"><span class="fb fbi">globalSetup</span><span class="arr">→</span><span class="fb fbn">login → save auth.json</span></div>
+        <div class="fr"><span class="fb fbg">Worker 1</span><span class="arr">→</span><span class="fb fbn">checkout.spec + fixture(auth.json context)</span></div>
+        <div class="fr"><span class="fb fbg">Worker 2</span><span class="arr">→</span><span class="fb fbn">search.spec + fixture(auth.json context)</span></div>
+        <div class="fr"><span class="fb fbw">retry on fail</span><span class="arr">→</span><span class="fb fbn">save trace + video + screenshot</span></div>
+        <div class="fr"><span class="fb fbi">globalTeardown</span><span class="arr">→</span><span class="fb fbn">cleanup test data</span></div>
+        <div class="fr"><span class="fb fbi">reporter</span><span class="arr">→</span><span class="fb fbn">HTML report + Allure + JUnit XML</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pan" id="s10-bp">
+  <div class="tsec">Best Practices</div>
+  <ul class="bpl">
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>globalSetup</code> for login — run it once, save <code>storageState</code>, restore in every test. Never log in inside individual tests.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Make POM locators as <code>get</code> properties (never assign to class fields) — getters re-query the DOM on every access, preventing stale element handles.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Set <code>retries: 2</code> in CI, <code>retries: 0</code> locally. Enable <code>trace: 'on-first-retry'</code> — traces are only captured when needed, saving disk space.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>projects</code> to test across all browsers. Add a <code>mobile</code> project with <code>isMobile: true</code> — one config, multi-platform coverage.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Create test data via API (<code>request</code> fixture) in <code>beforeEach</code>, then clean up via API in <code>afterEach</code> — faster than UI setup and doesn't depend on UI being bug-free.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Store <code>playwright-report/</code> and <code>test-results/</code> as CI artifacts. They contain traces, videos, and screenshots for every failed test — essential for debugging CI failures.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>test.describe.configure({ mode: 'serial' })</code> only for tests with genuine sequential dependencies. Default to parallel — it's 3-5× faster in CI.</div></li>
+  </ul>
+</div>
+<div class="pan" id="s10-qa">
+  <div class="tsec">Interview Prep</div>
+  <div class="qa" id="q10-1"><div class="qaq" onclick="tq(this)">Q1: How do you implement Page Object Model in Playwright TypeScript? <span class="qtg">▶</span></div><div class="qaa">I create a BasePage class that receives the page fixture in its constructor. Each page class extends BasePage and defines locators as getter properties (never regular class fields) so they're re-queried on every access: get submitButton() { return this.page.getByRole('button', {name:'Submit'}); }. Actions are async methods: async login(email, password) { await this.emailInput.fill(email); await this.passwordInput.fill(password); await this.submitButton.click(); }. Tests instantiate POMs and call methods: const loginPage = new LoginPage(page); await loginPage.login('user@test.com','Pass123'); await loginPage.expectDashboard(). The POM contains all locators and actions; the test contains only flow and assertions.</div></div>
+  <div class="qa" id="q10-2"><div class="qaq" onclick="tq(this)">Q2: What are Playwright fixtures and how do they differ from beforeEach? <span class="qtg">▶</span></div><div class="qaa">Fixtures are a dependency injection system — each fixture is a function that sets up resources, yields them to the test, and tears them down after. Unlike beforeEach which runs for every test in a describe block, fixtures are composed: a test declares which fixtures it needs and Playwright injects them. Key advantages: (1) Composable — a loggedInPage fixture can internally use the page and context fixtures. (2) Auto-teardown — anything after yield in a fixture runs after the test, even if it throws. (3) Type-safe — custom fixtures are typed, giving IntelliSense. (4) Scoped — fixtures can have 'test', 'worker', or 'global' scope. beforeEach can't be shared across files without a helper function; fixtures are reusable across any test that imports them.</div></div>
+  <div class="qa" id="q10-3"><div class="qaq" onclick="tq(this)">Q3: How do you run tests in parallel safely? <span class="qtg">▶</span></div><div class="qaa">Playwright runs each test in a separate browser context (process-isolated by default), so tests don't share DOM or cookies. The key to parallel safety: (1) Each test creates its own test data — never share a single user account across parallel tests because concurrent actions cause conflicts. (2) Use unique identifiers per test — append test ID to email/username: user_${test.info().testId}@test.com. (3) Avoid shared global state — no shared files, no shared database rows without transactions/locking. (4) For tests with genuine order dependency, use test.describe.configure({mode:'serial'}) on that describe block only — not globally. fullyParallel:true in the config means each test file also runs in parallel (default is parallel across files, serial within a file).</div></div>
+  <div class="qa" id="q10-4"><div class="qaq" onclick="tq(this)">Q4: How do you set up Playwright in a CI/CD pipeline? <span class="qtg">▶</span></div><div class="qaa">GitHub Actions example: (1) actions/checkout + actions/setup-node. (2) npm ci to install dependencies. (3) npx playwright install --with-deps to get browser binaries + system dependencies. (4) npx playwright test --reporter=html,junit. Key config settings for CI: retries:2 (stability), workers: process.env.CI ? 4 : undefined (scale to CI runner cores), trace:'on-first-retry' (capture on failure), video:'on-first-retry'. (5) Upload artifacts: actions/upload-artifact for playwright-report/ and test-results/. (6) Publish JUnit XML to the CI test results dashboard for trend analysis. For Allure: install allure-playwright, run allure generate after tests, publish the allure-report as an artifact or deploy to GitHub Pages.</div></div>
+  <div class="qa" id="q10-5"><div class="qaq" onclick="tq(this)">Q5: How do you combine API testing with UI testing in Playwright? <span class="qtg">▶</span></div><div class="qaa">Playwright's request fixture gives you an APIRequestContext to make HTTP requests without a browser. Pattern: (1) Setup — create test data via API (fast, reliable): const user = await request.post('/api/users', {data:{name:'Test'}}).then(r=>r.json()). (2) UI test — verify the created user appears in the UI: await page.goto('/users'); await expect(page.locator('.user-row').filter({hasText:user.name})).toBeVisible(). (3) Teardown — delete via API: await request.delete('/api/users/'+user.id). This hybrid approach is faster than creating data through UI flows, more reliable (UI bugs don't break setup), and gives true end-to-end coverage. The request context in globalSetup can also be used to seed databases with realistic test data before the suite starts.</div></div>
+</div>
+<div class="pan" id="s10-cd">
+  <div class="ctabs" id="ct-s10">
+    <button class="ctb active" data-c="c10-1"><span class="fx">.ts</span>pom-base.ts</button>
+    <button class="ctb" data-c="c10-2"><span class="fx">.ts</span>pom-login.ts</button>
+    <button class="ctb" data-c="c10-3"><span class="fx">.ts</span>fixtures.ts</button>
+    <button class="ctb" data-c="c10-4"><span class="fx">.ts</span>playwright.config.ts</button>
+    <button class="ctb" data-c="c10-5"><span class="fx">.ts</span>global-setup.ts</button>
+    <button class="ctb" data-c="c10-6"><span class="fx">.ts</span>api-ui-test.ts</button>
+    <button class="ctb" data-c="c10-7"><span class="fx">.ts</span>parallel-test.ts</button>
+    <button class="ctb" data-c="c10-8"><span class="fx">.ts</span>ci-github-actions.yml</button>
+    <button class="ctb" data-c="c10-9"><span class="fx">.ts</span>allure-report.ts</button>
+    <button class="ctb" data-c="c10-10"><span class="fx">.ts</span>full-e2e.spec.ts</button>
+  </div>
+  <div id="c10-1" class="cpan active"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>pom-base.ts</span><button class="cpbtn" onclick="doCopy('c10-1')">Copy</button></div>
+<pre><span class="cm">// pom-base.ts — BasePage class for all Page Objects</span>
+<span class="kw">import</span> { <span class="cls">Page</span>, <span class="cls">Locator</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="kw">export class</span> <span class="cls">BasePage</span> {
+  <span class="kw">constructor</span>(<span class="kw">protected readonly</span> <span class="prop">page</span>: <span class="type">Page</span>) {}
+
+  <span class="cm">// Navigate to this page's URL</span>
+  <span class="kw">async</span> <span class="fn">navigate</span>(<span class="prop">url</span>: <span class="type">string</span>): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">await</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">goto</span>(<span class="prop">url</span>);
+  }
+
+  <span class="cm">// Wait for page to be fully loaded</span>
+  <span class="kw">async</span> <span class="fn">waitForPageLoad</span>(): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">await</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">waitForLoadState</span>(<span class="str">'networkidle'</span>);
+  }
+
+  <span class="cm">// Get page title</span>
+  <span class="kw">async</span> <span class="fn">getTitle</span>(): <span class="type">Promise</span>&lt;<span class="type">string</span>&gt; {
+    <span class="kw">return</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">title</span>();
+  }
+
+  <span class="cm">// Take screenshot — attaches to test report</span>
+  <span class="kw">async</span> <span class="fn">takeScreenshot</span>(<span class="prop">name</span>: <span class="type">string</span>): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">await</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">screenshot</span>({ <span class="prop">path</span>: <span class="str">`screenshots/<span class="kw">${</span><span class="prop">name</span><span class="kw">}</span>.png`</span> });
+  }
+
+  <span class="cm">// Generic wait for element</span>
+  <span class="kw">async</span> <span class="fn">waitForElement</span>(<span class="prop">locator</span>: <span class="type">Locator</span>): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">locator</span>).<span class="fn">toBeVisible</span>();
+  }
+
+  <span class="cm">// Toast notification helper</span>
+  <span class="kw">async</span> <span class="fn">expectToast</span>(<span class="prop">message</span>: <span class="type">string</span>): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.toast-message'</span>))
+      .<span class="fn">toContainText</span>(<span class="prop">message</span>);
+  }
+}</pre></div>
+  <div id="c10-2" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>pom-login.ts</span><button class="cpbtn" onclick="doCopy('c10-2')">Copy</button></div>
+<pre><span class="cm">// pom-login.ts — LoginPage + DashboardPage POMs</span>
+<span class="kw">import</span> { <span class="cls">Page</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+<span class="kw">import</span> { <span class="cls">BasePage</span> } <span class="kw">from</span> <span class="str">'./pom-base'</span>;
+
+<span class="kw">export class</span> <span class="cls">LoginPage</span> <span class="kw">extends</span> <span class="cls">BasePage</span> {
+  <span class="kw">readonly</span> <span class="prop">url</span> = <span class="str">'/login'</span>;
+
+  <span class="cm">// Getters — re-queried on every access (no stale handles)</span>
+  <span class="kw">get</span> <span class="fn">emailInput</span>() { <span class="kw">return</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Email'</span>); }
+  <span class="kw">get</span> <span class="fn">passwordInput</span>() { <span class="kw">return</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">getByLabel</span>(<span class="str">'Password'</span>); }
+  <span class="kw">get</span> <span class="fn">submitButton</span>() { <span class="kw">return</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { <span class="prop">name</span>: <span class="str">'Sign In'</span> }); }
+  <span class="kw">get</span> <span class="fn">errorMessage</span>() { <span class="kw">return</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.auth-error'</span>); }
+
+  <span class="cm">// Actions</span>
+  <span class="kw">async</span> <span class="fn">goto</span>(): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">await</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">goto</span>(<span class="prop">this</span>.<span class="prop">url</span>);
+  }
+
+  <span class="kw">async</span> <span class="fn">login</span>(<span class="prop">email</span>: <span class="type">string</span>, <span class="prop">password</span>: <span class="type">string</span>): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">await</span> <span class="prop">this</span>.<span class="prop">emailInput</span>.<span class="fn">fill</span>(<span class="prop">email</span>);
+    <span class="kw">await</span> <span class="prop">this</span>.<span class="prop">passwordInput</span>.<span class="fn">fill</span>(<span class="prop">password</span>);
+    <span class="kw">await</span> <span class="prop">this</span>.<span class="prop">submitButton</span>.<span class="fn">click</span>();
+  }
+
+  <span class="kw">async</span> <span class="fn">expectError</span>(<span class="prop">msg</span>: <span class="type">string</span>): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">this</span>.<span class="prop">errorMessage</span>).<span class="fn">toContainText</span>(<span class="prop">msg</span>);
+  }
+}
+
+<span class="kw">export class</span> <span class="cls">DashboardPage</span> <span class="kw">extends</span> <span class="cls">BasePage</span> {
+  <span class="kw">get</span> <span class="fn">welcomeMsg</span>() { <span class="kw">return</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.welcome-msg'</span>); }
+  <span class="kw">get</span> <span class="fn">statsGrid</span>() { <span class="kw">return</span> <span class="prop">this</span>.<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.stats-grid'</span>); }
+
+  <span class="kw">async</span> <span class="fn">expectLoaded</span>(): <span class="type">Promise</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">this</span>.<span class="prop">page</span>).<span class="fn">toHaveURL</span>(<span class="str">/dashboard/</span>);
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">this</span>.<span class="prop">welcomeMsg</span>).<span class="fn">toBeVisible</span>();
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">this</span>.<span class="prop">statsGrid</span>).<span class="fn">toBeVisible</span>();
+  }
+}</pre></div>
+  <div id="c10-3" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>fixtures.ts</span><button class="cpbtn" onclick="doCopy('c10-3')">Copy</button></div>
+<pre><span class="cm">// fixtures.ts — custom Playwright fixtures (auth + POMs + API)</span>
+<span class="kw">import</span> { <span class="cls">test</span> <span class="kw">as</span> <span class="prop">base</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+<span class="kw">import</span> { <span class="cls">LoginPage</span>, <span class="cls">DashboardPage</span> } <span class="kw">from</span> <span class="str">'./pom-login'</span>;
+
+<span class="cm">// Define custom fixture types</span>
+<span class="kw">type</span> <span class="type">MyFixtures</span> = {
+  <span class="prop">loginPage</span>: <span class="type">LoginPage</span>;
+  <span class="prop">dashboardPage</span>: <span class="type">DashboardPage</span>;
+  <span class="prop">authenticatedPage</span>: <span class="type">DashboardPage</span>; <span class="cm">// pre-logged-in dashboard</span>
+};
+
+<span class="cm">// Extend test with custom fixtures</span>
+<span class="kw">export const</span> <span class="prop">test</span> = <span class="prop">base</span>.<span class="fn">extend</span>&lt;<span class="type">MyFixtures</span>&gt;({
+
+  <span class="cm">// POM fixtures — auto-cleanup (page closes with context)</span>
+  <span class="prop">loginPage</span>: <span class="kw">async</span> ({ <span class="prop">page</span> }, <span class="prop">use</span>) => {
+    <span class="kw">await</span> <span class="fn">use</span>(<span class="kw">new</span> <span class="cls">LoginPage</span>(<span class="prop">page</span>));
+  },
+
+  <span class="prop">dashboardPage</span>: <span class="kw">async</span> ({ <span class="prop">page</span> }, <span class="prop">use</span>) => {
+    <span class="kw">await</span> <span class="fn">use</span>(<span class="kw">new</span> <span class="cls">DashboardPage</span>(<span class="prop">page</span>));
+  },
+
+  <span class="cm">// Pre-authenticated fixture — restores storageState</span>
+  <span class="prop">authenticatedPage</span>: <span class="kw">async</span> ({ <span class="prop">browser</span> }, <span class="prop">use</span>) => {
+    <span class="kw">const</span> <span class="prop">context</span> = <span class="kw">await</span> <span class="prop">browser</span>.<span class="fn">newContext</span>({
+      <span class="prop">storageState</span>: <span class="str">'playwright/.auth/user.json'</span>,
+    });
+    <span class="kw">const</span> <span class="prop">page</span> = <span class="kw">await</span> <span class="prop">context</span>.<span class="fn">newPage</span>();
+    <span class="kw">const</span> <span class="prop">dashboard</span> = <span class="kw">new</span> <span class="cls">DashboardPage</span>(<span class="prop">page</span>);
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/dashboard'</span>);
+    <span class="kw">await</span> <span class="prop">dashboard</span>.<span class="fn">expectLoaded</span>();
+
+    <span class="kw">await</span> <span class="fn">use</span>(<span class="prop">dashboard</span>); <span class="cm">// ← test runs here</span>
+
+    <span class="kw">await</span> <span class="prop">context</span>.<span class="fn">close</span>(); <span class="cm">// ← teardown after use()</span>
+  },
+});
+
+<span class="cm">// Re-export expect so tests can import from one place</span>
+<span class="kw">export</span> { <span class="prop">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;</pre></div>
+  <div id="c10-4" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>playwright.config.ts</span><button class="cpbtn" onclick="doCopy('c10-4')">Copy</button></div>
+<pre><span class="cm">// playwright.config.ts — production-grade configuration</span>
+<span class="kw">import</span> { <span class="fn">defineConfig</span>, <span class="fn">devices</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="kw">export default</span> <span class="fn">defineConfig</span>({
+  <span class="prop">testDir</span>: <span class="str">'./tests'</span>,
+  <span class="prop">fullyParallel</span>: <span class="val">true</span>,             <span class="cm">// all tests run in parallel</span>
+  <span class="prop">forbidOnly</span>: !!<span class="prop">process</span>.<span class="prop">env</span>.<span class="prop">CI</span>,   <span class="cm">// fail if test.only left in</span>
+  <span class="prop">retries</span>: <span class="prop">process</span>.<span class="prop">env</span>.<span class="prop">CI</span> ? <span class="num">2</span> : <span class="num">0</span>, <span class="cm">// retry on CI only</span>
+  <span class="prop">workers</span>: <span class="prop">process</span>.<span class="prop">env</span>.<span class="prop">CI</span> ? <span class="num">4</span> : <span class="kw">undefined</span>,
+  <span class="prop">timeout</span>: <span class="num">30_000</span>,                   <span class="cm">// 30s per test</span>
+  <span class="prop">globalSetup</span>: <span class="str">'./global-setup.ts'</span>,
+  <span class="prop">globalTeardown</span>: <span class="str">'./global-teardown.ts'</span>,
+
+  <span class="prop">reporter</span>: [
+    [<span class="str">'html'</span>, { <span class="prop">open</span>: <span class="str">'never'</span> }],           <span class="cm">// HTML report</span>
+    [<span class="str">'junit'</span>, { <span class="prop">outputFile</span>: <span class="str">'results.xml'</span> }], <span class="cm">// CI XML</span>
+    [<span class="str">'allure-playwright'</span>],                     <span class="cm">// Allure</span>
+    [<span class="str">'dot'</span>],                                    <span class="cm">// Console dots</span>
+  ],
+
+  <span class="prop">use</span>: {
+    <span class="prop">baseURL</span>: <span class="str">'https://myapp.com'</span>,
+    <span class="prop">viewport</span>: { <span class="prop">width</span>: <span class="num">1280</span>, <span class="prop">height</span>: <span class="num">720</span> },
+    <span class="prop">actionTimeout</span>: <span class="num">10_000</span>,
+    <span class="prop">trace</span>: <span class="str">'on-first-retry'</span>,     <span class="cm">// trace on failure</span>
+    <span class="prop">video</span>: <span class="str">'on-first-retry'</span>,     <span class="cm">// video on failure</span>
+    <span class="prop">screenshot</span>: <span class="str">'only-on-failure'</span>,
+  },
+
+  <span class="prop">projects</span>: [
+    { <span class="prop">name</span>: <span class="str">'chromium'</span>, <span class="prop">use</span>: { ...<span class="fn">devices</span>[<span class="str">'Desktop Chrome'</span>] } },
+    { <span class="prop">name</span>: <span class="str">'firefox'</span>,  <span class="prop">use</span>: { ...<span class="fn">devices</span>[<span class="str">'Desktop Firefox'</span>] } },
+    { <span class="prop">name</span>: <span class="str">'webkit'</span>,   <span class="prop">use</span>: { ...<span class="fn">devices</span>[<span class="str">'Desktop Safari'</span>] } },
+    { <span class="prop">name</span>: <span class="str">'mobile-chrome'</span>, <span class="prop">use</span>: { ...<span class="fn">devices</span>[<span class="str">'Pixel 7'</span>] } },
+    { <span class="prop">name</span>: <span class="str">'mobile-safari'</span>, <span class="prop">use</span>: { ...<span class="fn">devices</span>[<span class="str">'iPhone 15'</span>] } },
+  ],
+});</pre></div>
+  <div id="c10-5" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>global-setup.ts</span><button class="cpbtn" onclick="doCopy('c10-5')">Copy</button></div>
+<pre><span class="cm">// global-setup.ts — runs ONCE before all tests</span>
+<span class="kw">import</span> { <span class="cls">chromium</span>, <span class="cls">FullConfig</span>, <span class="cls">request</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+<span class="kw">import</span> <span class="prop">fs</span> <span class="kw">from</span> <span class="str">'fs'</span>;
+
+<span class="kw">export default async function</span> <span class="fn">globalSetup</span>(<span class="prop">config</span>: <span class="type">FullConfig</span>) {
+
+  <span class="cm">// ── 1. Browser Login — save storageState ─────────────────────────</span>
+  <span class="kw">const</span> <span class="prop">browser</span> = <span class="kw">await</span> <span class="cls">chromium</span>.<span class="fn">launch</span>();
+  <span class="kw">const</span> <span class="prop">context</span> = <span class="kw">await</span> <span class="prop">browser</span>.<span class="fn">newContext</span>();
+  <span class="kw">const</span> <span class="prop">page</span> = <span class="kw">await</span> <span class="prop">context</span>.<span class="fn">newPage</span>();
+
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/login'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">fill</span>(<span class="str">'#email'</span>,    <span class="prop">process</span>.<span class="prop">env</span>.<span class="prop">TEST_EMAIL</span> ?? <span class="str">'admin@test.com'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">fill</span>(<span class="str">'#password'</span>, <span class="prop">process</span>.<span class="prop">env</span>.<span class="prop">TEST_PASS</span> ?? <span class="str">'Admin123!'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'button[type="submit"]'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForURL</span>(<span class="str">'**/dashboard'</span>);
+
+  <span class="cm">// Save auth state to file</span>
+  <span class="prop">fs</span>.<span class="fn">mkdirSync</span>(<span class="str">'playwright/.auth'</span>, { <span class="prop">recursive</span>: <span class="val">true</span> });
+  <span class="kw">await</span> <span class="prop">context</span>.<span class="fn">storageState</span>({ <span class="prop">path</span>: <span class="str">'playwright/.auth/user.json'</span> });
+  <span class="kw">await</span> <span class="prop">browser</span>.<span class="fn">close</span>();
+
+  <span class="cm">// ── 2. API Setup — seed test data ────────────────────────────────</span>
+  <span class="kw">const</span> <span class="prop">apiContext</span> = <span class="kw">await</span> <span class="prop">request</span>.<span class="fn">newContext</span>({
+    <span class="prop">baseURL</span>: <span class="str">'https://myapp.com'</span>,
+  });
+
+  <span class="cm">// Create test categories needed by tests</span>
+  <span class="kw">await</span> <span class="prop">apiContext</span>.<span class="fn">post</span>(<span class="str">'/api/categories'</span>, {
+    <span class="prop">data</span>: { <span class="prop">name</span>: <span class="str">'Test Category'</span>, <span class="prop">code</span>: <span class="str">'TEST_CAT'</span> },
+  });
+
+  <span class="kw">await</span> <span class="prop">apiContext</span>.<span class="fn">dispose</span>();
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">'✅ Global setup complete — auth saved, test data seeded'</span>);
+}</pre></div>
+  <div id="c10-6" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>api-ui-test.ts</span><button class="cpbtn" onclick="doCopy('c10-6')">Copy</button></div>
+<pre><span class="cm">// api-ui-test.ts — API + UI combined testing pattern</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>.<span class="fn">describe</span>(<span class="str">'User Management — API setup + UI verify'</span>, () => {
+
+  <span class="kw">let</span> <span class="prop">createdUserId</span>: <span class="type">number</span>;
+
+  <span class="cls">test</span>.<span class="fn">beforeEach</span>(<span class="kw">async</span> ({ <span class="prop">request</span> }) => {
+    <span class="cm">// Create user via API (fast, no UI dependency)</span>
+    <span class="kw">const</span> <span class="prop">response</span> = <span class="kw">await</span> <span class="prop">request</span>.<span class="fn">post</span>(<span class="str">'/api/users'</span>, {
+      <span class="prop">data</span>: { <span class="prop">name</span>: <span class="str">'Bob Singh'</span>, <span class="prop">email</span>: <span class="str">'bob@test.com'</span>, <span class="prop">role</span>: <span class="str">'viewer'</span> },
+    });
+    <span class="fn">expect</span>(<span class="prop">response</span>.<span class="fn">ok</span>()).<span class="fn">toBeTruthy</span>();
+    <span class="kw">const</span> <span class="prop">user</span> = <span class="kw">await</span> <span class="prop">response</span>.<span class="fn">json</span>();
+    <span class="prop">createdUserId</span> = <span class="prop">user</span>.<span class="prop">id</span>;
+  });
+
+  <span class="cls">test</span>(<span class="str">'user appears in UI user list'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/admin/users'</span>);
+
+    <span class="cm">// Verify API-created user is visible in UI</span>
+    <span class="kw">await</span> <span class="fn">expect</span>(
+      <span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.user-row'</span>).<span class="fn">filter</span>({ <span class="prop">hasText</span>: <span class="str">'bob@test.com'</span> })
+    ).<span class="fn">toBeVisible</span>();
+  });
+
+  <span class="cls">test</span>(<span class="str">'user role badge shows Viewer'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/admin/users'</span>);
+    <span class="kw">const</span> <span class="prop">row</span> = <span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.user-row'</span>).<span class="fn">filter</span>({ <span class="prop">hasText</span>: <span class="str">'Bob Singh'</span> });
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">row</span>.<span class="fn">locator</span>(<span class="str">'.role-badge'</span>)).<span class="fn">toHaveText</span>(<span class="str">'Viewer'</span>);
+  });
+
+  <span class="cls">test</span>.<span class="fn">afterEach</span>(<span class="kw">async</span> ({ <span class="prop">request</span> }) => {
+    <span class="cm">// Clean up via API (fast, reliable teardown)</span>
+    <span class="kw">await</span> <span class="prop">request</span>.<span class="fn">delete</span>(<span class="str">`/api/users/<span class="kw">${</span><span class="prop">createdUserId</span><span class="kw">}</span>`</span>);
+  });
+});</pre></div>
+  <div id="c10-7" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>parallel-test.ts</span><button class="cpbtn" onclick="doCopy('c10-7')">Copy</button></div>
+<pre><span class="cm">// parallel-test.ts — parallel and serial test execution patterns</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cm">// Fully parallel — all tests in this describe run simultaneously</span>
+<span class="cls">test</span>.<span class="fn">describe</span>(<span class="str">'Product pages — parallel'</span>, () => {
+  <span class="cls">test</span>.<span class="fn">describe</span>.<span class="fn">configure</span>({ <span class="prop">mode</span>: <span class="str">'parallel'</span> });
+
+  <span class="cls">test</span>(<span class="str">'homepage loads'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/'</span>);
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveTitle</span>(<span class="str">/MyApp/</span>);
+  });
+
+  <span class="cls">test</span>(<span class="str">'products page loads'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/products'</span>);
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.product-grid'</span>)).<span class="fn">toBeVisible</span>();
+  });
+});
+
+<span class="cm">// Serial — tests run in ORDER (use for wizard flows)</span>
+<span class="cls">test</span>.<span class="fn">describe</span>(<span class="str">'Checkout wizard — serial'</span>, () => {
+  <span class="cls">test</span>.<span class="fn">describe</span>.<span class="fn">configure</span>({ <span class="prop">mode</span>: <span class="str">'serial'</span> });
+
+  <span class="cls">test</span>(<span class="str">'step 1: add to cart'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/products'</span>);
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'.add-to-cart'</span>);
+  });
+
+  <span class="cls">test</span>(<span class="str">'step 2: checkout'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/cart'</span>);
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#checkout-btn'</span>);
+  });
+});
+
+<span class="cm">// Unique test data per parallel worker</span>
+<span class="cls">test</span>(<span class="str">'parallel-safe data isolation'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }, <span class="prop">testInfo</span>) => {
+  <span class="cm">// Use testId to make data unique across workers</span>
+  <span class="kw">const</span> <span class="prop">email</span> = <span class="str">`user_<span class="kw">${</span><span class="prop">testInfo</span>.<span class="prop">testId</span><span class="kw">}</span>@test.com`</span>;
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/register'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">fill</span>(<span class="str">'#email'</span>, <span class="prop">email</span>);
+});</pre></div>
+  <div id="c10-8" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>ci-github-actions.yml</span><button class="cpbtn" onclick="doCopy('c10-8')">Copy</button></div>
+<pre><span class="cm"># ci-github-actions.yml — GitHub Actions CI pipeline for Playwright</span>
+<span class="cm"># File: .github/workflows/playwright.yml</span>
+
+<span class="prop">name</span>: <span class="str">Playwright Tests</span>
+
+<span class="prop">on</span>:
+  <span class="prop">push</span>:
+    <span class="prop">branches</span>: [main, develop]
+  <span class="prop">pull_request</span>:
+    <span class="prop">branches</span>: [main]
+
+<span class="prop">jobs</span>:
+  <span class="prop">test</span>:
+    <span class="prop">timeout-minutes</span>: <span class="num">60</span>
+    <span class="prop">runs-on</span>: ubuntu-latest
+
+    <span class="prop">steps</span>:
+      <span class="cm"># Checkout code</span>
+      - <span class="prop">uses</span>: actions/checkout@v4
+
+      <span class="cm"># Setup Node.js</span>
+      - <span class="prop">uses</span>: actions/setup-node@v4
+        <span class="prop">with</span>:
+          <span class="prop">node-version</span>: <span class="str">'20'</span>
+          <span class="prop">cache</span>: <span class="str">'npm'</span>
+
+      <span class="cm"># Install dependencies</span>
+      - <span class="prop">name</span>: Install dependencies
+        <span class="prop">run</span>: npm ci
+
+      <span class="cm"># Install Playwright browsers + system deps</span>
+      - <span class="prop">name</span>: Install Playwright Browsers
+        <span class="prop">run</span>: npx playwright install --with-deps
+
+      <span class="cm"># Run Playwright tests</span>
+      - <span class="prop">name</span>: Run Playwright tests
+        <span class="prop">run</span>: npx playwright test
+        <span class="prop">env</span>:
+          <span class="prop">CI</span>: <span class="str">'true'</span>
+          <span class="prop">TEST_EMAIL</span>: ${{ secrets.TEST_EMAIL }}
+          <span class="prop">TEST_PASS</span>: ${{ secrets.TEST_PASS }}
+
+      <span class="cm"># Upload report + artifacts (always, even on failure)</span>
+      - <span class="prop">uses</span>: actions/upload-artifact@v4
+        <span class="prop">if</span>: always()
+        <span class="prop">with</span>:
+          <span class="prop">name</span>: playwright-report
+          <span class="prop">path</span>: playwright-report/
+          <span class="prop">retention-days</span>: <span class="num">30</span>
+
+      - <span class="prop">uses</span>: actions/upload-artifact@v4
+        <span class="prop">if</span>: failure()
+        <span class="prop">with</span>:
+          <span class="prop">name</span>: test-results-on-failure
+          <span class="prop">path</span>: test-results/
+          <span class="prop">retention-days</span>: <span class="num">7</span></pre></div>
+  <div id="c10-9" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>allure-report.ts</span><button class="cpbtn" onclick="doCopy('c10-9')">Copy</button></div>
+<pre><span class="cm">// allure-report.ts — Allure integration: tags, steps, attachments</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+<span class="kw">import</span> { <span class="fn">allure</span> } <span class="kw">from</span> <span class="str">'allure-playwright'</span>;
+
+<span class="cls">test</span>(<span class="str">'checkout flow with Allure annotations'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+
+  <span class="cm">// Allure metadata</span>
+  <span class="fn">allure</span>.<span class="fn">epic</span>(<span class="str">'E-Commerce'</span>);
+  <span class="fn">allure</span>.<span class="fn">feature</span>(<span class="str">'Checkout'</span>);
+  <span class="fn">allure</span>.<span class="fn">story</span>(<span class="str">'Guest checkout'</span>);
+  <span class="fn">allure</span>.<span class="fn">severity</span>(<span class="str">'critical'</span>);
+  <span class="fn">allure</span>.<span class="fn">owner</span>(<span class="str">'qa-team'</span>);
+  <span class="fn">allure</span>.<span class="fn">tag</span>(<span class="str">'smoke'</span>, <span class="str">'regression'</span>);
+
+  <span class="cm">// Allure steps — show structured steps in report</span>
+  <span class="kw">await</span> <span class="fn">allure</span>.<span class="fn">step</span>(<span class="str">'Navigate to product page'</span>, <span class="kw">async</span> () => {
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/products/laptop-pro'</span>);
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'h1'</span>)).<span class="fn">toContainText</span>(<span class="str">'Laptop Pro'</span>);
+  });
+
+  <span class="kw">await</span> <span class="fn">allure</span>.<span class="fn">step</span>(<span class="str">'Add product to cart'</span>, <span class="kw">async</span> () => {
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#add-to-cart'</span>);
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.cart-count'</span>)).<span class="fn">toHaveText</span>(<span class="str">'1'</span>);
+  });
+
+  <span class="kw">await</span> <span class="fn">allure</span>.<span class="fn">step</span>(<span class="str">'Proceed to checkout'</span>, <span class="kw">async</span> () => {
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#checkout-btn'</span>);
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveURL</span>(<span class="str">/checkout/</span>);
+  });
+
+  <span class="cm">// Attach screenshot to Allure report</span>
+  <span class="kw">const</span> <span class="prop">screenshot</span> = <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">screenshot</span>();
+  <span class="kw">await</span> <span class="fn">allure</span>.<span class="fn">attachment</span>(<span class="str">'Checkout screenshot'</span>, <span class="prop">screenshot</span>, <span class="str">'image/png'</span>);
+
+  <span class="cm">// Allure custom parameter</span>
+  <span class="fn">allure</span>.<span class="fn">parameter</span>(<span class="str">'environment'</span>, <span class="prop">process</span>.<span class="prop">env</span>.<span class="prop">TEST_ENV</span> ?? <span class="str">'staging'</span>);
+});</pre></div>
+  <div id="c10-10" class="cpan"><div class="ch"><span class="cfn"><i class="ti ti-file-code" aria-hidden="true"></i>full-e2e.spec.ts</span><button class="cpbtn" onclick="doCopy('c10-10')">Copy</button></div>
+<pre><span class="cm">// full-e2e.spec.ts — End-to-end capstone test combining ALL sessions</span>
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'./fixtures'</span>;     <span class="cm">// custom fixtures</span>
+<span class="kw">import</span> { <span class="cls">LoginPage</span>, <span class="cls">DashboardPage</span> } <span class="kw">from</span> <span class="str">'./pom-login'</span>;
+
+<span class="cls">test</span>.<span class="fn">describe</span>(<span class="str">'Full E2E: Register → Login → Shop → Checkout → Verify'</span>, () => {
+
+  <span class="cls">test</span>(<span class="str">'complete purchase journey'</span>, <span class="kw">async</span> ({ <span class="prop">page</span>, <span class="prop">request</span> }, <span class="prop">testInfo</span>) => {
+
+    <span class="cm">// ── SETUP via API ──────────────────────────────────────────────</span>
+    <span class="kw">const</span> <span class="prop">email</span> = <span class="str">`buyer_<span class="kw">${</span><span class="prop">testInfo</span>.<span class="prop">testId</span><span class="kw">}</span>@test.com`</span>;
+    <span class="kw">await</span> <span class="prop">request</span>.<span class="fn">post</span>(<span class="str">'/api/users'</span>, { <span class="prop">data</span>: { <span class="prop">email</span>, <span class="prop">password</span>: <span class="str">'Pass123!'</span> } });
+
+    <span class="cm">// ── LOGIN (S1+S5: context + navigation) ─────────────────────</span>
+    <span class="kw">const</span> <span class="prop">loginPage</span> = <span class="kw">new</span> <span class="cls">LoginPage</span>(<span class="prop">page</span>);
+    <span class="kw">await</span> <span class="prop">loginPage</span>.<span class="fn">goto</span>();
+    <span class="kw">await</span> <span class="prop">loginPage</span>.<span class="fn">login</span>(<span class="prop">email</span>, <span class="str">'Pass123!'</span>);
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>).<span class="fn">toHaveURL</span>(<span class="str">/dashboard/</span>);     <span class="cm">// S8: assert</span>
+
+    <span class="cm">// ── SEARCH (S6+S7: locators + actions) ──────────────────────</span>
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'/products'</span>);
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">getByPlaceholder</span>(<span class="str">'Search products...'</span>).<span class="fn">fill</span>(<span class="str">'laptop'</span>);
+
+    <span class="cm">// Wait for search API response (S9: waiting)</span>
+    <span class="kw">const</span> <span class="prop">searchResp</span> = <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForResponse</span>(<span class="str">'**/api/search**'</span>);
+    <span class="fn">expect</span>(<span class="prop">searchResp</span>.<span class="fn">ok</span>()).<span class="fn">toBeTruthy</span>();
+
+    <span class="cm">// ── ADD TO CART (S7: actions, S8: assertions) ────────────────</span>
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.product-card'</span>).<span class="fn">first</span>()
+      .<span class="fn">getByRole</span>(<span class="str">'button'</span>, { <span class="prop">name</span>: <span class="str">'Add to Cart'</span> }).<span class="fn">click</span>();
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.cart-badge'</span>)).<span class="fn">toHaveText</span>(<span class="str">'1'</span>);
+
+    <span class="cm">// ── CHECKOUT (S4: dialog, S5: navigation) ───────────────────</span>
+    <span class="prop">page</span>.<span class="fn">on</span>(<span class="str">'dialog'</span>, <span class="kw">async</span> (<span class="prop">d</span>) => <span class="kw">await</span> <span class="prop">d</span>.<span class="fn">accept</span>());
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'#checkout-btn'</span>);
+    <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForURL</span>(<span class="str">'**/order-success'</span>);
+
+    <span class="cm">// ── FINAL ASSERTIONS (S8: soft assertions) ──────────────────</span>
+    <span class="kw">await</span> <span class="fn">expect</span>.<span class="fn">soft</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.order-id'</span>)).<span class="fn">toBeVisible</span>();
+    <span class="kw">await</span> <span class="fn">expect</span>.<span class="fn">soft</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.order-status'</span>)).<span class="fn">toHaveText</span>(<span class="str">'Confirmed'</span>);
+    <span class="kw">await</span> <span class="fn">expect</span>.<span class="fn">soft</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.email-confirm'</span>)).<span class="fn">toContainText</span>(<span class="prop">email</span>);
+
+    <span class="cm">// Visual regression (S8: screenshot)</span>
+    <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.success-card'</span>)).<span class="fn">toHaveScreenshot</span>(<span class="str">'order-success.png'</span>);
+
+    <span class="cm">// TEARDOWN via API</span>
+    <span class="kw">await</span> <span class="prop">request</span>.<span class="fn">delete</span>(<span class="str">`/api/users?email=<span class="kw">${</span><span class="prop">email</span><span class="kw">}</span>`</span>);
+  });
+});</pre></div>
+</div>
+</div>
+
+<script>
+function tq(el){const b=el.closest('.qa');const a=b.querySelector('.qaa');b.classList.toggle('open');a.classList.toggle('open')}
+function doCopy(id){const p=document.getElementById(id);const t=p.querySelector('pre').innerText;navigator.clipboard.writeText(t).then(()=>{const b=p.querySelector('.cpbtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000)})}
+
+document.getElementById('snav').addEventListener('click',e=>{
+  const btn=e.target.closest('.sbtn');if(!btn)return;
+  const sid=btn.dataset.s;
+  document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.sc').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sc-'+sid).classList.add('active');
+});
+
+['s8','s9','s10'].forEach(sid=>{
+  const st=document.getElementById('st-'+sid);
+  if(!st)return;
+  st.addEventListener('click',e=>{
+    const btn=e.target.closest('.secbtn');if(!btn)return;
+    const p=btn.dataset.p;
+    st.querySelectorAll('.secbtn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#sc-'+sid+' .pan').forEach(x=>x.classList.remove('active'));
+    const target=document.getElementById(sid+'-'+p);
+    if(target)target.classList.add('active');
+  });
+  const ct=document.getElementById('ct-'+sid);
+  if(!ct)return;
+  ct.addEventListener('click',e=>{
+    const btn=e.target.closest('.ctb');if(!btn)return;
+    const cid=btn.dataset.c;
+    ct.querySelectorAll('.ctb').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const prefix=sid==='s10'?'c10':'c'+sid.slice(1);
+    document.querySelectorAll('[id^="'+prefix+'-"]').forEach(x=>x.classList.remove('active'));
+    const target=document.getElementById(cid);
+    if(target)target.classList.add('active');
+  });
+});
+</script>
+
+<script>
+/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
+(function(){try{
+  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
+    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
+      btn.addEventListener('click',function(){
+        var t=this.nextElementSibling;
+        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
+      });
+    }
+  });
+  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
+    if(!tab.dataset.vTab){tab.dataset.vTab='1';
+      tab.addEventListener('click',function(){
+        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
+        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
+      });
+    }
+  });
+}catch(e){console.log('VE:',e)}})();
+</script>
+</body>
+</html>

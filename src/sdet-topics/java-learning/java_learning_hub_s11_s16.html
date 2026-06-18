@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Java Learning Hub — Sessions 11–16 | Collections, Strings, Constructors</title>
+    <style>
+    /* === ORIGINAL STYLES (unchanged) === */
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--acc:#5048c8;--acc-l:#eeedfe;--acc-m:#7f77dd;--ok:#1d9e75;--ok-l:#e1f5ee;--warn:#ba7517;--warn-l:#faeeda;--dan:#a32d2d;--dan-l:#fcebeb;--cor:#993c1d;--cor-l:#faece7}
+    .hub{padding:1rem 0}
+    .phase-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+    .phase-pill{font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-secondary)}
+    .phase-pill.active{background:var(--acc-l);border-color:var(--acc-m);color:var(--acc)}
+    .tab-bar{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;flex-wrap:nowrap}
+    .tab-bar::-webkit-scrollbar{display:none}
+    .tab-btn{flex-shrink:0;font-size:12px;padding:6px 11px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap}
+    .tab-btn:hover{background:var(--color-background-primary);border-color:var(--color-border-secondary)}
+    .tab-btn.active{background:var(--acc);border-color:var(--acc);color:#fff}
+    .tab-btn.done::after{content:" ✓";opacity:.7}
+    .prog-track{height:3px;background:var(--color-background-secondary);border-radius:2px;margin:10px 0 18px;overflow:hidden}
+    .prog-fill{height:100%;background:var(--acc);border-radius:2px;transition:width .4s ease}
+    .session{animation:fadeIn .2s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+    .sec{margin-bottom:22px}
+    .sec-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .sec-label i{font-size:14px}
+    .ov-card{background:var(--acc-l);border:0.5px solid var(--acc-m);border-radius:var(--border-radius-lg);padding:14px 16px}
+    .ov-card .ov-title{font-size:16px;font-weight:500;color:var(--acc);margin-bottom:6px}
+    .ov-card p{font-size:13px;color:#534ab7;line-height:1.6}
+    .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+    .meta-item{background:rgba(255,255,255,0.6);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px}
+    .meta-item strong{display:block;color:var(--acc);font-weight:500;margin-bottom:2px;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+    .meta-item span{color:#534ab7}
+    .ol-list{display:flex;flex-direction:column;gap:6px}
+    .ol-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-left:3px solid var(--acc-m);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:8px 12px;font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+    .ol-item strong{color:var(--color-text-primary);font-weight:500}
+    .con-block{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px}
+    .con-block h4{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+    .con-block p{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+    .arch{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;margin-top:8px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);line-height:1.8;overflow-x:auto;white-space:pre}
+    .arch .kw{color:var(--acc);font-weight:500}
+    .arch .cm{color:var(--ok)}
+    .arch .cls{color:#D85A30}
+    .arch .str{color:var(--warn)}
+    .arch .ann{color:#993556}
+    .code-block{background:rgba(0,0,0,0.03);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px;overflow-x:auto}
+    .code-block .ct{font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .code-block pre{font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);line-height:1.7;white-space:pre}
+    .code-block .kw{color:var(--acc);font-weight:500}
+    .code-block .cm{color:#0F6E56;font-style:italic}
+    .code-block .str{color:#854F0B}
+    .code-block .cls{color:#D85A30}
+    .code-block .num{color:var(--acc)}
+    .code-block .ann{color:#993556}
+    .bp-list{display:flex;flex-direction:column;gap:6px}
+    .bp-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+    .bp-icon{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;margin-top:1px}
+    .bp-icon.ok{background:var(--ok-l);color:var(--ok)}
+    .bp-icon.warn{background:var(--warn-l);color:var(--warn)}
+    .qa-list{display:flex;flex-direction:column;gap:8px}
+    .qa-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+    .qa-q{padding:10px 14px;font-size:13px;font-weight:500;color:var(--color-text-primary);background:var(--color-background-secondary);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .qa-a{padding:10px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.6;display:none;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+    .qa-a.open{display:block}
+    .badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;margin-right:4px}
+    .badge.fund{background:var(--ok-l);color:var(--ok)}
+    .badge.inter{background:var(--warn-l);color:var(--warn)}
+    .badge.adv{background:var(--dan-l);color:var(--dan)}
+    .badge.auto{background:var(--cor-l);color:var(--cor)}
+    .nav-row{display:flex;justify-content:space-between;margin-top:16px}
+    .nav-btn{font-size:13px;padding:7px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;display:flex;align-items:center;gap:6px}
+    .nav-btn:hover{background:var(--color-background-secondary)}
+    .nav-btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+    .nav-btn.primary:hover{opacity:.9}
+    .nav-btn:disabled{opacity:.35;cursor:not-allowed}
+    .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .tag{font-size:11px;padding:3px 9px;border-radius:10px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+    /* sr-only for accessibility */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+    </style>
+
+    <!-- ===== ADDITIONAL RESPONSIVE & UI FIXES ===== -->
+    <style>
+    /* base responsive overrides — does not alter any original functional classes */
+    body {
+        background: #fbfafc;
+        margin: 0;
+        padding: 0 12px;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    }
+    .hub {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1rem 0.5rem;
+    }
+    /* improve readability on small screens */
+    .phase-bar {
+        gap: 8px;
+        justify-content: flex-start;
+    }
+    .phase-pill {
+        font-size: 10px;
+        padding: 4px 12px;
+    }
+    .tab-bar {
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+    .tab-btn {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+    /* meta grid becomes single column on mobile */
+    @media (max-width: 640px) {
+        .meta-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .ov-card .ov-title {
+            font-size: 15px;
+        }
+        .nav-row {
+            flex-direction: column;
+            gap: 12px;
+            align-items: stretch;
+        }
+        .nav-btn {
+            justify-content: center;
+        }
+        .session h2 {
+            font-size: 1.35rem;
+        }
+        .code-block pre {
+            font-size: 11px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .arch {
+            font-size: 11px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .con-block, .ov-card, .code-block {
+            padding: 12px;
+        }
+        .badge {
+            font-size: 9px;
+        }
+        .tag {
+            font-size: 10px;
+        }
+        .qa-q, .qa-a {
+            font-size: 12px;
+        }
+    }
+    @media (max-width: 768px) {
+        .sec-label {
+            font-size: 10px;
+        }
+        .tab-btn {
+            font-size: 11px;
+            padding: 6px 10px;
+        }
+    }
+    /* ensure .tab-bar stays scrollable horizontally on narrow screens */
+    .tab-bar {
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+    /* preserve spacing for icons (ti-* may not load, but keep original spacing) */
+    [class*="ti-"] {
+        display: inline-block;
+        width: 1.2em;
+        text-align: center;
+    }
+    /* optional: make click targets friendly */
+    .qa-q {
+        transition: background 0.1s;
+    }
+    .qa-q:active {
+        background: var(--color-background-tertiary, #e9e9ef);
+    }
+    </style>
+</head>
+<body>
+<div class="hub">
+<h2 class="sr-only">Java Learning Hub Sessions 11 to 16 covering Collections, Strings, and Constructors</h2>
+<div class="phase-bar" id="phaseBar"></div>
+<div class="tab-bar" id="tabBar"></div>
+<div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+<div id="content"></div>
+</div>
+
+<script>
+const SS=[
+{id:0,num:11,title:"List vs Set vs Map",phase:"Intermediate",badge:"inter",
+tags:["ArrayList","HashSet","HashMap","Collection","duplicates","key-value"],
+overview:{def:"List, Set, and Map are the three core Collection interfaces in Java. Each solves a different data-storage problem: ordered sequences, unique values, or key-value pairs.",
+what:"Three interfaces of the Java Collections Framework for storing groups of objects.",
+why:"To choose the right data structure for the right problem — order, uniqueness, or lookup.",
+when:"List for ordered/indexed data; Set for unique values; Map for key-value associations.",
+where:"java.util package; used everywhere in Java applications.",
+how:"Instantiate via their implementing classes: ArrayList, HashSet, HashMap."},
+oneliners:[
+"<strong>List</strong> — Ordered, index-based, allows duplicates. Use when sequence matters.",
+"<strong>Set</strong> — Unordered (except LinkedHashSet/TreeSet), NO duplicates. Use for uniqueness.",
+"<strong>Map</strong> — Key-value pairs, keys unique. Use when you need lookup by a key.",
+"<strong>ArrayList vs LinkedList</strong> — ArrayList is fast for get; LinkedList is fast for insert/delete.",
+"<strong>HashMap vs TreeMap</strong> — HashMap is O(1) unsorted; TreeMap is O(log n) sorted by key."
+],
+concepts:[
+{title:"Collection hierarchy snapshot",body:"All three extend from the Collection root (Map is separate). Key implementations to know:",arch:`<span class='cls'>Collection</span>
+├── <span class='cls'>List</span>   → <span class='cls'>ArrayList</span>, <span class='cls'>LinkedList</span>, <span class='cls'>Vector</span>
+├── <span class='cls'>Set</span>    → <span class='cls'>HashSet</span>, <span class='cls'>LinkedHashSet</span>, <span class='cls'>TreeSet</span>
+└── <span class='cls'>Queue</span>  → <span class='cls'>PriorityQueue</span>, <span class='cls'>ArrayDeque</span>
+
+<span class='cls'>Map</span> (separate root)
+├── <span class='cls'>HashMap</span>, <span class='cls'>LinkedHashMap</span>, <span class='cls'>TreeMap</span>
+└── <span class='cls'>Hashtable</span> (legacy, thread-safe)`},
+{title:"Quick comparison table",body:"",arch:`Feature       List          Set           Map
+Duplicates    ✅ Yes        ❌ No         Keys: ❌ No
+Order         Insertion     Unordered*    Unordered*
+Index access  ✅ get(i)     ❌ No         By key
+Null          One null      One null      One null key
+*LinkedHashSet/LinkedHashMap preserve insertion order
+*TreeSet/TreeMap sorted`}
+],
+codes:[
+{title:"Example 1 — ArrayList (List)",code:`<span class='kw'>import</span> java.util.*;
+
+<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='cls'>List</span>&lt;<span class='cls'>String</span>&gt; fruits = <span class='kw'>new</span> <span class='cls'>ArrayList</span>&lt;&gt;();
+    fruits.add(<span class='str'>"Apple"</span>);
+    fruits.add(<span class='str'>"Mango"</span>);
+    fruits.add(<span class='str'>"Apple"</span>); <span class='cm'>// duplicates allowed</span>
+
+    System.out.println(fruits.get(<span class='num'>0</span>)); <span class='cm'>// Apple (index)</span>
+    System.out.println(fruits.size());  <span class='cm'>// 3</span>
+    fruits.remove(<span class='str'>"Mango"</span>);
+    System.out.println(fruits);         <span class='cm'>// [Apple, Apple]</span>
+
+    <span class='kw'>for</span> (<span class='cls'>String</span> f : fruits) System.out.println(f);
+}`},
+{title:"Example 2 — HashSet (Set)",code:`<span class='cls'>Set</span>&lt;<span class='cls'>String</span>&gt; cities = <span class='kw'>new</span> <span class='cls'>HashSet</span>&lt;&gt;();
+cities.add(<span class='str'>"Delhi"</span>);
+cities.add(<span class='str'>"Mumbai"</span>);
+cities.add(<span class='str'>"Delhi"</span>); <span class='cm'>// duplicate — silently ignored</span>
+
+System.out.println(cities.size());         <span class='cm'>// 2</span>
+System.out.println(cities.contains(<span class='str'>"Delhi"</span>)); <span class='cm'>// true</span>
+
+<span class='cm'>// TreeSet — sorted order</span>
+<span class='cls'>Set</span>&lt;<span class='cls'>String</span>&gt; sorted = <span class='kw'>new</span> <span class='cls'>TreeSet</span>&lt;&gt;(cities);
+System.out.println(sorted); <span class='cm'>// [Delhi, Mumbai]</span>`},
+{title:"Example 3 — HashMap (Map)",code:`<span class='cls'>Map</span>&lt;<span class='cls'>String</span>, <span class='cls'>Integer</span>&gt; scores = <span class='kw'>new</span> <span class='cls'>HashMap</span>&lt;&gt;();
+scores.put(<span class='str'>"Alice"</span>, <span class='num'>95</span>);
+scores.put(<span class='str'>"Bob"</span>,   <span class='num'>82</span>);
+scores.put(<span class='str'>"Alice"</span>, <span class='num'>99</span>); <span class='cm'>// key duplicate — overwrites</span>
+
+System.out.println(scores.get(<span class='str'>"Alice"</span>));    <span class='cm'>// 99</span>
+System.out.println(scores.containsKey(<span class='str'>"Bob"</span>)); <span class='cm'>// true</span>
+
+<span class='cm'>// Iterate entries</span>
+<span class='kw'>for</span> (<span class='cls'>Map</span>.<span class='cls'>Entry</span>&lt;<span class='cls'>String</span>,<span class='cls'>Integer</span>&gt; e : scores.entrySet())
+    System.out.println(e.getKey() + <span class='str'>" = "</span> + e.getValue());`},
+{title:"Example 4 — When to use which",code:`<span class='cm'>// Shopping cart — order matters, duplicates ok → LIST</span>
+<span class='cls'>List</span>&lt;<span class='cls'>String</span>&gt; cart = <span class='kw'>new</span> <span class='cls'>ArrayList</span>&lt;&gt;();
+cart.add(<span class='str'>"Laptop"</span>); cart.add(<span class='str'>"Laptop"</span>); <span class='cm'>// qty 2 ok</span>
+
+<span class='cm'>// Visited URLs — no duplicates needed → SET</span>
+<span class='cls'>Set</span>&lt;<span class='cls'>String</span>&gt; visited = <span class='kw'>new</span> <span class='cls'>HashSet</span>&lt;&gt;();
+visited.add(<span class='str'>"google.com"</span>); visited.add(<span class='str'>"google.com"</span>);
+
+<span class='cm'>// Student roll → grade mapping → MAP</span>
+<span class='cls'>Map</span>&lt;<span class='cls'>Integer</span>, <span class='cls'>String</span>&gt; roster = <span class='kw'>new</span> <span class='cls'>HashMap</span>&lt;&gt;();
+roster.put(<span class='num'>101</span>, <span class='str'>"Riya"</span>); roster.put(<span class='num'>102</span>, <span class='str'>"Aman"</span>);`},
+{title:"Example 5 — Collections utility methods",code:`<span class='cls'>List</span>&lt;<span class='cls'>Integer</span>&gt; nums = <span class='kw'>new</span> <span class='cls'>ArrayList</span>&lt;&gt;(
+    <span class='cls'>Arrays</span>.asList(<span class='num'>5</span>,<span class='num'>2</span>,<span class='num'>8</span>,<span class='num'>1</span>,<span class='num'>9</span>));
+
+<span class='cls'>Collections</span>.sort(nums);           <span class='cm'>// [1,2,5,8,9]</span>
+<span class='cls'>Collections</span>.reverse(nums);        <span class='cm'>// [9,8,5,2,1]</span>
+System.out.println(<span class='cls'>Collections</span>.max(nums)); <span class='cm'>// 9</span>
+System.out.println(<span class='cls'>Collections</span>.min(nums)); <span class='cm'>// 1</span>
+<span class='cls'>Collections</span>.shuffle(nums);        <span class='cm'>// random order</span>`}
+],
+bestPractices:[
+{ok:true,text:"Declare variables using interface type: List<String> list = new ArrayList<>(); — not ArrayList<String>."},
+{ok:true,text:"Use HashMap for O(1) lookups; use TreeMap when you need sorted keys."},
+{ok:false,text:"Don't use Vector or Hashtable — they are legacy synchronized versions; use ArrayList/HashMap with explicit synchronization if needed."},
+{ok:false,text:"Don't iterate and remove from a List inside a for-each — use Iterator.remove() to avoid ConcurrentModificationException."},
+{ok:true,text:"Use LinkedHashMap when you need insertion-order iteration on a Map."}
+],
+qa:[
+{q:"Q1. What is the difference between ArrayList and LinkedList?",a:"ArrayList uses a dynamic array — O(1) random access by index, O(n) insert/delete in middle. LinkedList uses doubly-linked nodes — O(n) random access, O(1) insert/delete at known position. Use ArrayList for frequent reads; LinkedList for frequent insertions."},
+{q:"Q2. How does HashSet guarantee uniqueness?",a:"HashSet uses a HashMap internally. When you add an element, it calls hashCode() to find the bucket, then equals() to check for duplicates. If equals() returns true for an existing element, the add is ignored."},
+{q:"Q3. What is the difference between HashMap and TreeMap?",a:"HashMap stores entries in a hash table — unordered, O(1) average get/put. TreeMap stores entries in a Red-Black tree — sorted by key, O(log n) get/put. Use HashMap for performance; TreeMap when sorted iteration is needed."},
+{q:"Q4. Can a Map have duplicate values?",a:"Yes. Map keys must be unique, but values can repeat. Multiple keys can map to the same value. Example: {A→1, B→1, C→2} — 1 appears twice as a value."},
+{q:"Q5. What is fail-fast vs fail-safe iterator?",a:"Fail-fast (ArrayList, HashMap iterators) throws ConcurrentModificationException if the collection is modified during iteration. Fail-safe (CopyOnWriteArrayList, ConcurrentHashMap) iterates on a snapshot copy and doesn't throw, but may not reflect the latest changes."}
+]
+},
+
+{id:1,num:12,title:"Collections in Test Automation",phase:"Automation",badge:"auto",
+tags:["Selenium","TestNG","automation","WebElement","List","Map","DataProvider"],
+overview:{def:"In test automation, Java Collections are used everywhere — storing WebElements, test data, locators, response maps, and parameterized inputs for TestNG DataProvider.",
+what:"Applying List, Set, and Map in real Selenium/TestNG automation scenarios.",
+why:"To write clean, data-driven, reusable test code instead of hardcoded one-off scripts.",
+when:"When handling multiple web elements, reading test data, mapping locators, or validating API responses.",
+where:"Page Object Models, test utilities, DataProviders, API response validators.",
+how:"Use List<WebElement> for elements, Map for test data/responses, Set to detect duplicates."},
+oneliners:[
+"<strong>List&lt;WebElement&gt;</strong> — findElements() returns List; iterate to interact with all matching elements.",
+"<strong>Map&lt;String,String&gt;</strong> — Store locator → XPath mappings for dynamic element lookup.",
+"<strong>Set for uniqueness</strong> — Detect duplicate dropdown values or duplicate links on a page.",
+"<strong>Map as test data</strong> — Pass field → value map to a generic form-fill utility method.",
+"<strong>List in DataProvider</strong> — Build List of Object[] to feed parameterized test scenarios."
+],
+concepts:[
+{title:"Most common automation uses",body:"",arch:`<span class='cls'>Automation Use Case</span>       <span class='cls'>Collection</span>
+Multiple dropdowns         <span class='kw'>List</span>&lt;<span class='cls'>WebElement</span>&gt;
+Form field → value         <span class='kw'>Map</span>&lt;<span class='cls'>String</span>,<span class='cls'>String</span>&gt;
+Unique link check          <span class='kw'>Set</span>&lt;<span class='cls'>String</span>&gt;
+API JSON response          <span class='kw'>Map</span>&lt;<span class='cls'>String</span>,<span class='cls'>Object</span>&gt;
+DataProvider rows          <span class='kw'>List</span>&lt;<span class='cls'>Object</span>[]&gt;
+Expected vs actual         <span class='kw'>List</span>.equals() / <span class='kw'>Set</span>.containsAll()`}
+],
+codes:[
+{title:"Example 1 — List&lt;WebElement&gt; to interact with all checkboxes",code:`<span class='cls'>List</span>&lt;<span class='cls'>WebElement</span>&gt; checkboxes =
+    driver.findElements(<span class='cls'>By</span>.cssSelector(<span class='str'>"input[type='checkbox']"</span>));
+
+System.out.println(<span class='str'>"Total: "</span> + checkboxes.size());
+
+<span class='kw'>for</span> (<span class='cls'>WebElement</span> cb : checkboxes) {
+    <span class='kw'>if</span> (!cb.isSelected()) cb.click(); <span class='cm'>// select all</span>
+}
+
+<span class='cm'>// Get all checkbox values</span>
+<span class='cls'>List</span>&lt;<span class='cls'>String</span>&gt; values = <span class='kw'>new</span> <span class='cls'>ArrayList</span>&lt;&gt;();
+<span class='kw'>for</span> (<span class='cls'>WebElement</span> cb : checkboxes)
+    values.add(cb.getAttribute(<span class='str'>"value"</span>));`},
+{title:"Example 2 — Map for form-fill utility",code:`<span class='cm'>// Generic reusable form-fill method</span>
+<span class='kw'>public void</span> fillForm(<span class='cls'>Map</span>&lt;<span class='cls'>String</span>, <span class='cls'>String</span>&gt; data) {
+    <span class='kw'>for</span> (<span class='cls'>Map</span>.<span class='cls'>Entry</span>&lt;<span class='cls'>String</span>,<span class='cls'>String</span>&gt; entry : data.entrySet()) {
+        <span class='cls'>WebElement</span> field = driver.findElement(
+            <span class='cls'>By</span>.name(entry.getKey()));
+        field.clear();
+        field.sendKeys(entry.getValue());
+    }
+}
+
+<span class='cm'>// Usage in test</span>
+<span class='cls'>Map</span>&lt;<span class='cls'>String</span>,<span class='cls'>String</span>&gt; formData = <span class='kw'>new</span> <span class='cls'>LinkedHashMap</span>&lt;&gt;();
+formData.put(<span class='str'>"username"</span>, <span class='str'>"admin"</span>);
+formData.put(<span class='str'>"email"</span>,    <span class='str'>"admin@test.com"</span>);
+formData.put(<span class='str'>"phone"</span>,    <span class='str'>"9876543210"</span>);
+fillForm(formData);`},
+{title:"Example 3 — Set to detect duplicate links",code:`<span class='cls'>List</span>&lt;<span class='cls'>WebElement</span>&gt; links =
+    driver.findElements(<span class='cls'>By</span>.tagName(<span class='str'>"a"</span>));
+
+<span class='cls'>Set</span>&lt;<span class='cls'>String</span>&gt; unique = <span class='kw'>new</span> <span class='cls'>HashSet</span>&lt;&gt;();
+<span class='cls'>List</span>&lt;<span class='cls'>String</span>&gt; duplicates = <span class='kw'>new</span> <span class='cls'>ArrayList</span>&lt;&gt;();
+
+<span class='kw'>for</span> (<span class='cls'>WebElement</span> link : links) {
+    <span class='kw'>String</span> href = link.getAttribute(<span class='str'>"href"</span>);
+    <span class='kw'>if</span> (!unique.add(href)) { <span class='cm'>// add returns false if dup</span>
+        duplicates.add(href);
+    }
+}
+System.out.println(<span class='str'>"Duplicates: "</span> + duplicates);`},
+{title:"Example 4 — Map for API response validation",code:`<span class='cm'>// Parse JSON response as Map (using RestAssured)</span>
+<span class='cls'>Map</span>&lt;<span class='cls'>String</span>, <span class='cls'>Object</span>&gt; response =
+    given().get(<span class='str'>"/api/user/1"</span>)
+           .then().extract().response().as(<span class='cls'>Map</span>.<span class='kw'>class</span>);
+
+<span class='cm'>// Assert specific fields</span>
+Assert.assertEquals(response.get(<span class='str'>"name"</span>), <span class='str'>"Alice"</span>);
+Assert.assertEquals(response.get(<span class='str'>"status"</span>), <span class='str'>"active"</span>);
+
+<span class='cm'>// Validate all expected keys exist</span>
+<span class='cls'>Set</span>&lt;<span class='cls'>String</span>&gt; expected = <span class='kw'>new</span> <span class='cls'>HashSet</span>&lt;&gt;(
+    <span class='cls'>Arrays</span>.asList(<span class='str'>"id"</span>,<span class='str'>"name"</span>,<span class='str'>"email"</span>,<span class='str'>"status"</span>));
+Assert.assertTrue(response.keySet().containsAll(expected));`},
+{title:"Example 5 — List in TestNG DataProvider",code:`<span class='ann'>@DataProvider</span>(name = <span class='str'>"loginData"</span>)
+<span class='kw'>public</span> <span class='cls'>Object</span>[][] loginData() {
+    <span class='cls'>List</span>&lt;<span class='cls'>Object</span>[]&gt; data = <span class='kw'>new</span> <span class='cls'>ArrayList</span>&lt;&gt;();
+    data.add(<span class='kw'>new</span> <span class='cls'>Object</span>[]{ <span class='str'>"admin"</span>,  <span class='str'>"pass123"</span>, <span class='kw'>true</span>  });
+    data.add(<span class='kw'>new</span> <span class='cls'>Object</span>[]{ <span class='str'>"user"</span>,   <span class='str'>"wrong"</span>,   <span class='kw'>false</span> });
+    data.add(<span class='kw'>new</span> <span class='cls'>Object</span>[]{ <span class='str'>""</span>,       <span class='str'>""</span>,        <span class='kw'>false</span> });
+    <span class='kw'>return</span> data.toArray(<span class='kw'>new</span> <span class='cls'>Object</span>[<span class='num'>0</span>][]);
+}
+
+<span class='ann'>@Test</span>(dataProvider = <span class='str'>"loginData"</span>)
+<span class='kw'>public void</span> testLogin(<span class='cls'>String</span> user, <span class='cls'>String</span> pass, <span class='kw'>boolean</span> expected) {
+    loginPage.login(user, pass);
+    Assert.assertEquals(loginPage.isLoggedIn(), expected);
+}`}
+],
+bestPractices:[
+{ok:true,text:"Use List<WebElement> with explicit waits before iterating — stale element risk is real."},
+{ok:true,text:"Use LinkedHashMap for form data to preserve field-fill order."},
+{ok:false,text:"Don't store WebElement references for long — they go stale after page refresh. Re-find."},
+{ok:false,text:"Don't use raw types (List, Map without generics) — causes ClassCastException at runtime."},
+{ok:true,text:"Use Map<String,String> for locator repositories in POM to make element lookup data-driven."}
+],
+qa:[
+{q:"Q1. How do you get all dropdown options using List?",a:"Use Select class: Select dd = new Select(driver.findElement(By.id('drop'))); List<WebElement> options = dd.getOptions(); Then iterate to get text or values using option.getText()."},
+{q:"Q2. Why use LinkedHashMap in automation?",a:"LinkedHashMap preserves insertion order. In form-fill scenarios, field order matters (e.g., username before password). HashMap doesn't guarantee order, so fields could be filled randomly causing failures."},
+{q:"Q3. How do you assert that a dropdown has no duplicate values?",a:"Get all options as a List<String>, then add all to a HashSet. If Set.size() != List.size(), duplicates exist. Assert.assertEquals(new HashSet<>(optionTexts).size(), optionTexts.size());"},
+{q:"Q4. How is Map used in Page Object Model?",a:"Map<String, By> locatorMap can store locator name → By mapping. A generic getElement(String name) method does driver.findElement(locatorMap.get(name)). This makes POM data-driven and avoids hardcoding locators in every method."},
+{q:"Q5. How do you validate API response keys with Set?",a:"Extract the response as Map<String,Object>. Use response.keySet() to get the actual keys as a Set. Create a Set of expected keys and use containsAll(): Assert.assertTrue(response.keySet().containsAll(expectedKeys));"}
+]
+},
+
+{id:2,num:13,title:"Interface vs Abstract Class",phase:"Intermediate",badge:"inter",
+tags:["interface","abstract","default method","IS-A","CAN-DO","Java 8"],
+overview:{def:"Both interface and abstract class support abstraction, but they serve different purposes. Abstract class = partial blueprint for related classes (IS-A). Interface = capability contract for unrelated classes (CAN-DO).",
+what:"Two mechanisms for achieving abstraction and defining contracts in Java.",
+why:"To design flexible, loosely coupled systems where implementation details are hidden.",
+when:"Abstract class when sharing code+state among related classes; Interface for capabilities across unrelated classes.",
+where:"Declared with abstract class or interface keyword; used via extends/implements.",
+how:"Extend abstract class with extends; implement interface with implements (multiple allowed)."},
+oneliners:[
+"<strong>Abstract class</strong> — Can have constructors, fields, concrete methods + abstract methods.",
+"<strong>Interface</strong> — Pure contract; all fields are public static final; no constructors.",
+"<strong>Multiple inheritance</strong> — A class implements multiple interfaces but extends only one class.",
+"<strong>Java 8 default methods</strong> — Interfaces can now have method bodies via default keyword.",
+"<strong>Rule of thumb</strong> — IS-A relationship → abstract class; CAN-DO capability → interface."
+],
+concepts:[
+{title:"Side-by-side comparison",body:"",arch:`Feature              Abstract Class       Interface
+Instantiate          ❌ No                ❌ No
+Constructor          ✅ Yes               ❌ No
+Instance fields      ✅ Yes               ❌ No (only static final)
+Concrete methods     ✅ Yes               ✅ (default, Java 8+)
+Abstract methods     ✅ Yes               ✅ Yes (implicit)
+Multiple inherit     ❌ extends one       ✅ implements many
+Access modifiers     Any                  Public only
+Use for              Shared behavior      Capability contract`},
+{title:"When to choose which",body:"",arch:`Should subclasses SHARE STATE (fields)?  → Abstract class
+Do unrelated classes need same BEHAVIOR? → Interface
+Need to model IS-A (Dog IS-A Animal)?    → Abstract class
+Need CAN-DO (Dog CAN-DO Swimmable)?      → Interface
+Java 8+ — small APIs with defaults?      → Interface (preferred)`}
+],
+codes:[
+{title:"Example 1 — Abstract class (IS-A, shared state)",code:`<span class='kw'>abstract class</span> <span class='cls'>Vehicle</span> {
+    <span class='kw'>String</span> brand;   <span class='cm'>// shared field</span>
+    <span class='kw'>int</span> speed;
+
+    <span class='cls'>Vehicle</span>(<span class='kw'>String</span> brand) { <span class='kw'>this</span>.brand = brand; }
+
+    <span class='kw'>abstract void</span> fuelType();  <span class='cm'>// each subclass differs</span>
+
+    <span class='kw'>void</span> start() { <span class='cm'>// shared concrete method</span>
+        System.out.println(brand + <span class='str'>" started"</span>);
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>Car</span> <span class='kw'>extends</span> <span class='cls'>Vehicle</span> {
+    <span class='cls'>Car</span>(<span class='kw'>String</span> b) { <span class='kw'>super</span>(b); }
+    <span class='ann'>@Override</span>
+    <span class='kw'>void</span> fuelType() { System.out.println(<span class='str'>"Petrol"</span>); }
+}`},
+{title:"Example 2 — Interface (CAN-DO capability)",code:`<span class='kw'>interface</span> <span class='cls'>Printable</span> {
+    <span class='kw'>void</span> print();
+}
+<span class='kw'>interface</span> <span class='cls'>Saveable</span> {
+    <span class='kw'>void</span> save();
+}
+
+<span class='cm'>// Document can Print AND Save — unrelated capabilities</span>
+<span class='kw'>class</span> <span class='cls'>Document</span> <span class='kw'>implements</span> <span class='cls'>Printable</span>, <span class='cls'>Saveable</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>public void</span> print() { System.out.println(<span class='str'>"Printing..."</span>); }
+    <span class='ann'>@Override</span>
+    <span class='kw'>public void</span> save()  { System.out.println(<span class='str'>"Saving..."</span>); }
+}`},
+{title:"Example 3 — Combining both (common pattern)",code:`<span class='kw'>interface</span> <span class='cls'>Flyable</span> { <span class='kw'>void</span> fly(); }
+
+<span class='kw'>abstract class</span> <span class='cls'>Bird</span> {           <span class='cm'>// IS-A: all birds share</span>
+    <span class='kw'>String</span> name;
+    <span class='kw'>abstract void</span> sound();
+    <span class='kw'>void</span> eat() { System.out.println(<span class='str'>"Bird eats"</span>); }
+}
+
+<span class='cm'>// Eagle IS-A Bird AND CAN-DO Fly</span>
+<span class='kw'>class</span> <span class='cls'>Eagle</span> <span class='kw'>extends</span> <span class='cls'>Bird</span> <span class='kw'>implements</span> <span class='cls'>Flyable</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>void</span> sound() { System.out.println(<span class='str'>"Screech"</span>); }
+    <span class='ann'>@Override</span>
+    <span class='kw'>public void</span> fly()   { System.out.println(<span class='str'>"Eagle soars"</span>); }
+}`},
+{title:"Example 4 — Java 8 default method in interface",code:`<span class='kw'>interface</span> <span class='cls'>Greeter</span> {
+    <span class='kw'>void</span> greet(<span class='kw'>String</span> name); <span class='cm'>// abstract</span>
+
+    <span class='kw'>default void</span> greetAll(<span class='cls'>List</span>&lt;<span class='cls'>String</span>&gt; names) {
+        names.forEach(<span class='kw'>this</span>::greet); <span class='cm'>// uses abstract method</span>
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>FormalGreeter</span> <span class='kw'>implements</span> <span class='cls'>Greeter</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>public void</span> greet(<span class='kw'>String</span> name) {
+        System.out.println(<span class='str'>"Good morning, "</span> + name);
+    }
+    <span class='cm'>// greetAll() inherited from interface</span>
+}`},
+{title:"Example 5 — Interface in automation (Page Object)",code:`<span class='cm'>// Interface — every page CAN-DO these</span>
+<span class='kw'>interface</span> <span class='cls'>PageActions</span> {
+    <span class='kw'>boolean</span> isLoaded();
+    <span class='kw'>void</span> waitForLoad();
+}
+
+<span class='cm'>// Abstract class — shared driver setup</span>
+<span class='kw'>abstract class</span> <span class='cls'>BasePage</span> <span class='kw'>implements</span> <span class='cls'>PageActions</span> {
+    <span class='kw'>protected</span> <span class='cls'>WebDriver</span> driver;
+    <span class='cls'>BasePage</span>(<span class='cls'>WebDriver</span> d) { <span class='kw'>this</span>.driver = d; }
+    <span class='kw'>public void</span> waitForLoad() {
+        <span class='kw'>new</span> <span class='cls'>WebDriverWait</span>(driver, <span class='num'>10</span>)
+            .until(d -> isLoaded());
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>LoginPage</span> <span class='kw'>extends</span> <span class='cls'>BasePage</span> {
+    <span class='cls'>LoginPage</span>(<span class='cls'>WebDriver</span> d) { <span class='kw'>super</span>(d); }
+    <span class='kw'>public boolean</span> isLoaded() {
+        <span class='kw'>return</span> driver.getTitle().contains(<span class='str'>"Login"</span>);
+    }
+}`}
+],
+bestPractices:[
+{ok:true,text:"Start with interfaces; refactor to abstract class only if multiple implementations share state/code."},
+{ok:true,text:"In automation frameworks, use interface for page contracts (PageActions) and abstract class for shared driver/wait logic (BasePage)."},
+{ok:false,text:"Don't add instance variables to an interface — all interface fields are public static final (constants)."},
+{ok:false,text:"Don't use abstract class just to prevent instantiation — use interface or private constructor instead."},
+{ok:true,text:"Favor Interface Segregation (ISP from SOLID) — many small specific interfaces over one large interface."}
+],
+qa:[
+{q:"Q1. Can abstract class implement an interface?",a:"Yes. An abstract class can implement an interface without providing implementations for all its methods — the responsibility cascades to the first concrete subclass. This is a common pattern in frameworks."},
+{q:"Q2. What changed with interfaces in Java 8?",a:"Java 8 added default methods (method with body, keyword default) and static methods to interfaces. Java 9 added private methods. This narrowed the gap with abstract classes, but interfaces still can't have constructors or instance state."},
+{q:"Q3. Why can't we instantiate an interface?",a:"Interfaces have no constructors and potentially no implementation. There's nothing to instantiate. You must provide a concrete implementing class. Anonymous class or lambda (for functional interfaces) are workarounds for one-off use."},
+{q:"Q4. Abstract class vs Interface — which is preferred in Java 8+?",a:"In Java 8+, interfaces with default methods are often preferred because they allow multiple inheritance of behavior. Abstract class is still needed when you require constructors, instance fields, or non-public methods. Effective Java (Bloch) recommends interfaces for defining types."},
+{q:"Q5. How are abstract class and interface used in Selenium framework design?",a:"Interface defines the contract (what pages/tests must do): PageActions, TestLifecycle. Abstract class provides shared infrastructure (how things work): BasePage with driver, waits, and screenshot logic. Concrete page classes extend BasePage and satisfy interface contracts."}
+]
+},
+
+{id:3,num:14,title:"String Methods",phase:"Intermediate",badge:"inter",
+tags:["String","charAt","substring","indexOf","equals","split","replace","trim","format"],
+overview:{def:"The Java String class provides 50+ built-in methods for text manipulation. String is immutable — every method returns a NEW String; the original is unchanged.",
+what:"Built-in methods of java.lang.String for searching, comparing, transforming, and extracting text.",
+why:"To process user input, parse data, build dynamic messages, and validate text in both apps and tests.",
+when:"Anytime you work with text — form validation, log parsing, API response assertions, test data.",
+where:"java.lang.String — auto-imported; available on any String variable.",
+how:"Call methods directly on String objects: str.toUpperCase(), str.split(','), str.contains('x')."},
+oneliners:[
+"<strong>equals()</strong> — Compares content; use this NOT == for String comparison.",
+"<strong>substring(a,b)</strong> — Returns chars from index a (inclusive) to b (exclusive).",
+"<strong>split(regex)</strong> — Splits String on regex; returns String[]; essential for CSV parsing.",
+"<strong>trim() / strip()</strong> — trim() removes ASCII whitespace; strip() (Java 11) handles Unicode too.",
+"<strong>contains() vs indexOf()</strong> — contains() returns boolean; indexOf() returns position or -1."
+],
+concepts:[
+{title:"String method categories",body:"",arch:`<span class='cm'>// Comparison</span>
+equals(), equalsIgnoreCase(), compareTo(), compareToIgnoreCase()
+
+<span class='cm'>// Search</span>
+contains(), indexOf(), lastIndexOf(), startsWith(), endsWith()
+
+<span class='cm'>// Transform</span>
+toUpperCase(), toLowerCase(), trim(), strip(), replace(), replaceAll()
+
+<span class='cm'>// Extract</span>
+charAt(), substring(), split(), toCharArray()
+
+<span class='cm'>// Info</span>
+length(), isEmpty(), isBlank() <span class='cm'>// Java 11</span>
+
+<span class='cm'>// Build</span>
+concat(), String.format(), String.valueOf(), join()`}
+],
+codes:[
+{title:"Example 1 — Comparison and search methods",code:`<span class='kw'>String</span> s = <span class='str'>"Hello World"</span>;
+
+<span class='cm'>// Comparison</span>
+System.out.println(s.equals(<span class='str'>"Hello World"</span>));        <span class='cm'>// true</span>
+System.out.println(s.equalsIgnoreCase(<span class='str'>"hello world"</span>)); <span class='cm'>// true</span>
+
+<span class='cm'>// Search</span>
+System.out.println(s.contains(<span class='str'>"World"</span>));   <span class='cm'>// true</span>
+System.out.println(s.indexOf(<span class='str'>"o"</span>));        <span class='cm'>// 4 (first)</span>
+System.out.println(s.lastIndexOf(<span class='str'>"o"</span>));    <span class='cm'>// 7 (last)</span>
+System.out.println(s.startsWith(<span class='str'>"Hello"</span>)); <span class='cm'>// true</span>
+System.out.println(s.endsWith(<span class='str'>"World"</span>));  <span class='cm'>// true</span>`},
+{title:"Example 2 — Extraction methods",code:`<span class='kw'>String</span> s = <span class='str'>"JavaProgramming"</span>;
+
+<span class='cm'>// charAt — get character at index</span>
+System.out.println(s.charAt(<span class='num'>0</span>));        <span class='cm'>// 'J'</span>
+System.out.println(s.charAt(<span class='num'>4</span>));        <span class='cm'>// 'P'</span>
+
+<span class='cm'>// substring(start) — from index to end</span>
+System.out.println(s.substring(<span class='num'>4</span>));     <span class='cm'>// "Programming"</span>
+
+<span class='cm'>// substring(start, end) — start incl, end excl</span>
+System.out.println(s.substring(<span class='num'>0</span>, <span class='num'>4</span>));  <span class='cm'>// "Java"</span>
+
+<span class='cm'>// split</span>
+<span class='kw'>String</span>[] parts = <span class='str'>"a,b,c"</span>.split(<span class='str'>","</span>);   <span class='cm'>// ["a","b","c"]</span>
+System.out.println(parts.length);       <span class='cm'>// 3</span>`},
+{title:"Example 3 — Transform methods",code:`<span class='kw'>String</span> s = <span class='str'>"  Hello World  "</span>;
+
+System.out.println(s.toUpperCase()); <span class='cm'>// "  HELLO WORLD  "</span>
+System.out.println(s.toLowerCase()); <span class='cm'>// "  hello world  "</span>
+System.out.println(s.trim());        <span class='cm'>// "Hello World" (no spaces)</span>
+
+<span class='cm'>// replace — literal string replacement</span>
+System.out.println(s.trim().replace(<span class='str'>"World"</span>, <span class='str'>"Java"</span>));
+<span class='cm'>// "Hello Java"</span>
+
+<span class='cm'>// replaceAll — regex-based</span>
+System.out.println(<span class='str'>"a1b2c3"</span>.replaceAll(<span class='str'>"[0-9]"</span>, <span class='str'>"#"</span>));
+<span class='cm'>// "a#b#c#"</span>`},
+{title:"Example 4 — String.format() and join()",code:`<span class='cm'>// String.format() — like printf</span>
+<span class='kw'>String</span> msg = <span class='cls'>String</span>.format(
+    <span class='str'>"Name: %s, Age: %d, Score: %.2f"</span>,
+    <span class='str'>"Riya"</span>, <span class='num'>22</span>, <span class='num'>95.567</span>);
+System.out.println(msg);
+<span class='cm'>// Name: Riya, Age: 22, Score: 95.57</span>
+
+<span class='cm'>// String.join() — join with delimiter</span>
+<span class='kw'>String</span> csv = <span class='cls'>String</span>.join(<span class='str'>","</span>, <span class='str'>"a"</span>, <span class='str'>"b"</span>, <span class='str'>"c"</span>);
+System.out.println(csv); <span class='cm'>// "a,b,c"</span>
+
+<span class='cm'>// String.valueOf() — convert to String</span>
+System.out.println(<span class='cls'>String</span>.valueOf(<span class='num'>42</span>));    <span class='cm'>// "42"</span>
+System.out.println(<span class='cls'>String</span>.valueOf(<span class='kw'>true</span>));  <span class='cm'>// "true"</span>`},
+{title:"Example 5 — String methods in automation assertions",code:`<span class='cm'>// Real automation usage</span>
+<span class='kw'>String</span> pageTitle   = driver.getTitle();
+<span class='kw'>String</span> elementText = element.getText().trim();
+<span class='kw'>String</span> url         = driver.getCurrentUrl();
+
+<span class='cm'>// Assert page title contains keyword</span>
+Assert.assertTrue(pageTitle.contains(<span class='str'>"Dashboard"</span>));
+
+<span class='cm'>// Case-insensitive text check</span>
+Assert.assertTrue(elementText.equalsIgnoreCase(<span class='str'>"submit"</span>));
+
+<span class='cm'>// URL validation</span>
+Assert.assertTrue(url.startsWith(<span class='str'>"https://"</span>));
+Assert.assertTrue(url.endsWith(<span class='str'>"/home"</span>));
+
+<span class='cm'>// Extract value from dynamic text "Items: 42"</span>
+<span class='kw'>String</span> count = elementText.split(<span class='str'>":"</span>)[<span class='num'>1</span>].trim();
+System.out.println(<span class='str'>"Count: "</span> + count); <span class='cm'>// "42"</span>`}
+],
+bestPractices:[
+{ok:true,text:"Always use equals() or equalsIgnoreCase() to compare Strings — never == (compares references)."},
+{ok:true,text:"Use trim() or strip() before comparisons to avoid whitespace-caused test failures."},
+{ok:false,text:"Don't concatenate Strings in loops with + — it creates many garbage String objects; use StringBuilder."},
+{ok:false,text:"Don't call methods on a potentially null String — always null-check first or use Objects.equals()."},
+{ok:true,text:"Use String.format() for readable dynamic message building instead of multiple + concatenations."}
+],
+qa:[
+{q:"Q1. Why should we use equals() instead of == for String comparison?",a:"== compares references (memory addresses). String literals share the String pool, so == may return true coincidentally. But new String('abc') == new String('abc') returns false because they're different objects. equals() always compares the actual character content — use it always."},
+{q:"Q2. What is the difference between replace() and replaceAll()?",a:"replace(old, new) replaces a literal CharSequence — no regex. replaceAll(regex, replacement) uses regex pattern matching. replaceAll('[0-9]', '#') replaces all digits; replace('[0-9]', '#') looks for the literal string '[0-9]'."},
+{q:"Q3. What is the difference between trim() and strip()?",a:"trim() removes characters with ASCII value ≤ 32 (standard whitespace). strip() (Java 11+) uses Unicode whitespace definition — handles non-breaking spaces and other Unicode whitespace. strip() is the modern preferred method."},
+{q:"Q4. What does substring(a, b) return?",a:"Characters from index a (inclusive) to index b (exclusive). 'HelloWorld'.substring(0,5) returns 'Hello'. 'HelloWorld'.substring(5) returns 'World'. If indices are out of range, StringIndexOutOfBoundsException is thrown."},
+{q:"Q5. How to check if a String is null or empty safely?",a:"Never call str.isEmpty() on a potentially null String — NullPointerException. Use: str == null || str.isEmpty() — for null or empty. str == null || str.isBlank() — for null, empty, or only whitespace (Java 11). Or use Apache Commons: StringUtils.isBlank(str)."}
+]
+},
+
+{id:4,num:15,title:"String vs StringBuffer vs StringBuilder",phase:"Intermediate",badge:"inter",
+tags:["immutable","mutable","thread-safe","StringBuffer","StringBuilder","performance","memory"],
+overview:{def:"String is immutable — once created, its value cannot change. StringBuffer and StringBuilder are mutable — their content can be modified without creating new objects. The key difference between the two is thread safety.",
+what:"Three classes for working with text, each with different mutability and thread-safety characteristics.",
+why:"To choose the right class for performance: String for constants; StringBuilder for fast local building; StringBuffer for thread-safe building.",
+when:"String for fixed text; StringBuilder for single-thread string building; StringBuffer for multi-thread shared building.",
+where:"java.lang package — all auto-imported.",
+how:"Use append(), insert(), delete(), reverse() on StringBuffer/Builder; use new String or literals for String."},
+oneliners:[
+"<strong>String</strong> — Immutable; every modification creates a new object in heap.",
+"<strong>StringBuilder</strong> — Mutable, NOT thread-safe, fastest — use in single-threaded code.",
+"<strong>StringBuffer</strong> — Mutable, thread-safe (synchronized methods) — use in multi-threaded code.",
+"<strong>+operator on String</strong> — Compiler converts to StringBuilder.append() behind the scenes.",
+"<strong>reverse()</strong> — Only available on StringBuffer/StringBuilder, not on String directly."
+],
+concepts:[
+{title:"Comparison table",body:"",arch:`Feature         String        StringBuffer    StringBuilder
+Mutable         ❌ No         ✅ Yes          ✅ Yes
+Thread-safe     ✅ Yes*       ✅ Yes          ❌ No
+Performance     Slowest       Medium          Fastest
+Storage         String pool   Heap            Heap
+Methods         50+           append,insert   append,insert
+                              delete,reverse  delete,reverse
+*immutable = inherently thread-safe`},
+{title:"Memory: literal vs new keyword",body:"",arch:`<span class='kw'>String</span> s1 = <span class='str'>"Hello"</span>;  <span class='cm'>// String pool (SCP)</span>
+<span class='kw'>String</span> s2 = <span class='str'>"Hello"</span>;  <span class='cm'>// reuses same pool object</span>
+s1 == s2 → <span class='kw'>true</span>     <span class='cm'>// same reference</span>
+
+<span class='kw'>String</span> s3 = <span class='kw'>new</span> <span class='cls'>String</span>(<span class='str'>"Hello"</span>); <span class='cm'>// forces new heap object</span>
+s1 == s3 → <span class='kw'>false</span>   <span class='cm'>// different references</span>
+s1.equals(s3) → <span class='kw'>true</span>  <span class='cm'>// same content</span>
+
+<span class='cls'>StringBuilder</span> sb = <span class='kw'>new</span> <span class='cls'>StringBuilder</span>(<span class='str'>"Hello"</span>);
+sb.append(<span class='str'>" World"</span>); <span class='cm'>// modifies SAME object</span>`}
+],
+codes:[
+{title:"Example 1 — String immutability proof",code:`<span class='kw'>String</span> s = <span class='str'>"Hello"</span>;
+System.out.println(s.hashCode()); <span class='cm'>// e.g. 69609650</span>
+
+s = s + <span class='str'>" World"</span>; <span class='cm'>// creates NEW String object</span>
+System.out.println(s.hashCode()); <span class='cm'>// DIFFERENT hash</span>
+<span class='cm'>// Original "Hello" object still in pool — just unreferenced</span>
+
+<span class='cm'>// concat also creates new object</span>
+<span class='kw'>String</span> s2 = <span class='str'>"Java"</span>;
+<span class='kw'>String</span> s3 = s2.concat(<span class='str'>" Programming"</span>);
+System.out.println(s2); <span class='cm'>// still "Java" — unchanged</span>`},
+{title:"Example 2 — StringBuilder (single-thread building)",code:`<span class='cls'>StringBuilder</span> sb = <span class='kw'>new</span> <span class='cls'>StringBuilder</span>();
+
+sb.append(<span class='str'>"Hello"</span>);    <span class='cm'>// "Hello"</span>
+sb.append(<span class='str'>" World"</span>);   <span class='cm'>// "Hello World"</span>
+sb.insert(<span class='num'>5</span>, <span class='str'>","</span>);    <span class='cm'>// "Hello, World"</span>
+sb.delete(<span class='num'>5</span>, <span class='num'>6</span>);     <span class='cm'>// "Hello World"</span>
+sb.reverse();          <span class='cm'>// "dlroW olleH"</span>
+sb.replace(<span class='num'>0</span>,<span class='num'>5</span>,<span class='str'>"Java"</span>); <span class='cm'>// "Java olleH"</span>
+
+System.out.println(sb.toString());
+System.out.println(<span class='str'>"Length: "</span> + sb.length());`},
+{title:"Example 3 — StringBuffer (thread-safe)",code:`<span class='cls'>StringBuffer</span> sbf = <span class='kw'>new</span> <span class='cls'>StringBuffer</span>(<span class='str'>"Thread"</span>);
+
+<span class='cm'>// All methods are synchronized</span>
+sbf.append(<span class='str'>"-Safe"</span>);
+sbf.insert(<span class='num'>0</span>, <span class='str'>"[START] "</span>);
+System.out.println(sbf); <span class='cm'>// [START] Thread-Safe</span>
+
+<span class='cm'>// Shared StringBuffer in multi-threaded context</span>
+<span class='cls'>StringBuffer</span> shared = <span class='kw'>new</span> <span class='cls'>StringBuffer</span>();
+<span class='cls'>Runnable</span> task = () -> shared.append(<span class='str'>"X"</span>); <span class='cm'>// safe</span>
+<span class='kw'>new</span> <span class='cls'>Thread</span>(task).start();
+<span class='kw'>new</span> <span class='cls'>Thread</span>(task).start();`},
+{title:"Example 4 — Performance comparison",code:`<span class='kw'>int</span> N = <span class='num'>100000</span>;
+
+<span class='cm'>// String — creates 100000 objects (slow!)</span>
+<span class='kw'>long</span> t1 = <span class='cls'>System</span>.currentTimeMillis();
+<span class='kw'>String</span> s = <span class='str'>""</span>;
+<span class='kw'>for</span> (<span class='kw'>int</span> i=<span class='num'>0</span>; i&lt;N; i++) s += <span class='str'>"a"</span>;
+System.out.println(<span class='str'>"String: "</span> + (<span class='cls'>System</span>.currentTimeMillis()-t1) + <span class='str'>"ms"</span>);
+
+<span class='cm'>// StringBuilder — modifies ONE object (fast!)</span>
+<span class='kw'>long</span> t2 = <span class='cls'>System</span>.currentTimeMillis();
+<span class='cls'>StringBuilder</span> sb = <span class='kw'>new</span> <span class='cls'>StringBuilder</span>();
+<span class='kw'>for</span> (<span class='kw'>int</span> i=<span class='num'>0</span>; i&lt;N; i++) sb.append(<span class='str'>"a"</span>);
+System.out.println(<span class='str'>"StringBuilder: "</span> + (<span class='cls'>System</span>.currentTimeMillis()-t2) + <span class='str'>"ms"</span>);
+<span class='cm'>// StringBuilder is ~100x faster for large loops</span>`},
+{title:"Example 5 — String pool vs heap (literal vs new)",code:`<span class='kw'>String</span> a = <span class='str'>"Java"</span>;           <span class='cm'>// pool</span>
+<span class='kw'>String</span> b = <span class='str'>"Java"</span>;           <span class='cm'>// same pool object</span>
+<span class='kw'>String</span> c = <span class='kw'>new</span> <span class='cls'>String</span>(<span class='str'>"Java"</span>); <span class='cm'>// heap</span>
+
+System.out.println(a == b);           <span class='cm'>// true  (pool)</span>
+System.out.println(a == c);           <span class='cm'>// false (heap)</span>
+System.out.println(a.equals(c));      <span class='cm'>// true  (content)</span>
+
+<span class='cm'>// intern() moves heap string to pool</span>
+<span class='kw'>String</span> d = c.intern();
+System.out.println(a == d);           <span class='cm'>// true</span>`}
+],
+bestPractices:[
+{ok:true,text:"Use StringBuilder for string building in loops and local methods — fastest and garbage-friendly."},
+{ok:true,text:"Use StringBuffer only when a mutable string object is shared across multiple threads."},
+{ok:false,text:"Don't use String concatenation (+) in loops with large iterations — massive garbage generation."},
+{ok:false,text:"Don't use StringBuffer where StringBuilder suffices — synchronization overhead is unnecessary."},
+{ok:true,text:"Use String for constants, configuration values, and method parameters — immutability makes them safe to share."}
+],
+qa:[
+{q:"Q1. Why is String immutable in Java?",a:"Security (class names, network URLs can't be tampered), String pool efficiency (shared safely because no one can change the value), thread safety (immutable objects are inherently safe), and hashCode caching (HashMap key hash computed once). The designers made this fundamental decision for the language."},
+{q:"Q2. What is the String Constant Pool (SCP)?",a:"The String pool is a special area in the heap (Java 7+ moved from PermGen to heap) where String literals are stored and reused. When you write String s = 'Java', JVM checks the pool first. If 'Java' exists, it returns that reference. If not, it creates one and adds it. This avoids duplicate String objects."},
+{q:"Q3. What does intern() do?",a:"str.intern() returns the canonical representation from the String pool. If the pool already contains a string equal to str, it returns that pool reference. Otherwise, it adds str to the pool and returns it. Useful for memory optimization when working with many identical strings."},
+{q:"Q4. When would you use StringBuffer over StringBuilder?",a:"Only when the mutable string object is accessed by multiple threads concurrently. StringBuffer's methods are synchronized, making them thread-safe at the cost of performance. In 99% of cases (single-threaded code), StringBuilder is the right choice."},
+{q:"Q5. What happens behind the scenes when you use + to concatenate Strings?",a:"The Java compiler converts String s = 'a' + 'b' + 'c' into new StringBuilder().append('a').append('b').append('c').toString(). However, inside a loop, the compiler creates a new StringBuilder on EVERY iteration, defeating the purpose — which is why you must create the StringBuilder yourself outside the loop."}
+]
+},
+
+{id:5,num:16,title:"Types of Constructors & Automation Use",phase:"Automation",badge:"auto",
+tags:["default","parameterized","copy","private","chained","POM","PageFactory","automation"],
+overview:{def:"Java constructors initialize objects. In automation frameworks, constructors are critical for setting up WebDriver, initializing page elements via PageFactory, and injecting dependencies into page objects.",
+what:"All constructor types and their real-world application in Selenium/TestNG automation.",
+why:"To build robust, reusable Page Object Models where objects are properly initialized before use.",
+when:"Every time a Page Object, test class, or utility is instantiated — the constructor runs setup.",
+where:"Page classes, base test classes, data model classes, test helper utilities.",
+how:"Use parameterized constructors to pass WebDriver; use PageFactory.initElements() inside them."},
+oneliners:[
+"<strong>Default constructor</strong> — No-arg; JVM provides it if none written; often overridden in test base classes.",
+"<strong>Parameterized constructor</strong> — Takes WebDriver as arg; used in every POM page class.",
+"<strong>Copy constructor</strong> — Clones a test data object; useful in data-driven tests.",
+"<strong>Private constructor</strong> — Used in utility classes (DriverManager) and singleton patterns.",
+"<strong>Constructor chaining</strong> — this() or super() delegates setup; avoids code duplication in base/child pages."
+],
+concepts:[
+{title:"Constructor types at a glance",body:"",arch:`<span class='cls'>Constructor Type</span>    <span class='cls'>Automation Use</span>
+Default             BaseTest with default browser config
+Parameterized       POM pages receive WebDriver
+Copy                Clone TestData objects for isolation
+Private + static    DriverFactory singleton pattern
+Chained (this/super) BasePage → LoginPage → extends setup`},
+{title:"POM constructor pattern",body:"",arch:`<span class='kw'>class</span> <span class='cls'>LoginPage</span> <span class='kw'>extends</span> <span class='cls'>BasePage</span> {
+    LoginPage(<span class='cls'>WebDriver</span> driver) {
+        <span class='kw'>super</span>(driver);               <span class='cm'>// chain to BasePage</span>
+        <span class='cls'>PageFactory</span>.initElements(    <span class='cm'>// init @FindBy fields</span>
+            driver, <span class='kw'>this</span>);
+    }
+}`}
+],
+codes:[
+{title:"Example 1 — Default and parameterized in POM",code:`<span class='cm'>// BasePage — parameterized receives WebDriver</span>
+<span class='kw'>abstract class</span> <span class='cls'>BasePage</span> {
+    <span class='kw'>protected</span> <span class='cls'>WebDriver</span> driver;
+    <span class='kw'>protected</span> <span class='cls'>WebDriverWait</span> wait;
+
+    <span class='cls'>BasePage</span>(<span class='cls'>WebDriver</span> driver) {
+        <span class='kw'>this</span>.driver = driver;
+        <span class='kw'>this</span>.wait = <span class='kw'>new</span> <span class='cls'>WebDriverWait</span>(driver, <span class='cls'>Duration</span>.ofSeconds(<span class='num'>10</span>));
+    }
+}
+
+<span class='cm'>// LoginPage — chains to BasePage + PageFactory init</span>
+<span class='kw'>class</span> <span class='cls'>LoginPage</span> <span class='kw'>extends</span> <span class='cls'>BasePage</span> {
+    <span class='ann'>@FindBy</span>(id=<span class='str'>"username"</span>) <span class='cls'>WebElement</span> usernameField;
+    <span class='ann'>@FindBy</span>(id=<span class='str'>"password"</span>) <span class='cls'>WebElement</span> passwordField;
+
+    <span class='cls'>LoginPage</span>(<span class='cls'>WebDriver</span> driver) {
+        <span class='kw'>super</span>(driver); <span class='cm'>// chain to BasePage</span>
+        <span class='cls'>PageFactory</span>.initElements(driver, <span class='kw'>this</span>);
+    }
+}`},
+{title:"Example 2 — Copy constructor for test data isolation",code:`<span class='kw'>class</span> <span class='cls'>TestData</span> {
+    <span class='kw'>String</span> username, password, role;
+    <span class='kw'>boolean</span> isActive;
+
+    <span class='cls'>TestData</span>(<span class='kw'>String</span> user, <span class='kw'>String</span> pass, <span class='kw'>String</span> role, <span class='kw'>boolean</span> active) {
+        <span class='kw'>this</span>.username = user; <span class='kw'>this</span>.password = pass;
+        <span class='kw'>this</span>.role = role; <span class='kw'>this</span>.isActive = active;
+    }
+
+    <span class='cm'>// Copy constructor — independent copy for each test</span>
+    <span class='cls'>TestData</span>(<span class='cls'>TestData</span> other) {
+        <span class='kw'>this</span>.username = other.username;
+        <span class='kw'>this</span>.password = other.password;
+        <span class='kw'>this</span>.role     = other.role;
+        <span class='kw'>this</span>.isActive = other.isActive;
+    }
+}
+
+<span class='cm'>// Each test gets its OWN copy — no shared-state bugs</span>
+<span class='cls'>TestData</span> base = <span class='kw'>new</span> <span class='cls'>TestData</span>(<span class='str'>"admin"</span>,<span class='str'>"pass"</span>,<span class='str'>"ADMIN"</span>,<span class='kw'>true</span>);
+<span class='cls'>TestData</span> t1   = <span class='kw'>new</span> <span class='cls'>TestData</span>(base); <span class='cm'>// isolated copy</span>`},
+{title:"Example 3 — Private constructor (DriverManager singleton)",code:`<span class='kw'>class</span> <span class='cls'>DriverManager</span> {
+    <span class='kw'>private static</span> <span class='cls'>WebDriver</span> driver;
+
+    <span class='kw'>private</span> <span class='cls'>DriverManager</span>() { <span class='cm'>// no external instantiation</span> }
+
+    <span class='kw'>public static</span> <span class='cls'>WebDriver</span> getDriver() {
+        <span class='kw'>if</span> (driver == <span class='kw'>null</span>) {
+            driver = <span class='kw'>new</span> <span class='cls'>ChromeDriver</span>();
+            driver.manage().window().maximize();
+        }
+        <span class='kw'>return</span> driver;
+    }
+
+    <span class='kw'>public static void</span> quitDriver() {
+        <span class='kw'>if</span> (driver != <span class='kw'>null</span>) {
+            driver.quit(); driver = <span class='kw'>null</span>;
+        }
+    }
+}
+<span class='cm'>// Usage: DriverManager.getDriver().get("https://...")</span>`},
+{title:"Example 4 — Constructor chaining in BaseTest",code:`<span class='kw'>class</span> <span class='cls'>BaseTest</span> {
+    <span class='kw'>protected</span> <span class='cls'>WebDriver</span> driver;
+    <span class='kw'>protected</span> <span class='kw'>String</span> baseUrl;
+
+    <span class='cm'>// Default — chrome + production</span>
+    <span class='cls'>BaseTest</span>() {
+        <span class='kw'>this</span>(<span class='str'>"chrome"</span>, <span class='str'>"https://prod.example.com"</span>);
+    }
+
+    <span class='cm'>// Browser only — default url</span>
+    <span class='cls'>BaseTest</span>(<span class='kw'>String</span> browser) {
+        <span class='kw'>this</span>(browser, <span class='str'>"https://prod.example.com"</span>);
+    }
+
+    <span class='cm'>// Full parameterized — sets everything up</span>
+    <span class='cls'>BaseTest</span>(<span class='kw'>String</span> browser, <span class='kw'>String</span> url) {
+        <span class='kw'>this</span>.baseUrl = url;
+        <span class='kw'>this</span>.driver  = <span class='str'>"firefox"</span>.equals(browser)
+            ? <span class='kw'>new</span> <span class='cls'>FirefoxDriver</span>()
+            : <span class='kw'>new</span> <span class='cls'>ChromeDriver</span>();
+    }
+}`},
+{title:"Example 5 — Full POM with constructor + @FindBy",code:`<span class='kw'>class</span> <span class='cls'>DashboardPage</span> <span class='kw'>extends</span> <span class='cls'>BasePage</span> {
+    <span class='ann'>@FindBy</span>(css = <span class='str'>".welcome-msg"</span>)
+    <span class='kw'>private</span> <span class='cls'>WebElement</span> welcomeMsg;
+
+    <span class='ann'>@FindBy</span>(id = <span class='str'>"logout-btn"</span>)
+    <span class='kw'>private</span> <span class='cls'>WebElement</span> logoutBtn;
+
+    <span class='ann'>@FindBy</span>(css = <span class='str'>".menu-item"</span>)
+    <span class='kw'>private</span> <span class='cls'>List</span>&lt;<span class='cls'>WebElement</span>&gt; menuItems;
+
+    <span class='cls'>DashboardPage</span>(<span class='cls'>WebDriver</span> driver) {
+        <span class='kw'>super</span>(driver);
+        <span class='cls'>PageFactory</span>.initElements(driver, <span class='kw'>this</span>); <span class='cm'>// wires @FindBy</span>
+    }
+
+    <span class='kw'>public</span> <span class='cls'>String</span> getWelcomeMessage() {
+        <span class='kw'>return</span> welcomeMsg.getText();
+    }
+
+    <span class='kw'>public</span> <span class='cls'>LoginPage</span> logout() {
+        logoutBtn.click();
+        <span class='kw'>return new</span> <span class='cls'>LoginPage</span>(driver); <span class='cm'>// returns next page</span>
+    }
+}`}
+],
+bestPractices:[
+{ok:true,text:"Always call super(driver) in page class constructors to initialize BasePage fields before PageFactory."},
+{ok:true,text:"Use PageFactory.initElements(driver, this) inside the page constructor — not in a setup method — to guarantee element wiring at construction time."},
+{ok:false,text:"Don't create WebDriver in every page class constructor — create it once in BaseTest and pass as parameter."},
+{ok:false,text:"Don't use no-arg constructors in page objects — forces null WebDriver which fails at runtime."},
+{ok:true,text:"Use private constructor + static getInstance() in DriverManager to prevent multiple browser instances."}
+],
+qa:[
+{q:"Q1. Why do all POM page classes take WebDriver in their constructor?",a:"The constructor receives the already-running WebDriver instance from the test. This is Dependency Injection — the page doesn't create the driver, the test does. This way all pages in a test share the same browser session, and the test controls the browser lifecycle (quit in @AfterTest)."},
+{q:"Q2. What does PageFactory.initElements(driver, this) do?",a:"It wires up all @FindBy annotated WebElement fields in the page class. Without it, those fields remain null and throw NullPointerException when used. The 'this' passes the current page object so PageFactory knows which class to scan for @FindBy annotations."},
+{q:"Q3. What is the DriverManager singleton pattern and why is it used?",a:"A private constructor with a static getDriver() method that creates the WebDriver only once. In automation, it prevents accidentally opening multiple browser instances. Tests call DriverManager.getDriver() to get the shared instance, and DriverManager.quitDriver() in teardown to close it cleanly."},
+{q:"Q4. Why use constructor chaining (this()) in BaseTest?",a:"To support multiple test configurations (browser, URL, environment) without duplicating setup code. The default constructor delegates to the full parameterized one. Tests can choose: new BaseTest() for defaults, or new BaseTest('firefox', 'https://staging.com') for specific configs."},
+{q:"Q5. How is copy constructor useful in data-driven automation?",a:"When running the same test with different data, each iteration needs its own independent TestData object. If one test modifies the data (e.g., changes username), it shouldn't affect other tests. Copy constructor creates a deep copy so each test has isolated data — preventing shared-state test pollution."}
+]
+}
+];
+
+const phases=["Intermediate","Automation"];
+let cur=0;
+const seen=new Set();
+
+function renderPhaseBar(){
+  document.getElementById('phaseBar').innerHTML=phases.map(p=>{
+    const active=SS[cur].phase===p;
+    return `<span class="phase-pill ${active?'active':''}">${p}</span>`;
+  }).join('');
+}
+
+function renderTabs(){
+  const bar=document.getElementById('tabBar');
+  bar.innerHTML=SS.map(s=>`
+    <button class="tab-btn ${s.id===cur?'active':''} ${seen.has(s.id)&&s.id!==cur?'done':''}"
+      onclick="goTo(${s.id})">
+      S${s.num}. ${s.title}
+    </button>`).join('');
+  bar.children[cur].scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+}
+
+function renderProg(){
+  document.getElementById('progFill').style.width=((seen.size/SS.length)*100)+'%';
+}
+
+function renderSession(s){
+  const o=s.overview;
+  return `
+<div class="session">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+    <span class="badge ${s.badge}">${s.phase}</span>
+    <h2 style="font-size:18px;font-weight:500;color:var(--color-text-primary)">Session ${s.num}: ${s.title}</h2>
+  </div>
+  <div class="tag-row">${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+
+  <div class="sec">
+    <div class="sec-label"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+    <div class="ov-card">
+      <div class="ov-title">${s.title}</div>
+      <p>${o.def}</p>
+      <div class="meta-grid">
+        <div class="meta-item"><strong>What</strong><span>${o.what}</span></div>
+        <div class="meta-item"><strong>Why</strong><span>${o.why}</span></div>
+        <div class="meta-item"><strong>When</strong><span>${o.when}</span></div>
+        <div class="meta-item"><strong>How</strong><span>${o.how}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-label"><i class="ti ti-message-2" aria-hidden="true"></i> Interview one-liners</div>
+    <div class="ol-list">${s.oneliners.map(l=>`<div class="ol-item">${l}</div>`).join('')}</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-label"><i class="ti ti-topology-star" aria-hidden="true"></i> Concepts & architecture</div>
+    ${s.concepts.map(c=>`
+      <div class="con-block">
+        <h4><i class="ti ti-bulb" aria-hidden="true"></i> ${c.title}</h4>
+        ${c.body?`<p>${c.body}</p>`:''}
+        ${c.arch?`<div class="arch">${c.arch}</div>`:''}
+      </div>`).join('')}
+  </div>
+
+  <div class="sec">
+    <div class="sec-label"><i class="ti ti-code" aria-hidden="true"></i> Code examples</div>
+    ${s.codes.map(c=>`
+      <div class="code-block">
+        <div class="ct"><i class="ti ti-file-code" aria-hidden="true"></i> ${c.title}</div>
+        <pre>${c.code}</pre>
+      </div>`).join('')}
+  </div>
+
+  <div class="sec">
+    <div class="sec-label"><i class="ti ti-checklist" aria-hidden="true"></i> Best practices</div>
+    <div class="bp-list">
+      ${s.bestPractices.map(b=>`
+        <div class="bp-item">
+          <div class="bp-icon ${b.ok?'ok':'warn'}">${b.ok?'✓':'!'}</div>
+          <span>${b.text}</span>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-label"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&A (SDET style)</div>
+    <div class="qa-list">
+      ${s.qa.map(q=>`
+        <div class="qa-item">
+          <div class="qa-q" onclick="this.nextElementSibling.classList.toggle('open')">${q.q} <i class="ti ti-chevron-down" aria-hidden="true"></i></div>
+          <div class="qa-a">${q.a}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="goTo(${s.id-1})" ${s.id===0?'disabled':''}>
+      <i class="ti ti-arrow-left" aria-hidden="true"></i> Previous
+    </button>
+    <button class="nav-btn primary" onclick="goTo(${s.id+1})" ${s.id===SS.length-1?'disabled':''}>
+      Next <i class="ti ti-arrow-right" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>`;
+}
+
+function goTo(id){
+  if(id<0||id>=SS.length) return;
+  seen.add(cur); cur=id; seen.add(cur);
+  document.getElementById('content').innerHTML=renderSession(SS[cur]);
+  renderTabs(); renderPhaseBar(); renderProg();
+  document.querySelector('.hub').scrollIntoView({behavior:'smooth'});
+}
+
+goTo(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maven Java SDET complete learning course with 7 sessions covering fundamentals to intermediate topics</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,sans-serif);color:var(--color-text-primary);background:transparent}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.app{max-width:680px;margin:0 auto;padding:0 0 2rem}
+
+/* Phase bar */
+.phase-bar{display:flex;gap:8px;padding:12px 0 8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:0}
+.phase-pill{font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-secondary);font-weight:500}
+.phase-pill.active{background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
+
+/* Tab bar */
+.tab-scroll{display:flex;gap:0;overflow-x:auto;border-bottom:0.5px solid var(--color-border-tertiary);scrollbar-width:none}
+.tab-scroll::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:10px 16px;font-size:13px;font-weight:500;border:none;background:none;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s}
+.tab-btn:hover{color:var(--color-text-primary)}
+.tab-btn.active{color:var(--color-text-info);border-bottom-color:var(--color-text-info)}
+
+/* Progress */
+.progress-row{display:flex;align-items:center;gap:10px;padding:10px 0 16px}
+.progress-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0}
+.progress-dot.done{background:var(--color-text-success);border-color:var(--color-text-success)}
+.progress-dot.current{background:var(--color-text-info);border-color:var(--color-text-info)}
+.progress-line{flex:1;height:1px;background:var(--color-border-tertiary)}
+.prog-label{font-size:12px;color:var(--color-text-secondary)}
+
+/* Content */
+.session{display:none}
+.session.active{display:block}
+.section-head{font-size:16px;font-weight:500;margin:1.4rem 0 .5rem;color:var(--color-text-primary)}
+.overview-box{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem;border:0.5px solid var(--color-border-tertiary)}
+.overview-box p{font-size:14px;line-height:1.7;color:var(--color-text-secondary);margin-bottom:.5rem}
+.overview-box p:last-child{margin-bottom:0}
+.kw{font-family:var(--font-mono,monospace);font-size:12px;background:var(--color-background-tertiary);padding:1px 6px;border-radius:4px;color:var(--color-text-primary)}
+
+/* Interview one-liners */
+.oneliner-list{list-style:none;padding:0;margin:.5rem 0 1rem}
+.oneliner-list li{font-size:13px;color:var(--color-text-secondary);padding:6px 0 6px 18px;position:relative;border-bottom:0.5px solid var(--color-border-tertiary);line-height:1.5}
+.oneliner-list li:last-child{border-bottom:none}
+.oneliner-list li::before{content:"▸";position:absolute;left:0;color:var(--color-text-info);font-size:12px;top:7px}
+
+/* Code block */
+.code-block{background:#1a1a2e;border-radius:var(--border-radius-lg);margin:.75rem 0 1.25rem;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:rgba(255,255,255,.04);border-bottom:0.5px solid rgba(255,255,255,.08)}
+.code-label{font-size:11px;font-weight:500;color:#7c8baa;font-family:var(--font-mono,monospace)}
+.code-body{padding:14px;overflow-x:auto}
+pre{font-family:var(--font-mono,monospace);font-size:12px;line-height:1.7;color:#c8d3f5;white-space:pre}
+.c-comment{color:#5d7a9e}
+.c-kw{color:#82aaff}
+.c-tag{color:#f78c6c}
+.c-attr{color:#c3e88d}
+.c-val{color:#c792ea}
+.c-str{color:#c3e88d}
+.c-num{color:#f78c6c}
+.c-anno{color:#ffcb6b}
+
+/* Best practices */
+.checklist{list-style:none;padding:0;margin:.5rem 0 1rem}
+.checklist li{font-size:13px;padding:5px 0 5px 22px;position:relative;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);line-height:1.5}
+.checklist li:last-child{border-bottom:none}
+.checklist li::before{content:"✓";position:absolute;left:0;color:var(--color-text-success);font-weight:500}
+
+/* Q&A */
+.qa-item{margin-bottom:.75rem;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.qa-q{padding:10px 14px;font-size:13px;font-weight:500;background:var(--color-background-secondary);cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--color-text-primary)}
+.qa-q .toggle{font-size:16px;color:var(--color-text-secondary);transition:transform .2s}
+.qa-q.open .toggle{transform:rotate(45deg)}
+.qa-a{display:none;padding:10px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.6;background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary)}
+.qa-a.open{display:block}
+
+/* Diagram wrapper */
+.diagram-wrap{margin:1rem 0;border-radius:var(--border-radius-lg);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+
+/* Nav buttons */
+.nav-row{display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary)}
+.nav-btn{padding:8px 20px;font-size:13px;font-weight:500;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;transition:background .15s}
+.nav-btn:hover{background:var(--color-background-secondary)}
+.nav-btn.primary{background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
+.nav-btn:disabled{opacity:.35;cursor:default}
+
+/* badge */
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:500;margin-left:6px}
+.badge-fund{background:var(--color-background-success);color:var(--color-text-success)}
+.badge-inter{background:var(--color-background-warning);color:var(--color-text-warning)}
+</style>
+</head>
+<body>
+  <h2 class="sr-only">Maven Java SDET complete learning course with 7 sessions covering fundamentals to intermediate topics</h2>
+
+<div class="app">
+<div class="phase-bar">
+  <span class="phase-pill active" id="ph1">Phase 1: Fundamentals</span>
+  <span class="phase-pill" id="ph2">Phase 2: Intermediate</span>
+</div>
+
+<div class="tab-scroll" id="tabbar"></div>
+
+<div style="padding:0 2px">
+<div class="progress-row" id="prog-row"></div>
+
+<!-- ═══════════════════ SESSION 1 ═══════════════════ -->
+<div class="session active" id="s0">
+<div class="overview-box">
+  <p><strong>What is Maven?</strong> Maven is a <em>build automation and project management tool</em> for Java. It manages your project's build, reporting, and documentation using a central file called <span class="kw">pom.xml</span>.</p>
+  <p><strong>Why Maven?</strong> Before Maven, developers had to manually download JAR files and manage classpaths. Maven introduced <em>dependency management</em> — you declare what you need, Maven downloads it automatically from a central repository.</p>
+  <p><strong>When to use?</strong> Any Java project (Selenium, TestNG, RestAssured, Spring) needs Maven to manage dependencies, compile code, run tests, and package the application.</p>
+  <p><strong>Where does it run?</strong> On your local machine (CLI or IDE), CI/CD pipelines (Jenkins, GitHub Actions), and build servers.</p>
+</div>
+
+<div class="section-head">Interview one-liners</div>
+<ul class="oneliner-list">
+  <li>Maven is a build lifecycle management tool that uses convention over configuration.</li>
+  <li>Maven uses <span class="kw">pom.xml</span> as its central configuration file to define project metadata and dependencies.</li>
+  <li>Maven downloads dependencies automatically from Maven Central Repository or a custom Nexus/Artifactory server.</li>
+  <li>Maven follows a standard directory structure: <span class="kw">src/main/java</span>, <span class="kw">src/test/java</span>, <span class="kw">src/test/resources</span>.</li>
+  <li>Maven has three built-in lifecycles: default, clean, and site — each with ordered phases.</li>
+  <li>The <span class="kw">.m2</span> folder in the home directory is the local Maven repository where downloaded artifacts are cached.</li>
+</ul>
+
+<div class="section-head">Maven architecture diagram</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 340" role="img"><title>Maven architecture overview</title><desc>Shows Developer, POM.xml, Maven Engine, Local Repo, Remote Repo, and Build Output flow</desc>
+<defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Developer -->
+<g class="c-purple"><rect x="20" y="140" width="100" height="52" rx="8" stroke-width="0.5"/><text class="th" x="70" y="162" text-anchor="middle" dominant-baseline="central">Developer</text><text class="ts" x="70" y="180" text-anchor="middle" dominant-baseline="central">runs mvn command</text></g>
+<!-- pom.xml -->
+<g class="c-teal"><rect x="170" y="140" width="100" height="52" rx="8" stroke-width="0.5"/><text class="th" x="220" y="162" text-anchor="middle" dominant-baseline="central">pom.xml</text><text class="ts" x="220" y="180" text-anchor="middle" dominant-baseline="central">project config</text></g>
+<!-- Maven Engine -->
+<g class="c-amber"><rect x="310" y="130" width="120" height="72" rx="10" stroke-width="0.5"/><text class="th" x="370" y="155" text-anchor="middle" dominant-baseline="central">Maven Engine</text><text class="ts" x="370" y="175" text-anchor="middle" dominant-baseline="central">Lifecycle + Plugins</text><text class="ts" x="370" y="192" text-anchor="middle" dominant-baseline="central">Phase execution</text></g>
+<!-- Local Repo -->
+<g class="c-blue"><rect x="490" y="60" width="110" height="52" rx="8" stroke-width="0.5"/><text class="th" x="545" y="82" text-anchor="middle" dominant-baseline="central">Local Repo</text><text class="ts" x="545" y="100" text-anchor="middle" dominant-baseline="central">~/.m2/repository</text></g>
+<!-- Remote Repo -->
+<g class="c-coral"><rect x="490" y="150" width="110" height="52" rx="8" stroke-width="0.5"/><text class="th" x="545" y="172" text-anchor="middle" dominant-baseline="central">Remote Repo</text><text class="ts" x="545" y="190" text-anchor="middle" dominant-baseline="central">Maven Central</text></g>
+<!-- Build Output -->
+<g class="c-green"><rect x="490" y="240" width="110" height="52" rx="8" stroke-width="0.5"/><text class="th" x="545" y="262" text-anchor="middle" dominant-baseline="central">Build Output</text><text class="ts" x="545" y="280" text-anchor="middle" dominant-baseline="central">target/ folder</text></g>
+<!-- Arrows -->
+<line x1="120" y1="166" x2="168" y2="166" stroke="var(--t)" stroke-width="1" marker-end="url(#a1)"/>
+<line x1="270" y1="166" x2="308" y2="166" stroke="var(--t)" stroke-width="1" marker-end="url(#a1)"/>
+<line x1="430" y1="150" x2="488" y2="100" stroke="var(--t)" stroke-width="1" marker-end="url(#a1)"/>
+<line x1="430" y1="166" x2="488" y2="176" stroke="var(--t)" stroke-width="1" marker-end="url(#a1)"/>
+<line x1="430" y1="185" x2="488" y2="258" stroke="var(--t)" stroke-width="1" marker-end="url(#a1)"/>
+<!-- Step labels -->
+<text class="ts" x="144" y="158" text-anchor="middle">reads</text>
+<text class="ts" x="289" y="158" text-anchor="middle">parsed by</text>
+<text class="ts" x="350" y="50" text-anchor="middle">checks first</text>
+<line x1="545" y1="112" x2="545" y2="148" stroke="var(--t)" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#a1)"/>
+<text class="ts" x="560" y="134" text-anchor="start">if missing</text>
+</svg>
+</div>
+
+<div class="section-head">Maven standard directory structure</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 290" role="img"><title>Maven standard directory layout</title><desc>Tree showing my-project root with src/main/java, src/test/java, src/test/resources, and target folders</desc>
+<defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Root -->
+<g class="c-amber"><rect x="260" y="20" width="160" height="40" rx="8" stroke-width="0.5"/><text class="th" x="340" y="40" text-anchor="middle" dominant-baseline="central">my-project/</text></g>
+<!-- Level 1 -->
+<g class="c-purple"><rect x="40" y="100" width="100" height="36" rx="6" stroke-width="0.5"/><text class="th" x="90" y="118" text-anchor="middle" dominant-baseline="central">src/</text></g>
+<g class="c-gray"><rect x="290" y="100" width="100" height="36" rx="6" stroke-width="0.5"/><text class="th" x="340" y="118" text-anchor="middle" dominant-baseline="central">pom.xml</text></g>
+<g class="c-teal"><rect x="540" y="100" width="100" height="36" rx="6" stroke-width="0.5"/><text class="th" x="590" y="118" text-anchor="middle" dominant-baseline="central">target/</text></g>
+<!-- Level 2 -->
+<g class="c-blue"><rect x="10" y="190" width="120" height="36" rx="6" stroke-width="0.5"/><text class="th" x="70" y="200" text-anchor="middle" dominant-baseline="central">main/java</text><text class="ts" x="70" y="216" text-anchor="middle" dominant-baseline="central">prod code</text></g>
+<g class="c-coral"><rect x="150" y="190" width="120" height="36" rx="6" stroke-width="0.5"/><text class="th" x="210" y="200" text-anchor="middle" dominant-baseline="central">test/java</text><text class="ts" x="210" y="216" text-anchor="middle" dominant-baseline="central">test classes</text></g>
+<g class="c-green"><rect x="290" y="190" width="140" height="36" rx="6" stroke-width="0.5"/><text class="th" x="360" y="200" text-anchor="middle" dominant-baseline="central">test/resources</text><text class="ts" x="360" y="216" text-anchor="middle" dominant-baseline="central">testng.xml, data</text></g>
+<g class="c-pink"><rect x="500" y="190" width="140" height="36" rx="6" stroke-width="0.5"/><text class="th" x="570" y="200" text-anchor="middle" dominant-baseline="central">classes/, reports</text><text class="ts" x="570" y="216" text-anchor="middle" dominant-baseline="central">compiled output</text></g>
+<!-- connectors -->
+<line x1="340" y1="60" x2="90" y2="98" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a2)"/>
+<line x1="340" y1="60" x2="340" y2="98" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a2)"/>
+<line x1="340" y1="60" x2="590" y2="98" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a2)"/>
+<line x1="90" y1="136" x2="70" y2="188" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a2)"/>
+<line x1="90" y1="136" x2="210" y2="188" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a2)"/>
+<line x1="90" y1="136" x2="360" y2="188" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a2)"/>
+<line x1="590" y1="136" x2="570" y2="188" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a2)"/>
+<!-- labels -->
+<text class="ts" x="340" y="258" text-anchor="middle">Generated at build time — never commit to Git</text>
+</svg>
+</div>
+
+<div class="section-head">Code example 1 — install Maven & verify</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">terminal — verify installation</span></div>
+<div class="code-body"><pre><span class="c-comment"># Step 1: Check Java version (Maven requires Java 8+)</span>
+java -version
+<span class="c-comment"># Output: java version "17.0.x"</span>
+
+<span class="c-comment"># Step 2: Check Maven version</span>
+mvn -version
+<span class="c-comment"># Output: Apache Maven 3.9.x</span>
+<span class="c-comment">#         Java version: 17.0.x</span>
+
+<span class="c-comment"># Step 3: Create a new Maven project from archetype (template)</span>
+<span class="c-comment"># Keyword: archetype = pre-built project template</span>
+mvn archetype:generate \
+  -DgroupId=com.sdet.tests \
+  -DartifactId=MyTestProject \
+  -DarchetypeArtifactId=maven-archetype-quickstart \
+  -DinteractiveMode=false
+<span class="c-comment"># groupId    = unique org identifier (like a Java package)</span>
+<span class="c-comment"># artifactId = your project name / JAR name</span>
+<span class="c-comment"># archetype  = project skeleton Maven uses to generate structure</span></pre></div></div>
+
+<div class="section-head">Code example 2 — key Maven commands</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">terminal — essential commands</span></div>
+<div class="code-body"><pre><span class="c-comment"># mvn compile — compiles src/main/java source files</span>
+mvn compile
+
+<span class="c-comment"># mvn test — compiles + runs tests in src/test/java</span>
+mvn test
+
+<span class="c-comment"># mvn package — compile + test + create JAR/WAR in target/</span>
+mvn package
+
+<span class="c-comment"># mvn clean — deletes target/ folder (removes old build)</span>
+mvn clean
+
+<span class="c-comment"># mvn clean install — full build + copies to local .m2 repo</span>
+mvn clean install
+
+<span class="c-comment"># mvn verify — runs integration tests and checks package</span>
+mvn verify
+
+<span class="c-comment"># Skip tests during build (use carefully, not recommended)</span>
+<span class="c-comment"># -DskipTests=true = compile tests but don't run them</span>
+mvn clean install -DskipTests=true</pre></div></div>
+
+<div class="section-head">Best practices</div>
+<ul class="checklist">
+  <li>Always use <span class="kw">mvn clean install</span> before pushing code to ensure a fresh build.</li>
+  <li>Never manually place JAR files in the project — always declare them as dependencies in pom.xml.</li>
+  <li>Keep your Maven version consistent across the team using the <span class="kw">mvnw</span> wrapper script.</li>
+  <li>Add <span class="kw">target/</span> to <span class="kw">.gitignore</span> — it's generated and should never be committed.</li>
+  <li>Use <span class="kw">-DskipTests</span> only for quick packaging, never in CI pipelines for test automation projects.</li>
+  <li>Prefer <span class="kw">mvn dependency:tree</span> to debug dependency conflicts and transitive dependencies.</li>
+</ul>
+
+<div class="section-head">Interview Q&A</div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is Maven and why do we use it in test automation? <span class="toggle">+</span></div><div class="qa-a">Maven is a build and dependency management tool. In test automation, we use it to automatically download Selenium, TestNG, and other libraries declared in pom.xml, compile test classes, and run tests with a single command like <span class="kw">mvn test</span>, making the setup consistent across all team members and CI servers.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is the difference between <span class="kw">mvn install</span> and <span class="kw">mvn deploy</span>? <span class="toggle">+</span></div><div class="qa-a"><span class="kw">mvn install</span> builds the project and copies the artifact to your local <span class="kw">~/.m2</span> repository. <span class="kw">mvn deploy</span> does everything install does, plus it uploads the artifact to a remote repository (like Nexus or Artifactory) so other team members can use it as a dependency.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is a transitive dependency in Maven? <span class="toggle">+</span></div><div class="qa-a">A transitive dependency is an indirect dependency. For example, if your project depends on Selenium, and Selenium internally depends on Guava — then Guava is a transitive dependency. Maven automatically resolves and downloads transitive dependencies. You can see the full tree with <span class="kw">mvn dependency:tree</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is the role of the <span class="kw">.m2</span> folder? <span class="toggle">+</span></div><div class="qa-a">The <span class="kw">~/.m2/repository</span> folder is Maven's local cache. When Maven downloads a dependency for the first time, it stores it here. On subsequent builds, Maven reads from this local cache instead of downloading again, making builds faster. The <span class="kw">settings.xml</span> inside <span class="kw">~/.m2</span> can configure proxy, mirrors, and credentials.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What does <span class="kw">mvn archetype:generate</span> do? <span class="toggle">+</span></div><div class="qa-a">It generates a new Maven project from a pre-built template called an <em>archetype</em>. It creates the standard directory structure (<span class="kw">src/main/java</span>, <span class="kw">src/test/java</span>), an initial <span class="kw">pom.xml</span>, and a sample class — saving you from manual setup. It's the fastest way to bootstrap a Maven project.</div></div>
+</div>
+
+<!-- ═══════════════════ SESSION 2 ═══════════════════ -->
+<div class="session" id="s1">
+<div class="overview-box">
+  <p><strong>What is Maven Lifecycle?</strong> A <em>lifecycle</em> is an ordered sequence of named steps called <em>phases</em>. When you run a phase, Maven automatically executes all phases that come before it.</p>
+  <p><strong>Three built-in lifecycles:</strong> <span class="kw">default</span> (build & test), <span class="kw">clean</span> (delete output), <span class="kw">site</span> (generate docs/reports). Each lifecycle has its own ordered phases.</p>
+  <p><strong>Plugins &amp; Goals:</strong> Each phase is implemented by a <em>plugin goal</em>. Example: the <span class="kw">test</span> phase runs the goal <span class="kw">maven-surefire-plugin:test</span>. A goal is the actual unit of work a plugin performs.</p>
+</div>
+
+<div class="section-head">Interview one-liners</div>
+<ul class="oneliner-list">
+  <li>Maven has three built-in lifecycles: default, clean, and site.</li>
+  <li>When you run <span class="kw">mvn test</span>, Maven automatically runs validate → compile → test-compile → test phases in order.</li>
+  <li>A lifecycle phase is a named step; a plugin goal is the actual execution unit bound to that phase.</li>
+  <li>The <span class="kw">default</span> lifecycle has 23 phases; the most commonly used are compile, test, package, verify, install, deploy.</li>
+  <li>You can bind multiple goals to a single phase and they execute in the order declared in pom.xml.</li>
+  <li>The <span class="kw">clean</span> lifecycle has three phases: pre-clean, clean, post-clean — it removes the target/ folder.</li>
+  <li>Running <span class="kw">mvn clean test</span> combines two lifecycles: clean lifecycle then default lifecycle up to test phase.</li>
+</ul>
+
+<div class="section-head">Default lifecycle phases flow</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 420" role="img"><title>Maven default lifecycle phases</title><desc>Shows the sequential phases of Maven default lifecycle with arrows</desc>
+<defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Column 1 -->
+<g class="c-gray"><rect x="20" y="20" width="140" height="40" rx="6" stroke-width="0.5"/><text class="th" x="90" y="36" text-anchor="middle" dominant-baseline="central">validate</text><text class="ts" x="90" y="51" text-anchor="middle" dominant-baseline="central">check pom.xml is correct</text></g>
+<line x1="160" y1="40" x2="178" y2="40" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<g class="c-gray"><rect x="180" y="20" width="140" height="40" rx="6" stroke-width="0.5"/><text class="th" x="250" y="36" text-anchor="middle" dominant-baseline="central">initialize</text><text class="ts" x="250" y="51" text-anchor="middle" dominant-baseline="central">set build properties</text></g>
+<line x1="320" y1="40" x2="338" y2="40" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<g class="c-blue"><rect x="340" y="20" width="140" height="40" rx="6" stroke-width="0.5"/><text class="th" x="410" y="36" text-anchor="middle" dominant-baseline="central">compile</text><text class="ts" x="410" y="51" text-anchor="middle" dominant-baseline="central">compile source files</text></g>
+<line x1="480" y1="40" x2="498" y2="40" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<g class="c-blue"><rect x="500" y="20" width="160" height="40" rx="6" stroke-width="0.5"/><text class="th" x="580" y="36" text-anchor="middle" dominant-baseline="central">test-compile</text><text class="ts" x="580" y="51" text-anchor="middle" dominant-baseline="central">compile test files</text></g>
+
+<!-- Row 2 -->
+<line x1="580" y1="60" x2="580" y2="110" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<g class="c-amber"><rect x="500" y="112" width="160" height="40" rx="6" stroke-width="0.5"/><text class="th" x="580" y="128" text-anchor="middle" dominant-baseline="central">test</text><text class="ts" x="580" y="143" text-anchor="middle" dominant-baseline="central">run unit tests (Surefire)</text></g>
+<line x1="498" y1="132" x2="480" y2="132" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<g class="c-amber"><rect x="340" y="112" width="140" height="40" rx="6" stroke-width="0.5"/><text class="th" x="410" y="128" text-anchor="middle" dominant-baseline="central">package</text><text class="ts" x="410" y="143" text-anchor="middle" dominant-baseline="central">create JAR / WAR</text></g>
+<line x1="338" y1="132" x2="320" y2="132" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<g class="c-amber"><rect x="180" y="112" width="140" height="40" rx="6" stroke-width="0.5"/><text class="th" x="250" y="128" text-anchor="middle" dominant-baseline="central">verify</text><text class="ts" x="250" y="143" text-anchor="middle" dominant-baseline="central">run integration tests</text></g>
+<line x1="178" y1="132" x2="160" y2="132" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<g class="c-teal"><rect x="20" y="112" width="140" height="40" rx="6" stroke-width="0.5"/><text class="th" x="90" y="128" text-anchor="middle" dominant-baseline="central">install</text><text class="ts" x="90" y="143" text-anchor="middle" dominant-baseline="central">copy to ~/.m2</text></g>
+
+<!-- Row 3 -->
+<line x1="90" y1="152" x2="90" y2="200" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<g class="c-green"><rect x="20" y="202" width="140" height="40" rx="6" stroke-width="0.5"/><text class="th" x="90" y="218" text-anchor="middle" dominant-baseline="central">deploy</text><text class="ts" x="90" y="233" text-anchor="middle" dominant-baseline="central">push to remote repo</text></g>
+
+<!-- Clean lifecycle -->
+<g class="c-coral"><rect x="220" y="260" width="240" height="36" rx="8" stroke-width="0.5"/><text class="th" x="340" y="278" text-anchor="middle" dominant-baseline="central">clean lifecycle</text></g>
+<g class="c-coral"><rect x="180" y="316" width="100" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="230" y="334" text-anchor="middle" dominant-baseline="central">pre-clean</text></g>
+<g class="c-coral"><rect x="290" y="316" width="100" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="340" y="334" text-anchor="middle" dominant-baseline="central">clean</text></g>
+<g class="c-coral"><rect x="400" y="316" width="100" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="450" y="334" text-anchor="middle" dominant-baseline="central">post-clean</text></g>
+<line x1="280" y1="334" x2="288" y2="334" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<line x1="390" y1="334" x2="398" y2="334" stroke="var(--t)" stroke-width="1" marker-end="url(#a3)"/>
+<line x1="340" y1="296" x2="340" y2="314" stroke="var(--t)" stroke-width="0.5"/>
+
+<text class="ts" x="340" y="380" text-anchor="middle">Maven executes all phases preceding the one you run</text>
+<text class="ts" x="340" y="396" text-anchor="middle">Example: mvn package runs validate→compile→test→package</text>
+</svg>
+</div>
+
+<div class="section-head">Plugin Goal binding diagram</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 200" role="img"><title>Plugin goal binding to phases</title><desc>Shows phase to plugin goal relationship</desc>
+<defs><marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Phases -->
+<g class="c-blue"><rect x="20" y="60" width="100" height="40" rx="6" stroke-width="0.5"/><text class="th" x="70" y="80" text-anchor="middle" dominant-baseline="central">compile</text></g>
+<g class="c-amber"><rect x="20" y="120" width="100" height="40" rx="6" stroke-width="0.5"/><text class="th" x="70" y="140" text-anchor="middle" dominant-baseline="central">test</text></g>
+<!-- Goals -->
+<g class="c-purple"><rect x="280" y="50" width="200" height="52" rx="6" stroke-width="0.5"/><text class="th" x="380" y="68" text-anchor="middle" dominant-baseline="central">maven-compiler-plugin</text><text class="ts" x="380" y="86" text-anchor="middle" dominant-baseline="central">:compile goal</text></g>
+<g class="c-teal"><rect x="280" y="120" width="200" height="52" rx="6" stroke-width="0.5"/><text class="th" x="380" y="138" text-anchor="middle" dominant-baseline="central">maven-surefire-plugin</text><text class="ts" x="380" y="156" text-anchor="middle" dominant-baseline="central">:test goal</text></g>
+<!-- Arrows -->
+<line x1="120" y1="80" x2="278" y2="76" stroke="var(--t)" stroke-width="1" marker-end="url(#a4)"/>
+<line x1="120" y1="140" x2="278" y2="146" stroke="var(--t)" stroke-width="1" marker-end="url(#a4)"/>
+<!-- Output -->
+<g class="c-green"><rect x="530" y="80" width="120" height="40" rx="6" stroke-width="0.5"/><text class="th" x="590" y="100" text-anchor="middle" dominant-baseline="central">target/classes</text></g>
+<g class="c-green"><rect x="530" y="140" width="120" height="40" rx="6" stroke-width="0.5"/><text class="th" x="590" y="160" text-anchor="middle" dominant-baseline="central">test reports</text></g>
+<line x1="480" y1="76" x2="528" y2="95" stroke="var(--t)" stroke-width="1" marker-end="url(#a4)"/>
+<line x1="480" y1="146" x2="528" y2="155" stroke="var(--t)" stroke-width="1" marker-end="url(#a4)"/>
+<text class="th" x="70" y="25" text-anchor="middle">PHASES</text>
+<text class="th" x="380" y="20" text-anchor="middle">PLUGIN GOALS</text>
+<text class="th" x="590" y="50" text-anchor="middle">OUTPUT</text>
+</svg>
+</div>
+
+<div class="section-head">Code example 3 — run specific lifecycle phases</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">terminal — lifecycle commands</span></div>
+<div class="code-body"><pre><span class="c-comment"># Run ONLY compile phase (and all phases before it)</span>
+mvn compile
+
+<span class="c-comment"># Run up to test phase — executes validate,initialize,</span>
+<span class="c-comment"># generate-sources,compile,test-compile,test</span>
+mvn test
+
+<span class="c-comment"># Run clean lifecycle + default up to package phase</span>
+<span class="c-comment"># Best practice: always combine clean + goal</span>
+mvn clean package
+
+<span class="c-comment"># Execute a specific plugin:goal directly (not via lifecycle)</span>
+<span class="c-comment"># Format: mvn plugin:goal</span>
+mvn dependency:tree     <span class="c-comment"># show all deps including transitive</span>
+mvn dependency:resolve  <span class="c-comment"># download all declared dependencies</span>
+mvn help:effective-pom  <span class="c-comment"># shows the final merged pom.xml</span>
+
+<span class="c-comment"># Run site lifecycle (generates HTML reports)</span>
+mvn site
+<span class="c-comment"># Output saved to: target/site/index.html</span></pre></div></div>
+
+<div class="section-head">Best practices</div>
+<ul class="checklist">
+  <li>Always prefer <span class="kw">mvn clean test</span> over just <span class="kw">mvn test</span> to avoid stale build artifacts.</li>
+  <li>Use <span class="kw">mvn help:effective-pom</span> to debug inherited settings from parent pom.</li>
+  <li>Understand that running a later phase automatically triggers all earlier phases — never skip phases manually.</li>
+  <li>In CI pipelines, use <span class="kw">mvn clean verify</span> to ensure both unit and integration tests run.</li>
+  <li>Use <span class="kw">mvn dependency:analyze</span> to detect unused or undeclared dependencies.</li>
+</ul>
+
+<div class="section-head">Interview Q&A</div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the difference between a Maven lifecycle, phase, and goal? <span class="toggle">+</span></div><div class="qa-a">Lifecycle is the highest level — a sequence of phases (e.g., default lifecycle). A phase is a named step within a lifecycle (e.g., compile, test, package). A goal is the actual executable task performed by a plugin (e.g., <span class="kw">surefire:test</span>). Goals are bound to phases. Running <span class="kw">mvn test</span> triggers the test phase which executes the <span class="kw">surefire:test</span> goal.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What plugin runs TestNG tests in Maven? <span class="toggle">+</span></div><div class="qa-a">The <span class="kw">maven-surefire-plugin</span> runs TestNG tests. You configure it in pom.xml to point to your testng.xml suite file. The plugin is bound to the <span class="kw">test</span> phase by default and generates test reports in <span class="kw">target/surefire-reports/</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: If I run <span class="kw">mvn package</span>, what phases execute? <span class="toggle">+</span></div><div class="qa-a">Maven executes all phases up to and including package in order: validate → initialize → generate-sources → process-sources → generate-resources → process-resources → compile → process-classes → generate-test-sources → process-test-sources → generate-test-resources → process-test-resources → test-compile → test → package. The key ones you need to remember are: validate, compile, test, package.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is the purpose of <span class="kw">mvn verify</span>? <span class="toggle">+</span></div><div class="qa-a"><span class="kw">mvn verify</span> runs all phases up to and including verify. It's used after package to run integration tests and quality checks (code coverage, static analysis) to verify the package is valid. In SDET work, it's commonly used in CI to run the full test suite including Selenium/API tests configured with the Failsafe plugin.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How is the clean lifecycle different from the default lifecycle? <span class="toggle">+</span></div><div class="qa-a">The clean lifecycle has only 3 phases (pre-clean, clean, post-clean) and its purpose is to remove the <span class="kw">target/</span> folder (build output). The default lifecycle has 23 phases and handles compilation, testing, packaging, and deployment. They are completely separate lifecycles — you often combine them: <span class="kw">mvn clean install</span> runs clean lifecycle then default up to install.</div></div>
+</div>
+
+<!-- ═══════════════════ SESSION 3 ═══════════════════ -->
+<div class="session" id="s2">
+<div class="overview-box">
+  <p><strong>POM = Project Object Model.</strong> The <span class="kw">pom.xml</span> file is the heart of every Maven project. It defines everything about your project: coordinates (group, artifact, version), dependencies, plugins, properties, and build configuration.</p>
+  <p><strong>All elements explained:</strong> <span class="kw">groupId</span> = your organization namespace, <span class="kw">artifactId</span> = project name, <span class="kw">version</span> = project version, <span class="kw">packaging</span> = output type (jar/war/pom), <span class="kw">dependencies</span> = libraries you use, <span class="kw">build</span> = plugins and configuration, <span class="kw">properties</span> = reusable variables.</p>
+  <p><strong>Effective POM:</strong> Maven merges your pom.xml with the <em>Super POM</em> (Maven's default configuration) to create the effective POM. Run <span class="kw">mvn help:effective-pom</span> to see the merged result.</p>
+</div>
+
+<div class="section-head">Interview one-liners</div>
+<ul class="oneliner-list">
+  <li>POM stands for Project Object Model — it is the fundamental unit of work in Maven.</li>
+  <li>Every pom.xml must have exactly three required elements: <span class="kw">groupId</span>, <span class="kw">artifactId</span>, and <span class="kw">version</span> — these form the GAV coordinates.</li>
+  <li>The <span class="kw">&lt;dependencies&gt;</span> section declares external libraries; Maven downloads them from the configured repository.</li>
+  <li>The <span class="kw">&lt;properties&gt;</span> section allows you to define reusable variables like version numbers to avoid duplication.</li>
+  <li>The <span class="kw">&lt;build&gt;</span> section configures plugins and specifies the source and output directories.</li>
+  <li>Dependency <span class="kw">scope</span> controls when a dependency is available: compile, test, provided, runtime, system.</li>
+  <li>A parent pom.xml inherits settings to child modules — used in multi-module Maven projects.</li>
+</ul>
+
+<div class="section-head">POM.xml full structure diagram</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 380" role="img"><title>POM.xml complete structure</title><desc>Shows all major sections of a pom.xml file as connected boxes</desc>
+<defs><marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Central pom.xml -->
+<g class="c-amber"><rect x="250" y="160" width="180" height="60" rx="10" stroke-width="1.5"/><text class="th" x="340" y="185" text-anchor="middle" dominant-baseline="central">pom.xml</text><text class="ts" x="340" y="205" text-anchor="middle" dominant-baseline="central">Project Object Model</text></g>
+<!-- Surrounding boxes -->
+<g class="c-purple"><rect x="20" y="20" width="150" height="52" rx="8" stroke-width="0.5"/><text class="th" x="95" y="38" text-anchor="middle" dominant-baseline="central">GAV Coordinates</text><text class="ts" x="95" y="55" text-anchor="middle" dominant-baseline="central">groupId, artifactId, version</text></g>
+<g class="c-blue"><rect x="260" y="20" width="160" height="52" rx="8" stroke-width="0.5"/><text class="th" x="340" y="38" text-anchor="middle" dominant-baseline="central">&lt;properties&gt;</text><text class="ts" x="340" y="55" text-anchor="middle" dominant-baseline="central">reusable variables</text></g>
+<g class="c-teal"><rect x="490" y="20" width="160" height="52" rx="8" stroke-width="0.5"/><text class="th" x="570" y="38" text-anchor="middle" dominant-baseline="central">&lt;parent&gt;</text><text class="ts" x="570" y="55" text-anchor="middle" dominant-baseline="central">inherit from parent pom</text></g>
+<g class="c-coral"><rect x="20" y="160" width="190" height="52" rx="8" stroke-width="0.5"/><text class="th" x="115" y="178" text-anchor="middle" dominant-baseline="central">&lt;dependencies&gt;</text><text class="ts" x="115" y="196" text-anchor="middle" dominant-baseline="central">Selenium, TestNG, libs</text></g>
+<g class="c-green"><rect x="490" y="160" width="170" height="52" rx="8" stroke-width="0.5"/><text class="th" x="575" y="178" text-anchor="middle" dominant-baseline="central">&lt;build&gt;</text><text class="ts" x="575" y="196" text-anchor="middle" dominant-baseline="central">plugins, directories</text></g>
+<g class="c-gray"><rect x="20" y="300" width="190" height="52" rx="8" stroke-width="0.5"/><text class="th" x="115" y="318" text-anchor="middle" dominant-baseline="central">&lt;repositories&gt;</text><text class="ts" x="115" y="336" text-anchor="middle" dominant-baseline="central">custom artifact sources</text></g>
+<g class="c-pink"><rect x="260" y="300" width="160" height="52" rx="8" stroke-width="0.5"/><text class="th" x="340" y="318" text-anchor="middle" dominant-baseline="central">&lt;profiles&gt;</text><text class="ts" x="340" y="336" text-anchor="middle" dominant-baseline="central">env-specific config</text></g>
+<g class="c-blue"><rect x="490" y="300" width="170" height="52" rx="8" stroke-width="0.5"/><text class="th" x="575" y="318" text-anchor="middle" dominant-baseline="central">&lt;reporting&gt;</text><text class="ts" x="575" y="336" text-anchor="middle" dominant-baseline="central">HTML reports config</text></g>
+<!-- Arrows from center outward -->
+<line x1="252" y1="178" x2="210" y2="186" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a5)"/>
+<line x1="340" y1="160" x2="340" y2="74" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a5)"/>
+<line x1="428" y1="178" x2="488" y2="186" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a5)"/>
+<line x1="305" y1="178" x2="170" y2="72" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a5)"/>
+<line x1="375" y1="178" x2="490" y2="72" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a5)"/>
+<line x1="300" y1="220" x2="210" y2="300" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a5)"/>
+<line x1="340" y1="220" x2="340" y2="298" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a5)"/>
+<line x1="390" y1="220" x2="490" y2="300" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a5)"/>
+</svg>
+</div>
+
+<div class="section-head">Dependency scope diagram</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 190" role="img"><title>Maven dependency scope comparison</title><desc>Shows when each dependency scope is available in classpath</desc>
+<defs></defs>
+<text class="th" x="20" y="22">Scope</text><text class="th" x="170" y="22">Compile</text><text class="th" x="290" y="22">Test run</text><text class="th" x="410" y="22">Runtime</text><text class="th" x="530" y="22">Packaged</text>
+<!-- compile -->
+<g class="c-purple"><rect x="20" y="34" width="120" height="28" rx="4" stroke-width="0.5"/><text class="th" x="80" y="48" text-anchor="middle" dominant-baseline="central">compile (default)</text></g>
+<g class="c-green"><rect x="158" y="34" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="208" y="48" text-anchor="middle" dominant-baseline="central">✓</text></g>
+<g class="c-green"><rect x="278" y="34" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="328" y="48" text-anchor="middle" dominant-baseline="central">✓</text></g>
+<g class="c-green"><rect x="398" y="34" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="448" y="48" text-anchor="middle" dominant-baseline="central">✓</text></g>
+<g class="c-green"><rect x="518" y="34" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="568" y="48" text-anchor="middle" dominant-baseline="central">✓ in JAR</text></g>
+<!-- test -->
+<g class="c-blue"><rect x="20" y="72" width="120" height="28" rx="4" stroke-width="0.5"/><text class="th" x="80" y="86" text-anchor="middle" dominant-baseline="central">test</text></g>
+<g class="c-gray"><rect x="158" y="72" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="208" y="86" text-anchor="middle" dominant-baseline="central">✗</text></g>
+<g class="c-green"><rect x="278" y="72" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="328" y="86" text-anchor="middle" dominant-baseline="central">✓</text></g>
+<g class="c-gray"><rect x="398" y="72" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="448" y="86" text-anchor="middle" dominant-baseline="central">✗</text></g>
+<g class="c-gray"><rect x="518" y="72" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="568" y="86" text-anchor="middle" dominant-baseline="central">✗ not in JAR</text></g>
+<!-- provided -->
+<g class="c-amber"><rect x="20" y="110" width="120" height="28" rx="4" stroke-width="0.5"/><text class="th" x="80" y="124" text-anchor="middle" dominant-baseline="central">provided</text></g>
+<g class="c-green"><rect x="158" y="110" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="208" y="124" text-anchor="middle" dominant-baseline="central">✓</text></g>
+<g class="c-green"><rect x="278" y="110" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="328" y="124" text-anchor="middle" dominant-baseline="central">✓</text></g>
+<g class="c-gray"><rect x="398" y="110" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="448" y="124" text-anchor="middle" dominant-baseline="central">✗</text></g>
+<g class="c-gray"><rect x="518" y="110" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="568" y="124" text-anchor="middle" dominant-baseline="central">✗ JDK/server</text></g>
+<!-- runtime -->
+<g class="c-teal"><rect x="20" y="148" width="120" height="28" rx="4" stroke-width="0.5"/><text class="th" x="80" y="162" text-anchor="middle" dominant-baseline="central">runtime</text></g>
+<g class="c-gray"><rect x="158" y="148" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="208" y="162" text-anchor="middle" dominant-baseline="central">✗</text></g>
+<g class="c-green"><rect x="278" y="148" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="328" y="162" text-anchor="middle" dominant-baseline="central">✓</text></g>
+<g class="c-green"><rect x="398" y="148" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="448" y="162" text-anchor="middle" dominant-baseline="central">✓</text></g>
+<g class="c-green"><rect x="518" y="148" width="100" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="568" y="162" text-anchor="middle" dominant-baseline="central">✓ in JAR</text></g>
+</svg>
+</div>
+
+<div class="section-head">Code example 4 — complete pom.xml for SDET project</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">pom.xml — full SDET project setup</span></div>
+<div class="code-body"><pre><span class="c-comment">&lt;!-- XML declaration: required at top of every XML file --&gt;</span>
+<span class="c-tag">&lt;?xml version=</span><span class="c-val">"1.0"</span> <span class="c-attr">encoding=</span><span class="c-val">"UTF-8"</span><span class="c-tag">?&gt;</span>
+
+<span class="c-comment">&lt;!-- &lt;project&gt; = root element of every pom.xml --&gt;</span>
+<span class="c-comment">&lt;!-- xmlns = XML namespace to specify Maven POM schema --&gt;</span>
+<span class="c-tag">&lt;project</span> <span class="c-attr">xmlns=</span><span class="c-val">"http://maven.apache.org/POM/4.0.0"</span><span class="c-tag">&gt;</span>
+
+  <span class="c-comment">&lt;!-- modelVersion: always 4.0.0 for Maven 2/3/4 --&gt;</span>
+  <span class="c-tag">&lt;modelVersion&gt;</span>4.0.0<span class="c-tag">&lt;/modelVersion&gt;</span>
+
+  <span class="c-comment">&lt;!-- GAV = GroupId + ArtifactId + Version (unique identifier) --&gt;</span>
+  <span class="c-tag">&lt;groupId&gt;</span>com.sdet.automation<span class="c-tag">&lt;/groupId&gt;</span>
+  <span class="c-tag">&lt;artifactId&gt;</span>SeleniumTestNGProject<span class="c-tag">&lt;/artifactId&gt;</span>
+  <span class="c-tag">&lt;version&gt;</span>1.0-SNAPSHOT<span class="c-tag">&lt;/version&gt;</span>
+  <span class="c-comment">&lt;!-- SNAPSHOT = under development, not a stable release --&gt;</span>
+  <span class="c-tag">&lt;packaging&gt;</span>jar<span class="c-tag">&lt;/packaging&gt;</span>
+  <span class="c-comment">&lt;!-- packaging: jar (default), war, ear, pom --&gt;</span>
+
+  <span class="c-comment">&lt;!-- &lt;properties&gt;: define reusable variables, avoid duplication --&gt;</span>
+  <span class="c-tag">&lt;properties&gt;</span>
+    <span class="c-tag">&lt;maven.compiler.source&gt;</span>17<span class="c-tag">&lt;/maven.compiler.source&gt;</span>
+    <span class="c-tag">&lt;maven.compiler.target&gt;</span>17<span class="c-tag">&lt;/maven.compiler.target&gt;</span>
+    <span class="c-tag">&lt;selenium.version&gt;</span>4.18.1<span class="c-tag">&lt;/selenium.version&gt;</span>
+    <span class="c-tag">&lt;testng.version&gt;</span>7.9.0<span class="c-tag">&lt;/testng.version&gt;</span>
+    <span class="c-tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="c-tag">&lt;/project.build.sourceEncoding&gt;</span>
+  <span class="c-tag">&lt;/properties&gt;</span>
+
+  <span class="c-tag">&lt;dependencies&gt;</span>
+    <span class="c-comment">&lt;!-- Selenium WebDriver dependency --&gt;</span>
+    <span class="c-tag">&lt;dependency&gt;</span>
+      <span class="c-tag">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="c-tag">&lt;/groupId&gt;</span>
+      <span class="c-tag">&lt;artifactId&gt;</span>selenium-java<span class="c-tag">&lt;/artifactId&gt;</span>
+      <span class="c-comment">&lt;!-- ${} syntax references the property defined above --&gt;</span>
+      <span class="c-tag">&lt;version&gt;</span>${selenium.version}<span class="c-tag">&lt;/version&gt;</span>
+    <span class="c-tag">&lt;/dependency&gt;</span>
+
+    <span class="c-comment">&lt;!-- TestNG: scope=test means available only during testing --&gt;</span>
+    <span class="c-tag">&lt;dependency&gt;</span>
+      <span class="c-tag">&lt;groupId&gt;</span>org.testng<span class="c-tag">&lt;/groupId&gt;</span>
+      <span class="c-tag">&lt;artifactId&gt;</span>testng<span class="c-tag">&lt;/artifactId&gt;</span>
+      <span class="c-tag">&lt;version&gt;</span>${testng.version}<span class="c-tag">&lt;/version&gt;</span>
+      <span class="c-tag">&lt;scope&gt;</span>test<span class="c-tag">&lt;/scope&gt;</span>
+    <span class="c-tag">&lt;/dependency&gt;</span>
+  <span class="c-tag">&lt;/dependencies&gt;</span>
+<span class="c-tag">&lt;/project&gt;</span></pre></div></div>
+
+<div class="section-head">Code example 5 — properties and dependency management</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">pom.xml — advanced dependency control</span></div>
+<div class="code-body"><pre><span class="c-comment">&lt;!-- &lt;dependencyManagement&gt;: define versions in parent pom --&gt;</span>
+<span class="c-comment">&lt;!-- Child modules inherit these versions without specifying them --&gt;</span>
+<span class="c-tag">&lt;dependencyManagement&gt;</span>
+  <span class="c-tag">&lt;dependencies&gt;</span>
+    <span class="c-tag">&lt;dependency&gt;</span>
+      <span class="c-tag">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="c-tag">&lt;/groupId&gt;</span>
+      <span class="c-tag">&lt;artifactId&gt;</span>selenium-java<span class="c-tag">&lt;/artifactId&gt;</span>
+      <span class="c-tag">&lt;version&gt;</span>4.18.1<span class="c-tag">&lt;/version&gt;</span>
+    <span class="c-tag">&lt;/dependency&gt;</span>
+  <span class="c-tag">&lt;/dependencies&gt;</span>
+<span class="c-tag">&lt;/dependencyManagement&gt;</span>
+
+<span class="c-comment">&lt;!-- &lt;exclusions&gt;: remove a transitive dependency you don't want --&gt;</span>
+<span class="c-tag">&lt;dependency&gt;</span>
+  <span class="c-tag">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="c-tag">&lt;/groupId&gt;</span>
+  <span class="c-tag">&lt;artifactId&gt;</span>selenium-java<span class="c-tag">&lt;/artifactId&gt;</span>
+  <span class="c-tag">&lt;version&gt;</span>4.18.1<span class="c-tag">&lt;/version&gt;</span>
+  <span class="c-tag">&lt;exclusions&gt;</span>
+    <span class="c-tag">&lt;exclusion&gt;</span>
+      <span class="c-comment">&lt;!-- Exclude a conflicting transitive dependency --&gt;</span>
+      <span class="c-tag">&lt;groupId&gt;</span>com.google.guava<span class="c-tag">&lt;/groupId&gt;</span>
+      <span class="c-tag">&lt;artifactId&gt;</span>guava<span class="c-tag">&lt;/artifactId&gt;</span>
+    <span class="c-tag">&lt;/exclusion&gt;</span>
+  <span class="c-tag">&lt;/exclusions&gt;</span>
+<span class="c-tag">&lt;/dependency&gt;</span></pre></div></div>
+
+<div class="section-head">Best practices</div>
+<ul class="checklist">
+  <li>Always define version numbers in <span class="kw">&lt;properties&gt;</span> so you can update them in one place.</li>
+  <li>Use <span class="kw">scope=test</span> for TestNG, JUnit, Mockito — they should never end up in production JARs.</li>
+  <li>Use <span class="kw">&lt;dependencyManagement&gt;</span> in a parent pom to centralize version control for multi-module projects.</li>
+  <li>Run <span class="kw">mvn dependency:analyze</span> to find declared but unused, or used but undeclared dependencies.</li>
+  <li>Never hardcode credentials in pom.xml — use Maven settings.xml or CI environment variables.</li>
+</ul>
+
+<div class="section-head">Interview Q&A</div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What are the three required elements in every pom.xml? <span class="toggle">+</span></div><div class="qa-a">Every pom.xml must have <span class="kw">groupId</span> (organization namespace like com.company), <span class="kw">artifactId</span> (project/JAR name), and <span class="kw">version</span> (release version). These three together form the GAV coordinates that uniquely identify your artifact in any Maven repository.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is the difference between <span class="kw">&lt;dependencies&gt;</span> and <span class="kw">&lt;dependencyManagement&gt;</span>? <span class="toggle">+</span></div><div class="qa-a"><span class="kw">&lt;dependencies&gt;</span> declares actual dependencies that get added to the classpath immediately. <span class="kw">&lt;dependencyManagement&gt;</span> only declares version information — the dependency is NOT added to the classpath unless a child pom or the same pom also lists it in <span class="kw">&lt;dependencies&gt;</span>. It's used in parent poms to manage versions centrally.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What does SNAPSHOT mean in Maven version? <span class="toggle">+</span></div><div class="qa-a">SNAPSHOT (e.g., <span class="kw">1.0-SNAPSHOT</span>) means the artifact is still under active development and is not a stable release. Maven checks the remote repository for newer SNAPSHOT versions on each build (unless configured otherwise). When you release, you remove SNAPSHOT and publish a stable version like <span class="kw">1.0</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is the Super POM? <span class="toggle">+</span></div><div class="qa-a">The Super POM is Maven's built-in default pom.xml that all projects implicitly inherit from. It defines default values for source directories (<span class="kw">src/main/java</span>), output directories (<span class="kw">target/</span>), default plugin bindings, and the Maven Central repository. You can view the merged result with <span class="kw">mvn help:effective-pom</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How do you resolve a dependency version conflict in Maven? <span class="toggle">+</span></div><div class="qa-a">Maven uses nearest-definition wins: the dependency closest in the dependency tree wins. To override a transitive dependency version, you can: (1) explicitly declare the desired version in your own <span class="kw">&lt;dependencies&gt;</span>, (2) use <span class="kw">&lt;exclusions&gt;</span> to remove the unwanted transitive dependency, or (3) use <span class="kw">&lt;dependencyManagement&gt;</span> to enforce a specific version. Always verify with <span class="kw">mvn dependency:tree</span>.</div></div>
+</div>
+
+<!-- ═══════════════════ SESSION 4 ═══════════════════ -->
+<div class="session" id="s3">
+<div class="overview-box">
+  <p><strong>Common Maven Plugins for SDET:</strong> Maven uses plugins to execute every build action. For SDET, the key plugins are <span class="kw">maven-surefire-plugin</span> (unit/TestNG tests), <span class="kw">maven-failsafe-plugin</span> (integration tests), <span class="kw">maven-compiler-plugin</span> (Java version), and <span class="kw">maven-resources-plugin</span> (copy test data files).</p>
+  <p><strong>Surefire vs Failsafe:</strong> Surefire runs <span class="kw">*Test.java</span> files during the <span class="kw">test</span> phase. Failsafe runs <span class="kw">*IT.java</span> files during the <span class="kw">integration-test</span> phase. In SDET, Selenium end-to-end tests are often configured under Failsafe so they don't block the package phase if they fail.</p>
+  <p><strong>Plugin configuration:</strong> Every plugin is configured inside the <span class="kw">&lt;build&gt;&lt;plugins&gt;</span> section of pom.xml. You specify the plugin's GAV coordinates, version, and configuration parameters.</p>
+</div>
+
+<div class="section-head">Interview one-liners</div>
+<ul class="oneliner-list">
+  <li><span class="kw">maven-surefire-plugin</span> runs TestNG and JUnit tests during the <span class="kw">test</span> phase.</li>
+  <li><span class="kw">maven-compiler-plugin</span> compiles Java source using the JDK version specified in <span class="kw">source</span> and <span class="kw">target</span> configuration.</li>
+  <li>Surefire generates reports in <span class="kw">target/surefire-reports/</span> as XML and plain text files.</li>
+  <li><span class="kw">maven-failsafe-plugin</span> is designed for integration tests — a test failure does not immediately fail the build, allowing post-integration cleanup.</li>
+  <li>Plugin <span class="kw">executions</span> allow you to bind a plugin goal to a specific lifecycle phase with custom configuration.</li>
+  <li>The <span class="kw">maven-resources-plugin</span> copies files from <span class="kw">src/test/resources</span> to <span class="kw">target/test-classes</span> so tests can access them at runtime.</li>
+  <li>You can run a specific plugin goal directly: <span class="kw">mvn surefire:test</span> without running earlier lifecycle phases.</li>
+</ul>
+
+<div class="section-head">Plugin ecosystem diagram</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 300" role="img"><title>Maven plugin ecosystem for SDET</title><desc>Shows core plugins and their relationship to build phases</desc>
+<defs><marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Phases column -->
+<text class="th" x="60" y="22" text-anchor="middle">PHASE</text>
+<g class="c-blue"><rect x="10" y="34" width="100" height="34" rx="6" stroke-width="0.5"/><text class="th" x="60" y="51" text-anchor="middle" dominant-baseline="central">compile</text></g>
+<g class="c-blue"><rect x="10" y="80" width="100" height="34" rx="6" stroke-width="0.5"/><text class="th" x="60" y="97" text-anchor="middle" dominant-baseline="central">test-compile</text></g>
+<g class="c-amber"><rect x="10" y="126" width="100" height="34" rx="6" stroke-width="0.5"/><text class="th" x="60" y="143" text-anchor="middle" dominant-baseline="central">test</text></g>
+<g class="c-teal"><rect x="10" y="172" width="100" height="34" rx="6" stroke-width="0.5"/><text class="th" x="60" y="189" text-anchor="middle" dominant-baseline="central">package</text></g>
+<g class="c-coral"><rect x="10" y="218" width="100" height="34" rx="6" stroke-width="0.5"/><text class="th" x="60" y="235" text-anchor="middle" dominant-baseline="central">integration-test</text></g>
+
+<!-- Plugin column -->
+<text class="th" x="380" y="22" text-anchor="middle">PLUGIN : GOAL</text>
+<g class="c-purple"><rect x="180" y="34" width="260" height="34" rx="6" stroke-width="0.5"/><text class="th" x="310" y="44" text-anchor="middle" dominant-baseline="central">maven-compiler-plugin</text><text class="ts" x="310" y="59" text-anchor="middle" dominant-baseline="central">:compile → compiles src/main/java</text></g>
+<g class="c-purple"><rect x="180" y="80" width="260" height="34" rx="6" stroke-width="0.5"/><text class="th" x="310" y="90" text-anchor="middle" dominant-baseline="central">maven-compiler-plugin</text><text class="ts" x="310" y="105" text-anchor="middle" dominant-baseline="central">:testCompile → compiles src/test/java</text></g>
+<g class="c-amber"><rect x="180" y="126" width="260" height="34" rx="6" stroke-width="0.5"/><text class="th" x="310" y="136" text-anchor="middle" dominant-baseline="central">maven-surefire-plugin</text><text class="ts" x="310" y="151" text-anchor="middle" dominant-baseline="central">:test → runs TestNG/JUnit tests</text></g>
+<g class="c-teal"><rect x="180" y="172" width="260" height="34" rx="6" stroke-width="0.5"/><text class="th" x="310" y="182" text-anchor="middle" dominant-baseline="central">maven-jar-plugin</text><text class="ts" x="310" y="197" text-anchor="middle" dominant-baseline="central">:jar → creates target/*.jar</text></g>
+<g class="c-coral"><rect x="180" y="218" width="260" height="34" rx="6" stroke-width="0.5"/><text class="th" x="310" y="228" text-anchor="middle" dominant-baseline="central">maven-failsafe-plugin</text><text class="ts" x="310" y="243" text-anchor="middle" dominant-baseline="central">:integration-test → Selenium E2E</text></g>
+<!-- Arrows -->
+<line x1="110" y1="51" x2="178" y2="51" stroke="var(--t)" stroke-width="1" marker-end="url(#a6)"/>
+<line x1="110" y1="97" x2="178" y2="97" stroke="var(--t)" stroke-width="1" marker-end="url(#a6)"/>
+<line x1="110" y1="143" x2="178" y2="143" stroke="var(--t)" stroke-width="1" marker-end="url(#a6)"/>
+<line x1="110" y1="189" x2="178" y2="189" stroke="var(--t)" stroke-width="1" marker-end="url(#a6)"/>
+<line x1="110" y1="235" x2="178" y2="235" stroke="var(--t)" stroke-width="1" marker-end="url(#a6)"/>
+<!-- Reports column -->
+<text class="th" x="590" y="22" text-anchor="middle">OUTPUT</text>
+<g class="c-green"><rect x="460" y="126" width="200" height="34" rx="6" stroke-width="0.5"/><text class="th" x="560" y="136" text-anchor="middle" dominant-baseline="central">target/surefire-reports/</text><text class="ts" x="560" y="151" text-anchor="middle" dominant-baseline="central">*.xml + *.txt</text></g>
+<g class="c-green"><rect x="460" y="218" width="200" height="34" rx="6" stroke-width="0.5"/><text class="th" x="560" y="228" text-anchor="middle" dominant-baseline="central">target/failsafe-reports/</text><text class="ts" x="560" y="243" text-anchor="middle" dominant-baseline="central">*.xml + *.txt</text></g>
+<line x1="440" y1="143" x2="458" y2="143" stroke="var(--t)" stroke-width="1" marker-end="url(#a6)"/>
+<line x1="440" y1="235" x2="458" y2="235" stroke="var(--t)" stroke-width="1" marker-end="url(#a6)"/>
+<text class="ts" x="340" y="278" text-anchor="middle">Surefire → unit tests | Failsafe → integration/E2E tests</text>
+</svg>
+</div>
+
+<div class="section-head">Code example 6 — configure maven-compiler-plugin</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">pom.xml — compiler plugin config</span></div>
+<div class="code-body"><pre><span class="c-tag">&lt;build&gt;</span>
+  <span class="c-tag">&lt;plugins&gt;</span>
+
+    <span class="c-comment">&lt;!-- maven-compiler-plugin: compiles Java source code --&gt;</span>
+    <span class="c-comment">&lt;!-- Without this, Maven uses Java 5 by default! --&gt;</span>
+    <span class="c-tag">&lt;plugin&gt;</span>
+      <span class="c-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="c-tag">&lt;/groupId&gt;</span>
+      <span class="c-tag">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="c-tag">&lt;/artifactId&gt;</span>
+      <span class="c-tag">&lt;version&gt;</span>3.13.0<span class="c-tag">&lt;/version&gt;</span>
+      <span class="c-tag">&lt;configuration&gt;</span>
+        <span class="c-comment">&lt;!-- source: minimum Java version your code supports --&gt;</span>
+        <span class="c-tag">&lt;source&gt;</span>17<span class="c-tag">&lt;/source&gt;</span>
+        <span class="c-comment">&lt;!-- target: Java version for compiled .class files --&gt;</span>
+        <span class="c-tag">&lt;target&gt;</span>17<span class="c-tag">&lt;/target&gt;</span>
+        <span class="c-comment">&lt;!-- encoding: prevent character encoding warnings --&gt;</span>
+        <span class="c-tag">&lt;encoding&gt;</span>UTF-8<span class="c-tag">&lt;/encoding&gt;</span>
+      <span class="c-tag">&lt;/configuration&gt;</span>
+    <span class="c-tag">&lt;/plugin&gt;</span>
+
+  <span class="c-tag">&lt;/plugins&gt;</span>
+<span class="c-tag">&lt;/build&gt;</span></pre></div></div>
+
+<div class="section-head">Code example 7 — maven-surefire-plugin with TestNG suite</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">pom.xml — surefire plugin config</span></div>
+<div class="code-body"><pre><span class="c-tag">&lt;plugin&gt;</span>
+  <span class="c-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="c-tag">&lt;/groupId&gt;</span>
+  <span class="c-tag">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="c-tag">&lt;/artifactId&gt;</span>
+  <span class="c-tag">&lt;version&gt;</span>3.2.5<span class="c-tag">&lt;/version&gt;</span>
+  <span class="c-tag">&lt;configuration&gt;</span>
+    <span class="c-comment">&lt;!-- suiteXmlFiles: tell Surefire to use testng.xml --&gt;</span>
+    <span class="c-comment">&lt;!-- instead of auto-discovering *Test.java files --&gt;</span>
+    <span class="c-tag">&lt;suiteXmlFiles&gt;</span>
+      <span class="c-tag">&lt;suiteXmlFile&gt;</span>src/test/resources/testng.xml<span class="c-tag">&lt;/suiteXmlFile&gt;</span>
+    <span class="c-tag">&lt;/suiteXmlFiles&gt;</span>
+
+    <span class="c-comment">&lt;!-- reportsDirectory: where XML reports are saved --&gt;</span>
+    <span class="c-tag">&lt;reportsDirectory&gt;</span>${project.build.directory}/surefire-reports<span class="c-tag">&lt;/reportsDirectory&gt;</span>
+
+    <span class="c-comment">&lt;!-- testFailureIgnore: true = don't fail build on test failure --&gt;</span>
+    <span class="c-comment">&lt;!-- Use with caution — only when you still want reporting --&gt;</span>
+    <span class="c-tag">&lt;testFailureIgnore&gt;</span>false<span class="c-tag">&lt;/testFailureIgnore&gt;</span>
+
+    <span class="c-comment">&lt;!-- parallel: run tests in parallel threads (TestNG feature) --&gt;</span>
+    <span class="c-tag">&lt;parallel&gt;</span>methods<span class="c-tag">&lt;/parallel&gt;</span>
+    <span class="c-tag">&lt;threadCount&gt;</span>4<span class="c-tag">&lt;/threadCount&gt;</span>
+  <span class="c-tag">&lt;/configuration&gt;</span>
+<span class="c-tag">&lt;/plugin&gt;</span></pre></div></div>
+
+<div class="section-head">Best practices</div>
+<ul class="checklist">
+  <li>Always specify the plugin version explicitly — never rely on Maven's default plugin versions, which may vary between Maven versions.</li>
+  <li>Use <span class="kw">maven-failsafe-plugin</span> for Selenium E2E tests so a failed UI test doesn't prevent packaging.</li>
+  <li>Set <span class="kw">maven.compiler.source/target</span> in <span class="kw">&lt;properties&gt;</span> rather than in the plugin config — it's cleaner and reusable.</li>
+  <li>Use <span class="kw">parallel=methods</span> and <span class="kw">threadCount</span> in Surefire only after confirming tests are thread-safe.</li>
+  <li>Check <span class="kw">target/surefire-reports/*.xml</span> in CI for detailed failure messages before looking at console output.</li>
+</ul>
+
+<div class="section-head">Interview Q&A</div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the difference between Surefire and Failsafe plugins? <span class="toggle">+</span></div><div class="qa-a">Surefire runs unit tests (files matching *Test.java) during the <span class="kw">test</span> phase — a failure immediately fails the build. Failsafe runs integration tests (*IT.java) during the <span class="kw">integration-test</span> phase — a failure is recorded but the build continues to the <span class="kw">verify</span> phase where results are checked. For Selenium E2E tests, Failsafe is preferred so cleanup code (e.g., stopping a server) still runs.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: How do you configure Surefire to run a specific testng.xml file? <span class="toggle">+</span></div><div class="qa-a">Inside the Surefire plugin's <span class="kw">&lt;configuration&gt;</span>, add a <span class="kw">&lt;suiteXmlFiles&gt;</span> element pointing to your testng.xml path. Example: <span class="kw">&lt;suiteXmlFile&gt;src/test/resources/testng.xml&lt;/suiteXmlFile&gt;</span>. This tells Surefire to use TestNG's XML-based test organization instead of auto-scanning for test classes.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: Where are Surefire test reports saved and how do you read them? <span class="toggle">+</span></div><div class="qa-a">Surefire saves reports in <span class="kw">target/surefire-reports/</span> as two formats: XML files (<span class="kw">TEST-*.xml</span>) that CI tools like Jenkins parse to display test results, and plain text files (<span class="kw">*.txt</span>) with console output. To view them as formatted HTML, configure the <span class="kw">maven-surefire-report-plugin</span> and run <span class="kw">mvn surefire-report:report</span> — the HTML is saved to <span class="kw">target/site/</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is a plugin execution in Maven? <span class="toggle">+</span></div><div class="qa-a">A plugin execution is a way to bind a plugin goal to a specific lifecycle phase with custom configuration. Using <span class="kw">&lt;executions&gt;&lt;execution&gt;</span>, you can run the same plugin multiple times in different phases with different configurations — for example, running surefire in both the test phase and again in verify with different test suite files.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How do you skip test execution in Maven? <span class="toggle">+</span></div><div class="qa-a">There are two ways: <span class="kw">-DskipTests=true</span> compiles test classes but skips running them (Surefire and Failsafe), <span class="kw">-Dmaven.test.skip=true</span> skips compilation AND execution of tests entirely. The first is preferred when you still want to verify tests compile. Neither should be used in regular CI — only for quick local packaging when you've already verified tests pass.</div></div>
+</div>
+
+<!-- ═══════════════════ SESSION 5 ═══════════════════ -->
+<div class="session" id="s4">
+<div class="overview-box">
+  <p><strong>TestNG in pom.xml — multiple ways:</strong> You can configure TestNG test execution in pom.xml in several ways: pointing to a single testng.xml, multiple testng.xml files, using includes/excludes patterns, using groups, or using Maven profiles to switch between suites based on environment.</p>
+  <p><strong>Maven Profiles:</strong> A <span class="kw">&lt;profile&gt;</span> is a set of configuration values that override or extend the default build. Profiles allow you to run different browsers, different test suites, or different environments with a single command-line flag: <span class="kw">-P profileName</span>.</p>
+  <p><strong>Command line alternatives:</strong> Maven allows you to pass system properties (<span class="kw">-D</span>) and activate profiles (<span class="kw">-P</span>) to control which tests run, which browser to use, and which environment to target — all without changing pom.xml.</p>
+</div>
+
+<div class="section-head">Interview one-liners</div>
+<ul class="oneliner-list">
+  <li>You can pass TestNG XML file location via command line: <span class="kw">mvn test -DsuiteFile=regression.xml</span></li>
+  <li>Maven profiles (<span class="kw">-P</span>) allow switching between different browser or environment configurations without code changes.</li>
+  <li>System properties passed with <span class="kw">-D</span> are accessible in Java via <span class="kw">System.getProperty("key")</span>.</li>
+  <li>TestNG groups can be included or excluded in Surefire config using <span class="kw">&lt;groups&gt;</span> and <span class="kw">&lt;excludedGroups&gt;</span> elements.</li>
+  <li>Multiple testng.xml files can be specified in Surefire's <span class="kw">&lt;suiteXmlFiles&gt;</span> — they run sequentially.</li>
+  <li>A profile can be activated automatically by OS, JDK version, property value, or file presence.</li>
+  <li>In CI/CD, <span class="kw">mvn clean test -Pbrowser=chrome -Denv=staging</span> is a typical pipeline command in SDET projects.</li>
+</ul>
+
+<div class="section-head">Profile and command-line flow diagram</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 280" role="img"><title>Maven profiles and command line test execution flow</title><desc>Shows how command line flags activate profiles and control test execution</desc>
+<defs><marker id="a7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Command line -->
+<g class="c-gray"><rect x="20" y="20" width="280" height="52" rx="8" stroke-width="0.5"/><text class="th" x="160" y="38" text-anchor="middle" dominant-baseline="central">mvn clean test -Pchrome -Denv=staging</text><text class="ts" x="160" y="58" text-anchor="middle" dominant-baseline="central">-P activates profile | -D sets system property</text></g>
+<!-- Arrow down -->
+<line x1="160" y1="72" x2="160" y2="110" stroke="var(--t)" stroke-width="1" marker-end="url(#a7)"/>
+<!-- Maven Engine -->
+<g class="c-amber"><rect x="80" y="112" width="160" height="44" rx="8" stroke-width="0.5"/><text class="th" x="160" y="134" text-anchor="middle" dominant-baseline="central">Maven reads profiles</text></g>
+<!-- Profiles -->
+<line x1="240" y1="134" x2="320" y2="100" stroke="var(--t)" stroke-width="1" marker-end="url(#a7)"/>
+<g class="c-teal"><rect x="322" y="76" width="160" height="52" rx="8" stroke-width="0.5"/><text class="th" x="402" y="94" text-anchor="middle" dominant-baseline="central">profile: chrome</text><text class="ts" x="402" y="112" text-anchor="middle" dominant-baseline="central">browser=chrome, testng-chrome.xml</text></g>
+<line x1="240" y1="134" x2="320" y2="168" stroke="var(--t)" stroke-width="1" marker-end="url(#a7)"/>
+<g class="c-coral"><rect x="322" y="148" width="160" height="52" rx="8" stroke-width="0.5"/><text class="th" x="402" y="166" text-anchor="middle" dominant-baseline="central">profile: firefox</text><text class="ts" x="402" y="184" text-anchor="middle" dominant-baseline="central">browser=firefox, testng-ff.xml</text></g>
+<!-- System props box -->
+<line x1="160" y1="156" x2="160" y2="195" stroke="var(--t)" stroke-width="1" marker-end="url(#a7)"/>
+<g class="c-blue"><rect x="60" y="198" width="200" height="52" rx="8" stroke-width="0.5"/><text class="th" x="160" y="216" text-anchor="middle" dominant-baseline="central">System.getProperty</text><text class="ts" x="160" y="234" text-anchor="middle" dominant-baseline="central">env=staging in Java code</text></g>
+<!-- Test output -->
+<line x1="482" y1="148" x2="540" y2="148" stroke="var(--t)" stroke-width="1" marker-end="url(#a7)"/>
+<g class="c-green"><rect x="542" y="124" width="120" height="48" rx="8" stroke-width="0.5"/><text class="th" x="602" y="144" text-anchor="middle" dominant-baseline="central">Surefire runs</text><text class="ts" x="602" y="162" text-anchor="middle" dominant-baseline="central">selected suite</text></g>
+<text class="ts" x="340" y="250" text-anchor="middle">Only one profile's suiteXmlFile is used per run</text>
+</svg>
+</div>
+
+<div class="section-head">Code example 8 — multiple testng.xml ways in pom.xml</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">pom.xml — 3 ways to configure TestNG suites</span></div>
+<div class="code-body"><pre><span class="c-comment">&lt;!-- WAY 1: Single hardcoded testng.xml --&gt;</span>
+<span class="c-tag">&lt;configuration&gt;</span>
+  <span class="c-tag">&lt;suiteXmlFiles&gt;</span>
+    <span class="c-tag">&lt;suiteXmlFile&gt;</span>src/test/resources/testng.xml<span class="c-tag">&lt;/suiteXmlFile&gt;</span>
+  <span class="c-tag">&lt;/suiteXmlFiles&gt;</span>
+<span class="c-tag">&lt;/configuration&gt;</span>
+
+<span class="c-comment">&lt;!-- WAY 2: Multiple testng.xml files (run sequentially) --&gt;</span>
+<span class="c-tag">&lt;configuration&gt;</span>
+  <span class="c-tag">&lt;suiteXmlFiles&gt;</span>
+    <span class="c-tag">&lt;suiteXmlFile&gt;</span>src/test/resources/smoke.xml<span class="c-tag">&lt;/suiteXmlFile&gt;</span>
+    <span class="c-tag">&lt;suiteXmlFile&gt;</span>src/test/resources/regression.xml<span class="c-tag">&lt;/suiteXmlFile&gt;</span>
+  <span class="c-tag">&lt;/suiteXmlFiles&gt;</span>
+<span class="c-tag">&lt;/configuration&gt;</span>
+
+<span class="c-comment">&lt;!-- WAY 3: Dynamic — suite file passed via command line --&gt;</span>
+<span class="c-comment">&lt;!-- Command: mvn test -DsuiteFile=regression.xml --&gt;</span>
+<span class="c-comment">&lt;!-- ${suiteFile} resolves to command-line -D value --&gt;</span>
+<span class="c-tag">&lt;configuration&gt;</span>
+  <span class="c-tag">&lt;suiteXmlFiles&gt;</span>
+    <span class="c-tag">&lt;suiteXmlFile&gt;</span>src/test/resources/${suiteFile}<span class="c-tag">&lt;/suiteXmlFile&gt;</span>
+  <span class="c-tag">&lt;/suiteXmlFiles&gt;</span>
+<span class="c-tag">&lt;/configuration&gt;</span>
+
+<span class="c-comment">&lt;!-- WAY 4: Using TestNG groups (run only @Test(groups="smoke")) --&gt;</span>
+<span class="c-tag">&lt;configuration&gt;</span>
+  <span class="c-comment">&lt;!-- groups: include only tests tagged with this TestNG group --&gt;</span>
+  <span class="c-tag">&lt;groups&gt;</span>smoke<span class="c-tag">&lt;/groups&gt;</span>
+  <span class="c-comment">&lt;!-- excludedGroups: skip tests with this TestNG group --&gt;</span>
+  <span class="c-tag">&lt;excludedGroups&gt;</span>broken,wip<span class="c-tag">&lt;/excludedGroups&gt;</span>
+<span class="c-tag">&lt;/configuration&gt;</span></pre></div></div>
+
+<div class="section-head">Code example 9 — Maven profiles for multi-browser / multi-env</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">pom.xml — profiles for browser and environment</span></div>
+<div class="code-body"><pre><span class="c-tag">&lt;profiles&gt;</span>
+
+  <span class="c-comment">&lt;!-- Chrome profile: activated with -Pchrome --&gt;</span>
+  <span class="c-comment">&lt;!-- id: the profile name used on command line --&gt;</span>
+  <span class="c-tag">&lt;profile&gt;</span>
+    <span class="c-tag">&lt;id&gt;</span>chrome<span class="c-tag">&lt;/id&gt;</span>
+    <span class="c-comment">&lt;!-- activation: auto-activate when property browser=chrome --&gt;</span>
+    <span class="c-tag">&lt;activation&gt;</span>
+      <span class="c-tag">&lt;property&gt;</span>
+        <span class="c-tag">&lt;name&gt;</span>browser<span class="c-tag">&lt;/name&gt;</span>
+        <span class="c-tag">&lt;value&gt;</span>chrome<span class="c-tag">&lt;/value&gt;</span>
+      <span class="c-tag">&lt;/property&gt;</span>
+    <span class="c-tag">&lt;/activation&gt;</span>
+    <span class="c-tag">&lt;properties&gt;</span>
+      <span class="c-comment">&lt;!-- These override global properties --&gt;</span>
+      <span class="c-tag">&lt;browser.name&gt;</span>chrome<span class="c-tag">&lt;/browser.name&gt;</span>
+    <span class="c-tag">&lt;/properties&gt;</span>
+    <span class="c-tag">&lt;build&gt;</span><span class="c-tag">&lt;plugins&gt;</span><span class="c-tag">&lt;plugin&gt;</span>
+      <span class="c-tag">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="c-tag">&lt;/artifactId&gt;</span>
+      <span class="c-tag">&lt;configuration&gt;</span>
+        <span class="c-tag">&lt;suiteXmlFiles&gt;</span>
+          <span class="c-tag">&lt;suiteXmlFile&gt;</span>src/test/resources/testng-chrome.xml<span class="c-tag">&lt;/suiteXmlFile&gt;</span>
+        <span class="c-tag">&lt;/suiteXmlFiles&gt;</span>
+        <span class="c-comment">&lt;!-- systemPropertyVariables: pass to Java as System.getProperty --&gt;</span>
+        <span class="c-tag">&lt;systemPropertyVariables&gt;</span>
+          <span class="c-tag">&lt;browser&gt;</span>chrome<span class="c-tag">&lt;/browser&gt;</span>
+          <span class="c-tag">&lt;env&gt;</span>${env}<span class="c-tag">&lt;/env&gt;</span>
+        <span class="c-tag">&lt;/systemPropertyVariables&gt;</span>
+      <span class="c-tag">&lt;/configuration&gt;</span>
+    <span class="c-tag">&lt;/plugin&gt;</span><span class="c-tag">&lt;/plugins&gt;</span><span class="c-tag">&lt;/build&gt;</span>
+  <span class="c-tag">&lt;/profile&gt;</span>
+
+  <span class="c-comment">&lt;!-- Firefox profile: activated with -Pfirefox --&gt;</span>
+  <span class="c-tag">&lt;profile&gt;</span>
+    <span class="c-tag">&lt;id&gt;</span>firefox<span class="c-tag">&lt;/id&gt;</span>
+    <span class="c-tag">&lt;build&gt;</span><span class="c-tag">&lt;plugins&gt;</span><span class="c-tag">&lt;plugin&gt;</span>
+      <span class="c-tag">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="c-tag">&lt;/artifactId&gt;</span>
+      <span class="c-tag">&lt;configuration&gt;</span>
+        <span class="c-tag">&lt;suiteXmlFiles&gt;</span>
+          <span class="c-tag">&lt;suiteXmlFile&gt;</span>src/test/resources/testng-firefox.xml<span class="c-tag">&lt;/suiteXmlFile&gt;</span>
+        <span class="c-tag">&lt;/suiteXmlFiles&gt;</span>
+        <span class="c-tag">&lt;systemPropertyVariables&gt;</span>
+          <span class="c-tag">&lt;browser&gt;</span>firefox<span class="c-tag">&lt;/browser&gt;</span>
+        <span class="c-tag">&lt;/systemPropertyVariables&gt;</span>
+      <span class="c-tag">&lt;/configuration&gt;</span>
+    <span class="c-tag">&lt;/plugin&gt;</span><span class="c-tag">&lt;/plugins&gt;</span><span class="c-tag">&lt;/build&gt;</span>
+  <span class="c-tag">&lt;/profile&gt;</span>
+<span class="c-tag">&lt;/profiles&gt;</span>
+
+<span class="c-comment">/* ---- COMMAND LINE EXAMPLES ---- */</span>
+<span class="c-comment">/* mvn clean test -Pchrome -Denv=staging  */</span>
+<span class="c-comment">/* mvn clean test -Pfirefox -Denv=prod    */</span>
+<span class="c-comment">/* mvn clean test -DsuiteFile=smoke.xml   */</span>
+<span class="c-comment">/* mvn clean test -Dgroups=regression     */</span></pre></div></div>
+
+<div class="section-head">Code example 10 — reading system properties in Java test</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">Java — BaseTest.java reading Maven -D properties</span></div>
+<div class="code-body"><pre><span class="c-kw">import</span> org.openqa.selenium.WebDriver;
+<span class="c-kw">import</span> org.openqa.selenium.chrome.ChromeDriver;
+<span class="c-kw">import</span> org.openqa.selenium.firefox.FirefoxDriver;
+<span class="c-kw">import</span> org.testng.annotations.BeforeClass;
+
+<span class="c-kw">public class</span> BaseTest {
+    <span class="c-kw">protected</span> WebDriver driver;
+
+    <span class="c-anno">@BeforeClass</span>
+    <span class="c-kw">public void</span> setUp() {
+        <span class="c-comment">// System.getProperty reads -Dbrowser=chrome from command line</span>
+        <span class="c-comment">// "chrome" = default value if -Dbrowser is not specified</span>
+        String browser = System.getProperty(<span class="c-str">"browser"</span>, <span class="c-str">"chrome"</span>);
+
+        <span class="c-comment">// System.getProperty reads -Denv=staging from command line</span>
+        String env = System.getProperty(<span class="c-str">"env"</span>, <span class="c-str">"dev"</span>);
+
+        <span class="c-kw">if</span> (browser.equalsIgnoreCase(<span class="c-str">"chrome"</span>)) {
+            driver = <span class="c-kw">new</span> ChromeDriver();
+        } <span class="c-kw">else if</span> (browser.equalsIgnoreCase(<span class="c-str">"firefox"</span>)) {
+            driver = <span class="c-kw">new</span> FirefoxDriver();
+        }
+
+        <span class="c-comment">// Load base URL based on environment</span>
+        String baseUrl = env.equals(<span class="c-str">"staging"</span>)
+            ? <span class="c-str">"https://staging.myapp.com"</span>
+            : <span class="c-str">"https://dev.myapp.com"</span>;
+        driver.get(baseUrl);
+    }
+}
+<span class="c-comment">/* Run with: mvn clean test -Dbrowser=firefox -Denv=staging */</span></pre></div></div>
+
+<div class="section-head">Best practices</div>
+<ul class="checklist">
+  <li>Use <span class="kw">-P profile</span> for structural changes (different plugins, suites) and <span class="kw">-D property</span> for values (browser name, URL).</li>
+  <li>Always provide a default value in <span class="kw">System.getProperty("key", "defaultValue")</span> to prevent NullPointerExceptions.</li>
+  <li>Name profiles descriptively: <span class="kw">smoke</span>, <span class="kw">regression</span>, <span class="kw">chrome</span>, <span class="kw">staging</span> — not <span class="kw">p1</span>, <span class="kw">p2</span>.</li>
+  <li>In Jenkins pipelines, inject browser and environment as build parameters and pass them as <span class="kw">-D</span> flags.</li>
+  <li>Use <span class="kw">&lt;activeByDefault&gt;true&lt;/activeByDefault&gt;</span> on your most common profile to set sensible defaults.</li>
+</ul>
+
+<div class="section-head">Interview Q&A</div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: How do you run only smoke tests using Maven command line? <span class="toggle">+</span></div><div class="qa-a">Two ways: (1) If you have a separate smoke testng.xml: <span class="kw">mvn test -DsuiteFile=smoke.xml</span>. (2) If your tests use TestNG groups (<span class="kw">@Test(groups="smoke")</span>): configure Surefire with <span class="kw">&lt;groups&gt;smoke&lt;/groups&gt;</span> or pass it via command line <span class="kw">mvn test -Dgroups=smoke</span>. The second approach is more flexible for filtering without XML changes.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is the difference between -D and -P in Maven? <span class="toggle">+</span></div><div class="qa-a"><span class="kw">-D</span> sets a Java system property that your test code reads with <span class="kw">System.getProperty()</span>. For example, <span class="kw">-Dbrowser=chrome</span> sets the browser. <span class="kw">-P</span> activates a named Maven profile defined in pom.xml, which can change plugin configurations, add/remove dependencies, or override properties. You often use both together: <span class="kw">mvn test -Pchrome -Denv=staging</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: Can you run multiple browsers in parallel with Maven? <span class="toggle">+</span></div><div class="qa-a">Yes. You can: (1) Use TestNG's <span class="kw">parallel="tests"</span> in testng.xml with separate <span class="kw">&lt;test&gt;</span> blocks for each browser. (2) Use Surefire's <span class="kw">&lt;parallel&gt;suites&lt;/parallel&gt;</span> with multiple testng.xml files — each suite runs in its own thread. (3) Use a Grid or cloud provider (Selenium Grid, LambdaTest, BrowserStack) and pass the browser capability via <span class="kw">System.getProperty()</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you activate a Maven profile automatically? <span class="toggle">+</span></div><div class="qa-a">Using the <span class="kw">&lt;activation&gt;</span> element inside a profile. Profiles can auto-activate based on: OS (<span class="kw">&lt;os&gt;&lt;name&gt;Windows&lt;/name&gt;</span>), JDK version (<span class="kw">&lt;jdk&gt;17&lt;/jdk&gt;</span>), a property value (<span class="kw">&lt;property&gt;&lt;name&gt;env&lt;/name&gt;&lt;value&gt;prod&lt;/value&gt;</span>), or file existence (<span class="kw">&lt;file&gt;&lt;exists&gt;</span>path<span class="kw">&lt;/exists&gt;</span>). The most common in SDET is property-based activation.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What is <span class="kw">systemPropertyVariables</span> in Surefire config? <span class="toggle">+</span></div><div class="qa-a"><span class="kw">&lt;systemPropertyVariables&gt;</span> inside the Surefire plugin configuration sets Java system properties specifically for the test JVM process that Surefire forks. Unlike <span class="kw">-D</span> on the command line (which sets the property in the Maven JVM), systemPropertyVariables ensures the property is available in the forked test process. This is important because Surefire runs tests in a separate JVM by default.</div></div>
+</div>
+
+<!-- ═══════════════════ SESSION 6 ═══════════════════ -->
+<div class="session" id="s5">
+<div class="overview-box">
+  <p><strong>TestNG XML — the test suite file:</strong> A <span class="kw">testng.xml</span> file defines which tests to run, in what order, with what parallelism, and with what parameters. Maven's Surefire plugin reads this file when configured with <span class="kw">&lt;suiteXmlFiles&gt;</span>.</p>
+  <p><strong>Key elements:</strong> <span class="kw">&lt;suite&gt;</span> (top level), <span class="kw">&lt;test&gt;</span> (a group of classes), <span class="kw">&lt;classes&gt;</span> (specific test classes), <span class="kw">&lt;groups&gt;</span> (include/exclude test methods by group), <span class="kw">&lt;parameter&gt;</span> (pass data to @Parameters), <span class="kw">&lt;listeners&gt;</span> (reporting listeners).</p>
+  <p><strong>Parallel execution:</strong> TestNG supports parallel running at suite, test, class, or method level — configured in the <span class="kw">parallel</span> attribute of <span class="kw">&lt;suite&gt;</span> or <span class="kw">&lt;test&gt;</span>.</p>
+</div>
+
+<div class="section-head">Interview one-liners</div>
+<ul class="oneliner-list">
+  <li><span class="kw">testng.xml</span> is the suite configuration file that organizes which test classes and methods TestNG should run.</li>
+  <li>The <span class="kw">parallel</span> attribute can be set to <span class="kw">tests</span>, <span class="kw">classes</span>, <span class="kw">methods</span>, or <span class="kw">instances</span> to enable concurrent execution.</li>
+  <li><span class="kw">&lt;parameter name="browser" value="chrome"/&gt;</span> in testng.xml passes data to <span class="kw">@Parameters({"browser"})</span> annotated methods.</li>
+  <li>TestNG listeners (implementing ITestListener) are added in testng.xml to capture events like onTestFailure.</li>
+  <li>The <span class="kw">preserve-order="true"</span> attribute ensures tests run in the order listed in testng.xml.</li>
+  <li>You can include or exclude entire packages, classes, or methods using <span class="kw">&lt;packages&gt;</span>, <span class="kw">&lt;classes&gt;</span>, and <span class="kw">&lt;include/exclude&gt;</span>.</li>
+</ul>
+
+<div class="section-head">TestNG XML structure diagram</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 300" role="img"><title>testng.xml structure hierarchy</title><desc>Shows the hierarchical structure of a testng.xml file with suite, test, classes elements</desc>
+<defs><marker id="a8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Suite -->
+<g class="c-amber"><rect x="220" y="14" width="240" height="44" rx="10" stroke-width="0.5"/><text class="th" x="340" y="30" text-anchor="middle" dominant-baseline="central">&lt;suite name="..." parallel="..."&gt;</text><text class="ts" x="340" y="48" text-anchor="middle" dominant-baseline="central">Top level — entire test run</text></g>
+<!-- Children of suite -->
+<line x1="340" y1="58" x2="120" y2="110" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a8)"/>
+<line x1="340" y1="58" x2="340" y2="110" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a8)"/>
+<line x1="340" y1="58" x2="560" y2="110" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a8)"/>
+<g class="c-blue"><rect x="20" y="112" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="120" y="128" text-anchor="middle" dominant-baseline="central">&lt;parameter&gt;</text><text class="ts" x="120" y="146" text-anchor="middle" dominant-baseline="central">key-value for @Parameters</text></g>
+<g class="c-purple"><rect x="240" y="112" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="340" y="128" text-anchor="middle" dominant-baseline="central">&lt;test name="..."&gt;</text><text class="ts" x="340" y="146" text-anchor="middle" dominant-baseline="central">a logical group of classes</text></g>
+<g class="c-teal"><rect x="460" y="112" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="560" y="128" text-anchor="middle" dominant-baseline="central">&lt;listeners&gt;</text><text class="ts" x="560" y="146" text-anchor="middle" dominant-baseline="central">ITestListener, IReporter</text></g>
+<!-- Children of test -->
+<line x1="340" y1="156" x2="200" y2="208" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a8)"/>
+<line x1="340" y1="156" x2="340" y2="208" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a8)"/>
+<line x1="340" y1="156" x2="480" y2="208" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a8)"/>
+<g class="c-coral"><rect x="100" y="210" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="200" y="228" text-anchor="middle" dominant-baseline="central">&lt;groups&gt;</text><text class="ts" x="200" y="246" text-anchor="middle" dominant-baseline="central">include/exclude groups</text></g>
+<g class="c-green"><rect x="240" y="210" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="340" y="228" text-anchor="middle" dominant-baseline="central">&lt;classes&gt;</text><text class="ts" x="340" y="246" text-anchor="middle" dominant-baseline="central">list of test class FQNs</text></g>
+<g class="c-gray"><rect x="380" y="210" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="480" y="228" text-anchor="middle" dominant-baseline="central">&lt;packages&gt;</text><text class="ts" x="480" y="246" text-anchor="middle" dominant-baseline="central">auto-discover all tests in pkg</text></g>
+<!-- class children -->
+<line x1="340" y1="254" x2="340" y2="278" stroke="var(--t)" stroke-width="0.5" marker-end="url(#a8)"/>
+<g class="c-green"><rect x="240" y="278" width="200" height="18" rx="4" stroke-width="0.5"/><text class="ts" x="340" y="288" text-anchor="middle" dominant-baseline="central">&lt;class name="..."&gt; → &lt;include/exclude&gt;</text></g>
+</svg>
+</div>
+
+<div class="section-head">Code example 11 — complete testng.xml configurations</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">testng.xml — 4 different configurations</span></div>
+<div class="code-body"><pre><span class="c-comment">&lt;!-- CONFIG 1: Basic suite with specific classes --&gt;</span>
+<span class="c-tag">&lt;!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd"&gt;</span>
+<span class="c-tag">&lt;suite</span> <span class="c-attr">name=</span><span class="c-val">"SmokeSuite"</span> <span class="c-attr">verbose=</span><span class="c-val">"1"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;test</span> <span class="c-attr">name=</span><span class="c-val">"LoginTests"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;classes&gt;</span>
+      <span class="c-comment">&lt;!-- name = fully qualified class name --&gt;</span>
+      <span class="c-tag">&lt;class</span> <span class="c-attr">name=</span><span class="c-val">"com.sdet.tests.LoginTest"</span><span class="c-tag">/&gt;</span>
+      <span class="c-tag">&lt;class</span> <span class="c-attr">name=</span><span class="c-val">"com.sdet.tests.HomeTest"</span><span class="c-tag">/&gt;</span>
+    <span class="c-tag">&lt;/classes&gt;</span>
+  <span class="c-tag">&lt;/test&gt;</span>
+<span class="c-tag">&lt;/suite&gt;</span>
+
+<span class="c-comment">&lt;!-- CONFIG 2: Parallel execution with browser parameter --&gt;</span>
+<span class="c-comment">&lt;!-- parallel="tests" = each &lt;test&gt; block runs in its own thread --&gt;</span>
+<span class="c-tag">&lt;suite</span> <span class="c-attr">name=</span><span class="c-val">"CrossBrowser"</span> <span class="c-attr">parallel=</span><span class="c-val">"tests"</span> <span class="c-attr">thread-count=</span><span class="c-val">"2"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;test</span> <span class="c-attr">name=</span><span class="c-val">"Chrome Tests"</span><span class="c-tag">&gt;</span>
+    <span class="c-comment">&lt;!-- parameter: passed to @Parameters({"browser"}) --&gt;</span>
+    <span class="c-tag">&lt;parameter</span> <span class="c-attr">name=</span><span class="c-val">"browser"</span> <span class="c-attr">value=</span><span class="c-val">"chrome"</span><span class="c-tag">/&gt;</span>
+    <span class="c-tag">&lt;classes&gt;</span><span class="c-tag">&lt;class</span> <span class="c-attr">name=</span><span class="c-val">"com.sdet.tests.CheckoutTest"</span><span class="c-tag">/&gt;</span><span class="c-tag">&lt;/classes&gt;</span>
+  <span class="c-tag">&lt;/test&gt;</span>
+  <span class="c-tag">&lt;test</span> <span class="c-attr">name=</span><span class="c-val">"Firefox Tests"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;parameter</span> <span class="c-attr">name=</span><span class="c-val">"browser"</span> <span class="c-attr">value=</span><span class="c-val">"firefox"</span><span class="c-tag">/&gt;</span>
+    <span class="c-tag">&lt;classes&gt;</span><span class="c-tag">&lt;class</span> <span class="c-attr">name=</span><span class="c-val">"com.sdet.tests.CheckoutTest"</span><span class="c-tag">/&gt;</span><span class="c-tag">&lt;/classes&gt;</span>
+  <span class="c-tag">&lt;/test&gt;</span>
+<span class="c-tag">&lt;/suite&gt;</span>
+
+<span class="c-comment">&lt;!-- CONFIG 3: Using groups to include/exclude --&gt;</span>
+<span class="c-tag">&lt;suite</span> <span class="c-attr">name=</span><span class="c-val">"RegressionSuite"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;test</span> <span class="c-attr">name=</span><span class="c-val">"Full Regression"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;groups&gt;</span>
+      <span class="c-tag">&lt;run&gt;</span>
+        <span class="c-tag">&lt;include</span> <span class="c-attr">name=</span><span class="c-val">"smoke"</span><span class="c-tag">/&gt;</span>
+        <span class="c-tag">&lt;include</span> <span class="c-attr">name=</span><span class="c-val">"regression"</span><span class="c-tag">/&gt;</span>
+        <span class="c-comment">&lt;!-- exclude: skip tests tagged @Test(groups="wip") --&gt;</span>
+        <span class="c-tag">&lt;exclude</span> <span class="c-attr">name=</span><span class="c-val">"wip"</span><span class="c-tag">/&gt;</span>
+      <span class="c-tag">&lt;/run&gt;</span>
+    <span class="c-tag">&lt;/groups&gt;</span>
+    <span class="c-tag">&lt;packages&gt;</span>
+      <span class="c-tag">&lt;package</span> <span class="c-attr">name=</span><span class="c-val">"com.sdet.tests"</span><span class="c-tag">/&gt;</span>
+    <span class="c-tag">&lt;/packages&gt;</span>
+  <span class="c-tag">&lt;/test&gt;</span>
+<span class="c-tag">&lt;/suite&gt;</span></pre></div></div>
+
+<div class="section-head">Best practices</div>
+<ul class="checklist">
+  <li>Keep testng.xml in <span class="kw">src/test/resources/</span> so Maven copies it to <span class="kw">target/test-classes/</span> and Surefire can find it.</li>
+  <li>Use <span class="kw">preserve-order="true"</span> in <span class="kw">&lt;test&gt;</span> when test execution order matters (e.g., end-to-end flows).</li>
+  <li>Create separate testng.xml files for different scopes: <span class="kw">smoke.xml</span>, <span class="kw">regression.xml</span>, <span class="kw">sanity.xml</span>.</li>
+  <li>When using parallel, use ThreadLocal <span class="kw">WebDriver</span> to avoid sharing browser instances across threads.</li>
+  <li>Add the ExtentReports or Allure listener in testng.xml <span class="kw">&lt;listeners&gt;</span> to get rich HTML reports automatically.</li>
+</ul>
+
+<div class="section-head">Interview Q&A</div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is testng.xml and why is it needed in Maven? <span class="toggle">+</span></div><div class="qa-a">testng.xml is TestNG's suite configuration file. It organizes which test classes, packages, and methods to run, in which order, with what parallelism, and with what parameters. In Maven, when Surefire is configured with <span class="kw">&lt;suiteXmlFiles&gt;</span> pointing to testng.xml, it uses TestNG's XML-based test organization instead of its default pattern-matching (which finds *Test.java files). This gives you full control over test execution.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: How do you run tests in parallel using testng.xml? <span class="toggle">+</span></div><div class="qa-a">Set the <span class="kw">parallel</span> attribute on the <span class="kw">&lt;suite&gt;</span> or <span class="kw">&lt;test&gt;</span> element. Values: <span class="kw">methods</span> (each test method runs in its own thread — fastest but tests must be stateless), <span class="kw">classes</span> (each class in its own thread), <span class="kw">tests</span> (each <span class="kw">&lt;test&gt;</span> block in its own thread — safest for browser testing), <span class="kw">instances</span>. Set <span class="kw">thread-count</span> to control max concurrency. Always use ThreadLocal WebDriver to keep browser instances isolated per thread.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is the <span class="kw">@Parameters</span> annotation and how does testng.xml feed it? <span class="toggle">+</span></div><div class="qa-a"><span class="kw">@Parameters({"browser", "env"})</span> annotates a <span class="kw">@BeforeClass</span> or <span class="kw">@Test</span> method to receive values from testng.xml's <span class="kw">&lt;parameter&gt;</span> elements. Example: <span class="kw">&lt;parameter name="browser" value="chrome"/&gt;</span> in testng.xml → the method receives "chrome" as the browser argument. This allows data-driven browser or environment configuration without hardcoding in test code.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do TestNG groups work? Give an SDET example. <span class="toggle">+</span></div><div class="qa-a">Groups allow you to tag test methods with labels like <span class="kw">@Test(groups={"smoke", "regression"})</span>. In testng.xml, you use <span class="kw">&lt;groups&gt;&lt;run&gt;&lt;include name="smoke"/&gt;</span> to run only smoke-tagged tests. SDET example: <span class="kw">smoke</span> group for 5-minute CI sanity check, <span class="kw">regression</span> for full nightly suite, <span class="kw">wip</span> for excluded work-in-progress tests. Combine with Maven profiles to run different groups in different pipelines.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: Where should testng.xml be placed in a Maven project? <span class="toggle">+</span></div><div class="qa-a">It should be in <span class="kw">src/test/resources/</span>. Maven's <span class="kw">maven-resources-plugin</span> automatically copies everything from <span class="kw">src/test/resources/</span> to <span class="kw">target/test-classes/</span> during the build. Surefire then reads it from there. You reference it in pom.xml as <span class="kw">src/test/resources/testng.xml</span>. Placing it at the project root also works but is not the Maven convention.</div></div>
+</div>
+
+<!-- ═══════════════════ SESSION 7 ═══════════════════ -->
+<div class="session" id="s6">
+<div class="overview-box">
+  <p><strong>Reporting in Maven:</strong> Maven generates test reports automatically via Surefire (XML/text) and optionally via the <span class="kw">maven-surefire-report-plugin</span> (HTML). For rich SDET reporting, teams integrate ExtentReports or Allure Framework.</p>
+  <p><strong>Where reports are saved:</strong> Surefire XML/text → <span class="kw">target/surefire-reports/</span>. Surefire HTML → <span class="kw">target/site/surefire-report.html</span>. Allure results → <span class="kw">target/allure-results/</span> → HTML at <span class="kw">target/site/allure-maven-plugin/</span>. ExtentReports → configurable, usually <span class="kw">test-output/ExtentReport.html</span>.</p>
+  <p><strong>Site lifecycle:</strong> Running <span class="kw">mvn site</span> generates a complete project website with all configured reports in <span class="kw">target/site/</span>. Open <span class="kw">target/site/index.html</span> in a browser to view it.</p>
+</div>
+
+<div class="section-head">Interview one-liners</div>
+<ul class="oneliner-list">
+  <li>Surefire generates XML reports in <span class="kw">target/surefire-reports/</span> which Jenkins's JUnit plugin parses to display test results.</li>
+  <li>Run <span class="kw">mvn surefire-report:report</span> to generate a formatted HTML test report at <span class="kw">target/site/surefire-report.html</span>.</li>
+  <li>Allure Framework provides rich visual reports with steps, screenshots, attachments, and trend charts.</li>
+  <li>The <span class="kw">maven-site-plugin</span> aggregates all configured reporting plugins into a single project website.</li>
+  <li>ExtentReports is configured as a TestNG listener — not a Maven plugin — and generates its HTML wherever you set the output path.</li>
+  <li>The <span class="kw">&lt;reporting&gt;</span> section in pom.xml configures plugins that generate reports when <span class="kw">mvn site</span> runs.</li>
+</ul>
+
+<div class="section-head">Report generation flow diagram</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 280" role="img"><title>Maven report generation flow</title><desc>Shows how tests generate reports through different paths to final HTML output</desc>
+<defs><marker id="a9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Test run -->
+<g class="c-amber"><rect x="250" y="20" width="180" height="44" rx="8" stroke-width="0.5"/><text class="th" x="340" y="38" text-anchor="middle" dominant-baseline="central">mvn clean test</text><text class="ts" x="340" y="56" text-anchor="middle" dominant-baseline="central">Surefire executes TestNG</text></g>
+<!-- Three paths -->
+<line x1="280" y1="64" x2="120" y2="120" stroke="var(--t)" stroke-width="1" marker-end="url(#a9)"/>
+<line x1="340" y1="64" x2="340" y2="120" stroke="var(--t)" stroke-width="1" marker-end="url(#a9)"/>
+<line x1="400" y1="64" x2="560" y2="120" stroke="var(--t)" stroke-width="1" marker-end="url(#a9)"/>
+<!-- Path 1: Surefire XML -->
+<g class="c-blue"><rect x="20" y="122" width="200" height="52" rx="8" stroke-width="0.5"/><text class="th" x="120" y="140" text-anchor="middle" dominant-baseline="central">Surefire XML reports</text><text class="ts" x="120" y="158" text-anchor="middle" dominant-baseline="central">target/surefire-reports/*.xml</text></g>
+<!-- Path 2: Surefire HTML -->
+<g class="c-purple"><rect x="240" y="122" width="200" height="52" rx="8" stroke-width="0.5"/><text class="th" x="340" y="140" text-anchor="middle" dominant-baseline="central">Surefire HTML report</text><text class="ts" x="340" y="158" text-anchor="middle" dominant-baseline="central">mvn surefire-report:report</text></g>
+<!-- Path 3: Allure/Extent -->
+<g class="c-coral"><rect x="460" y="122" width="200" height="52" rx="8" stroke-width="0.5"/><text class="th" x="560" y="140" text-anchor="middle" dominant-baseline="central">Allure / ExtentReports</text><text class="ts" x="560" y="158" text-anchor="middle" dominant-baseline="central">via listener + plugin</text></g>
+<!-- Outputs -->
+<g class="c-green"><rect x="20" y="220" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="120" y="238" text-anchor="middle" dominant-baseline="central">Jenkins JUnit Report</text><text class="ts" x="120" y="254" text-anchor="middle" dominant-baseline="central">reads *.xml directly</text></g>
+<g class="c-green"><rect x="240" y="220" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="340" y="238" text-anchor="middle" dominant-baseline="central">target/site/</text><text class="ts" x="340" y="254" text-anchor="middle" dominant-baseline="central">surefire-report.html</text></g>
+<g class="c-green"><rect x="460" y="220" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="560" y="238" text-anchor="middle" dominant-baseline="central">target/site/allure-report</text><text class="ts" x="560" y="254" text-anchor="middle" dominant-baseline="central">rich HTML dashboard</text></g>
+<line x1="120" y1="174" x2="120" y2="218" stroke="var(--t)" stroke-width="1" marker-end="url(#a9)"/>
+<line x1="340" y1="174" x2="340" y2="218" stroke="var(--t)" stroke-width="1" marker-end="url(#a9)"/>
+<line x1="560" y1="174" x2="560" y2="218" stroke="var(--t)" stroke-width="1" marker-end="url(#a9)"/>
+</svg>
+</div>
+
+<div class="section-head">Code example 12 — reporting section in pom.xml</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">pom.xml — reporting plugins configuration</span></div>
+<div class="code-body"><pre><span class="c-comment">&lt;!-- &lt;reporting&gt;: section for mvn site report generation --&gt;</span>
+<span class="c-comment">&lt;!-- Output directory: target/site/ --&gt;</span>
+<span class="c-tag">&lt;reporting&gt;</span>
+  <span class="c-tag">&lt;plugins&gt;</span>
+
+    <span class="c-comment">&lt;!-- maven-surefire-report-plugin: generates HTML test report --&gt;</span>
+    <span class="c-comment">&lt;!-- Reads target/surefire-reports/*.xml files --&gt;</span>
+    <span class="c-comment">&lt;!-- Run: mvn surefire-report:report --&gt;</span>
+    <span class="c-comment">&lt;!-- View: target/site/surefire-report.html --&gt;</span>
+    <span class="c-tag">&lt;plugin&gt;</span>
+      <span class="c-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="c-tag">&lt;/groupId&gt;</span>
+      <span class="c-tag">&lt;artifactId&gt;</span>maven-surefire-report-plugin<span class="c-tag">&lt;/artifactId&gt;</span>
+      <span class="c-tag">&lt;version&gt;</span>3.2.5<span class="c-tag">&lt;/version&gt;</span>
+    <span class="c-tag">&lt;/plugin&gt;</span>
+
+    <span class="c-comment">&lt;!-- maven-site-plugin: generates project website --&gt;</span>
+    <span class="c-comment">&lt;!-- Aggregates all report plugins into target/site/index.html --&gt;</span>
+    <span class="c-tag">&lt;plugin&gt;</span>
+      <span class="c-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="c-tag">&lt;/groupId&gt;</span>
+      <span class="c-tag">&lt;artifactId&gt;</span>maven-site-plugin<span class="c-tag">&lt;/artifactId&gt;</span>
+      <span class="c-tag">&lt;version&gt;</span>4.0.0-M13<span class="c-tag">&lt;/version&gt;</span>
+    <span class="c-tag">&lt;/plugin&gt;</span>
+
+  <span class="c-tag">&lt;/plugins&gt;</span>
+<span class="c-tag">&lt;/reporting&gt;</span></pre></div></div>
+
+<div class="section-head">Code example 13 — Allure reporting setup in pom.xml</div>
+<div class="code-block">
+<div class="code-header"><span class="code-label">pom.xml — Allure Framework integration</span></div>
+<div class="code-body"><pre><span class="c-tag">&lt;properties&gt;</span>
+  <span class="c-tag">&lt;allure.version&gt;</span>2.25.0<span class="c-tag">&lt;/allure.version&gt;</span>
+  <span class="c-comment">&lt;!-- aspectj: needed for Allure to capture test steps --&gt;</span>
+  <span class="c-tag">&lt;aspectj.version&gt;</span>1.9.21<span class="c-tag">&lt;/aspectj.version&gt;</span>
+<span class="c-tag">&lt;/properties&gt;</span>
+
+<span class="c-tag">&lt;dependencies&gt;</span>
+  <span class="c-comment">&lt;!-- allure-testng: integrates Allure with TestNG --&gt;</span>
+  <span class="c-tag">&lt;dependency&gt;</span>
+    <span class="c-tag">&lt;groupId&gt;</span>io.qameta.allure<span class="c-tag">&lt;/groupId&gt;</span>
+    <span class="c-tag">&lt;artifactId&gt;</span>allure-testng<span class="c-tag">&lt;/artifactId&gt;</span>
+    <span class="c-tag">&lt;version&gt;</span>${allure.version}<span class="c-tag">&lt;/version&gt;</span>
+    <span class="c-tag">&lt;scope&gt;</span>test<span class="c-tag">&lt;/scope&gt;</span>
+  <span class="c-tag">&lt;/dependency&gt;</span>
+<span class="c-tag">&lt;/dependencies&gt;</span>
+
+<span class="c-tag">&lt;build&gt;</span><span class="c-tag">&lt;plugins&gt;</span>
+  <span class="c-tag">&lt;plugin&gt;</span>
+    <span class="c-tag">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="c-tag">&lt;/artifactId&gt;</span>
+    <span class="c-tag">&lt;configuration&gt;</span>
+      <span class="c-comment">&lt;!-- argLine: JVM args for test process --&gt;</span>
+      <span class="c-comment">&lt;!-- aspectj agent: intercepts @Step, @Attachment annotations --&gt;</span>
+      <span class="c-tag">&lt;argLine&gt;</span>
+        -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/
+        ${aspectj.version}/aspectjweaver-${aspectj.version}.jar
+      <span class="c-tag">&lt;/argLine&gt;</span>
+      <span class="c-tag">&lt;systemPropertyVariables&gt;</span>
+        <span class="c-comment">&lt;!-- allure.results.directory: where raw JSON results go --&gt;</span>
+        <span class="c-tag">&lt;allure.results.directory&gt;</span>${project.build.directory}/allure-results<span class="c-tag">&lt;/allure.results.directory&gt;</span>
+      <span class="c-tag">&lt;/systemPropertyVariables&gt;</span>
+    <span class="c-tag">&lt;/configuration&gt;</span>
+  <span class="c-tag">&lt;/plugin&gt;</span>
+<span class="c-tag">&lt;/plugins&gt;</span><span class="c-tag">&lt;/build&gt;</span>
+
+<span class="c-tag">&lt;reporting&gt;</span><span class="c-tag">&lt;plugins&gt;</span>
+  <span class="c-comment">&lt;!-- allure-maven: generates HTML report from JSON results --&gt;</span>
+  <span class="c-comment">&lt;!-- Run: mvn allure:report --&gt;</span>
+  <span class="c-comment">&lt;!-- View: target/site/allure-maven-plugin/index.html --&gt;</span>
+  <span class="c-tag">&lt;plugin&gt;</span>
+    <span class="c-tag">&lt;groupId&gt;</span>io.qameta.allure<span class="c-tag">&lt;/groupId&gt;</span>
+    <span class="c-tag">&lt;artifactId&gt;</span>allure-maven<span class="c-tag">&lt;/artifactId&gt;</span>
+    <span class="c-tag">&lt;version&gt;</span>2.12.0<span class="c-tag">&lt;/version&gt;</span>
+    <span class="c-tag">&lt;configuration&gt;</span>
+      <span class="c-comment">&lt;!-- reportVersion: Allure CLI version to download for report --&gt;</span>
+      <span class="c-tag">&lt;reportVersion&gt;</span>${allure.version}<span class="c-tag">&lt;/reportVersion&gt;</span>
+      <span class="c-tag">&lt;resultsDirectory&gt;</span>${project.build.directory}/allure-results<span class="c-tag">&lt;/resultsDirectory&gt;</span>
+    <span class="c-tag">&lt;/configuration&gt;</span>
+  <span class="c-tag">&lt;/plugin&gt;</span>
+<span class="c-tag">&lt;/plugins&gt;</span><span class="c-tag">&lt;/reporting&gt;</span>
+
+<span class="c-comment">/* ----- COMMANDS TO GENERATE REPORTS ----- */</span>
+<span class="c-comment">/* mvn clean test                = run tests, save allure-results/ */</span>
+<span class="c-comment">/* mvn allure:report             = generate HTML from results      */</span>
+<span class="c-comment">/* mvn allure:serve              = generate + open browser         */</span>
+<span class="c-comment">/* mvn surefire-report:report    = plain surefire HTML report      */</span>
+<span class="c-comment">/* mvn site                      = full project site with reports  */</span></pre></div></div>
+
+<div class="section-head">Report locations quick reference</div>
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 680 180" role="img"><title>Maven report output locations</title><desc>Shows where each type of report is saved</desc>
+<defs></defs>
+<text class="th" x="20" y="22">Report type</text><text class="th" x="300" y="22">Command to generate</text><text class="th" x="520" y="22">Output location</text>
+<g class="c-blue"><rect x="10" y="34" width="270" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="20" y="48" dominant-baseline="central">Surefire XML (auto-generated)</text></g>
+<text class="ts" x="300" y="48" dominant-baseline="central">mvn test</text>
+<text class="ts" x="520" y="48" dominant-baseline="central">target/surefire-reports/*.xml</text>
+<g class="c-purple"><rect x="10" y="70" width="270" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="20" y="84" dominant-baseline="central">Surefire HTML report</text></g>
+<text class="ts" x="300" y="84" dominant-baseline="central">mvn surefire-report:report</text>
+<text class="ts" x="520" y="84" dominant-baseline="central">target/site/surefire-report.html</text>
+<g class="c-amber"><rect x="10" y="106" width="270" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="20" y="120" dominant-baseline="central">Allure HTML report</text></g>
+<text class="ts" x="300" y="120" dominant-baseline="central">mvn allure:report</text>
+<text class="ts" x="520" y="120" dominant-baseline="central">target/site/allure-maven-plugin/</text>
+<g class="c-teal"><rect x="10" y="142" width="270" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="20" y="156" dominant-baseline="central">Full Maven site (all reports)</text></g>
+<text class="ts" x="300" y="156" dominant-baseline="central">mvn site</text>
+<text class="ts" x="520" y="156" dominant-baseline="central">target/site/index.html</text>
+</svg>
+</div>
+
+<div class="section-head">Best practices</div>
+<ul class="checklist">
+  <li>Archive <span class="kw">target/surefire-reports/*.xml</span> as a CI artifact — Jenkins/GitHub Actions parse these for test trend charts.</li>
+  <li>Use <span class="kw">mvn allure:serve</span> locally to instantly open the Allure report in a browser after test execution.</li>
+  <li>In Jenkins, use the Allure plugin to automatically pick up <span class="kw">target/allure-results/</span> and build history trends.</li>
+  <li>Add screenshots on failure as Allure attachments using <span class="kw">@Attachment</span> annotation in your TestNG listener.</li>
+  <li>Don't commit <span class="kw">target/</span> or <span class="kw">test-output/</span> to Git — these are generated artifacts that should be published by CI instead.</li>
+</ul>
+
+<div class="section-head">Interview Q&A</div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: Where does Maven Surefire save test reports and in what format? <span class="toggle">+</span></div><div class="qa-a">Surefire saves two formats in <span class="kw">target/surefire-reports/</span>: (1) XML files (<span class="kw">TEST-classname.xml</span>) containing pass/fail counts, test names, and failure messages — these are read by Jenkins's JUnit plugin and GitHub Actions; (2) plain text files (<span class="kw">classname.txt</span>) with the console output of each test class. To get HTML, run <span class="kw">mvn surefire-report:report</span> which reads those XMLs and generates <span class="kw">target/site/surefire-report.html</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is the difference between Surefire report and Allure report? <span class="toggle">+</span></div><div class="qa-a">Surefire report is a basic HTML/XML report showing pass/fail counts and stack traces. Allure report is a rich interactive dashboard showing test steps (via <span class="kw">@Step</span>), screenshots (via <span class="kw">@Attachment</span>), test history trends, categories of failures (broken vs failed), severity, and feature groupings. Allure requires adding the allure-testng dependency and a listener; Surefire report is available out of the box with Maven.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: How does <span class="kw">mvn site</span> work and what does it generate? <span class="toggle">+</span></div><div class="qa-a"><span class="kw">mvn site</span> runs the site lifecycle which triggers all plugins configured in the <span class="kw">&lt;reporting&gt;</span> section of pom.xml. It generates a complete HTML project website in <span class="kw">target/site/</span> including: project information (from pom.xml metadata), test reports (from surefire-report-plugin), dependency reports, source cross-reference, and any other configured reporting plugins. The entry point is <span class="kw">target/site/index.html</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you integrate ExtentReports with Maven TestNG project? <span class="toggle">+</span></div><div class="qa-a">ExtentReports doesn't use a Maven plugin — it integrates as a TestNG listener. Steps: (1) Add ExtentReports dependency in pom.xml <span class="kw">&lt;dependencies&gt;</span>. (2) Create a class implementing <span class="kw">ITestListener</span> that initializes ExtentReports and logs pass/fail events. (3) Add this listener class to testng.xml in <span class="kw">&lt;listeners&gt;&lt;listener classname="..."/&gt;</span>. (4) ExtentReports generates HTML at the path you configure, typically <span class="kw">test-output/ExtentReport.html</span>.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How do you publish test reports in Jenkins for a Maven project? <span class="toggle">+</span></div><div class="qa-a">Two main options: (1) Jenkins's built-in JUnit plugin — add a post-build step "Publish JUnit test result report" pointing to <span class="kw">**/surefire-reports/*.xml</span> — Jenkins displays trend graphs automatically. (2) Allure Jenkins plugin — configure it to read <span class="kw">target/allure-results/</span> after each build and generate the rich Allure report as a build artifact with history. The first is simpler; the second gives much richer reporting with trends, categories, and step-level details.</div></div>
+</div>
+
+</div><!-- /progress content -->
+</div><!-- /app -->
+
+<script>
+const SESSIONS = [
+  {label:'S1: Maven Intro',phase:1},
+  {label:'S2: Lifecycle',phase:1},
+  {label:'S3: POM.xml Deep',phase:1},
+  {label:'S4: Plugins',phase:2},
+  {label:'S5: Profiles & CLI',phase:2},
+  {label:'S6: TestNG XML',phase:2},
+  {label:'S7: Reporting',phase:2},
+];
+let current = 0;
+
+function buildTabs(){
+  const tb = document.getElementById('tabbar');
+  SESSIONS.forEach((s,i)=>{
+    const b = document.createElement('button');
+    b.className='tab-btn'+(i===0?' active':'');
+    b.textContent=s.label;
+    b.onclick=()=>goTo(i);
+    tb.appendChild(b);
+  });
+}
+
+function buildProg(){
+  const pr = document.getElementById('prog-row');
+  pr.innerHTML='';
+  SESSIONS.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='progress-dot'+(i<current?' done':i===current?' current':'');
+    d.title=s.label;
+    d.onclick=()=>goTo(i);
+    pr.appendChild(d);
+    if(i<SESSIONS.length-1){const l=document.createElement('div');l.className='progress-line';pr.appendChild(l);}
+  });
+  const lbl = document.createElement('span');
+  lbl.className='prog-label';
+  lbl.textContent = 'Session '+(current+1)+' of '+SESSIONS.length;
+  pr.appendChild(lbl);
+}
+
+function goTo(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.session').forEach((s,j)=>s.classList.toggle('active',j===i));
+  current=i;
+  buildProg();
+  const ph1=document.getElementById('ph1');
+  const ph2=document.getElementById('ph2');
+  const isP2 = SESSIONS[i].phase===2;
+  ph1.classList.toggle('active',!isP2);
+  ph2.classList.toggle('active',isP2);
+}
+
+function toggleQA(el){
+  const ans = el.nextElementSibling;
+  const open = ans.classList.toggle('open');
+  el.classList.toggle('open',open);
+}
+
+buildTabs();
+buildProg();
+</script>
+</body>
+</html>

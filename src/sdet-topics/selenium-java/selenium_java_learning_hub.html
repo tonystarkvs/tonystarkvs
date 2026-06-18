@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>selenium java learning hub</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-mono,'Courier New',monospace)}
+.hub{padding:1rem 0;max-width:700px}
+.phase-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.phase-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;border:1.5px solid}
+.ph1{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.ph2{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.ph3{background:#FAECE7;color:#712B13;border-color:#F0997B}
+.ph4{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.session-tabs{display:flex;gap:0;border-bottom:1.5px solid var(--color-border-tertiary);margin-bottom:0;overflow-x:auto}
+.stab{padding:9px 16px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--color-text-secondary);white-space:nowrap;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;font-family:var(--font-sans)}
+.stab.active{color:#3C3489;border-bottom-color:#7F77DD;background:var(--color-background-secondary)}
+.stab:hover:not(.active){background:var(--color-background-secondary)}
+.progress-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.done{background:#1D9E75}.dot.active{background:#7F77DD}.dot.todo{background:var(--color-border-tertiary)}
+.prog-label{font-size:11px;color:var(--color-text-secondary)}
+.session-content{padding:0}
+.overview-banner{background:var(--color-background-secondary);padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.overview-banner h2{font-size:13px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.overview-banner p{font-size:14px;color:var(--color-text-primary);line-height:1.6}
+.section{padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.section h3{font-size:12px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.interview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.q-pill{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px;color:var(--color-text-primary);line-height:1.5;border-left:3px solid #7F77DD}
+.arch-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;margin-bottom:10px}
+.arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.arch-node{padding:6px 12px;border-radius:var(--border-radius-md);font-size:12px;font-weight:500;text-align:center}
+.arch-node.n1{background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC}
+.arch-node.n2{background:#E1F5EE;color:#085041;border:1px solid #5DCAA5}
+.arch-node.n3{background:#FAECE7;color:#712B13;border:1px solid #F0997B}
+.arch-node.n4{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
+.arch-arrow{color:var(--color-text-secondary);font-size:16px}
+.code-tabs-wrap{background:#0d1117;border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.code-tab-bar{display:flex;gap:0;background:#161b22;overflow-x:auto}
+.ctab{padding:7px 14px;font-size:11px;cursor:pointer;border:none;background:transparent;color:#8b949e;white-space:nowrap;font-family:'Courier New',monospace;border-bottom:2px solid transparent}
+.ctab.active{color:#e6edf3;border-bottom-color:#7F77DD;background:#0d1117}
+.ctab:hover:not(.active){background:#0d1117;color:#c9d1d9}
+.code-panel{display:none;padding:14px 16px;overflow-x:auto}
+.code-panel.active{display:block}
+pre{font-family:'Courier New',monospace;font-size:12px;line-height:1.8;white-space:pre;color:#e6edf3}
+.kw{color:#ff7b72}.cm{color:#8b949e;font-style:italic}.st{color:#a5d6ff}.cl{color:#ffa657}.mt{color:#d2a8ff}.an{color:#79c0ff}.nm{color:#79c0ff}.vr{color:#e6edf3}.op{color:#ff7b72}
+.bp-list{list-style:none;display:grid;gap:6px}
+.bp-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.bp-list li::before{content:"✓";color:#1D9E75;font-weight:700;flex-shrink:0;margin-top:1px}
+.qa-list{display:grid;gap:10px}
+.qa-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.qa-q{font-size:12px;font-weight:500;color:#3C3489;margin-bottom:4px}
+.qa-a{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{padding:2px 8px;border-radius:12px;font-size:11px;background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC}
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.comp-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px}
+.comp-card h4{font-size:12px;font-weight:500;margin-bottom:6px}
+.v3-h{color:#633806}.v4-h{color:#085041}
+.dep-badge{background:#FAECE7;color:#712B13;border:0.5px solid #F0997B;border-radius:10px;font-size:10px;padding:1px 6px}
+.new-badge{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5;border-radius:10px;font-size:10px;padding:1px 6px}
+.diff-row{font-size:12px;color:var(--color-text-secondary);padding:4px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+  <div class="hub">
+<div class="phase-bar">
+  <span class="phase-pill ph1">Phase 1: Fundamentals S1–S2</span>
+  <span class="phase-pill ph2">Phase 2: Core Concepts S3–S4</span>
+  <span class="phase-pill ph3">Phase 3: Advanced S5</span>
+  <span class="phase-pill ph4">Phase 4: Framework S6</span>
+</div>
+
+<div class="session-tabs" id="sessionTabs">
+  <button class="stab active" onclick="switchSession(0)">S1 · Selenium Overview</button>
+  <button class="stab" onclick="switchSession(1)">S2 · Architecture</button>
+  <button class="stab" onclick="switchSession(2)">S3 · Components</button>
+  <button class="stab" onclick="switchSession(3)">S4 · v3 vs v4</button>
+  <button class="stab" onclick="switchSession(4)">S5 · Deprecated v4</button>
+  <button class="stab" onclick="switchSession(5)">S6 · New in v4</button>
+</div>
+
+<div class="progress-row">
+  <span id="progDots"></span>
+  <span class="prog-label" id="progLabel">Session 1 of 6</span>
+</div>
+
+<div id="allSessions">
+
+<!-- SESSION 1 -->
+<div class="session-content" id="s0">
+  <div class="overview-banner">
+    <h2>Overview — What is Selenium?</h2>
+    <p><strong>Selenium</strong> is a free, open-source browser automation framework that lets you control web browsers programmatically. Think of it as a "robot hand" that types, clicks, and navigates websites exactly like a human — but automated, fast, and repeatable. It is used for <em>functional testing</em>, <em>regression testing</em>, and <em>UI automation</em> of web applications.</p>
+  </div>
+
+  <div class="section">
+    <h3>🎙 Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">Selenium is an open-source tool used to automate web browser interactions for testing purposes.</div>
+      <div class="q-pill">Selenium supports multiple browsers like Chrome, Firefox, Edge, and Safari via their native drivers.</div>
+      <div class="q-pill">Selenium is not a testing framework — it is a browser automation library used alongside frameworks like TestNG or JUnit.</div>
+      <div class="q-pill">Selenium supports multiple languages: Java, Python, C#, JavaScript, Ruby, and Kotlin.</div>
+      <div class="q-pill">Selenium WebDriver directly communicates with the browser without any intermediate server in v3, but v4 uses W3C protocol natively.</div>
+      <div class="q-pill">Selenium is platform-independent and can run on Windows, Linux, and macOS environments.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>📋 What / Why / When / Where / How</h3>
+    <div class="arch-box">
+      <div class="diff-row"><span style="color:#3C3489;font-weight:500;width:50px">WHAT</span><span>A suite of tools (WebDriver, Grid, IDE) to automate browser actions via code</span></div>
+      <div class="diff-row"><span style="color:#085041;font-weight:500;width:50px">WHY</span><span>Manual testing is slow, error-prone, and doesn't scale — automation ensures consistency</span></div>
+      <div class="diff-row"><span style="color:#712B13;font-weight:500;width:50px">WHEN</span><span>Used in CI/CD pipelines, regression suites, cross-browser testing, nightly builds</span></div>
+      <div class="diff-row"><span style="color:#633806;font-weight:500;width:50px">WHERE</span><span>Any web application — banking, e-commerce, healthcare, SaaS platforms</span></div>
+      <div class="diff-row" style="border:none"><span style="color:#085041;font-weight:500;width:50px">HOW</span><span>Java code → WebDriver API → Browser Driver (e.g., ChromeDriver) → Chrome Browser</span></div>
+    </div>
+    <div class="tag-row">
+      <span class="tag">Open Source</span><span class="tag">Apache 2.0 License</span><span class="tag">Multi-browser</span><span class="tag">Multi-language</span><span class="tag">CI/CD Ready</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>💻 Code Examples</h3>
+    <div class="code-tabs-wrap">
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(0,0)">1. First WebDriver</button>
+        <button class="ctab" onclick="switchCode(0,1)">2. Launch & Close</button>
+        <button class="ctab" onclick="switchCode(0,2)">3. Page Title</button>
+        <button class="ctab" onclick="switchCode(0,3)">4. Navigate URL</button>
+        <button class="ctab" onclick="switchCode(0,4)">5. Maximize Window</button>
+        <button class="ctab" onclick="switchCode(0,5)">6. Implicit Wait</button>
+      </div>
+      <div class="code-panel active" id="c0-0"><pre>
+<cm>// ─── CODE EXAMPLE 1: Your very first Selenium WebDriver program ───</cm>
+<cm>// 'import' keyword → tells Java where to find the class definition</cm>
+<cm>// 'org.openqa.selenium' → this is the Selenium package (library namespace)</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+
+<cm>// 'public class' → declares a class visible to all</cm>
+<cm>// A class is a blueprint — think of it as a container for your code</cm>
+<kw>public class</kw> <cl>FirstSeleniumTest</cl> {
+
+    <cm>// 'public static void main' → entry point of any Java program</cm>
+    <cm>// 'static' means no object of this class is needed to call this method</cm>
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// WebDriver → interface (like a contract) defining all browser actions</cm>
+        <cm>// ChromeDriver → class that implements WebDriver for Chrome browser</cm>
+        <cm>// 'new' keyword → creates a fresh instance (object) of ChromeDriver</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+
+        <cm>// driver.get() → opens the given URL in the browser</cm>
+        <cm>// This is equivalent to typing in the address bar and pressing Enter</cm>
+        driver.<mt>get</mt>(<st>"https://www.google.com"</st>);
+
+        <cm>// driver.getTitle() → returns the text in the browser tab (page title)</cm>
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Page title: "</st> + driver.<mt>getTitle</mt>());
+
+        <cm>// driver.quit() → closes ALL browser windows AND ends the WebDriver session</cm>
+        <cm>// ALWAYS call quit() to free memory — failing to do so causes resource leaks</cm>
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c0-1"><pre>
+<cm>// ─── CODE EXAMPLE 2: Browser launch, actions, and proper close ───</cm>
+<cm>// 'ChromeOptions' → class to customize how Chrome is launched</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+
+<kw>public class</kw> <cl>LaunchAndClose</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// ChromeOptions → lets us configure Chrome before opening it</cm>
+        <cl>ChromeOptions</cl> options = <kw>new</kw> <cl>ChromeOptions</cl>();
+
+        <cm>// addArgument() → adds command-line flags to Chrome</cm>
+        <cm>// "--start-maximized" → opens Chrome in full screen mode</cm>
+        options.<mt>addArguments</mt>(<st>"--start-maximized"</st>);
+
+        <cm>// Passing options into ChromeDriver applies our configuration</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>(options);
+
+        <cm>// Navigate to a URL</cm>
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+
+        <cm>// driver.close() → closes ONLY the CURRENT browser tab</cm>
+        <cm>// Use close() when you have multiple tabs open</cm>
+        <cm>// Use quit() to end entire session and close all tabs</cm>
+        driver.<mt>close</mt>();  <cm>// closes tab</cm>
+        driver.<mt>quit</mt>();   <cm>// ends WebDriver session completely</cm>
+    }
+}</pre></div>
+      <div class="code-panel" id="c0-2"><pre>
+<cm>// ─── CODE EXAMPLE 3: Getting page information ───</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+
+<kw>public class</kw> <cl>PageInfo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.selenium.dev"</st>);
+
+        <cm>// getTitle() → returns HTML &lt;title&gt; tag text (browser tab name)</cm>
+        <cl>String</cl> title = driver.<mt>getTitle</mt>();
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Title: "</st> + title);
+
+        <cm>// getCurrentUrl() → returns the exact URL of the current page</cm>
+        <cm>// Useful to assert page navigation happened correctly</cm>
+        <cl>String</cl> currentUrl = driver.<mt>getCurrentUrl</mt>();
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"URL: "</st> + currentUrl);
+
+        <cm>// getPageSource() → returns entire HTML source of the page as a String</cm>
+        <cm>// Use for content verification or scraping during testing</cm>
+        <cl>String</cl> pageSource = driver.<mt>getPageSource</mt>();
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Source length: "</st> + pageSource.<mt>length</mt>() + <st>" chars"</st>);
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c0-3"><pre>
+<cm>// ─── CODE EXAMPLE 4: Browser Navigation Methods ───</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+
+<kw>public class</kw> <cl>NavigationDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) <kw>throws</kw> <cl>InterruptedException</cl> {
+
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+
+        <cm>// navigate().to() → same as driver.get() but part of navigate() object</cm>
+        driver.<mt>navigate</mt>().<mt>to</mt>(<st>"https://www.google.com"</st>);
+        <cl>Thread</cl>.<mt>sleep</mt>(<nm>1000</nm>); <cm>// Pause 1 sec so we can observe</cm>
+
+        driver.<mt>navigate</mt>().<mt>to</mt>(<st>"https://www.selenium.dev"</st>);
+        <cl>Thread</cl>.<mt>sleep</mt>(<nm>1000</nm>);
+
+        <cm>// navigate().back() → like clicking the browser BACK button</cm>
+        driver.<mt>navigate</mt>().<mt>back</mt>();
+        <cl>Thread</cl>.<mt>sleep</mt>(<nm>1000</nm>);
+
+        <cm>// navigate().forward() → like clicking browser FORWARD button</cm>
+        driver.<mt>navigate</mt>().<mt>forward</mt>();
+        <cl>Thread</cl>.<mt>sleep</mt>(<nm>1000</nm>);
+
+        <cm>// navigate().refresh() → reloads the current page (like F5)</cm>
+        driver.<mt>navigate</mt>().<mt>refresh</mt>();
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c0-4"><pre>
+<cm>// ─── CODE EXAMPLE 5: Window Management ───</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.Dimension</nm>;
+
+<kw>public class</kw> <cl>WindowManagement</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+
+        <cm>// manage().window() → returns a Window object to control size/position</cm>
+        <cm>// maximize() → expands browser to fill the entire screen</cm>
+        driver.<mt>manage</mt>().<mt>window</mt>().<mt>maximize</mt>();
+
+        <cm>// minimize() → shrinks browser to taskbar (Selenium 4 feature)</cm>
+        driver.<mt>manage</mt>().<mt>window</mt>().<mt>minimize</mt>();
+
+        <cm>// fullscreen() → true fullscreen mode (hides OS taskbar)</cm>
+        driver.<mt>manage</mt>().<mt>window</mt>().<mt>fullscreen</mt>();
+
+        <cm>// Dimension → a class holding width and height as integers</cm>
+        <cm>// setSize() → resizes browser to custom pixel dimensions</cm>
+        <cm>// Useful for responsive/mobile testing</cm>
+        <cl>Dimension</cl> d = <kw>new</kw> <cl>Dimension</cl>(<nm>1280</nm>, <nm>720</nm>);
+        driver.<mt>manage</mt>().<mt>window</mt>().<mt>setSize</mt>(d);
+
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Window size: "</st> + driver.<mt>manage</mt>().<mt>window</mt>().<mt>getSize</mt>());
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c0-5"><pre>
+<cm>// ─── CODE EXAMPLE 6: Implicit Wait — Handle slow-loading pages ───</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>java.time.Duration</nm>; <cm>// Duration → standard Java class for time values</cm>
+
+<kw>public class</kw> <cl>ImplicitWaitDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+
+        <cm>// Implicit Wait → tells WebDriver: "if element not found immediately,</cm>
+        <cm>// keep POLLING (checking repeatedly) for up to N seconds before failing"</cm>
+        <cm>// Duration.ofSeconds(10) → 10 second maximum wait time</cm>
+        <cm>// This applies GLOBALLY to all findElement() calls in this session</cm>
+        driver.<mt>manage</mt>().<mt>timeouts</mt>().<mt>implicitlyWait</mt>(<cl>Duration</cl>.<mt>ofSeconds</mt>(<nm>10</nm>));
+
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+
+        <cm>// Without the wait, if page is slow, this line would throw NoSuchElementException</cm>
+        <cm>// With implicit wait, Selenium waits up to 10s for the element to appear</cm>
+        driver.<mt>findElement</mt>(<nm>By</nm>.<mt>tagName</mt>(<st>"h1"</st>));
+
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Element found successfully!"</st>);
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>✅ Best Practices</h3>
+    <ul class="bp-list">
+      <li>Always call <code>driver.quit()</code> in a <code>finally</code> block — ensures browser closes even if test fails</li>
+      <li>Never hardcode browser driver paths — use WebDriverManager or Selenium Manager (v4.6+)</li>
+      <li>Set implicit wait once at test setup, not inside individual test methods</li>
+      <li>Use <code>ChromeOptions</code> for headless mode in CI/CD environments (no UI needed)</li>
+      <li>Always assert the page title or URL after navigation to confirm the right page loaded</li>
+      <li>Use interface type <code>WebDriver driver</code> (not <code>ChromeDriver driver</code>) for flexibility across browsers</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>🎯 SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What is the difference between driver.close() and driver.quit()?</div><div class="qa-a">A: <code>close()</code> closes only the currently focused browser tab/window. <code>quit()</code> closes ALL browser windows and terminates the entire WebDriver session, freeing all resources.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. What is WebDriver in Selenium?</div><div class="qa-a">A: WebDriver is an interface (API) in Selenium that provides methods to interact with a browser. Classes like ChromeDriver and FirefoxDriver implement this interface for specific browsers.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. Is Selenium a testing framework?</div><div class="qa-a">A: No. Selenium is a browser automation library. For test management (assertions, reports, test structure), you combine it with TestNG or JUnit frameworks.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. What languages does Selenium support?</div><div class="qa-a">A: Selenium officially supports Java, Python, C#, JavaScript (Node.js), Ruby, and Kotlin with maintained client bindings.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. What happens if you don't call quit() after tests?</div><div class="qa-a">A: Browser processes remain open in the OS memory, ChromeDriver orphan processes accumulate, causing memory leaks and test instability in subsequent runs.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION 2 -->
+<div class="session-content" id="s1" style="display:none">
+  <div class="overview-banner">
+    <h2>Overview — Selenium Architecture</h2>
+    <p>Selenium's architecture defines <strong>HOW your Java code talks to the browser</strong>. In Selenium 3, it used the JSON Wire Protocol. In Selenium 4, it uses the native <strong>W3C WebDriver Protocol</strong> — a standardized HTTP-based communication specification. Understanding this flow is critical for any SDET interview.</p>
+  </div>
+
+  <div class="section">
+    <h3>🎙 Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">Selenium 4 uses the W3C WebDriver standard protocol, making it more stable and browser-compatible.</div>
+      <div class="q-pill">In Selenium's architecture, the Java client sends HTTP requests to the browser driver, which forwards commands to the actual browser.</div>
+      <div class="q-pill">ChromeDriver acts as a bridge (middleware) between Selenium WebDriver and the Chrome browser.</div>
+      <div class="q-pill">W3C protocol eliminates the need for JSON Wire Protocol translation layer used in Selenium 3.</div>
+      <div class="q-pill">Each browser has its own driver: ChromeDriver for Chrome, GeckoDriver for Firefox, EdgeDriver for Edge.</div>
+      <div class="q-pill">Selenium Grid extends this architecture to run tests remotely on different machines and browsers simultaneously.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🏗 Architecture Flow Diagram</h3>
+    <div class="arch-box">
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">Layer-by-layer communication chain:</div>
+      <div class="arch-flow">
+        <div class="arch-node n1">☕ Java Test Code<br><span style="font-size:10px;opacity:.8">Your .java file</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n2">Selenium WebDriver API<br><span style="font-size:10px;opacity:.8">Interface / Commands</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n3">HTTP W3C Request<br><span style="font-size:10px;opacity:.8">JSON over HTTP</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n4">Browser Driver<br><span style="font-size:10px;opacity:.8">ChromeDriver.exe</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n1">🌐 Browser<br><span style="font-size:10px;opacity:.8">Chrome/Firefox</span></div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--color-text-secondary)">⬆ Response travels back through same layers in reverse</div>
+    </div>
+    <div class="arch-box">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">Selenium Grid Architecture (Remote Execution)</div>
+      <div class="arch-flow">
+        <div class="arch-node n2">Test Machine<br><span style="font-size:10px;opacity:.8">Runs Java tests</span></div>
+        <div class="arch-arrow">→ HTTP →</div>
+        <div class="arch-node n1">Hub / Router<br><span style="font-size:10px;opacity:.8">Manages sessions</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n3">Node 1<br><span style="font-size:10px;opacity:.8">Chrome on Win</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-top:6px">Hub also routes to Node 2 (Firefox/Linux), Node 3 (Safari/Mac)</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>💻 Code Examples</h3>
+    <div class="code-tabs-wrap">
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(1,0)">1. W3C Protocol</button>
+        <button class="ctab" onclick="switchCode(1,1)">2. Remote WebDriver</button>
+        <button class="ctab" onclick="switchCode(1,2)">3. Grid Connection</button>
+        <button class="ctab" onclick="switchCode(1,3)">4. DesiredCaps</button>
+        <button class="ctab" onclick="switchCode(1,4)">5. MultiDriver</button>
+        <button class="ctab" onclick="switchCode(1,5)">6. Platform Caps</button>
+      </div>
+      <div class="code-panel active" id="c1-0"><pre>
+<cm>// ─── CODE EXAMPLE 1: Understanding W3C Protocol in Selenium 4 ───</cm>
+<cm>// Selenium 4 uses W3C WebDriver standard natively (no translation needed)</cm>
+<cm>// The protocol sends JSON commands over HTTP to the browser driver</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+
+<kw>public class</kw> <cl>W3CProtocolDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// ChromeOptions → W3C-compliant capability container</cm>
+        <cm>// In Selenium 4, ALL capabilities must go through Options objects</cm>
+        <cm>// This replaces the old DesiredCapabilities approach (deprecated)</cm>
+        <cl>ChromeOptions</cl> options = <kw>new</kw> <cl>ChromeOptions</cl>();
+
+        <cm>// setCapability() → sets W3C standard capability key-value pairs</cm>
+        <cm>// W3C capabilities are standardized — same names across all browsers</cm>
+        options.<mt>setCapability</mt>(<st>"browserName"</st>, <st>"chrome"</st>);
+        options.<mt>setCapability</mt>(<st>"browserVersion"</st>, <st>"latest"</st>);
+
+        <cm>// When you do 'new ChromeDriver(options)', Selenium internally:</cm>
+        <cm>// 1. Starts ChromeDriver.exe process</cm>
+        <cm>// 2. Sends POST /session (HTTP request) with capabilities JSON</cm>
+        <cm>// 3. ChromeDriver launches Chrome and returns a session ID</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>(options);
+
+        driver.<mt>get</mt>(<st>"https://www.selenium.dev"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"W3C Session active: "</st> + driver.<mt>getTitle</mt>());
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c1-1"><pre>
+<cm>// ─── CODE EXAMPLE 2: Remote WebDriver — Architecture in Action ───</cm>
+<cm>// RemoteWebDriver → sends commands to a REMOTE machine (not local)</cm>
+<cm>// Used with Selenium Grid or cloud services like BrowserStack/Sauce Labs</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.remote.RemoteWebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+<kw>import</kw> <nm>java.net.URL</nm>;
+
+<kw>public class</kw> <cl>RemoteDriverDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) <kw>throws</kw> <cl>Exception</cl> {
+
+        <cm>// ChromeOptions → browser config to send to remote node</cm>
+        <cl>ChromeOptions</cl> options = <kw>new</kw> <cl>ChromeOptions</cl>();
+        options.<mt>addArguments</mt>(<st>"--headless"</st>); <cm>// headless = no UI (runs silently)</cm>
+
+        <cm>// URL → the address of the Selenium Grid Hub or Remote server</cm>
+        <cm>// 4444 → default port Selenium Grid Hub listens on</cm>
+        <cl>URL</cl> gridUrl = <kw>new</kw> <cl>URL</cl>(<st>"http://localhost:4444"</st>);
+
+        <cm>// RemoteWebDriver → sends HTTP commands to the remote Hub</cm>
+        <cm>// Hub then routes to an appropriate Node machine</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>RemoteWebDriver</cl>(gridUrl, options);
+
+        driver.<mt>get</mt>(<st>"https://www.google.com"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Remote Title: "</st> + driver.<mt>getTitle</mt>());
+
+        driver.<mt>quit</mt>(); <cm>// closes remote browser session</cm>
+    }
+}</pre></div>
+      <div class="code-panel" id="c1-2"><pre>
+<cm>// ─── CODE EXAMPLE 3: Selenium Grid 4 — Hub + Node Setup (Code side) ───</cm>
+<cm>// Grid commands run in terminal, but here we show Java side connection</cm>
+
+<cm>// TERMINAL COMMANDS (run these first):</cm>
+<cm>// java -jar selenium-server-4.x.x.jar hub       ← starts Hub on port 4444</cm>
+<cm>// java -jar selenium-server-4.x.x.jar node      ← registers Node to Hub</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.remote.RemoteWebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.firefox.FirefoxOptions</nm>;
+<kw>import</kw> <nm>java.net.URL</nm>;
+
+<kw>public class</kw> <cl>GridConnectionDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) <kw>throws</kw> <cl>Exception</cl> {
+
+        <cm>// FirefoxOptions → capabilities for Firefox browser on the Node</cm>
+        <cl>FirefoxOptions</cl> ffOptions = <kw>new</kw> <cl>FirefoxOptions</cl>();
+
+        <cm>// Grid 4 Hub URL — your Hub machine's IP:port</cm>
+        <cl>String</cl> hubUrl = <st>"http://hub-machine-ip:4444"</st>;
+
+        <cm>// This test will run on a Firefox Node registered to the Grid Hub</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>RemoteWebDriver</cl>(
+            <kw>new</kw> <cl>URL</cl>(hubUrl), ffOptions
+        );
+
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Running on Grid Node: "</st> + driver.<mt>getTitle</mt>());
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c1-3"><pre>
+<cm>// ─── CODE EXAMPLE 4: Capabilities — Old vs New Way ───</cm>
+
+<cm>// ❌ OLD WAY (Selenium 3) - DesiredCapabilities (DEPRECATED in Selenium 4)</cm>
+<cm>// import org.openqa.selenium.remote.DesiredCapabilities;</cm>
+<cm>// DesiredCapabilities caps = new DesiredCapabilities();</cm>
+<cm>// caps.setBrowserName("chrome");</cm>
+<cm>// WebDriver driver = new ChromeDriver(caps);  ← Still works but deprecated</cm>
+
+<cm>// ✅ NEW WAY (Selenium 4) - Use Browser-specific Options classes</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.edge.EdgeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.edge.EdgeOptions</nm>;
+
+<kw>public class</kw> <cl>CapabilitiesDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// ChromeOptions → W3C compliant, replaces DesiredCapabilities for Chrome</cm>
+        <cl>ChromeOptions</cl> chromeOpts = <kw>new</kw> <cl>ChromeOptions</cl>();
+        chromeOpts.<mt>addArguments</mt>(<st>"--incognito"</st>); <cm>// private browsing mode</cm>
+        chromeOpts.<mt>addArguments</mt>(<st>"--disable-notifications"</st>); <cm>// block popups</cm>
+        <cl>WebDriver</cl> chrome = <kw>new</kw> <cl>ChromeDriver</cl>(chromeOpts);
+
+        <cm>// EdgeOptions → same pattern for Microsoft Edge</cm>
+        <cl>EdgeOptions</cl> edgeOpts = <kw>new</kw> <cl>EdgeOptions</cl>();
+        edgeOpts.<mt>addArguments</mt>(<st>"--inprivate"</st>);
+        <cl>WebDriver</cl> edge = <kw>new</kw> <cl>EdgeDriver</cl>(edgeOpts);
+
+        chrome.<mt>quit</mt>();
+        edge.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c1-4"><pre>
+<cm>// ─── CODE EXAMPLE 5: Running Multiple Browsers Simultaneously ───</cm>
+<cm>// Architecture allows multiple WebDriver instances (sessions) at once</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.firefox.FirefoxDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.edge.EdgeDriver</nm>;
+
+<kw>public class</kw> <cl>MultiBrowserDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// Each 'new XDriver()' creates a SEPARATE WebDriver session</cm>
+        <cm>// Each session is independent — has its own cookies, tabs, history</cm>
+        <cl>WebDriver</cl> chrome  = <kw>new</kw> <cl>ChromeDriver</cl>();
+        <cl>WebDriver</cl> firefox = <kw>new</kw> <cl>FirefoxDriver</cl>();
+        <cl>WebDriver</cl> edge    = <kw>new</kw> <cl>EdgeDriver</cl>();
+
+        <cm>// All three browsers open the same URL simultaneously</cm>
+        <cl>String</cl> url = <st>"https://www.example.com"</st>;
+        chrome.<mt>get</mt>(url);
+        firefox.<mt>get</mt>(url);
+        edge.<mt>get</mt>(url);
+
+        <cm>// Print titles from all browsers</cm>
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Chrome:  "</st> + chrome.<mt>getTitle</mt>());
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Firefox: "</st> + firefox.<mt>getTitle</mt>());
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Edge:    "</st> + edge.<mt>getTitle</mt>());
+
+        <cm>// Always quit each driver separately</cm>
+        chrome.<mt>quit</mt>();
+        firefox.<mt>quit</mt>();
+        edge.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c1-5"><pre>
+<cm>// ─── CODE EXAMPLE 6: Platform Capabilities for Grid Testing ───</cm>
+<kw>import</kw> <nm>org.openqa.selenium.Platform</nm>; <cm>// Platform → enum of OS types</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.remote.RemoteWebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+<kw>import</kw> <nm>java.net.URL</nm>;
+
+<kw>public class</kw> <cl>PlatformCapabilitiesDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) <kw>throws</kw> <cl>Exception</cl> {
+
+        <cl>ChromeOptions</cl> options = <kw>new</kw> <cl>ChromeOptions</cl>();
+
+        <cm>// setPlatformName() → tells Grid which OS the test should run on</cm>
+        <cm>// Platform.WINDOWS → Grid finds a Node running Windows</cm>
+        <cm>// Platform.LINUX, Platform.MAC → other OS options</cm>
+        options.<mt>setPlatformName</mt>(<st>"WINDOWS"</st>);
+
+        <cm>// setBrowserVersion() → requests specific browser version from Grid Node</cm>
+        options.<mt>setBrowserVersion</mt>(<st>"latest"</st>);
+
+        <cm>// Grid hub will match these requirements to an available Node</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>RemoteWebDriver</cl>(
+            <kw>new</kw> <cl>URL</cl>(<st>"http://localhost:4444"</st>), options
+        );
+
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Platform test running: "</st> + driver.<mt>getTitle</mt>());
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>✅ Best Practices</h3>
+    <ul class="bp-list">
+      <li>Always use W3C-compliant <code>Options</code> classes (ChromeOptions, FirefoxOptions) instead of deprecated <code>DesiredCapabilities</code></li>
+      <li>Run <code>java -jar selenium-server.jar standalone</code> for local Grid testing without needing Hub+Node setup</li>
+      <li>Use Docker containers with Selenium Grid 4 for consistent, isolated test environments</li>
+      <li>Store Grid Hub URL in configuration files, not hardcoded in test classes</li>
+      <li>Use <code>RemoteWebDriver</code> with cloud platforms (BrowserStack, Sauce Labs) for real device cross-browser testing</li>
+      <li>Always verify browser driver version matches installed browser version to prevent session creation failures</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>🎯 SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What protocol does Selenium 4 use and why is it better than Selenium 3?</div><div class="qa-a">A: Selenium 4 natively uses W3C WebDriver protocol, eliminating the JSON Wire Protocol translation layer from v3. This means fewer compatibility issues and more stable cross-browser behavior.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. What is the role of ChromeDriver in Selenium architecture?</div><div class="qa-a">A: ChromeDriver is an executable that acts as a bridge between Selenium's HTTP commands and Chrome's DevTools Protocol (CDP). It translates WebDriver commands into Chrome-understandable instructions.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. What is Selenium Grid and when do you use it?</div><div class="qa-a">A: Selenium Grid allows parallel test execution across multiple machines and browsers. Use it when you need to cut test execution time via parallelism or need cross-browser/cross-OS testing on different physical/virtual machines.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. What changed in Selenium Grid 4 vs Grid 3?</div><div class="qa-a">A: Grid 4 introduced a new architecture: Router, Distributor, SessionMap, and Node. It also supports Docker, Kubernetes, and has a built-in GraphQL API for monitoring sessions.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. How does RemoteWebDriver differ from ChromeDriver?</div><div class="qa-a">A: ChromeDriver runs locally on your machine. RemoteWebDriver sends WebDriver commands over HTTP to a remote machine (Grid Hub), enabling execution on remote/cloud infrastructure.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION 3 -->
+<div class="session-content" id="s2" style="display:none">
+  <div class="overview-banner">
+    <h2>Overview — Selenium Components</h2>
+    <p>Selenium is not a single tool — it is a <strong>suite of 4 components</strong>, each serving a different purpose. Understanding what each component does, when to use it, and how they relate to each other is foundational knowledge for any automation engineer.</p>
+  </div>
+
+  <div class="section">
+    <h3>🎙 Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">Selenium WebDriver is the core component for programmatic browser control using code.</div>
+      <div class="q-pill">Selenium IDE is a browser plugin for record-and-playback test creation — no coding required.</div>
+      <div class="q-pill">Selenium Grid enables parallel test execution across multiple machines and browser configurations.</div>
+      <div class="q-pill">Selenium RC (Remote Control) is the predecessor to WebDriver and is now fully deprecated.</div>
+      <div class="q-pill">Selenium WebDriver replaced Selenium RC because it communicates directly with browsers without a proxy server.</div>
+      <div class="q-pill">The Selenium Manager (introduced in v4.6) auto-manages browser driver binaries without manual setup.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🧩 4 Components Visual</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="arch-box"><div class="arch-node n1" style="margin-bottom:8px;display:inline-block">Selenium WebDriver</div><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.6">Core library. Controls browser via HTTP+W3C. Write Java/Python code to interact with DOM elements. <strong>Primary tool</strong> for all professional automation.</div></div>
+      <div class="arch-box"><div class="arch-node n2" style="margin-bottom:8px;display:inline-block">Selenium IDE</div><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.6">Browser extension (Chrome/Firefox). Records your clicks/typing and replays them. Exports to Java, Python. Good for <strong>quick prototyping</strong> or non-coders.</div></div>
+      <div class="arch-box"><div class="arch-node n3" style="margin-bottom:8px;display:inline-block">Selenium Grid</div><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.6">Distributed execution server. Runs tests on multiple machines/browsers in <strong>parallel</strong>. Reduces total test suite execution time drastically.</div></div>
+      <div class="arch-box"><div class="arch-node n4" style="margin-bottom:8px;display:inline-block">Selenium RC (Legacy)</div><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.6">Fully deprecated. Was the original Selenium automation approach using a JavaScript injection proxy server. <strong>Not used</strong> in any modern project.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>💻 Code Examples</h3>
+    <div class="code-tabs-wrap">
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(2,0)">1. findElement</button>
+        <button class="ctab" onclick="switchCode(2,1)">2. findElements</button>
+        <button class="ctab" onclick="switchCode(2,2)">3. By Locators</button>
+        <button class="ctab" onclick="switchCode(2,3)">4. Actions Class</button>
+        <button class="ctab" onclick="switchCode(2,4)">5. JavaScript Exec</button>
+        <button class="ctab" onclick="switchCode(2,5)">6. Screenshots</button>
+      </div>
+      <div class="code-panel active" id="c2-0"><pre>
+<cm>// ─── CODE EXAMPLE 1: findElement() — Locate a single web element ───</cm>
+<cm>// 'WebElement' → interface representing a single HTML element on the page</cm>
+<cm>// Think of it as a Java handle to a button, input, link, or any HTML tag</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.By</nm>;       <cm>// By → class providing locator strategies</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebElement</nm>; <cm>// WebElement → interface for DOM element</cm>
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+
+<kw>public class</kw> <cl>FindElementDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.google.com"</st>);
+
+        <cm>// findElement() → returns the FIRST matching element</cm>
+        <cm>// Throws NoSuchElementException if element not found</cm>
+        <cm>// By.name() → locates element by its HTML 'name' attribute</cm>
+        <cm>// &lt;input name="q"&gt; is Google's search box</cm>
+        <cl>WebElement</cl> searchBox = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>name</mt>(<st>"q"</st>));
+
+        <cm>// sendKeys() → types text into an input field</cm>
+        <cm>// Like a human typing on the keyboard</cm>
+        searchBox.<mt>sendKeys</mt>(<st>"Selenium Java Tutorial"</st>);
+
+        <cm>// submit() → submits the form containing this element</cm>
+        searchBox.<mt>submit</mt>();
+
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Search submitted. Title: "</st> + driver.<mt>getTitle</mt>());
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c2-1"><pre>
+<cm>// ─── CODE EXAMPLE 2: findElements() — Get multiple elements at once ───</cm>
+<cm>// findElements() (plural) → returns a List of all matching WebElements</cm>
+<cm>// Returns EMPTY LIST (not exception) if no elements found</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.By</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebElement</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>java.util.List</nm>; <cm>// List → Java ordered collection interface</cm>
+
+<kw>public class</kw> <cl>FindElementsDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.selenium.dev/documentation/"</st>);
+
+        <cm>// By.tagName("a") → finds ALL anchor (&lt;a&gt;) tags on the page</cm>
+        <cl>List</cl>&lt;<cl>WebElement</cl>&gt; allLinks = driver.<mt>findElements</mt>(<cl>By</cl>.<mt>tagName</mt>(<st>"a"</st>));
+
+        <cm>// .size() → number of elements in the List</cm>
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Total links found: "</st> + allLinks.<mt>size</mt>());
+
+        <cm>// Enhanced for-loop to iterate over every WebElement in the list</cm>
+        <kw>for</kw> (<cl>WebElement</cl> link : allLinks) {
+            <cm>// getText() → returns visible text content of the element</cm>
+            <cm>// getAttribute("href") → returns value of 'href' HTML attribute</cm>
+            <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(link.<mt>getText</mt>() + <st>" → "</st> + link.<mt>getAttribute</mt>(<st>"href"</st>));
+        }
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c2-2"><pre>
+<cm>// ─── CODE EXAMPLE 3: All 8 By Locator Strategies ───</cm>
+<cm>// By class provides 8 ways to find elements — choose the most stable one</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.By</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebElement</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+
+<kw>public class</kw> <cl>LocatorStrategies</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+
+        <cm>// 1. By.id() — FASTEST and most reliable (unique per page per HTML spec)</cm>
+        driver.<mt>findElement</mt>(<cl>By</cl>.<mt>id</mt>(<st>"username"</st>));
+
+        <cm>// 2. By.name() — uses HTML 'name' attribute (common in forms)</cm>
+        driver.<mt>findElement</mt>(<cl>By</cl>.<mt>name</mt>(<st>"email"</st>));
+
+        <cm>// 3. By.className() — matches HTML class attribute (can return multiple)</cm>
+        driver.<mt>findElement</mt>(<cl>By</cl>.<mt>className</mt>(<st>"btn-primary"</st>));
+
+        <cm>// 4. By.tagName() — matches HTML tag type (e.g., h1, input, button)</cm>
+        driver.<mt>findElement</mt>(<cl>By</cl>.<mt>tagName</mt>(<st>"h1"</st>));
+
+        <cm>// 5. By.linkText() — exact full text of a clickable &lt;a&gt; link</cm>
+        driver.<mt>findElement</mt>(<cl>By</cl>.<mt>linkText</mt>(<st>"More information..."</st>));
+
+        <cm>// 6. By.partialLinkText() — partial match of link text</cm>
+        driver.<mt>findElement</mt>(<cl>By</cl>.<mt>partialLinkText</mt>(<st>"More"</st>));
+
+        <cm>// 7. By.cssSelector() — CSS selector syntax (powerful, widely used)</cm>
+        driver.<mt>findElement</mt>(<cl>By</cl>.<mt>cssSelector</mt>(<st>"input[type='text']"</st>));
+
+        <cm>// 8. By.xpath() — XPath query (most powerful but slower)</cm>
+        driver.<mt>findElement</mt>(<cl>By</cl>.<mt>xpath</mt>(<st>"//input[@id='search']"</st>));
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c2-3"><pre>
+<cm>// ─── CODE EXAMPLE 4: Actions Class — Mouse & Keyboard Interactions ───</cm>
+<cm>// Actions → class for complex user gestures: hover, drag, right-click, etc.</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.By</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebElement</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.interactions.Actions</nm>; <cm>// Actions → complex gesture class</cm>
+
+<kw>public class</kw> <cl>ActionsClassDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+
+        <cm>// Create an Actions object — needs driver as parameter</cm>
+        <cl>Actions</cl> actions = <kw>new</kw> <cl>Actions</cl>(driver);
+
+        <cl>WebElement</cl> menu = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>id</mt>(<st>"nav-menu"</st>));
+
+        <cm>// moveToElement() → simulates mouse HOVER over an element</cm>
+        <cm>// perform() → EXECUTES the built-up action chain</cm>
+        actions.<mt>moveToElement</mt>(menu).<mt>perform</mt>();
+
+        <cm>// contextClick() → right-click on an element (opens context menu)</cm>
+        <cl>WebElement</cl> item = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>id</mt>(<st>"item"</st>));
+        actions.<mt>contextClick</mt>(item).<mt>perform</mt>();
+
+        <cm>// doubleClick() → double-click (used for file rename, text select, etc.)</cm>
+        actions.<mt>doubleClick</mt>(item).<mt>perform</mt>();
+
+        <cm>// dragAndDrop(source, target) → drag element from one place to another</cm>
+        <cl>WebElement</cl> source = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>id</mt>(<st>"drag"</st>));
+        <cl>WebElement</cl> target = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>id</mt>(<st>"drop"</st>));
+        actions.<mt>dragAndDrop</mt>(source, target).<mt>perform</mt>();
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c2-4"><pre>
+<cm>// ─── CODE EXAMPLE 5: JavascriptExecutor — Direct JS execution ───</cm>
+<cm>// JavascriptExecutor → interface to run JavaScript in the browser context</cm>
+<cm>// Used when WebDriver can't interact with hidden/custom elements</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.JavascriptExecutor</nm>; <cm>// Key interface</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.By</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebElement</nm>;
+
+<kw>public class</kw> <cl>JavaScriptDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.google.com"</st>);
+
+        <cm>// Cast driver to JavascriptExecutor to access JS methods</cm>
+        <cm>// 'Casting' = treating an object as a different (related) type</cm>
+        <cl>JavascriptExecutor</cl> js = (<cl>JavascriptExecutor</cl>) driver;
+
+        <cm>// executeScript() → runs JS in the browser and returns result</cm>
+        <cm>// "return document.title" → JS expression to get page title</cm>
+        <cl>Object</cl> title = js.<mt>executeScript</mt>(<st>"return document.title;"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"JS Title: "</st> + title);
+
+        <cm>// Scroll the page by 500 pixels downward using JS</cm>
+        js.<mt>executeScript</mt>(<st>"window.scrollBy(0, 500);"</st>);
+
+        <cm>// Click an element using JS (when regular .click() fails)</cm>
+        <cl>WebElement</cl> btn = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>name</mt>(<st>"q"</st>));
+        js.<mt>executeScript</mt>(<st>"arguments[0].click();"</st>, btn);
+        <cm>// 'arguments[0]' → refers to the first Java object passed (btn)</cm>
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c2-5"><pre>
+<cm>// ─── CODE EXAMPLE 6: Screenshots — Evidence capture ───</cm>
+<cm>// TakesScreenshot → interface to capture browser screen as image file</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.OutputType</nm>;    <cm>// Output format (FILE, BASE64, BYTES)</cm>
+<kw>import</kw> <nm>org.openqa.selenium.TakesScreenshot</nm>; <cm>// Interface for screen capture</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.apache.commons.io.FileUtils</nm>;     <cm>// Apache utility to copy files</cm>
+<kw>import</kw> <nm>java.io.File</nm>;                         <cm>// Java File class for filesystem ops</cm>
+
+<kw>public class</kw> <cl>ScreenshotDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) <kw>throws</kw> <cl>Exception</cl> {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.selenium.dev"</st>);
+
+        <cm>// Cast to TakesScreenshot to access screenshot methods</cm>
+        <cl>TakesScreenshot</cl> shooter = (<cl>TakesScreenshot</cl>) driver;
+
+        <cm>// getScreenshotAs(OutputType.FILE) → saves screenshot as a temp File</cm>
+        <cl>File</cl> srcFile = shooter.<mt>getScreenshotAs</mt>(<cl>OutputType</cl>.<nm>FILE</nm>);
+
+        <cm>// FileUtils.copyFile() → copies the temp file to a permanent location</cm>
+        <cm>// This is from Apache Commons IO library (add to your Maven pom.xml)</cm>
+        <cl>FileUtils</cl>.<mt>copyFile</mt>(srcFile, <kw>new</kw> <cl>File</cl>(<st>"screenshot.png"</st>));
+
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Screenshot saved as screenshot.png"</st>);
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>✅ Best Practices</h3>
+    <ul class="bp-list">
+      <li>Prefer <code>By.id()</code> and <code>By.cssSelector()</code> over XPath — they are faster and more readable</li>
+      <li>Use <code>findElements()</code> (plural) to check element existence (returns empty list, not exception)</li>
+      <li>Always use <code>Actions</code> class for hover/drag — don't use JavaScript unless WebDriver can't handle it</li>
+      <li>Use <code>JavascriptExecutor</code> as a last resort for elements not interactable via standard WebDriver</li>
+      <li>Capture screenshots on test failure in <code>@AfterMethod</code> hooks for test evidence</li>
+      <li>Avoid XPath with absolute paths — they break if page structure changes even slightly</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>🎯 SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What is the difference between findElement() and findElements()?</div><div class="qa-a">A: <code>findElement()</code> returns a single WebElement and throws <code>NoSuchElementException</code> if not found. <code>findElements()</code> returns a <code>List&lt;WebElement&gt;</code> and returns an empty list if nothing matches — no exception thrown.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. Which locator strategy is best and why?</div><div class="qa-a">A: <code>By.id()</code> is fastest and most reliable per HTML spec (IDs must be unique). For complex scenarios, <code>By.cssSelector()</code> is preferred over XPath for speed and readability.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. When would you use JavascriptExecutor?</div><div class="qa-a">A: When standard WebDriver interactions fail — e.g., clicking a hidden element, scrolling to an element, setting a readonly input value, or reading custom DOM properties.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. What is the Actions class used for?</div><div class="qa-a">A: Complex user gestures: hover (mouse-over), right-click, double-click, drag-and-drop, keyboard combos (Ctrl+A), and slow typing. Regular <code>.click()</code> can't handle these.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. Name all 4 Selenium components.</div><div class="qa-a">A: (1) Selenium WebDriver — core browser automation library; (2) Selenium IDE — record-and-playback browser extension; (3) Selenium Grid — distributed parallel execution server; (4) Selenium RC — legacy, fully deprecated.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION 4 -->
+<div class="session-content" id="s3" style="display:none">
+  <div class="overview-banner">
+    <h2>Overview — Selenium v3 vs v4</h2>
+    <p>Selenium 4 is not just a version bump — it is a <strong>complete architectural and API overhaul</strong>. Understanding what changed, what was removed, and what was added is essential for modern SDET roles. The shift from JSON Wire Protocol to W3C is the biggest fundamental change.</p>
+  </div>
+
+  <div class="section">
+    <h3>🎙 Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">Selenium 4 fully adopted the W3C WebDriver standard, making it browser-vendor agnostic.</div>
+      <div class="q-pill">Selenium 4 introduced native CDP (Chrome DevTools Protocol) support for network interception.</div>
+      <div class="q-pill">Relative Locators (near, above, below, toLeftOf, toRightOf) are new in Selenium 4.</div>
+      <div class="q-pill">Selenium 4 deprecated DesiredCapabilities — replaced by browser-specific Options classes.</div>
+      <div class="q-pill">Selenium Grid 4 was completely rewritten with a new Hub-Node architecture using Docker support.</div>
+      <div class="q-pill">Selenium 4 eliminated the need for JSON Wire Protocol translation, reducing flakiness.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>📊 v3 vs v4 Comparison</h3>
+    <div class="comp-grid">
+      <div class="comp-card"><h4 class="v3-h">Selenium 3</h4>
+        <div class="diff-row"><span style="font-size:11px">Protocol</span><span style="font-size:11px;margin-left:auto">JSON Wire Protocol</span></div>
+        <div class="diff-row"><span style="font-size:11px">Capabilities</span><span style="font-size:11px;margin-left:auto">DesiredCapabilities</span></div>
+        <div class="diff-row"><span style="font-size:11px">Locators</span><span style="font-size:11px;margin-left:auto">8 By strategies</span></div>
+        <div class="diff-row"><span style="font-size:11px">Browser DevTools</span><span style="font-size:11px;margin-left:auto">Not supported</span></div>
+        <div class="diff-row"><span style="font-size:11px">Grid</span><span style="font-size:11px;margin-left:auto">Hub+Node (basic)</span></div>
+        <div class="diff-row" style="border:none"><span style="font-size:11px">Driver setup</span><span style="font-size:11px;margin-left:auto">Manual path required</span></div>
+      </div>
+      <div class="comp-card" style="border-left:2px solid #1D9E75"><h4 class="v4-h">Selenium 4 ✅</h4>
+        <div class="diff-row"><span style="font-size:11px">Protocol</span><span style="font-size:11px;margin-left:auto"><span class="new-badge">NEW</span> W3C Standard</span></div>
+        <div class="diff-row"><span style="font-size:11px">Capabilities</span><span style="font-size:11px;margin-left:auto"><span class="new-badge">NEW</span> Browser Options</span></div>
+        <div class="diff-row"><span style="font-size:11px">Locators</span><span style="font-size:11px;margin-left:auto"><span class="new-badge">NEW</span> Relative Locators</span></div>
+        <div class="diff-row"><span style="font-size:11px">Browser DevTools</span><span style="font-size:11px;margin-left:auto"><span class="new-badge">NEW</span> CDP native</span></div>
+        <div class="diff-row"><span style="font-size:11px">Grid</span><span style="font-size:11px;margin-left:auto"><span class="new-badge">NEW</span> Docker/K8s ready</span></div>
+        <div class="diff-row" style="border:none"><span style="font-size:11px">Driver setup</span><span style="font-size:11px;margin-left:auto"><span class="new-badge">NEW</span> Selenium Manager</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>💻 Code Examples</h3>
+    <div class="code-tabs-wrap">
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(3,0)">1. Protocol Diff</button>
+        <button class="ctab" onclick="switchCode(3,1)">2. Caps Old vs New</button>
+        <button class="ctab" onclick="switchCode(3,2)">3. Relative Locators</button>
+        <button class="ctab" onclick="switchCode(3,3)">4. New Window Tab</button>
+        <button class="ctab" onclick="switchCode(3,4)">5. CDP Network</button>
+        <button class="ctab" onclick="switchCode(3,5)">6. Selenium Manager</button>
+      </div>
+      <div class="code-panel active" id="c3-0"><pre>
+<cm>// ─── CODE EXAMPLE 1: Protocol Difference — v3 vs v4 ───</cm>
+
+<cm>// ═══ SELENIUM 3 Flow ═══</cm>
+<cm>// Java Code → JSON Wire Protocol (custom Selenium protocol) → ChromeDriver → Chrome</cm>
+<cm>// The issue: JSON Wire Protocol was NOT standardized, causing browser inconsistencies</cm>
+
+<cm>// ═══ SELENIUM 4 Flow ═══</cm>
+<cm>// Java Code → W3C WebDriver Protocol (HTTP standard) → ChromeDriver → Chrome</cm>
+<cm>// W3C is an official W3C standard — browsers implement it natively</cm>
+
+<cm>// The difference shows up when you create a WebDriver session:</cm>
+<cm>// Selenium 4 POST request to ChromeDriver looks like:</cm>
+<cm>// POST /session</cm>
+<cm>// { "capabilities": { "alwaysMatch": { "browserName": "chrome" } } }</cm>
+<cm>// → This is standard W3C format, NOT custom JSON Wire Protocol format</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+
+<kw>public class</kw> <cl>ProtocolDiff</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// Selenium 4: W3C protocol used automatically under the hood</cm>
+        <cm>// You don't write HTTP requests — Selenium handles them internally</cm>
+        <cl>ChromeOptions</cl> options = <kw>new</kw> <cl>ChromeOptions</cl>();
+
+        <cm>// This single line internally sends a W3C-compliant POST /session</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>(options);
+        driver.<mt>get</mt>(<st>"https://www.google.com"</st>);
+
+        <cm>// getCapabilities() → returns the actual W3C caps negotiated with browser</cm>
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Browser: "</st> + driver.<mt>getCapabilities</mt>().<mt>getBrowserName</mt>());
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c3-1"><pre>
+<cm>// ─── CODE EXAMPLE 2: Capabilities — Old (v3) vs New (v4) ───</cm>
+
+<cm>// ❌ SELENIUM 3 WAY — DesiredCapabilities (works but DEPRECATED in v4)</cm>
+<cm>// import org.openqa.selenium.remote.DesiredCapabilities;</cm>
+<cm>// DesiredCapabilities caps = DesiredCapabilities.chrome();</cm>
+<cm>// caps.setCapability("browserName", "chrome");</cm>
+<cm>// caps.setCapability("version", "95.0");</cm>
+<cm>// WebDriver driver = new RemoteWebDriver(hubURL, caps);</cm>
+<cm>// Problem: DesiredCapabilities mixes W3C + legacy non-standard props</cm>
+
+<cm>// ✅ SELENIUM 4 WAY — Browser-specific Options classes</cm>
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.firefox.FirefoxOptions</nm>;
+
+<kw>public class</kw> <cl>CapabilitiesComparison</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// ChromeOptions → W3C compliant capability set for Chrome</cm>
+        <cl>ChromeOptions</cl> chrome = <kw>new</kw> <cl>ChromeOptions</cl>();
+
+        <cm>// addArguments() → browser command-line flags</cm>
+        chrome.<mt>addArguments</mt>(<st>"--headless=new"</st>); <cm>// Selenium 4 headless flag format</cm>
+        chrome.<mt>addArguments</mt>(<st>"--window-size=1920,1080"</st>);
+
+        <cm>// setExperimentalOption() → Chrome-specific config (not W3C standard)</cm>
+        <cm>// These go inside 'goog:chromeOptions' in the W3C request body</cm>
+        chrome.<mt>setExperimentalOption</mt>(<st>"excludeSwitches"</st>,
+            <kw>new</kw> <cl>String</cl>[]{<st>"enable-automation"</st>}); <cm>// hides "controlled by automation" bar</cm>
+
+        <cm>// FirefoxOptions → same pattern for Firefox</cm>
+        <cl>FirefoxOptions</cl> firefox = <kw>new</kw> <cl>FirefoxOptions</cl>();
+        firefox.<mt>addArguments</mt>(<st>"-headless"</st>);
+
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Options configured using Selenium 4 W3C approach"</st>);
+    }
+}</pre></div>
+      <div class="code-panel" id="c3-2"><pre>
+<cm>// ─── CODE EXAMPLE 3: Relative Locators — NEW in Selenium 4 ───</cm>
+<cm>// Relative Locators let you find elements RELATIVE to another element's position</cm>
+<cm>// Useful when elements lack unique IDs/names but have positional relationships</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.By</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebElement</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.support.locators.RelativeLocator</nm>; <cm>// v4 only</cm>
+
+<kw>public class</kw> <cl>RelativeLocatorsDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+
+        <cm>// First find a known "anchor" element</cm>
+        <cl>WebElement</cl> emailLabel = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>id</mt>(<st>"email-label"</st>));
+
+        <cm>// near() → finds element within 50px of the anchor element</cm>
+        <cl>WebElement</cl> nearby = driver.<mt>findElement</mt>(
+            <cl>RelativeLocator</cl>.<mt>with</mt>(<cl>By</cl>.<mt>tagName</mt>(<st>"input"</st>)).<mt>near</mt>(emailLabel));
+
+        <cm>// above() → element above the anchor in the DOM layout</cm>
+        <cl>WebElement</cl> above = driver.<mt>findElement</mt>(
+            <cl>RelativeLocator</cl>.<mt>with</mt>(<cl>By</cl>.<mt>tagName</mt>(<st>"label"</st>)).<mt>above</mt>(emailLabel));
+
+        <cm>// below() → element below the anchor</cm>
+        <cl>WebElement</cl> below = driver.<mt>findElement</mt>(
+            <cl>RelativeLocator</cl>.<mt>with</mt>(<cl>By</cl>.<mt>tagName</mt>(<st>"input"</st>)).<mt>below</mt>(emailLabel));
+
+        <cm>// toLeftOf() → element to the left</cm>
+        <cm>// toRightOf() → element to the right</cm>
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Relative locators working in Selenium 4!"</st>);
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c3-3"><pre>
+<cm>// ─── CODE EXAMPLE 4: New Window/Tab Management — Selenium 4 ───</cm>
+<cm>// Selenium 4 added native methods to open new windows/tabs without JS hacks</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WindowType</nm>; <cm>// WindowType → TAB or WINDOW enum</cm>
+
+<kw>public class</kw> <cl>NewWindowTabDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.google.com"</st>);
+
+        <cm>// switchTo().newWindow(WindowType.TAB) → opens a NEW BROWSER TAB</cm>
+        <cm>// and automatically switches focus to it</cm>
+        <cm>// In Selenium 3, you had to use JavaScript to open new tabs</cm>
+        driver.<mt>switchTo</mt>().<mt>newWindow</mt>(<cl>WindowType</cl>.<nm>TAB</nm>);
+        driver.<mt>get</mt>(<st>"https://www.selenium.dev"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"New tab: "</st> + driver.<mt>getTitle</mt>());
+
+        <cm>// switchTo().newWindow(WindowType.WINDOW) → opens a NEW BROWSER WINDOW</cm>
+        driver.<mt>switchTo</mt>().<mt>newWindow</mt>(<cl>WindowType</cl>.<nm>WINDOW</nm>);
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"New window: "</st> + driver.<mt>getTitle</mt>());
+
+        <cm>// getWindowHandles() → returns Set of all open window handle IDs</cm>
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Open windows: "</st> + driver.<mt>getWindowHandles</mt>().<mt>size</mt>());
+
+        driver.<mt>quit</mt>(); <cm>// closes all windows</cm>
+    }
+}</pre></div>
+      <div class="code-panel" id="c3-4"><pre>
+<cm>// ─── CODE EXAMPLE 5: CDP — Chrome DevTools Protocol (Selenium 4) ───</cm>
+<cm>// CDP lets Selenium 4 control Chrome internals: network, console, performance</cm>
+<cm>// This was IMPOSSIBLE with Selenium 3 without third-party tools</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.devtools.DevTools</nm>; <cm>// DevTools → CDP access interface</cm>
+<kw>import</kw> <nm>org.openqa.selenium.devtools.v120.network.Network</nm>; <cm>// CDP Network domain</cm>
+<kw>import</kw> <nm>java.util.Optional</nm>;
+
+<kw>public class</kw> <cl>CDPDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>ChromeDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        <cm>// Note: Must use ChromeDriver (not WebDriver) to access getDevTools()</cm>
+
+        <cm>// getDevTools() → returns DevTools object for CDP communication</cm>
+        <cl>DevTools</cl> devTools = driver.<mt>getDevTools</mt>();
+
+        <cm>// createSession() → opens a CDP session with Chrome's internal engine</cm>
+        devTools.<mt>createSession</mt>();
+
+        <cm>// Enable the Network domain — allows monitoring of HTTP requests</cm>
+        devTools.<mt>send</mt>(<cl>Network</cl>.<mt>enable</mt>(
+            <cl>Optional</cl>.<mt>empty</mt>(), <cl>Optional</cl>.<mt>empty</mt>(), <cl>Optional</cl>.<mt>empty</mt>()
+        ));
+
+        <cm>// addListener → callback when ANY network request is made</cm>
+        devTools.<mt>addListener</mt>(<cl>Network</cl>.<mt>requestWillBeSent</mt>(), req -&gt; {
+            <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Request: "</st> + req.<mt>getRequest</mt>().<mt>getUrl</mt>());
+        });
+
+        driver.<mt>get</mt>(<st>"https://www.selenium.dev"</st>);
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c3-5"><pre>
+<cm>// ─── CODE EXAMPLE 6: Selenium Manager (v4.6+) — Zero setup ───</cm>
+<cm>// Problem in Selenium 3: You had to manually download ChromeDriver</cm>
+<cm>// and set the path with System.setProperty()</cm>
+<cm>// Selenium 4.6+ includes Selenium Manager — auto-downloads the right driver</cm>
+
+<cm>// ❌ OLD WAY (Selenium 3 / early v4):</cm>
+<cm>// System.setProperty("webdriver.chrome.driver", "C:/drivers/chromedriver.exe");</cm>
+<cm>// WebDriver driver = new ChromeDriver();</cm>
+
+<cm>// ✅ NEW WAY — Selenium Manager does it automatically (Selenium 4.6+)</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+
+<kw>public class</kw> <cl>SeleniumManagerDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// NO System.setProperty needed!</cm>
+        <cm>// Selenium Manager auto-detects your Chrome version</cm>
+        <cm>// Downloads the correct ChromeDriver binary automatically</cm>
+        <cm>// Caches it in ~/.cache/selenium/ for reuse</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+
+        driver.<mt>get</mt>(<st>"https://www.selenium.dev"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"No driver setup needed! Title: "</st> + driver.<mt>getTitle</mt>());
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>✅ Best Practices</h3>
+    <ul class="bp-list">
+      <li>Migrate from <code>DesiredCapabilities</code> to <code>ChromeOptions/FirefoxOptions</code> — it's the W3C standard</li>
+      <li>Use Selenium 4.6+ Selenium Manager to eliminate manual driver management completely</li>
+      <li>Leverage <code>WindowType.TAB</code> and <code>WindowType.WINDOW</code> instead of JavaScript hacks for new windows</li>
+      <li>Use Relative Locators only when elements truly lack unique identifiers — don't use them as default strategy</li>
+      <li>CDP is Chrome-only — design CDP tests separately from cross-browser test suites</li>
+      <li>When upgrading v3→v4, search for all <code>DesiredCapabilities</code> usages and replace with <code>Options</code> classes</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>🎯 SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What is the biggest change in Selenium 4?</div><div class="qa-a">A: Native W3C WebDriver protocol support. Selenium 3 used its own JSON Wire Protocol which required translation. Selenium 4 speaks W3C directly, eliminating compatibility issues between browser and driver versions.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. What are Relative Locators?</div><div class="qa-a">A: New in Selenium 4 — locators that find elements based on their visual position relative to another element. Methods: <code>near()</code>, <code>above()</code>, <code>below()</code>, <code>toLeftOf()</code>, <code>toRightOf()</code>. Uses JavaScript's <code>getBoundingClientRect()</code> internally.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. How do you open a new tab in Selenium 4?</div><div class="qa-a">A: <code>driver.switchTo().newWindow(WindowType.TAB)</code>. In Selenium 3, you had to use <code>JavascriptExecutor</code> with <code>window.open()</code> command.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. What is Selenium Manager?</div><div class="qa-a">A: Introduced in Selenium 4.6, it's a built-in binary that auto-downloads the correct browser driver (ChromeDriver, GeckoDriver, etc.) matching your installed browser version. Eliminates all <code>System.setProperty</code> setup code.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. What is CDP support in Selenium 4?</div><div class="qa-a">A: Chrome DevTools Protocol integration lets Selenium 4 directly control Chrome internals — intercept network requests, mock geolocation, set device emulation, capture performance metrics, and block specific URLs. Not available in Selenium 3.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION 5 -->
+<div class="session-content" id="s4" style="display:none">
+  <div class="overview-banner">
+    <h2>Overview — Deprecated in Selenium 4</h2>
+    <p>When upgrading from Selenium 3 to 4, certain APIs were <strong>deprecated or removed</strong>. Using deprecated APIs causes compiler warnings and may break in future Selenium releases. Knowing these ensures you write future-proof automation code.</p>
+  </div>
+
+  <div class="section">
+    <h3>🎙 Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">DesiredCapabilities is deprecated in Selenium 4 — use browser-specific Options classes instead.</div>
+      <div class="q-pill">FindsByXPath, FindsById and similar FindsBy interfaces were deprecated in favor of findElement(By).</div>
+      <div class="q-pill">The MutableCapabilities merge() chaining approach changed — mapCapabilities() API was refactored.</div>
+      <div class="q-pill">System.setProperty for driver paths is deprecated — Selenium Manager handles this automatically.</div>
+      <div class="q-pill">ExpectedConditions with Predicate was deprecated — use FluentWait directly.</div>
+      <div class="q-pill">The withTimeout() overload using TimeUnit is deprecated — use Duration objects instead.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>⚠️ Deprecated APIs Quick Reference</h3>
+    <div class="arch-box">
+      <div class="diff-row"><span style="width:200px;font-size:12px"><span class="dep-badge">DEPRECATED</span> DesiredCapabilities</span><span style="font-size:12px;color:var(--color-text-secondary)">→ Use ChromeOptions / FirefoxOptions / EdgeOptions</span></div>
+      <div class="diff-row"><span style="width:200px;font-size:12px"><span class="dep-badge">DEPRECATED</span> implicitlyWait(long, TimeUnit)</span><span style="font-size:12px;color:var(--color-text-secondary)">→ Use implicitlyWait(Duration.ofSeconds(n))</span></div>
+      <div class="diff-row"><span style="width:200px;font-size:12px"><span class="dep-badge">DEPRECATED</span> pageLoadTimeout(long, TimeUnit)</span><span style="font-size:12px;color:var(--color-text-secondary)">→ Use pageLoadTimeout(Duration.ofSeconds(n))</span></div>
+      <div class="diff-row"><span style="width:200px;font-size:12px"><span class="dep-badge">DEPRECATED</span> setScriptTimeout(long, TimeUnit)</span><span style="font-size:12px;color:var(--color-text-secondary)">→ Use scriptTimeout(Duration.ofSeconds(n))</span></div>
+      <div class="diff-row"><span style="width:200px;font-size:12px"><span class="dep-badge">DEPRECATED</span> withTimeout(long, TimeUnit)</span><span style="font-size:12px;color:var(--color-text-secondary)">→ Use withTimeout(Duration.ofSeconds(n))</span></div>
+      <div class="diff-row" style="border:none"><span style="width:200px;font-size:12px"><span class="dep-badge">DEPRECATED</span> System.setProperty driver</span><span style="font-size:12px;color:var(--color-text-secondary)">→ Selenium Manager auto-downloads drivers</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>💻 Code Examples</h3>
+    <div class="code-tabs-wrap">
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(4,0)">1. DesiredCaps ❌</button>
+        <button class="ctab" onclick="switchCode(4,1)">2. TimeUnit ❌</button>
+        <button class="ctab" onclick="switchCode(4,2)">3. FindsBy ❌</button>
+        <button class="ctab" onclick="switchCode(4,3)">4. FluentWait ❌</button>
+        <button class="ctab" onclick="switchCode(4,4)">5. setProperty ❌</button>
+        <button class="ctab" onclick="switchCode(4,5)">6. All Fixes ✅</button>
+      </div>
+      <div class="code-panel active" id="c4-0"><pre>
+<cm>// ─── CODE EXAMPLE 1: DesiredCapabilities — Deprecated ───</cm>
+
+<cm>// ❌ DEPRECATED — Selenium 3 / old Selenium 4 code</cm>
+<cm>// This still compiles but shows @Deprecated warning and may break in future</cm>
+<cm>// import org.openqa.selenium.remote.DesiredCapabilities;</cm>
+
+<cm>// DesiredCapabilities caps = new DesiredCapabilities();</cm>
+<cm>// caps.setBrowserName("chrome");             // ← @Deprecated in Selenium 4</cm>
+<cm>// caps.setCapability("version", "latest");   // ← mixed W3C + legacy props</cm>
+<cm>// caps.setPlatform(Platform.LINUX);          // ← @Deprecated method</cm>
+<cm>// WebDriver driver = new ChromeDriver(caps); // ← causes W3C/non-W3C mixing</cm>
+
+<cm>// ✅ CORRECT Selenium 4 Way</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+
+<kw>public class</kw> <cl>FixedCapabilities</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// ChromeOptions → W3C-compliant, no deprecation warnings</cm>
+        <cl>ChromeOptions</cl> options = <kw>new</kw> <cl>ChromeOptions</cl>();
+
+        <cm>// setBrowserVersion() → W3C standard way to request browser version</cm>
+        options.<mt>setBrowserVersion</mt>(<st>"latest"</st>);
+
+        <cm>// setPlatformName() → W3C standard way to set platform/OS</cm>
+        options.<mt>setPlatformName</mt>(<st>"linux"</st>);
+
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>(options);
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c4-1"><pre>
+<cm>// ─── CODE EXAMPLE 2: TimeUnit → Duration Migration ───</cm>
+<cm>// All timeout methods using TimeUnit enum are deprecated in Selenium 4</cm>
+<cm>// Use java.time.Duration instead — cleaner, more readable API</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>java.time.Duration</nm>;             <cm>// ← Java 8+ time API, preferred</cm>
+<kw>import</kw> <nm>java.util.concurrent.TimeUnit</nm>;    <cm>// ← Old Java API, being phased out</cm>
+
+<kw>public class</kw> <cl>TimeoutMigration</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+
+        <cm>// ❌ DEPRECATED — old TimeUnit approach</cm>
+        <cm>// driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);</cm>
+        <cm>// driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);</cm>
+        <cm>// driver.manage().timeouts().setScriptTimeout(15, TimeUnit.SECONDS);</cm>
+
+        <cm>// ✅ CORRECT — Duration approach (Selenium 4)</cm>
+
+        <cm>// implicitlyWait → polls for element for up to N seconds before failing</cm>
+        driver.<mt>manage</mt>().<mt>timeouts</mt>().<mt>implicitlyWait</mt>(<cl>Duration</cl>.<mt>ofSeconds</mt>(<nm>10</nm>));
+
+        <cm>// pageLoadTimeout → max time to wait for page to fully load</cm>
+        driver.<mt>manage</mt>().<mt>timeouts</mt>().<mt>pageLoadTimeout</mt>(<cl>Duration</cl>.<mt>ofSeconds</mt>(<nm>30</nm>));
+
+        <cm>// scriptTimeout → max time for async JavaScript execution</cm>
+        driver.<mt>manage</mt>().<mt>timeouts</mt>().<mt>scriptTimeout</mt>(<cl>Duration</cl>.<mt>ofSeconds</mt>(<nm>15</nm>));
+        <cm>// Note: setScriptTimeout() → deprecated, renamed to scriptTimeout()</cm>
+
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c4-2"><pre>
+<cm>// ─── CODE EXAMPLE 3: FindsBy Interfaces — Deprecated Pattern ───</cm>
+<cm>// Selenium 3 had internal FindsBy* interfaces used in some advanced patterns</cm>
+<cm>// These are removed in Selenium 4 — use standard findElement(By) only</cm>
+
+<cm>// ❌ REMOVED — Do NOT use these patterns</cm>
+<cm>// These were internal implementation details leaked into public API</cm>
+<cm>// org.openqa.selenium.internal.FindsById        ← REMOVED</cm>
+<cm>// org.openqa.selenium.internal.FindsByName      ← REMOVED</cm>
+<cm>// org.openqa.selenium.internal.FindsByXPath     ← REMOVED</cm>
+<cm>// org.openqa.selenium.internal.FindsByClassName ← REMOVED</cm>
+
+<cm>// ✅ CORRECT — Always use findElement(By.xxx()) pattern</cm>
+<kw>import</kw> <nm>org.openqa.selenium.By</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebElement</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+
+<kw>public class</kw> <cl>FindsByFix</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.google.com"</st>);
+
+        <cm>// The ONLY correct way to find elements in Selenium 4</cm>
+        <cl>WebElement</cl> byId    = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>id</mt>(<st>"APjFqb"</st>));
+        <cl>WebElement</cl> byName  = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>name</mt>(<st>"q"</st>));
+        <cl>WebElement</cl> byXPath = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>xpath</mt>(<st>"//input[@name='q']"</st>));
+        <cl>WebElement</cl> byCss   = driver.<mt>findElement</mt>(<cl>By</cl>.<mt>cssSelector</mt>(<st>"input[name='q']"</st>));
+
+        byName.<mt>sendKeys</mt>(<st>"Selenium 4 migration"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"All locators work correctly"</st>);
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c4-3"><pre>
+<cm>// ─── CODE EXAMPLE 4: FluentWait — Deprecated withTimeout overload ───</cm>
+<cm>// FluentWait is a customizable wait — polls at intervals with ignored exceptions</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.By</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.WebElement</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.support.ui.FluentWait</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.NoSuchElementException</nm>;
+<kw>import</kw> <nm>java.time.Duration</nm>;
+
+<kw>public class</kw> <cl>FluentWaitFixed</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+
+        <cm>// ❌ DEPRECATED overload (Selenium 3 style):</cm>
+        <cm>// new FluentWait&lt;&gt;(driver).withTimeout(10, TimeUnit.SECONDS)</cm>
+        <cm>// .pollingEvery(500, TimeUnit.MILLISECONDS);</cm>
+
+        <cm>// ✅ CORRECT Selenium 4 FluentWait:</cm>
+        <cm>// FluentWait → generic wait that accepts driver and returns WebElement</cm>
+        <cl>FluentWait</cl>&lt;<cl>WebDriver</cl>&gt; wait = <kw>new</kw> <cl>FluentWait</cl>&lt;&gt;(driver)
+            .<mt>withTimeout</mt>(<cl>Duration</cl>.<mt>ofSeconds</mt>(<nm>15</nm>))   <cm>// max wait time</cm>
+            .<mt>pollingEvery</mt>(<cl>Duration</cl>.<mt>ofMillis</mt>(<nm>500</nm>)) <cm>// check every 500ms</cm>
+            .<mt>ignoring</mt>(<cl>NoSuchElementException</cl>.<kw>class</kw>); <cm>// ignore this exception while waiting</cm>
+
+        <cm>// until() → repeatedly calls this lambda until it returns non-null/true</cm>
+        <cl>WebElement</cl> element = wait.<mt>until</mt>(d -&gt;
+            d.<mt>findElement</mt>(<cl>By</cl>.<mt>tagName</mt>(<st>"h1"</st>))
+        );
+
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Found: "</st> + element.<mt>getText</mt>());
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c4-4"><pre>
+<cm>// ─── CODE EXAMPLE 5: System.setProperty — Old driver setup ───</cm>
+<cm>// Before Selenium Manager, you had to manually manage browser drivers</cm>
+
+<cm>// ❌ OLD WAY — Selenium 3 and early Selenium 4:</cm>
+<cm>// Must download ChromeDriver matching your Chrome version from:</cm>
+<cm>// https://chromedriver.chromium.org/downloads</cm>
+<cm>// Then tell Selenium where it is:</cm>
+<cm>// System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");</cm>
+
+<cm>// This was a huge pain because Chrome auto-updates, breaking drivers</cm>
+<cm>// WebDriverManager library (3rd party) was the common workaround:</cm>
+<cm>// io.github.bonigarcia.WebDriverManager.chromedriver().setup();</cm>
+
+<cm>// ✅ NEW WAY — Selenium 4.6+ with Selenium Manager:</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.firefox.FirefoxDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.edge.EdgeDriver</nm>;
+
+<kw>public class</kw> <cl>NoSetupNeeded</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// Zero configuration — Selenium Manager handles everything</cm>
+        <cl>WebDriver</cl> chrome = <kw>new</kw> <cl>ChromeDriver</cl>();    <cm>// auto-downloads chromedriver</cm>
+        <cl>WebDriver</cl> firefox = <kw>new</kw> <cl>FirefoxDriver</cl>(); <cm>// auto-downloads geckodriver</cm>
+        <cl>WebDriver</cl> edge = <kw>new</kw> <cl>EdgeDriver</cl>();       <cm>// auto-downloads msedgedriver</cm>
+
+        chrome.<mt>quit</mt>();
+        firefox.<mt>quit</mt>();
+        edge.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c4-5"><pre>
+<cm>// ─── CODE EXAMPLE 6: Complete Migration Cheatsheet ───</cm>
+<cm>// Comprehensive before/after showing ALL deprecations fixed</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+<kw>import</kw> <nm>java.time.Duration</nm>;
+
+<kw>public class</kw> <cl>CompleteMigration</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// ✅ FIX 1: No System.setProperty (Selenium Manager auto-handles it)</cm>
+        <cm>// REMOVED: System.setProperty("webdriver.chrome.driver", path);</cm>
+
+        <cm>// ✅ FIX 2: ChromeOptions instead of DesiredCapabilities</cm>
+        <cl>ChromeOptions</cl> options = <kw>new</kw> <cl>ChromeOptions</cl>();
+        options.<mt>addArguments</mt>(<st>"--headless=new"</st>); <cm>// new headless format in v4</cm>
+
+        <cm>// ✅ FIX 3: ChromeDriver(options) — no mixing caps</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>(options);
+
+        <cm>// ✅ FIX 4: Duration.ofSeconds() instead of long + TimeUnit</cm>
+        driver.<mt>manage</mt>().<mt>timeouts</mt>().<mt>implicitlyWait</mt>(<cl>Duration</cl>.<mt>ofSeconds</mt>(<nm>10</nm>));
+        driver.<mt>manage</mt>().<mt>timeouts</mt>().<mt>pageLoadTimeout</mt>(<cl>Duration</cl>.<mt>ofSeconds</mt>(<nm>30</nm>));
+        driver.<mt>manage</mt>().<mt>timeouts</mt>().<mt>scriptTimeout</mt>(<cl>Duration</cl>.<mt>ofSeconds</mt>(<nm>15</nm>));
+        <cm>// Note: setScriptTimeout → renamed to scriptTimeout() in Selenium 4</cm>
+
+        <cm>// ✅ FIX 5: Use findElement(By) not FindsBy* interfaces</cm>
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+        driver.<mt>findElement</mt>(<nm>By</nm>.<mt>tagName</mt>(<st>"h1"</st>)); <cm>// standard API, no deprecation</cm>
+
+        driver.<mt>quit</mt>();
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Migration complete — zero deprecated APIs!"</st>);
+    }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>✅ Best Practices</h3>
+    <ul class="bp-list">
+      <li>Run your Selenium 3 project with Selenium 4 jar first — compiler warnings reveal all deprecated usages</li>
+      <li>Replace all <code>TimeUnit</code> in timeout calls with <code>java.time.Duration</code> equivalents</li>
+      <li>Remove all <code>System.setProperty("webdriver.*.driver")</code> lines — Selenium Manager handles this</li>
+      <li>Replace every <code>DesiredCapabilities</code> with <code>ChromeOptions/FirefoxOptions/EdgeOptions</code></li>
+      <li>Update <code>setScriptTimeout()</code> to <code>scriptTimeout()</code> — method was renamed, not just deprecated</li>
+      <li>Check Selenium changelog at selenium.dev for each version's deprecation list before upgrading</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>🎯 SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What is deprecated in Selenium 4 from Selenium 3?</div><div class="qa-a">A: Key deprecations: <code>DesiredCapabilities</code> (use Options classes), <code>TimeUnit</code> in waits (use Duration), <code>System.setProperty</code> for drivers (use Selenium Manager), <code>setScriptTimeout()</code> renamed to <code>scriptTimeout()</code>.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. How do you migrate timeouts from Selenium 3 to 4?</div><div class="qa-a">A: Replace <code>implicitlyWait(10, TimeUnit.SECONDS)</code> with <code>implicitlyWait(Duration.ofSeconds(10))</code>. Same pattern for <code>pageLoadTimeout</code> and <code>scriptTimeout</code>.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. Were any classes completely removed (not just deprecated) in Selenium 4?</div><div class="qa-a">A: Yes — the internal <code>FindsById</code>, <code>FindsByName</code>, <code>FindsByXPath</code>, <code>FindsByClassName</code> interfaces from <code>org.openqa.selenium.internal</code> package were completely removed.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. What replaced WebDriverManager third-party library?</div><div class="qa-a">A: Selenium Manager, built into Selenium 4.6+, provides the same auto-download functionality natively. No extra Maven dependency needed for driver management anymore.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. How do you find all deprecated usages in your Selenium 3 project?</div><div class="qa-a">A: (1) Swap the Selenium dependency version in pom.xml to Selenium 4. (2) Run <code>mvn compile</code> — all deprecated usages show as warnings. (3) IDE (IntelliJ/Eclipse) strikethroughs also highlight deprecated calls inline.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION 6 -->
+<div class="session-content" id="s5" style="display:none">
+  <div class="overview-banner">
+    <h2>Overview — New Features in Selenium 4</h2>
+    <p>Selenium 4 is packed with powerful new capabilities that unlock modern web testing scenarios. From <strong>Chrome DevTools Protocol</strong> to <strong>native window management</strong>, these features make Selenium competitive with Playwright and Cypress for advanced use cases.</p>
+  </div>
+
+  <div class="section">
+    <h3>🎙 Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">Selenium 4 introduced native Chrome DevTools Protocol support for network mocking and console capture.</div>
+      <div class="q-pill">Relative Locators (near, above, below, toLeftOf, toRightOf) are a completely new element finding strategy in Selenium 4.</div>
+      <div class="q-pill">Selenium 4 Grid is rewritten with Docker and Kubernetes support and has a built-in observability dashboard.</div>
+      <div class="q-pill">WindowType.TAB and WindowType.WINDOW enable native new tab/window creation without JavaScript.</div>
+      <div class="q-pill">getFullPageScreenshot() in Firefox Driver captures a full scrollable page screenshot in one call.</div>
+      <div class="q-pill">Selenium 4 supports BiDi (WebDriver BiDirectional) protocol for real-time browser event listening.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🆕 New Features Overview</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div class="arch-box" style="margin:0"><div class="arch-node n2" style="margin-bottom:6px;display:inline-block;font-size:11px">CDP Support</div><div style="font-size:11px;color:var(--color-text-secondary)">Network mock, geolocation, console capture</div></div>
+      <div class="arch-box" style="margin:0"><div class="arch-node n1" style="margin-bottom:6px;display:inline-block;font-size:11px">Relative Locators</div><div style="font-size:11px;color:var(--color-text-secondary)">near() above() below() toLeftOf()</div></div>
+      <div class="arch-box" style="margin:0"><div class="arch-node n3" style="margin-bottom:6px;display:inline-block;font-size:11px">Window Management</div><div style="font-size:11px;color:var(--color-text-secondary)">WindowType.TAB/WINDOW native</div></div>
+      <div class="arch-box" style="margin:0"><div class="arch-node n4" style="margin-bottom:6px;display:inline-block;font-size:11px">Grid 4 Rewrite</div><div style="font-size:11px;color:var(--color-text-secondary)">Docker, K8s, GraphQL dashboard</div></div>
+      <div class="arch-box" style="margin:0"><div class="arch-node n2" style="margin-bottom:6px;display:inline-block;font-size:11px">Full Page Screenshot</div><div style="font-size:11px;color:var(--color-text-secondary)">Firefox: getFullPageScreenshotAs()</div></div>
+      <div class="arch-box" style="margin:0"><div class="arch-node n1" style="margin-bottom:6px;display:inline-block;font-size:11px">BiDi Protocol</div><div style="font-size:11px;color:var(--color-text-secondary)">Real-time browser event streaming</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>💻 Code Examples</h3>
+    <div class="code-tabs-wrap">
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(5,0)">1. CDP Geolocation</button>
+        <button class="ctab" onclick="switchCode(5,1)">2. CDP Console</button>
+        <button class="ctab" onclick="switchCode(5,2)">3. CDP Network Block</button>
+        <button class="ctab" onclick="switchCode(5,3)">4. Full Screenshot</button>
+        <button class="ctab" onclick="switchCode(5,4)">5. BiDi Events</button>
+        <button class="ctab" onclick="switchCode(5,5)">6. Grid 4 Docker</button>
+      </div>
+      <div class="code-panel active" id="c5-0"><pre>
+<cm>// ─── CODE EXAMPLE 1: CDP — Mock Geolocation ───</cm>
+<cm>// Use case: Test location-based features (show nearby restaurants, maps)</cm>
+<cm>// CDP Emulation domain → override browser's location data</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.devtools.DevTools</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.devtools.v120.emulation.Emulation</nm>; <cm>// Emulation domain</cm>
+<kw>import</kw> <nm>java.util.Optional</nm>;
+
+<kw>public class</kw> <cl>CDPGeolocationDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// Must use ChromeDriver (concrete class) for CDP access</cm>
+        <cl>ChromeDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        <cl>DevTools</cl> devTools = driver.<mt>getDevTools</mt>();
+        devTools.<mt>createSession</mt>();
+
+        <cm>// Emulation.setGeolocationOverride() → fakes GPS coordinates</cm>
+        <cm>// latitude: 48.8566 = Paris, France</cm>
+        <cm>// longitude: 2.3522 = Paris, France</cm>
+        <cm>// accuracy: how precise the GPS appears (meters)</cm>
+        devTools.<mt>send</mt>(<cl>Emulation</cl>.<mt>setGeolocationOverride</mt>(
+            <cl>Optional</cl>.<mt>of</mt>(<nm>48.8566</nm>),  <cm>// latitude (Paris)</cm>
+            <cl>Optional</cl>.<mt>of</mt>(<nm>2.3522</nm>),   <cm>// longitude (Paris)</cm>
+            <cl>Optional</cl>.<mt>of</mt>(<nm>1</nm>)          <cm>// accuracy in meters</cm>
+        ));
+
+        <cm>// Now browser thinks it's in Paris — location APIs return Paris coords</cm>
+        driver.<mt>get</mt>(<st>"https://maps.google.com"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Browser geolocated to Paris, France"</st>);
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c5-1"><pre>
+<cm>// ─── CODE EXAMPLE 2: CDP — Capture Browser Console Logs ───</cm>
+<cm>// Use case: Verify no JS errors on page, capture console.log messages</cm>
+<cm>// Log domain → real-time browser console event listener</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.devtools.DevTools</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.devtools.v120.log.Log</nm>; <cm>// CDP Log domain</cm>
+
+<kw>public class</kw> <cl>CDPConsoleCapture</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cl>ChromeDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        <cl>DevTools</cl> devTools = driver.<mt>getDevTools</mt>();
+        devTools.<mt>createSession</mt>();
+
+        <cm>// Enable the Log domain — starts sending log events to Java</cm>
+        devTools.<mt>send</mt>(<cl>Log</cl>.<mt>enable</mt>());
+
+        <cm>// addListener → registers a callback for EVERY log entry</cm>
+        <cm>// This fires whenever browser console produces output</cm>
+        devTools.<mt>addListener</mt>(<cl>Log</cl>.<mt>entryAdded</mt>(), entry -&gt; {
+            <cm>// entry.getLevel() → severity: VERBOSE, INFO, WARNING, ERROR</cm>
+            <cm>// entry.getText() → the actual console message</cm>
+            <cm>// entry.getSource() → where the log came from (javascript, network, etc.)</cm>
+            <cl>System</cl>.<nm>out</nm>.<mt>printf</mt>(
+                <st>"[%s] %s: %s%n"</st>,
+                entry.<mt>getLevel</mt>(),
+                entry.<mt>getSource</mt>(),
+                entry.<mt>getText</mt>()
+            );
+        });
+
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Console logs captured via CDP!"</st>);
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c5-2"><pre>
+<cm>// ─── CODE EXAMPLE 3: CDP — Block Network Requests ───</cm>
+<cm>// Use case: Test behavior when specific resources fail to load</cm>
+<cm>// Block ads, images, analytics scripts during testing</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.devtools.DevTools</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.devtools.v120.network.Network</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.devtools.v120.network.model.ResourceType</nm>;
+<kw>import</kw> <nm>java.util.Optional</nm>;
+
+<kw>public class</kw> <cl>CDPNetworkBlock</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cl>ChromeDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>();
+        <cl>DevTools</cl> devTools = driver.<mt>getDevTools</mt>();
+        devTools.<mt>createSession</mt>();
+
+        <cm>// Enable Network domain to intercept requests</cm>
+        devTools.<mt>send</mt>(<cl>Network</cl>.<mt>enable</mt>(
+            <cl>Optional</cl>.<mt>empty</mt>(), <cl>Optional</cl>.<mt>empty</mt>(), <cl>Optional</cl>.<mt>empty</mt>()
+        ));
+
+        <cm>// setBlockedURLs() → list of URL patterns to block</cm>
+        <cm>// Browser will fail any request matching these patterns</cm>
+        <cm>// Useful to simulate slow/broken networks or block ads</cm>
+        devTools.<mt>send</mt>(<cl>Network</cl>.<mt>setBlockedURLs</mt>(
+            <nm>java.util.List</nm>.<mt>of</mt>(
+                <st>"*google-analytics*"</st>,  <cm>// block analytics</cm>
+                <st>"*doubleclick.net*"</st>,   <cm>// block ad network</cm>
+                <st>"*.png"</st>                <cm>// block all PNG images</cm>
+            )
+        ));
+
+        driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Page loaded with blocked resources"</st>);
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c5-3"><pre>
+<cm>// ─── CODE EXAMPLE 4: Full Page Screenshot (Firefox) — New in Selenium 4 ───</cm>
+<cm>// Standard getScreenshotAs() only captures visible viewport</cm>
+<cm>// Firefox in Selenium 4 supports full scrollable page capture</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.OutputType</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.firefox.FirefoxDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.firefox.HasFullPageScreenshot</nm>; <cm>// Firefox-only interface</cm>
+<kw>import</kw> <nm>org.apache.commons.io.FileUtils</nm>;
+<kw>import</kw> <nm>java.io.File</nm>;
+
+<kw>public class</kw> <cl>FullPageScreenshot</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) <kw>throws</kw> <cl>Exception</cl> {
+
+        <cm>// Must use FirefoxDriver — this feature is Firefox-only for now</cm>
+        <cl>FirefoxDriver</cl> driver = <kw>new</kw> <cl>FirefoxDriver</cl>();
+        driver.<mt>get</mt>(<st>"https://www.selenium.dev/documentation/"</st>);
+
+        <cm>// HasFullPageScreenshot → Firefox-specific interface for full-page capture</cm>
+        <cm>// Cast driver to this interface to access getFullPageScreenshotAs()</cm>
+        <cl>File</cl> fullPage = ((<cl>HasFullPageScreenshot</cl>) driver)
+            .<mt>getFullPageScreenshotAs</mt>(<cl>OutputType</cl>.<nm>FILE</nm>);
+        <cm>// This captures ENTIRE page height — not just visible viewport</cm>
+
+        <cm>// Save the screenshot to disk</cm>
+        <cl>FileUtils</cl>.<mt>copyFile</mt>(fullPage, <kw>new</kw> <cl>File</cl>(<st>"full-page-screenshot.png"</st>));
+
+        <cm>// Regular screenshot for comparison (viewport only)</cm>
+        <cl>File</cl> viewport = driver.<mt>getScreenshotAs</mt>(<cl>OutputType</cl>.<nm>FILE</nm>);
+        <cl>FileUtils</cl>.<mt>copyFile</mt>(viewport, <kw>new</kw> <cl>File</cl>(<st>"viewport-screenshot.png"</st>));
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c5-4"><pre>
+<cm>// ─── CODE EXAMPLE 5: WebDriver BiDi — Real-time Event Listening ───</cm>
+<cm>// BiDi = Bidirectional WebDriver Protocol (W3C draft standard)</cm>
+<cm>// Enables PUSH events from browser to Java (vs old pull/polling model)</cm>
+
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.bidi.browsingcontext.BrowsingContext</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.bidi.module.LogInspector</nm>;
+
+<kw>public class</kw> <cl>BiDiDemo</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) {
+
+        <cm>// Enable BiDi by setting "webSocketUrl" capability to true</cm>
+        <cl>ChromeOptions</cl> options = <kw>new</kw> <cl>ChromeOptions</cl>();
+        options.<mt>setCapability</mt>(<st>"webSocketUrl"</st>, <kw>true</kw>); <cm>// activates BiDi mode</cm>
+
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>ChromeDriver</cl>(options);
+
+        <cm>// LogInspector → BiDi module that listens for browser log events</cm>
+        <cm>// This is a PUSH model — events fire as they happen, no polling</cm>
+        <kw>try</kw> (<cl>LogInspector</cl> inspector = <kw>new</kw> <cl>LogInspector</cl>(driver)) {
+
+            <cm>// onConsoleEntry() → fires on EVERY console.log/error/warn call</cm>
+            inspector.<mt>onConsoleEntry</mt>(entry -&gt;
+                <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"BiDi Console: "</st> + entry.<mt>getText</mt>())
+            );
+
+            driver.<mt>get</mt>(<st>"https://www.example.com"</st>);
+            <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"BiDi event listener active!"</st>);
+        }
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+      <div class="code-panel" id="c5-5"><pre>
+<cm>// ─── CODE EXAMPLE 6: Selenium Grid 4 — Docker Compose Setup ───</cm>
+<cm>// Selenium Grid 4 has native Docker support — containerized browser nodes</cm>
+<cm>// docker-compose.yml (not Java — but you need to understand this)</cm>
+
+<cm>// ═══ DOCKER COMPOSE FILE (create docker-compose.yml) ═══</cm>
+<cm>//</cm>
+<cm>// version: '3'</cm>
+<cm>// services:</cm>
+<cm>//   selenium-hub:</cm>
+<cm>//     image: selenium/hub:4.18.0          ← official Selenium Hub image</cm>
+<cm>//     ports:</cm>
+<cm>//       - "4442:4442"</cm>
+<cm>//       - "4443:4443"</cm>
+<cm>//       - "4444:4444"                      ← dashboard at localhost:4444</cm>
+<cm>//</cm>
+<cm>//   chrome-node:</cm>
+<cm>//     image: selenium/node-chrome:4.18.0  ← Chrome browser node</cm>
+<cm>//     shm_size: '2gb'                      ← shared memory for browser</cm>
+<cm>//     depends_on: [selenium-hub]</cm>
+<cm>//     environment:</cm>
+<cm>//       SE_EVENT_BUS_HOST: selenium-hub</cm>
+<cm>//       SE_EVENT_BUS_PUBLISH_PORT: 4442</cm>
+<cm>//       SE_EVENT_BUS_SUBSCRIBE_PORT: 4443</cm>
+
+<cm>// Java side — connecting to Dockerized Grid:</cm>
+<kw>import</kw> <nm>org.openqa.selenium.WebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.remote.RemoteWebDriver</nm>;
+<kw>import</kw> <nm>org.openqa.selenium.chrome.ChromeOptions</nm>;
+<kw>import</kw> <nm>java.net.URL</nm>;
+
+<kw>public class</kw> <cl>DockerGridTest</cl> {
+    <kw>public static void</kw> <mt>main</mt>(<cl>String</cl>[] args) <kw>throws</kw> <cl>Exception</cl> {
+
+        <cl>ChromeOptions</cl> options = <kw>new</kw> <cl>ChromeOptions</cl>();
+
+        <cm>// Connect to the Selenium Hub running in Docker container</cm>
+        <cl>WebDriver</cl> driver = <kw>new</kw> <cl>RemoteWebDriver</cl>(
+            <kw>new</kw> <cl>URL</cl>(<st>"http://localhost:4444"</st>), options
+        );
+
+        driver.<mt>get</mt>(<st>"https://www.selenium.dev"</st>);
+        <cl>System</cl>.<nm>out</nm>.<mt>println</mt>(<st>"Running in Docker container: "</st> + driver.<mt>getTitle</mt>());
+
+        driver.<mt>quit</mt>();
+    }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>✅ Best Practices</h3>
+    <ul class="bp-list">
+      <li>Use CDP for Chrome-specific advanced scenarios only — keep core test logic browser-agnostic using standard WebDriver</li>
+      <li>Use <code>HasFullPageScreenshot</code> in Firefox for visual regression testing of long scrollable pages</li>
+      <li>Use BiDi protocol instead of CDP when cross-browser compatibility matters (BiDi is a W3C standard, CDP is Chrome-only)</li>
+      <li>Prefer Selenium Grid 4 with Docker Compose for consistent, reproducible local Grid environments</li>
+      <li>Prefix CDP DevTools version in import paths (e.g., <code>v120</code>) — update when Chrome major versions change</li>
+      <li>Monitor the Grid dashboard at <code>localhost:4444</code> in Grid 4 to observe active sessions and node health</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>🎯 SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What new features does Selenium 4 offer for network testing?</div><div class="qa-a">A: Via Chrome DevTools Protocol (CDP): intercept and block network requests, mock responses, monitor all outgoing HTTP calls, and simulate offline mode — all from Java code without proxy tools like BrowserMob.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. What is WebDriver BiDi and how is it different from CDP?</div><div class="qa-a">A: BiDi (Bidirectional) is a W3C draft standard for real-time browser-to-driver communication. CDP is Chrome-proprietary. BiDi works across Chrome, Firefox, and Edge. It enables push-based event listening rather than polling.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. Can you take a full-page screenshot in Selenium 4?</div><div class="qa-a">A: Yes, but only in Firefox using the <code>HasFullPageScreenshot</code> interface and <code>getFullPageScreenshotAs()</code> method. Chrome's standard <code>getScreenshotAs()</code> captures only the visible viewport unless you use CDP scroll-capture workarounds.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. How is Selenium Grid 4 different from Grid 3?</div><div class="qa-a">A: Grid 4 is completely rewritten. New components: Router, Distributor, SessionMap, SessionQueue, Node. New features: native Docker/Kubernetes support, built-in GraphQL monitoring API, UI dashboard at port 4444, and Standalone mode (single JAR for Hub+Node).</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. How do you mock geolocation in Selenium 4?</div><div class="qa-a">A: Use Chrome DevTools Protocol's Emulation domain — <code>devTools.send(Emulation.setGeolocationOverride(lat, lng, accuracy))</code>. The browser will then report those coordinates to any website requesting GPS location via the Geolocation API.</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+var currentSession = 0;
+var codePanels = [
+  ['c0-0','c0-1','c0-2','c0-3','c0-4','c0-5'],
+  ['c1-0','c1-1','c1-2','c1-3','c1-4','c1-5'],
+  ['c2-0','c2-1','c2-2','c2-3','c2-4','c2-5'],
+  ['c3-0','c3-1','c3-2','c3-3','c3-4','c3-5'],
+  ['c4-0','c4-1','c4-2','c4-3','c4-4','c4-5'],
+  ['c5-0','c5-1','c5-2','c5-3','c5-4','c5-5']
+];
+
+function switchSession(n) {
+  document.getElementById('s' + currentSession).style.display = 'none';
+  document.getElementById('s' + n).style.display = 'block';
+  var tabs = document.getElementById('sessionTabs').children;
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active', i===n);
+  currentSession = n;
+  updateProgress();
+}
+
+function switchCode(session, tab) {
+  var panels = codePanels[session];
+  var ctabs = document.getElementById('s'+session).querySelectorAll('.ctab');
+  panels.forEach(function(id, i) {
+    var el = document.getElementById(id);
+    if(el) { el.className = 'code-panel' + (i===tab?' active':''); }
+  });
+  ctabs.forEach(function(t,i){ t.classList.toggle('active',i===tab); });
+}
+
+function updateProgress() {
+  var dots = '';
+  for(var i=0;i<6;i++) {
+    var cls = i < currentSession ? 'done' : (i===currentSession ? 'active' : 'todo');
+    dots += '<span class="dot ' + cls + '"></span> ';
+  }
+  document.getElementById('progDots').innerHTML = dots;
+  document.getElementById('progLabel').textContent = 'Session ' + (currentSession+1) + ' of 6';
+}
+
+updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,2564 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-mono, 'Courier New', monospace); background: transparent; }
+
+/* ─── TOP BAR ──────────────────────────── */
+.top-bar {
+  background: #0d1117;
+  border-radius: 10px 10px 0 0;
+  padding: 10px 14px 0;
+  border-bottom: 2px solid #21262d;
+}
+.phase-badges { display: flex; gap: 8px; margin-bottom: 8px; }
+.badge {
+  font-size: 10px; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; letter-spacing: .5px;
+  font-family: var(--font-sans, sans-serif);
+}
+.badge-p1 { background: #1f6feb33; color: #58a6ff; border: 1px solid #1f6feb; }
+.badge-p2 { background: #3fb95033; color: #56d364; border: 1px solid #3fb950; }
+.badge-active { opacity: 1; }
+.badge-dim { opacity: .4; }
+
+.session-tabs {
+  display: flex; gap: 0; overflow-x: auto; scrollbar-width: none;
+}
+.session-tabs::-webkit-scrollbar { display: none; }
+.stab {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  font-size: 11px;
+  font-family: var(--font-sans, sans-serif);
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  color: #8b949e;
+  background: transparent;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.stab:hover { color: #e6edf3; background: #161b22; }
+.stab.active {
+  background: #161b22;
+  color: #ffffff;
+  border-color: #30363d;
+  border-bottom: 2px solid #161b22;
+}
+.stab.done::after { content: ' ✓'; color: #56d364; font-size: 9px; }
+
+/* ─── MAIN CONTENT ─────────────────────── */
+.main { background: #161b22; border-radius: 0 0 10px 10px; min-height: 500px; }
+
+/* ─── CODE TABS ────────────────────────── */
+.code-area { background: #0d1117; border-radius: 0 0 8px 8px; }
+.code-tab-bar {
+  display: flex; gap: 2px; padding: 8px 8px 0;
+  background: #0d1117; overflow-x: auto; scrollbar-width: none;
+  border-bottom: 1px solid #21262d;
+}
+.code-tab-bar::-webkit-scrollbar { display: none; }
+.ctab {
+  padding: 5px 14px; font-size: 11px; cursor: pointer;
+  border-radius: 5px 5px 0 0; border: 1px solid #30363d;
+  border-bottom: none; color: #8b949e;
+  background: #161b22; white-space: nowrap;
+  font-family: var(--font-sans, sans-serif);
+  transition: all .18s;
+}
+.ctab:hover { color: #e6edf3; }
+.ctab.active { background: #0d1117; color: #e6edf3; border-bottom: 2px solid #0d1117; }
+.code-block {
+  display: none; padding: 16px 18px;
+  font-size: 12px; line-height: 1.7;
+  color: #e6edf3; white-space: pre; overflow-x: auto;
+  font-family: 'Courier New', monospace;
+}
+.code-block.active { display: block; }
+
+/* ─── SYNTAX COLORS ─────────────────────── */
+.kw   { color: #ff7b72; }  /* keyword — red */
+.cls  { color: #ffa657; }  /* class/type — orange */
+.fn   { color: #d2a8ff; }  /* method/function — purple */
+.str  { color: #a5d6ff; }  /* string — light blue */
+.cm   { color: #8b949e; font-style: italic; }  /* comment — gray */
+.num  { color: #79c0ff; }  /* number — blue */
+.ann  { color: #56d364; }  /* annotation — green */
+.var  { color: #e6edf3; }  /* variable — white */
+.op   { color: #ff7b72; }  /* operator — red */
+
+/* ─── SESSION CONTENT ───────────────────── */
+.session-panel { display: none; padding: 20px; }
+.session-panel.active { display: block; }
+
+.section-label {
+  font-family: var(--font-sans, sans-serif);
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  color: #58a6ff; text-transform: uppercase;
+  margin: 18px 0 8px; display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: #21262d; }
+
+.overview-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 8px; margin-bottom: 12px;
+}
+.ov-card {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 7px;
+  padding: 10px;
+}
+.ov-icon { font-size: 16px; margin-bottom: 4px; }
+.ov-title {
+  font-family: var(--font-sans); font-size: 10px; font-weight: 700;
+  color: #58a6ff; margin-bottom: 3px; letter-spacing: .5px;
+}
+.ov-text {
+  font-family: var(--font-sans); font-size: 11px;
+  color: #8b949e; line-height: 1.45;
+}
+
+.oneliner-list {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.oneliner {
+  background: #0d1117; border-left: 3px solid #1f6feb;
+  border-radius: 0 6px 6px 0; padding: 8px 12px;
+  font-family: var(--font-sans); font-size: 12px;
+  color: #e6edf3; line-height: 1.5;
+}
+.oneliner span { color: #ffa657; font-weight: 700; }
+
+.concept-box {
+  background: #0d1117; border: 1px solid #30363d;
+  border-radius: 8px; padding: 14px; margin-bottom: 10px;
+}
+.concept-title {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 700;
+  color: #ffa657; margin-bottom: 8px;
+}
+.concept-text {
+  font-family: var(--font-sans); font-size: 12px;
+  color: #c9d1d9; line-height: 1.6;
+}
+.concept-text code {
+  background: #21262d; color: #a5d6ff;
+  padding: 1px 5px; border-radius: 3px; font-size: 11px;
+}
+
+.arch-diagram {
+  background: #0d1117; border: 1px solid #21262d;
+  border-radius: 8px; padding: 12px; font-family: monospace;
+  font-size: 11px; color: #8b949e; line-height: 1.8;
+  margin-bottom: 10px; overflow-x: auto;
+}
+.arch-diagram .hl { color: #56d364; }
+.arch-diagram .arrow { color: #ffa657; }
+.arch-diagram .box { color: #a5d6ff; }
+.arch-diagram .label { color: #d2a8ff; }
+
+.checklist { display: flex; flex-direction: column; gap: 5px; }
+.check-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: #0d1117; border-radius: 6px; padding: 8px 10px;
+  font-family: var(--font-sans); font-size: 12px; color: #c9d1d9;
+}
+.check-icon { color: #56d364; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+
+.qa-list { display: flex; flex-direction: column; gap: 10px; }
+.qa-item { background: #0d1117; border-radius: 8px; overflow: hidden; border: 1px solid #30363d; }
+.qa-q {
+  background: #161b22; padding: 10px 14px;
+  font-family: var(--font-sans); font-size: 12px;
+  font-weight: 700; color: #58a6ff; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: background .15s;
+}
+.qa-q:hover { background: #21262d; }
+.qa-q .toggle { color: #8b949e; font-size: 16px; transition: transform .2s; }
+.qa-q.open .toggle { transform: rotate(45deg); }
+.qa-a {
+  padding: 0 14px; max-height: 0; overflow: hidden;
+  font-family: var(--font-sans); font-size: 12px;
+  color: #8b949e; line-height: 1.65; transition: all .25s;
+}
+.qa-a.open { padding: 10px 14px; max-height: 300px; }
+
+/* ─── PROGRESS BAR ─────────────────────── */
+.progress-section {
+  background: #0d1117; border-top: 1px solid #21262d;
+  padding: 10px 16px; border-radius: 0 0 10px 10px;
+  display: flex; align-items: center; gap: 12px;
+}
+.progress-bar-wrap {
+  flex: 1; background: #21262d; height: 6px;
+  border-radius: 3px; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%; background: linear-gradient(90deg, #1f6feb, #56d364);
+  border-radius: 3px; transition: width .4s;
+}
+.progress-text {
+  font-family: var(--font-sans); font-size: 11px;
+  color: #8b949e; white-space: nowrap;
+}
+.nav-btns { display: flex; gap: 6px; }
+.nav-btn {
+  background: #21262d; border: 1px solid #30363d;
+  color: #e6edf3; padding: 5px 12px; border-radius: 6px;
+  font-size: 11px; cursor: pointer;
+  font-family: var(--font-sans); transition: all .15s;
+}
+.nav-btn:hover { background: #30363d; }
+
+.keyword-pill {
+  display: inline-block;
+  background: #1f6feb22; color: #79c0ff;
+  border: 1px solid #1f6feb55;
+  border-radius: 4px; padding: 1px 6px;
+  font-size: 10px; font-weight: 700;
+  margin: 1px 2px;
+}
+</style>
+
+<div class="top-bar">
+  <div class="phase-badges">
+    <div class="badge badge-p1" id="badge-p1">📘 PHASE 1: FUNDAMENTALS (S1–S5)</div>
+    <div class="badge badge-p2" id="badge-p2">🚀 PHASE 2: INTERMEDIATE (S6–S10)</div>
+  </div>
+  <div class="session-tabs" id="stabs">
+    <div class="stab active" onclick="gotoSession(0)">S1: REST & API Basics</div>
+    <div class="stab" onclick="gotoSession(1)">S2: HTTP Deep Dive</div>
+    <div class="stab" onclick="gotoSession(2)">S3: REST Assured Setup</div>
+    <div class="stab" onclick="gotoSession(3)">S4: GET & Assertions</div>
+    <div class="stab" onclick="gotoSession(4)">S5: POST PUT DELETE</div>
+    <div class="stab" onclick="gotoSession(5)">S6: CRUD & Auth</div>
+    <div class="stab" onclick="gotoSession(6)">S7: JSON Path & Extraction</div>
+    <div class="stab" onclick="gotoSession(7)">S8: Serialization</div>
+    <div class="stab" onclick="gotoSession(8)">S9: POJO & Jackson</div>
+    <div class="stab" onclick="gotoSession(9)">S10: Advanced Logging</div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════════
+     SESSION 1 — REST & API & Web Services & JSON
+     ═══════════════════════════════════════════ -->
+<div class="session-panel active" id="s0">
+  <div class="section-label">🌐 Overview — What / Why / When / Where / How</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-icon">❓</div><div class="ov-title">WHAT</div><div class="ov-text">REST is an architectural style for designing networked apps using HTTP. API is a contract between client & server. Web Services expose business logic over a network.</div></div>
+    <div class="ov-card"><div class="ov-icon">💡</div><div class="ov-title">WHY</div><div class="ov-text">Enables interoperability — any language, any platform can talk to each other using standard HTTP. REST Assured is Java's most popular library to test REST APIs automatically.</div></div>
+    <div class="ov-card"><div class="ov-icon">⏰</div><div class="ov-title">WHEN</div><div class="ov-text">Use REST Assured when your team ships REST APIs and you need automated regression, integration, or contract testing as part of CI/CD.</div></div>
+    <div class="ov-card"><div class="ov-icon">📍</div><div class="ov-title">WHERE</div><div class="ov-text">SDETs use it in Maven/Gradle Java projects. Runs in TestNG/JUnit test suites, CI pipelines (Jenkins, GitHub Actions), API regression suites.</div></div>
+    <div class="ov-card"><div class="ov-icon">⚙️</div><div class="ov-title">HOW</div><div class="ov-text">Add rest-assured dependency → write Given/When/Then test → run via Maven → assert status, headers, body. BDD-style readable test code.</div></div>
+  </div>
+
+  <div class="section-label">🎤 Interview One-Liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>REST</span> = Representational State Transfer — a stateless, client-server architecture style that uses HTTP and treats every resource as a URL-addressable entity.</div>
+    <div class="oneliner"><span>API</span> = Application Programming Interface — a defined contract (endpoints, request/response formats) that allows two systems to talk to each other.</div>
+    <div class="oneliner"><span>Web Service</span> = a REST API that is deployed over HTTP/HTTPS on a server and is accessible via the internet or intranet.</div>
+    <div class="oneliner"><span>JSON</span> = JavaScript Object Notation — a lightweight, human-readable key-value text format used as the body of most REST API requests and responses.</div>
+    <div class="oneliner"><span>REST Assured</span> = a Java DSL library that lets you write BDD-style (Given/When/Then) automated tests for REST APIs with minimal boilerplate code.</div>
+    <div class="oneliner"><span>Stateless</span> = each HTTP request must carry all info the server needs; the server stores zero client-session data between calls.</div>
+  </div>
+
+  <div class="section-label">💡 Core Concepts with Architecture</div>
+  <div class="concept-box">
+    <div class="concept-title">🏗️ REST Architecture Flow</div>
+    <div class="arch-diagram">
+<span class="hl">CLIENT (Rest Assured Test)</span>
+         <span class="arrow">│</span>
+         <span class="arrow">│  HTTP Request (method + URL + headers + body)</span>
+         <span class="arrow">▼</span>
+<span class="box">┌─────────────────────────────────────────┐</span>
+<span class="box">│       WEB SERVER / REST API             │</span>
+<span class="box">│  ┌──────────┐   ┌──────────────────┐   │</span>
+<span class="box">│  │ Controller│──▶│ Service / DB     │   │</span>
+<span class="box">│  └──────────┘   └──────────────────┘   │</span>
+<span class="box">└─────────────────────────────────────────┘</span>
+         <span class="arrow">│</span>
+         <span class="arrow">│  HTTP Response (status code + headers + JSON body)</span>
+         <span class="arrow">▼</span>
+<span class="hl">TEST ASSERTIONS (status, body, headers)</span>
+    </div>
+    <div class="concept-text">
+      <code>Endpoint</code> = a specific URL that the server exposes (e.g. <code>/api/users/1</code>).<br>
+      <code>Resource</code> = the data entity exposed by the API (e.g. a User, Product, Order).<br>
+      <code>Representation</code> = the format of that resource (usually JSON or XML).
+    </div>
+  </div>
+  <div class="concept-box">
+    <div class="concept-title">📦 JSON Structure — Keywords Explained</div>
+    <div class="arch-diagram">
+<span class="hl">JSON OBJECT  →  { "key": "value" }</span>
+<span class="label">Key</span>     → Always a <span class="hl">String</span> in double quotes
+<span class="label">Value</span>   → String | Number | Boolean | null | Array | Object
+
+<span class="hl">JSON ARRAY   →  [ item1, item2, item3 ]</span>
+<span class="label">Index</span>   → Zero-based position (index 0 = first element)
+
+<span class="arrow">EXAMPLE:</span>
+<span class="box">{</span>
+<span class="box">  "id": 1,                    ← number value</span>
+<span class="box">  "name": "Chitti",           ← string value</span>
+<span class="box">  "active": true,             ← boolean value</span>
+<span class="box">  "roles": ["admin","user"],  ← array value</span>
+<span class="box">  "address": { "city":"Delhi" } ← nested object</span>
+<span class="box">}</span>
+    </div>
+  </div>
+
+  <div class="section-label">💻 Code Examples</div>
+  <div class="code-area">
+    <div class="code-tab-bar">
+      <div class="ctab active" onclick="switchCode('s0',0)">📄 pom.xml</div>
+      <div class="ctab" onclick="switchCode('s0',1)">🔧 First Test</div>
+      <div class="ctab" onclick="switchCode('s0',2)">📦 JSON Parse</div>
+      <div class="ctab" onclick="switchCode('s0',3)">🌐 Base Config</div>
+      <div class="ctab" onclick="switchCode('s0',4)">🔍 API Keywords</div>
+      <div class="ctab" onclick="switchCode('s0',5)">📋 JSON Types</div>
+    </div>
+    <div id="s0-code-0" class="code-block active"><span class="cm">// ──────────────────────────────────────────────────────
+// pom.xml — Maven dependency to add REST Assured to your project
+// Maven = build tool that manages Java project dependencies
+// ──────────────────────────────────────────────────────</span>
+&lt;<span class="cls">dependencies</span>&gt;
+
+    <span class="cm">&lt;!-- rest-assured: main testing library for REST APIs --&gt;</span>
+    &lt;<span class="cls">dependency</span>&gt;
+        &lt;<span class="cls">groupId</span>&gt;io.rest-assured&lt;/<span class="cls">groupId</span>&gt;
+        <span class="cm">&lt;!-- groupId = organization namespace --&gt;</span>
+        &lt;<span class="cls">artifactId</span>&gt;rest-assured&lt;/<span class="cls">artifactId</span>&gt;
+        <span class="cm">&lt;!-- artifactId = library name --&gt;</span>
+        &lt;<span class="cls">version</span>&gt;5.3.2&lt;/<span class="cls">version</span>&gt;
+        &lt;<span class="cls">scope</span>&gt;test&lt;/<span class="cls">scope</span>&gt;
+        <span class="cm">&lt;!-- scope=test → only available during testing phase --&gt;</span>
+    &lt;/<span class="cls">dependency</span>&gt;
+
+    <span class="cm">&lt;!-- TestNG: test framework for running/grouping test methods --&gt;</span>
+    &lt;<span class="cls">dependency</span>&gt;
+        &lt;<span class="cls">groupId</span>&gt;org.testng&lt;/<span class="cls">groupId</span>&gt;
+        &lt;<span class="cls">artifactId</span>&gt;testng&lt;/<span class="cls">artifactId</span>&gt;
+        &lt;<span class="cls">version</span>&gt;7.9.0&lt;/<span class="cls">version</span>&gt;
+        &lt;<span class="cls">scope</span>&gt;test&lt;/<span class="cls">scope</span>&gt;
+    &lt;/<span class="cls">dependency</span>&gt;
+
+    <span class="cm">&lt;!-- Jackson: converts Java objects ↔ JSON (serialization) --&gt;</span>
+    &lt;<span class="cls">dependency</span>&gt;
+        &lt;<span class="cls">groupId</span>&gt;com.fasterxml.jackson.core&lt;/<span class="cls">groupId</span>&gt;
+        &lt;<span class="cls">artifactId</span>&gt;jackson-databind&lt;/<span class="cls">artifactId</span>&gt;
+        &lt;<span class="cls">version</span>&gt;2.15.3&lt;/<span class="cls">version</span>&gt;
+    &lt;/<span class="cls">dependency</span>&gt;
+
+&lt;/<span class="cls">dependencies</span>&gt;</div>
+    <div id="s0-code-1" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// FirstAPITest.java — your very first REST Assured test
+// BDD = Behavior Driven Development style (Given/When/Then)
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.RestAssured</span>;
+<span class="cm">// RestAssured = main class — entry point to all tests</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="cm">// static import → lets us write "given()" instead of "RestAssured.given()"</span>
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="cm">// Hamcrest → matcher library for assertions (equalTo, hasItem, etc.)</span>
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">FirstAPITest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="cm">// @Test = TestNG annotation marks this method as a test case</span>
+    <span class="kw">public void</span> <span class="fn">testGetFirstUser</span>() {
+
+        <span class="fn">given</span>()          <span class="cm">// GIVEN = setup: base URL, headers, body</span>
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            <span class="cm">// baseUri = the root URL of the API server</span>
+
+        .<span class="fn">when</span>()           <span class="cm">// WHEN = action: which HTTP method + path</span>
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+            <span class="cm">// get() = sends HTTP GET request to /users/1</span>
+
+        .<span class="fn">then</span>()           <span class="cm">// THEN = assertions on the response</span>
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+            <span class="cm">// statusCode(200) = asserts HTTP response status is 200 OK</span>
+            .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">equalTo</span>(<span class="str">"Leanne Graham"</span>));
+            <span class="cm">// body() = asserts JSON field "name" equals expected value</span>
+    }
+}</div>
+    <div id="s0-code-2" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// JSONParseDemo.java — understanding JSON structure
+// JSONPath = language to navigate/query JSON (like XPath for XML)
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">JSONParseDemo</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">exploreJSONStructure</span>() {
+
+        <span class="cm">// Response = object holding full HTTP response (status+headers+body)</span>
+        <span class="cls">Response</span> <span class="var">response</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>);
+
+        <span class="cm">// JsonPath = object to navigate JSON body using dot/bracket notation</span>
+        <span class="cls">JsonPath</span> <span class="var">jp</span> = <span class="var">response</span>.<span class="fn">jsonPath</span>();
+
+        <span class="cm">// jp.getString() = extract a String value by JSONPath expression</span>
+        <span class="cls">String</span> <span class="var">name</span>  = <span class="var">jp</span>.<span class="fn">getString</span>(<span class="str">"name"</span>);
+        <span class="cls">String</span> <span class="var">city</span>  = <span class="var">jp</span>.<span class="fn">getString</span>(<span class="str">"address.city"</span>);
+        <span class="cm">// "address.city" = nested object access using dot notation</span>
+        <span class="cls">String</span> <span class="var">suite</span> = <span class="var">jp</span>.<span class="fn">getString</span>(<span class="str">"address.suite"</span>);
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Name  : "</span> + <span class="var">name</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"City  : "</span> + <span class="var">city</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Suite : "</span> + <span class="var">suite</span>);
+        <span class="cm">// Output: Name: Leanne Graham, City: Gwenborough</span>
+    }
+}</div>
+    <div id="s0-code-3" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// BaseConfig.java — Global setup using RestAssured static fields
+// baseURI = the server domain shared across all tests
+// basePath = the common URL prefix (e.g. /api/v1)
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.RestAssured</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.BeforeClass</span>;
+<span class="cm">// @BeforeClass = runs ONCE before any test in this class</span>
+
+<span class="kw">public class</span> <span class="cls">BaseConfig</span> {
+
+    <span class="ann">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">setup</span>() {
+
+        <span class="cm">// baseURI = static field → no need to pass in every given()</span>
+        <span class="cls">RestAssured</span>.<span class="var">baseURI</span>  = <span class="str">"https://jsonplaceholder.typicode.com"</span>;
+
+        <span class="cm">// basePath = appended to baseURI for all requests automatically</span>
+        <span class="cls">RestAssured</span>.<span class="var">basePath</span> = <span class="str">"/users"</span>;
+
+        <span class="cm">// port = if server runs on non-standard port (default: 443 for HTTPS)</span>
+        <span class="cm">// RestAssured.port = 8080;  ← uncomment for local dev server</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Base setup complete!"</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testWithGlobalBase</span>() {
+        <span class="cm">// No baseURI needed — picked up from RestAssured.baseURI</span>
+        <span class="fn">given</span>()
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/1"</span>)  <span class="cm">// resolves to: baseURI + basePath + "/1"</span>
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+}</div>
+    <div id="s0-code-4" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// API Keywords explained in code comments
+// Every single keyword used is explained inline
+// ──────────────────────────────────────────────────────</span>
+
+<span class="cm">/*
+  REST  = Representational State Transfer
+          ↳ Architectural style (NOT a protocol)
+          ↳ Uses HTTP as transport layer
+
+  API   = Application Programming Interface
+          ↳ Set of rules/endpoints for communication
+          ↳ e.g. GET /users → returns list of users
+
+  Web Service = API hosted on a web server
+          ↳ Accessible via HTTP/HTTPS over network
+          ↳ Language-agnostic (Java, Python, JS can all call it)
+
+  JSON  = JavaScript Object Notation
+          ↳ Text-based data format: { "key": value }
+          ↳ Standard body format for REST APIs
+
+  Endpoint = specific URL that a REST API exposes
+          ↳ e.g. https://api.example.com/products/5
+                  ↑ baseURI         ↑ path param (id=5)
+
+  Resource = entity the API manages (User, Product, Order)
+          ↳ Represented in JSON format
+
+  Client   = the caller (browser, mobile app, test script)
+  Server   = the machine hosting the API
+
+  Stateless = Server does NOT remember previous requests
+          ↳ Every request must be self-contained
+          ↳ Auth token must be sent with EVERY request
+*/</span>
+<span class="kw">public class</span> <span class="cls">ConceptsExplained</span> { <span class="cm">/* reference class */</span> }</div>
+    <div id="s0-code-5" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// JSONTypesDemo.java — all 6 JSON value types with examples
+// Demonstrates how to assert each type using REST Assured
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">JSONTypesDemo</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">assertAllJSONTypes</span>() {
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>()
+            <span class="cm">// String type assertion</span>
+            .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">equalTo</span>(<span class="str">"Leanne Graham"</span>))
+
+            <span class="cm">// Number/Integer type</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">equalTo</span>(<span class="num">1</span>))
+            <span class="cm">// equalTo(1) → Hamcrest matcher for exact match</span>
+
+            <span class="cm">// Nested object → dot notation</span>
+            .<span class="fn">body</span>(<span class="str">"address.city"</span>, <span class="fn">equalTo</span>(<span class="str">"Gwenborough"</span>))
+            <span class="cm">// "address.city" = GPath expression (Groovy Path)</span>
+
+            <span class="cm">// Nested object → deeper level</span>
+            .<span class="fn">body</span>(<span class="str">"address.geo.lat"</span>, <span class="fn">equalTo</span>(<span class="str">"-37.3159"</span>))
+
+            <span class="cm">// Check a field is not null</span>
+            .<span class="fn">body</span>(<span class="str">"email"</span>, <span class="fn">notNullValue</span>())
+            <span class="cm">// notNullValue() = Hamcrest → asserts field exists and is not null</span>
+
+            <span class="cm">// Check field contains substring</span>
+            .<span class="fn">body</span>(<span class="str">"email"</span>, <span class="fn">containsString</span>(<span class="str">"@"</span>));
+            <span class="cm">// containsString() = asserts value contains the given substring</span>
+    }
+}</div>
+  </div>
+
+  <div class="section-label">✅ Best Practices Checklist</div>
+  <div class="checklist">
+    <div class="check-item"><span class="check-icon">✔</span> Always set <code>baseURI</code> globally in <code>@BeforeClass</code> — avoid hardcoding URLs in every test.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>given().log().all()</code> during development to see full request/response in console.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Keep JSON sample files in <code>src/test/resources</code> for reusability.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>Hamcrest</code> matchers (<code>equalTo</code>, <code>hasItem</code>, <code>containsString</code>) — never plain <code>assertEquals</code> for body checks.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Validate not just <code>statusCode</code> but also <code>contentType</code> and key body fields in every test.</div>
+  </div>
+
+  <div class="section-label">🎯 SDET Interview Q&A</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the difference between REST and SOAP? <span class="toggle">+</span></div><div class="qa-a">REST uses HTTP methods (GET/POST/PUT/DELETE) and JSON; it is stateless, lightweight, and uses URL-based resources. SOAP is a protocol that uses XML envelopes, mandatory WSDL contracts, and supports WS-Security. REST is preferred for modern APIs due to simplicity and performance.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: Why do we use REST Assured instead of Postman for automation? <span class="toggle">+</span></div><div class="qa-a">Postman is a manual testing tool (though it has Newman for scripts). REST Assured integrates natively with Java, TestNG/JUnit, Maven, and CI/CD pipelines — enabling version-controlled, reusable, data-driven automated API regression suites that run headlessly in build pipelines.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is GPath in REST Assured? <span class="toggle">+</span></div><div class="qa-a">GPath is a Groovy-based path expression language (similar to XPath for XML) used inside REST Assured's body() assertions. Example: body("users[0].address.city", equalTo("Delhi")) — the dot notation navigates nested JSON objects and [0] indexes into arrays.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is the difference between baseURI and basePath? <span class="toggle">+</span></div><div class="qa-a">baseURI is the server domain (e.g. https://api.example.com). basePath is the common URL prefix appended to all requests (e.g. /api/v2). Together: baseURI + basePath + endpoint = full URL. Setting them globally avoids repetition across every test.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What is statelessness in REST? <span class="toggle">+</span></div><div class="qa-a">Statelessness means the server does not store any session/client context between requests. Every HTTP call must contain all information needed (auth tokens, parameters). This makes REST services scalable and independent, allowing load balancers to route requests to any server instance.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SESSION 2 — HTTP Deep Dive
+     ═══════════════════════════════════════════ -->
+<div class="session-panel" id="s1">
+  <div class="section-label">🌐 Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-icon">❓</div><div class="ov-title">WHAT</div><div class="ov-text">HTTP (HyperText Transfer Protocol) is the communication protocol used by REST APIs. Every API call is an HTTP request that gets an HTTP response.</div></div>
+    <div class="ov-card"><div class="ov-icon">💡</div><div class="ov-title">WHY</div><div class="ov-text">Understanding HTTP methods, status codes, headers, request & response anatomy is essential for writing meaningful API assertions and debugging failures.</div></div>
+    <div class="ov-card"><div class="ov-icon">⏰</div><div class="ov-title">WHEN</div><div class="ov-text">Every time you write a REST Assured test — you select an HTTP method, assert a status code, and validate response headers/body.</div></div>
+    <div class="ov-card"><div class="ov-icon">📍</div><div class="ov-title">WHERE</div><div class="ov-text">In REST Assured: get(), post(), put(), delete() = HTTP methods. statusCode() = HTTP response code assertion. header() = HTTP header assertion.</div></div>
+    <div class="ov-card"><div class="ov-icon">⚙️</div><div class="ov-title">HOW</div><div class="ov-text">Client sends Request (method+URL+headers+body) → Server processes → Server returns Response (status code + headers + body).</div></div>
+  </div>
+
+  <div class="section-label">🎤 Interview One-Liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>GET</span> = retrieves data from server, no body in request, idempotent (same result every call), safe (does NOT modify data).</div>
+    <div class="oneliner"><span>POST</span> = creates a new resource on server, sends body with data, NOT idempotent (each call creates a new record).</div>
+    <div class="oneliner"><span>PUT</span> = updates/replaces an existing resource completely, idempotent (calling twice gives same result).</div>
+    <div class="oneliner"><span>DELETE</span> = removes a resource from server, idempotent — deleting a deleted resource still returns 200 or 204.</div>
+    <div class="oneliner"><span>HTTP 200</span> = OK (success). <span>201</span> = Created. <span>400</span> = Bad Request. <span>401</span> = Unauthorized. <span>404</span> = Not Found. <span>500</span> = Internal Server Error.</div>
+    <div class="oneliner"><span>PATCH</span> = partial update of a resource — only send the fields you want to change (unlike PUT which replaces the whole resource).</div>
+  </div>
+
+  <div class="section-label">💡 Core Concepts</div>
+  <div class="concept-box">
+    <div class="concept-title">📨 HTTP Request Anatomy</div>
+    <div class="arch-diagram">
+<span class="hl">HTTP REQUEST STRUCTURE</span>
+<span class="arrow">────────────────────────────────────────────</span>
+<span class="label">Request Line:</span>  <span class="hl">POST /api/users HTTP/1.1</span>
+                  ↑        ↑          ↑
+               Method   Path      HTTP Version
+
+<span class="label">Headers:</span>       <span class="box">Content-Type: application/json</span>
+                <span class="box">Authorization: Bearer eyJhbGci...</span>
+                <span class="box">Accept: application/json</span>
+                <span class="cm">← key:value pairs, metadata about request</span>
+
+<span class="label">Blank Line:</span>    (separates headers from body)
+
+<span class="label">Body:</span>          <span class="box">{</span>
+                <span class="box">  "name": "Chitti",</span>
+                <span class="box">  "email": "chitti@test.com"</span>
+                <span class="box">}</span>
+                <span class="cm">← Only POST/PUT/PATCH have body</span>
+    </div>
+  </div>
+  <div class="concept-box">
+    <div class="concept-title">📩 HTTP Response Anatomy</div>
+    <div class="arch-diagram">
+<span class="hl">HTTP RESPONSE STRUCTURE</span>
+<span class="arrow">────────────────────────────────────────────</span>
+<span class="label">Status Line:</span>   <span class="hl">HTTP/1.1 201 Created</span>
+                          ↑      ↑
+                      Status   Status Message
+                       Code
+
+<span class="label">Headers:</span>       <span class="box">Content-Type: application/json</span>
+                <span class="box">Location: /api/users/42</span>
+                <span class="cm">← Location header = URL of newly created resource</span>
+
+<span class="label">Body:</span>          <span class="box">{ "id": 42, "name": "Chitti" }</span>
+                <span class="cm">← Created resource is returned back</span>
+
+<span class="arrow">────────────────────────────────────────────</span>
+<span class="label">STATUS CODE GROUPS:</span>
+  <span class="hl">1xx</span> = Informational  (100 Continue)
+  <span class="hl">2xx</span> = Success        (200 OK, 201 Created, 204 No Content)
+  <span class="hl">3xx</span> = Redirection    (301 Moved, 304 Not Modified)
+  <span class="hl">4xx</span> = Client Error   (400 Bad Request, 401 Unauth, 404 Not Found)
+  <span class="hl">5xx</span> = Server Error   (500 Internal Server Error)
+    </div>
+  </div>
+  <div class="concept-box">
+    <div class="concept-title">🔗 Anatomy of a REST API URL</div>
+    <div class="arch-diagram">
+<span class="hl">https://api.example.com/api/v1/users/5?status=active&role=admin</span>
+<span class="arrow">  ↑         ↑           ↑   ↑   ↑    ↑  ↑──────────────────────</span>
+<span class="cm">scheme  subdomain    host  base path  id  query params (key=value)</span>
+       <span class="box">└─────────────────────────┘</span>
+               <span class="label">baseURI</span>
+              <span class="box">└──────────────────┘</span>
+                    <span class="label">basePath</span>
+                        <span class="box">└────────────┘</span>
+                           <span class="label">endpoint</span>
+                                 <span class="box">└──┘</span>
+                               <span class="label">path param</span>
+    </div>
+  </div>
+
+  <div class="section-label">💻 Code Examples</div>
+  <div class="code-area">
+    <div class="code-tab-bar">
+      <div class="ctab active" onclick="switchCode('s1',0)">📊 Status Codes</div>
+      <div class="ctab" onclick="switchCode('s1',1)">📨 Request Headers</div>
+      <div class="ctab" onclick="switchCode('s1',2)">🔗 URL & queryParam</div>
+      <div class="ctab" onclick="switchCode('s1',3)">📩 Response Object</div>
+      <div class="ctab" onclick="switchCode('s1',4)">🔍 Logging</div>
+      <div class="ctab" onclick="switchCode('s1',5)">⚙️ HTTP Methods</div>
+    </div>
+    <div id="s1-code-0" class="code-block active"><span class="cm">// ──────────────────────────────────────────────────────
+// StatusCodeAssertions.java — assert various HTTP status codes
+// statusCode() = validator for numeric HTTP response status
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">StatusCodeTests</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">test200OK</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts/1"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>); <span class="cm">// 200 = successful GET</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">test404NotFound</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts/9999"</span>) <span class="cm">// resource does not exist</span>
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">404</span>); <span class="cm">// 404 = Not Found</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">test201Created</span>() {
+        <span class="cm">// POST creates a resource → expects 201 Created</span>
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            <span class="cm">// contentType = sets Content-Type header for request body</span>
+            .<span class="fn">body</span>(<span class="str">"{ \"title\": \"Test Post\" }"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>); <span class="cm">// 201 = resource was created</span>
+    }
+}</div>
+    <div id="s1-code-1" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// HeaderTests.java — setting request headers & asserting response headers
+// header() = adds a single HTTP header to the request
+// headers() = adds multiple headers at once
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">HeaderTests</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">setAndAssertHeaders</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+
+            <span class="cm">// .header(name, value) = sets a custom request header</span>
+            .<span class="fn">header</span>(<span class="str">"Accept"</span>, <span class="str">"application/json"</span>)
+            <span class="cm">// Accept = tells server what format client can handle</span>
+
+            .<span class="fn">header</span>(<span class="str">"X-Custom-Header"</span>, <span class="str">"TestValue"</span>)
+            <span class="cm">// X- prefix = custom/non-standard headers</span>
+
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            <span class="cm">// contentType() = shorthand for Content-Type header</span>
+            <span class="cm">// Content-Type = format of the REQUEST body</span>
+
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts/1"</span>)
+
+        .<span class="fn">then</span>()
+            <span class="cm">// Assert response headers</span>
+            .<span class="fn">header</span>(<span class="str">"Content-Type"</span>, <span class="fn">containsString</span>(<span class="str">"application/json"</span>))
+            <span class="cm">// Asserts response has Content-Type: application/json</span>
+
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">printAllResponseHeaders</span>() {
+        <span class="cls">Response</span> <span class="var">res</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts/1"</span>);
+
+        <span class="cm">// .getHeaders() = returns all response headers as Headers object</span>
+        <span class="var">res</span>.<span class="fn">getHeaders</span>().<span class="fn">forEach</span>(<span class="var">h</span> ->
+            <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="var">h</span>.<span class="fn">getName</span>() + <span class="str">" : "</span> + <span class="var">h</span>.<span class="fn">getValue</span>()));
+    }
+}</div>
+    <div id="s1-code-2" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// URLAndQueryParamTest.java — URL anatomy + queryParam()
+// queryParam = ?key=value appended to URL (filter/search params)
+// pathParam  = variable part in the URL path (/users/{id})
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">URLParamTests</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testQueryParam</span>() {
+        <span class="cm">// queryParam() adds ?key=value to the URL automatically
+        // URL becomes: /posts?userId=1</span>
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">queryParam</span>(<span class="str">"userId"</span>, <span class="num">1</span>)
+            <span class="cm">// queryParam(name, value) = adds ?userId=1 to the URL</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">body</span>(<span class="str">"size()"</span>, <span class="fn">greaterThan</span>(<span class="num">0</span>));
+            <span class="cm">// size() = GPath function returning length of JSON array</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testMultipleQueryParams</span>() {
+        <span class="cm">// Multiple queryParams → ?userId=1&_limit=3</span>
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">queryParam</span>(<span class="str">"userId"</span>, <span class="num">1</span>)
+            .<span class="fn">queryParam</span>(<span class="str">"_limit"</span>, <span class="num">3</span>)
+            <span class="cm">// _limit = pagination parameter (limit results to 3)</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">body</span>(<span class="str">"size()"</span>, <span class="fn">equalTo</span>(<span class="num">3</span>));
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testPathParam</span>() {
+        <span class="cm">// pathParam() → replaces {id} placeholder in URL path
+        // URL becomes: /users/5</span>
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">pathParam</span>(<span class="str">"id"</span>, <span class="num">5</span>)
+            <span class="cm">// pathParam(name, value) = replaces {name} in path</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/{id}"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">equalTo</span>(<span class="num">5</span>));
+    }
+}</div>
+    <div id="s1-code-3" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// ResponseObjectTest.java — extract and print from Response
+// Response = object wrapping the full HTTP response
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="cm">// Response interface = full HTTP response wrapper</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">ResponseObjectTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">extractAndPrintAll</span>() {
+
+        <span class="cm">// Store entire response in Response object</span>
+        <span class="cls">Response</span> <span class="var">response</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>);
+
+        <span class="cm">// getStatusCode() = returns int HTTP status code</span>
+        <span class="kw">int</span> <span class="var">code</span> = <span class="var">response</span>.<span class="fn">getStatusCode</span>();
+
+        <span class="cm">// getHeader(name) = get a specific response header value</span>
+        <span class="cls">String</span> <span class="var">ct</span> = <span class="var">response</span>.<span class="fn">getHeader</span>(<span class="str">"Content-Type"</span>);
+
+        <span class="cm">// getTime() = response time in milliseconds</span>
+        <span class="kw">long</span> <span class="var">time</span> = <span class="var">response</span>.<span class="fn">getTime</span>();
+
+        <span class="cm">// getBody().asString() = entire response body as a String</span>
+        <span class="cls">String</span> <span class="var">body</span> = <span class="var">response</span>.<span class="fn">getBody</span>().<span class="fn">asString</span>();
+
+        <span class="cm">// path(expression) = directly extract value via GPath</span>
+        <span class="cls">String</span> <span class="var">name</span> = <span class="var">response</span>.<span class="fn">path</span>(<span class="str">"name"</span>);
+        <span class="cm">// path() = shortcut to get a single value from response body</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Status: "</span>  + <span class="var">code</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Content-Type: "</span> + <span class="var">ct</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Time(ms): "</span>  + <span class="var">time</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Name: "</span>     + <span class="var">name</span>);
+    }
+}</div>
+    <div id="s1-code-4" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// LoggingTest.java — logging requests and responses
+// log().all() = prints EVERYTHING: method, URI, headers, body
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">LoggingTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">logEverything</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">log</span>().<span class="fn">all</span>()
+            <span class="cm">// log().all() = logs method, URI, headers, body BEFORE sending</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts/1"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">log</span>().<span class="fn">all</span>()
+            <span class="cm">// then().log().all() = logs status, headers, body of RESPONSE</span>
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">logOnlyOnFailure</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts/1"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">log</span>().<span class="fn">ifValidationFails</span>()
+            <span class="cm">// ifValidationFails() = only logs if an assertion fails
+            // BEST PRACTICE: use in CI to reduce console noise</span>
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">logOnlyBody</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">log</span>().<span class="fn">body</span>()  <span class="cm">// log only request body</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts/1"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">log</span>().<span class="fn">body</span>()  <span class="cm">// log only response body</span>
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+}</div>
+    <div id="s1-code-5" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// HTTPMethodsDemo.java — all 5 HTTP methods with real examples
+// Idempotent = calling multiple times gives same server state
+// Safe = does not modify server data
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">HTTPMethodsDemo</span> {
+
+    <span class="kw">static final</span> <span class="cls">String</span> <span class="var">BASE</span> = <span class="str">"https://jsonplaceholder.typicode.com"</span>;
+
+    <span class="ann">@Test</span> <span class="kw">void</span> <span class="fn">getTest</span>() {
+        <span class="cm">// GET = READ, safe, idempotent, no body</span>
+        <span class="fn">given</span>().<span class="fn">baseUri</span>(<span class="var">BASE</span>).<span class="fn">when</span>().<span class="fn">get</span>(<span class="str">"/posts/1"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">200</span>).<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">equalTo</span>(<span class="num">1</span>));
+    }
+
+    <span class="ann">@Test</span> <span class="kw">void</span> <span class="fn">postTest</span>() {
+        <span class="cm">// POST = CREATE, NOT idempotent, has body</span>
+        <span class="fn">given</span>().<span class="fn">baseUri</span>(<span class="var">BASE</span>).<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="str">"{ \"title\": \"New\" }"</span>)
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+
+    <span class="ann">@Test</span> <span class="kw">void</span> <span class="fn">putTest</span>() {
+        <span class="cm">// PUT = FULL UPDATE, idempotent, replaces whole resource</span>
+        <span class="fn">given</span>().<span class="fn">baseUri</span>(<span class="var">BASE</span>).<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="str">"{ \"id\": 1, \"title\": \"Updated\" }"</span>)
+        .<span class="fn">when</span>().<span class="fn">put</span>(<span class="str">"/posts/1"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+
+    <span class="ann">@Test</span> <span class="kw">void</span> <span class="fn">patchTest</span>() {
+        <span class="cm">// PATCH = PARTIAL UPDATE, only send fields to change</span>
+        <span class="fn">given</span>().<span class="fn">baseUri</span>(<span class="var">BASE</span>).<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="str">"{ \"title\": \"Patched Title\" }"</span>)
+        .<span class="fn">when</span>().<span class="fn">patch</span>(<span class="str">"/posts/1"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+
+    <span class="ann">@Test</span> <span class="kw">void</span> <span class="fn">deleteTest</span>() {
+        <span class="cm">// DELETE = REMOVE, idempotent, returns 200 or 204</span>
+        <span class="fn">given</span>().<span class="fn">baseUri</span>(<span class="var">BASE</span>)
+        .<span class="fn">when</span>().<span class="fn">delete</span>(<span class="str">"/posts/1"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="fn">anyOf</span>(<span class="fn">equalTo</span>(<span class="num">200</span>), <span class="fn">equalTo</span>(<span class="num">204</span>)));
+        <span class="cm">// anyOf() = Hamcrest OR matcher — accepts 200 or 204</span>
+    }
+}</div>
+  </div>
+
+  <div class="section-label">✅ Best Practices Checklist</div>
+  <div class="checklist">
+    <div class="check-item"><span class="check-icon">✔</span> Always assert <code>statusCode</code> AND <code>contentType</code> in every test — not just one of them.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>log().ifValidationFails()</code> in CI — prevents console flooding on passing tests.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Prefer <code>queryParam()</code> over string-concatenating query strings in URLs — safer and more readable.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>pathParam()</code> for dynamic URL segments like <code>/users/{id}</code> — avoids hard-coded URL strings.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>getTime()</code> to assert performance SLA — e.g. <code>time(lessThan(2000L))</code>.</div>
+  </div>
+
+  <div class="section-label">🎯 SDET Interview Q&A</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: Difference between PUT and PATCH? <span class="toggle">+</span></div><div class="qa-a">PUT replaces the ENTIRE resource — you must send all fields, even unchanged ones. PATCH does a PARTIAL update — you only send the fields that changed. Example: updating a user's email → use PATCH so other fields aren't overwritten.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is idempotency and why does it matter for testing? <span class="toggle">+</span></div><div class="qa-a">Idempotent means calling the same request N times produces the same server state as calling it once. GET, PUT, DELETE are idempotent; POST is NOT. This matters in tests because retrying a PUT/DELETE is safe, but retrying a POST creates duplicate data.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is the difference between queryParam and pathParam? <span class="toggle">+</span></div><div class="qa-a">pathParam replaces a variable segment in the URL path — e.g. /users/{id} → /users/5. queryParam appends ?key=value to filter or search — e.g. /posts?userId=1. Path params identify a resource; query params filter/paginate results.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: When should you use log().all() vs log().ifValidationFails()? <span class="toggle">+</span></div><div class="qa-a">Use log().all() during development/debugging to see full request-response. Use log().ifValidationFails() in CI pipelines — it only outputs logs when a test fails, keeping build output clean for passing tests.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What does the Accept header do? <span class="toggle">+</span></div><div class="qa-a">The Accept request header tells the server what response format the client can handle. Accept: application/json → client wants JSON. Accept: application/xml → client wants XML. The server responds with Content-Type matching the requested format (or 406 Not Acceptable if unsupported).</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SESSION 3 — GET & Assertions & Soft Assertions
+     ═══════════════════════════════════════════ -->
+<div class="session-panel" id="s2">
+  <div class="section-label">🌐 Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-icon">❓</div><div class="ov-title">WHAT</div><div class="ov-text">Body assertions validate the JSON response content using Hamcrest matchers and GPath expressions. Soft assertions let ALL checks run even if one fails.</div></div>
+    <div class="ov-card"><div class="ov-icon">💡</div><div class="ov-title">WHY</div><div class="ov-text">Hard assertions (default) stop on first failure, hiding other issues. Soft assertions (SoftAssert) collect all failures and report them together — critical for comprehensive API validation.</div></div>
+    <div class="ov-card"><div class="ov-icon">⏰</div><div class="ov-title">WHEN</div><div class="ov-text">Use multiple assertions in one test when validating complete API contracts. Use soft assertions when you want to validate 10+ fields without losing failure info on subsequent fields.</div></div>
+    <div class="ov-card"><div class="ov-icon">📍</div><div class="ov-title">WHERE</div><div class="ov-text">In <code>then().body()</code> chains — using Hamcrest matchers. Soft assertions use TestNG's <code>SoftAssert</code> class outside the REST Assured chain.</div></div>
+    <div class="ov-card"><div class="ov-icon">⚙️</div><div class="ov-title">HOW</div><div class="ov-text">Chain multiple <code>.body()</code> calls in then(). For soft: create <code>SoftAssert sa</code>, call <code>sa.assertEquals()</code>, end with <code>sa.assertAll()</code>.</div></div>
+  </div>
+
+  <div class="section-label">🎤 Interview One-Liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Hard Assertion</span> = stops test execution immediately on first failure — you lose visibility into all other potential failures in the same test.</div>
+    <div class="oneliner"><span>Soft Assertion</span> = collects ALL assertion failures throughout the test, then reports them all together when <code>assertAll()</code> is called at the end.</div>
+    <div class="oneliner"><span>GPath</span> = Groovy Path — expression language for navigating JSON/XML structures using dot notation and array indexing inside REST Assured body().</div>
+    <div class="oneliner"><span>Hamcrest</span> = matcher library — provides human-readable assertion expressions like <code>equalTo()</code>, <code>hasItem()</code>, <code>greaterThan()</code>, <code>containsString()</code>.</div>
+    <div class="oneliner"><span>body()</span> = method to assert JSON/XML response body content using a GPath expression and a Hamcrest matcher.</div>
+    <div class="oneliner"><span>Multiple assertions</span> = chain multiple <code>.body()</code> calls in one <code>then()</code> block to validate multiple fields in a single HTTP call — saves network round-trips.</div>
+  </div>
+
+  <div class="section-label">💡 Core Concepts</div>
+  <div class="concept-box">
+    <div class="concept-title">🔍 GPath Expressions Explained</div>
+    <div class="arch-diagram">
+<span class="hl">JSON RESPONSE (for GPath examples):</span>
+<span class="box">{</span>
+<span class="box">  "id": 1,</span>
+<span class="box">  "name": "Chitti",</span>
+<span class="box">  "address": { "city": "Delhi", "zip": "110001" },</span>
+<span class="box">  "roles": ["admin", "user", "viewer"]</span>
+<span class="box">}</span>
+
+<span class="arrow">GPath Examples:</span>
+<span class="hl">"name"</span>              → <span class="cm">"Chitti"    (top-level string)</span>
+<span class="hl">"id"</span>                → <span class="cm">1           (top-level number)</span>
+<span class="hl">"address.city"</span>      → <span class="cm">"Delhi"     (nested object, dot notation)</span>
+<span class="hl">"address.zip"</span>       → <span class="cm">"110001"    (nested object)</span>
+<span class="hl">"roles[0]"</span>          → <span class="cm">"admin"     (array element by index)</span>
+<span class="hl">"roles"</span>             → <span class="cm">["admin","user","viewer"]   (whole array)</span>
+<span class="hl">"roles.size()"</span>      → <span class="cm">3           (size() = array length)</span>
+<span class="hl">"roles.contains('admin')"</span> → <span class="cm">true</span>
+    </div>
+  </div>
+  <div class="concept-box">
+    <div class="concept-title">⚡ Hard vs Soft Assertion Flow</div>
+    <div class="arch-diagram">
+<span class="hl">HARD ASSERTION (default REST Assured behavior):</span>
+<span class="box">Test Start</span>
+    <span class="arrow">→</span> <span class="hl">Assert statusCode == 200</span>  ✓ PASS → continue
+    <span class="arrow">→</span> <span class="hl">Assert name == "Chitti"</span>   ✗ FAIL → <span class="cls">STOP! Exception thrown</span>
+    <span class="arrow">→</span> <span class="cm">Assert email (NEVER RUNS — test already stopped!)</span>
+
+<span class="hl">SOFT ASSERTION (TestNG SoftAssert):</span>
+<span class="box">Test Start → SoftAssert sa = new SoftAssert()</span>
+    <span class="arrow">→</span> <span class="hl">sa.assertEquals(statusCode, 200)</span>  ✓ PASS → continue
+    <span class="arrow">→</span> <span class="hl">sa.assertEquals(name, "Chitti")</span>   ✗ FAIL → <span class="cls">RECORDED, continue</span>
+    <span class="arrow">→</span> <span class="hl">sa.assertNotNull(email)</span>            ✓ PASS → continue
+    <span class="arrow">→</span> <span class="hl">sa.assertAll()</span>  → <span class="cls">Reports ALL failures at once</span>
+    </div>
+  </div>
+
+  <div class="section-label">💻 Code Examples</div>
+  <div class="code-area">
+    <div class="code-tab-bar">
+      <div class="ctab active" onclick="switchCode('s2',0)">🔍 GPath Basics</div>
+      <div class="ctab" onclick="switchCode('s2',1)">📋 Multiple Assertions</div>
+      <div class="ctab" onclick="switchCode('s2',2)">🛡️ Soft Assertions</div>
+      <div class="ctab" onclick="switchCode('s2',3)">📊 Array Assertions</div>
+      <div class="ctab" onclick="switchCode('s2',4)">🎯 Body Types</div>
+      <div class="ctab" onclick="switchCode('s2',5)">⚡ Full Validation</div>
+    </div>
+    <div id="s2-code-0" class="code-block active"><span class="cm">// ──────────────────────────────────────────────────────
+// GPathBasicsTest.java — navigating JSON with GPath expressions
+// GPath = Groovy Path (works like XPath but for JSON)
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">GPathBasicsTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">gPathExpressions</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+
+            <span class="cm">// Top-level number field</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">equalTo</span>(<span class="num">1</span>))
+
+            <span class="cm">// Top-level string field</span>
+            .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">equalTo</span>(<span class="str">"Leanne Graham"</span>))
+
+            <span class="cm">// Nested: address.city → dot notation access</span>
+            .<span class="fn">body</span>(<span class="str">"address.city"</span>, <span class="fn">equalTo</span>(<span class="str">"Gwenborough"</span>))
+
+            <span class="cm">// Deeper nested: address.geo.lat</span>
+            .<span class="fn">body</span>(<span class="str">"address.geo.lat"</span>, <span class="fn">equalTo</span>(<span class="str">"-37.3159"</span>))
+
+            <span class="cm">// Nested object field: company.name</span>
+            .<span class="fn">body</span>(<span class="str">"company.name"</span>, <span class="fn">notNullValue</span>())
+            <span class="cm">// notNullValue() = Hamcrest → just check field exists & not null</span>
+
+            <span class="cm">// String contains check</span>
+            .<span class="fn">body</span>(<span class="str">"email"</span>, <span class="fn">containsString</span>(<span class="str">"@"</span>))
+            <span class="cm">// containsString("@") = email must contain @ symbol</span>
+
+            <span class="cm">// Number range check</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">greaterThan</span>(<span class="num">0</span>));
+            <span class="cm">// greaterThan(0) = id must be a positive number</span>
+    }
+}</div>
+    <div id="s2-code-1" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// MultipleAssertionsTest.java — chain multiple body() assertions
+// All checks run in ONE HTTP call — efficient & readable
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">MultipleAssertionsTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">validateFullUserObject</span>() {
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>()
+            <span class="cm">// 1. HTTP status</span>
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+
+            <span class="cm">// 2. Response format header</span>
+            .<span class="fn">contentType</span>(<span class="fn">containsString</span>(<span class="str">"application/json"</span>))
+            <span class="cm">// contentType() in then() = asserts Content-Type header</span>
+
+            <span class="cm">// 3. Exact match</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">equalTo</span>(<span class="num">1</span>))
+
+            <span class="cm">// 4. String not empty</span>
+            .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">not</span>(<span class="fn">emptyString</span>()))
+            <span class="cm">// not(emptyString()) = name field must not be blank</span>
+
+            <span class="cm">// 5. Email format check</span>
+            .<span class="fn">body</span>(<span class="str">"email"</span>, <span class="fn">containsString</span>(<span class="str">"@"</span>))
+
+            <span class="cm">// 6. Nested field exists</span>
+            .<span class="fn">body</span>(<span class="str">"address.city"</span>, <span class="fn">notNullValue</span>())
+
+            <span class="cm">// 7. Nested field value</span>
+            .<span class="fn">body</span>(<span class="str">"address.zipcode"</span>, <span class="fn">notNullValue</span>())
+
+            <span class="cm">// 8. Response time performance SLA</span>
+            .<span class="fn">time</span>(<span class="fn">lessThan</span>(<span class="num">3000L</span>));
+            <span class="cm">// time() = asserts response time in ms is less than 3000</span>
+    }
+}</div>
+    <div id="s2-code-2" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// SoftAssertionsTest.java — TestNG SoftAssert with REST Assured
+// SoftAssert = collects failures without stopping test execution
+// assertAll() = must be called at end to trigger failure if any
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import</span> <span class="cls">org.testng.asserts.SoftAssert</span>;
+<span class="cm">// SoftAssert = TestNG class for non-blocking assertions</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">SoftAssertionsTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">softAssertUser</span>() {
+
+        <span class="cm">// Step 1: Store response object</span>
+        <span class="cls">Response</span> <span class="var">res</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>);
+
+        <span class="cm">// Step 2: Create SoftAssert instance</span>
+        <span class="cls">SoftAssert</span> <span class="var">sa</span> = <span class="kw">new</span> <span class="cls">SoftAssert</span>();
+        <span class="cm">// SoftAssert = object that records failures without throwing</span>
+
+        <span class="cm">// Step 3: Make assertions (all run even if one fails)</span>
+        <span class="var">sa</span>.<span class="fn">assertEquals</span>(<span class="var">res</span>.<span class="fn">getStatusCode</span>(), <span class="num">200</span>,
+            <span class="str">"Status code mismatch"</span>);
+        <span class="cm">// assertEquals(actual, expected, message)</span>
+
+        <span class="var">sa</span>.<span class="fn">assertEquals</span>(<span class="var">res</span>.<span class="fn">jsonPath</span>().<span class="fn">getInt</span>(<span class="str">"id"</span>), <span class="num">1</span>,
+            <span class="str">"User ID mismatch"</span>);
+        <span class="cm">// getInt(path) = extracts integer value by GPath</span>
+
+        <span class="var">sa</span>.<span class="fn">assertNotNull</span>(<span class="var">res</span>.<span class="fn">jsonPath</span>().<span class="fn">getString</span>(<span class="str">"name"</span>),
+            <span class="str">"Name should not be null"</span>);
+
+        <span class="var">sa</span>.<span class="fn">assertTrue</span>(
+            <span class="var">res</span>.<span class="fn">jsonPath</span>().<span class="fn">getString</span>(<span class="str">"email"</span>).<span class="fn">contains</span>(<span class="str">"@"</span>),
+            <span class="str">"Email should contain @"</span>);
+        <span class="cm">// assertTrue(condition, message)</span>
+
+        <span class="var">sa</span>.<span class="fn">assertNotNull</span>(<span class="var">res</span>.<span class="fn">jsonPath</span>().<span class="fn">getString</span>(<span class="str">"address.city"</span>),
+            <span class="str">"City should be present"</span>);
+
+        <span class="cm">// Step 4: MANDATORY — triggers test failure if any assertion failed</span>
+        <span class="var">sa</span>.<span class="fn">assertAll</span>();
+        <span class="cm">// assertAll() = without this, failures are SILENTLY IGNORED!</span>
+    }
+}</div>
+    <div id="s2-code-3" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// ArrayAssertionsTest.java — asserting JSON arrays with GPath
+// JSON Array = ordered list: [ "a", "b", "c" ]
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">ArrayAssertionsTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">validateJSONArray</span>() {
+        <span class="cm">// This endpoint returns an ARRAY of posts</span>
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+
+            <span class="cm">// Assert array is not empty</span>
+            .<span class="fn">body</span>(<span class="str">"$"</span>, <span class="fn">not</span>(<span class="fn">empty</span>()))
+            <span class="cm">// "$" = root of JSON document (the array itself)</span>
+            <span class="cm">// empty() = Hamcrest → checks collection is empty</span>
+
+            <span class="cm">// Assert array size</span>
+            .<span class="fn">body</span>(<span class="str">"size()"</span>, <span class="fn">equalTo</span>(<span class="num">100</span>))
+            <span class="cm">// size() = GPath function → length of root array</span>
+
+            <span class="cm">// Assert first element's field</span>
+            .<span class="fn">body</span>(<span class="str">"[0].userId"</span>, <span class="fn">equalTo</span>(<span class="num">1</span>))
+            <span class="cm">// [0] = first array element, then .userId</span>
+
+            <span class="cm">// Assert a specific field exists in ALL elements</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">hasItem</span>(<span class="num">1</span>))
+            <span class="cm">// "id" on array = extracts id from every element
+            // hasItem(1) = at least one element has id=1</span>
+
+            <span class="cm">// Assert all title fields are not null</span>
+            .<span class="fn">body</span>(<span class="str">"title"</span>, <span class="fn">everyItem</span>(<span class="fn">notNullValue</span>()));
+            <span class="cm">// everyItem() = Hamcrest → applies matcher to every item in list</span>
+    }
+}</div>
+    <div id="s2-code-4" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// BodyTypesTest.java — different assertion types & matchers
+// Shows: equalTo, hasSize, hasKey, allOf, anyOf, is
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">BodyTypesTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">matcherShowcase</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>()
+
+            <span class="cm">// is() = alias for equalTo(), more readable</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">is</span>(<span class="num">1</span>))
+
+            <span class="cm">// allOf() = ALL conditions must be true (AND logic)</span>
+            .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">allOf</span>(
+                <span class="fn">notNullValue</span>(),
+                <span class="fn">containsString</span>(<span class="str">"Graham"</span>)
+            ))
+
+            <span class="cm">// anyOf() = AT LEAST ONE condition must be true (OR logic)</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">anyOf</span>(
+                <span class="fn">equalTo</span>(<span class="num">1</span>),
+                <span class="fn">equalTo</span>(<span class="num">2</span>)
+            ))
+
+            <span class="cm">// hasKey() = map/object has this key</span>
+            .<span class="fn">body</span>(<span class="str">"address"</span>, <span class="fn">hasKey</span>(<span class="str">"city"</span>))
+            <span class="cm">// hasKey() = checks object has the given key name</span>
+
+            <span class="cm">// instanceOf() = check value type</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">instanceOf</span>(<span class="cls">Integer</span>.<span class="kw">class</span>))
+            <span class="cm">// instanceOf = verifies the JSON value is an Integer type</span>
+
+            <span class="cm">// lessThan / greaterThan for numbers</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">lessThanOrEqualTo</span>(<span class="num">10</span>))
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">greaterThan</span>(<span class="num">0</span>))
+
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+}</div>
+    <div id="s2-code-5" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// FullValidationTest.java — industry-grade comprehensive validation
+// Combines: status, content-type, headers, time + body fields
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">FullValidationTest</span> {
+
+    <span class="ann">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">setup</span>() {
+        <span class="cls">RestAssured</span>.<span class="var">baseURI</span> = <span class="str">"https://jsonplaceholder.typicode.com"</span>;
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">fullAPIContractValidation</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">log</span>().<span class="fn">ifValidationFails</span>()
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>()
+            <span class="cm">// ── STATUS ─────────────────────────</span>
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+
+            <span class="cm">// ── HEADERS ────────────────────────</span>
+            .<span class="fn">contentType</span>(<span class="fn">containsString</span>(<span class="str">"application/json"</span>))
+            .<span class="fn">header</span>(<span class="str">"Content-Type"</span>, <span class="fn">notNullValue</span>())
+
+            <span class="cm">// ── PERFORMANCE ────────────────────</span>
+            .<span class="fn">time</span>(<span class="fn">lessThan</span>(<span class="num">3000L</span>))
+
+            <span class="cm">// ── BODY FIELDS ────────────────────</span>
+            .<span class="fn">body</span>(<span class="str">"id"</span>,             <span class="fn">equalTo</span>(<span class="num">1</span>))
+            .<span class="fn">body</span>(<span class="str">"name"</span>,           <span class="fn">not</span>(<span class="fn">emptyString</span>()))
+            .<span class="fn">body</span>(<span class="str">"email"</span>,          <span class="fn">containsString</span>(<span class="str">"@"</span>))
+            .<span class="fn">body</span>(<span class="str">"address.city"</span>,   <span class="fn">notNullValue</span>())
+            .<span class="fn">body</span>(<span class="str">"company.name"</span>,   <span class="fn">notNullValue</span>())
+            .<span class="fn">body</span>(<span class="str">"phone"</span>,          <span class="fn">not</span>(<span class="fn">emptyString</span>()));
+    }
+}</div>
+  </div>
+
+  <div class="section-label">✅ Best Practices Checklist</div>
+  <div class="checklist">
+    <div class="check-item"><span class="check-icon">✔</span> Always call <code>sa.assertAll()</code> at the end of every soft assertion test — forgetting it means failures are silently ignored.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Validate status code, Content-Type header, body fields AND response time in every critical test.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>allOf()</code> to combine multiple conditions on one field cleanly rather than chaining separate <code>.body()</code> calls for the same field.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>everyItem(notNullValue())</code> when validating arrays to ensure no null elements slip through.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Prefer soft assertions for API contract tests where you want full visibility into ALL deviations.</div>
+  </div>
+
+  <div class="section-label">🎯 SDET Interview Q&A</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What happens if you forget assertAll() in SoftAssert? <span class="toggle">+</span></div><div class="qa-a">The test PASSES even if assertions failed! SoftAssert records failures internally but only reports them when assertAll() is called. Without it, a broken API appears healthy. Always put assertAll() as the last line of tests using SoftAssert.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is the difference between hasItem() and equalTo() on arrays? <span class="toggle">+</span></div><div class="qa-a">equalTo() checks the ENTIRE array equals a given value. hasItem() checks that at least ONE element in the array matches. For example: body("ids", hasItem(5)) passes if any element is 5; body("ids", equalTo(5)) would try to match the whole array to 5 and always fail.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is GPath and how is it different from JSONPath? <span class="toggle">+</span></div><div class="qa-a">GPath is a Groovy-based path language natively integrated into REST Assured body() assertions. JSONPath (used with jsonPath().get()) is a separate standard query language. GPath uses dot notation and is evaluated directly in then().body(). JSONPath is used explicitly when you call response.jsonPath().getString("path").</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you assert response time in REST Assured? <span class="toggle">+</span></div><div class="qa-a">Use then().time(lessThan(2000L)) — asserts response time is less than 2000 milliseconds. The L suffix makes it a long literal. You can also use response.getTime() to get the value and assert it programmatically with SoftAssert.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: Explain the $ symbol in GPath <span class="toggle">+</span></div><div class="qa-a">$ represents the ROOT of the JSON document. When the root is an array (not an object), use "$" to reference the array itself. Example: body("$", hasSize(10)) asserts the root array has exactly 10 elements. body("$", not(empty())) asserts the root array is not empty.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SESSION 4 — POST PUT DELETE CRUD + Auth
+     ═══════════════════════════════════════════ -->
+<div class="session-panel" id="s3">
+  <div class="section-label">🌐 Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-icon">❓</div><div class="ov-title">WHAT</div><div class="ov-text">CRUD = Create (POST), Read (GET), Update (PUT/PATCH), Delete (DELETE). Real-world tests chain all 4 to simulate full user workflows. Auth adds security to API calls.</div></div>
+    <div class="ov-card"><div class="ov-icon">💡</div><div class="ov-title">WHY</div><div class="ov-text">End-to-end CRUD tests catch regressions in the complete data lifecycle — not just isolated endpoints. Auth testing ensures APIs reject unauthenticated/unauthorized calls.</div></div>
+    <div class="ov-card"><div class="ov-icon">⏰</div><div class="ov-title">WHEN</div><div class="ov-text">Use CRUD chains for smoke/regression suites. Test auth in security test suites. Always clean up data created during tests (teardown).</div></div>
+    <div class="ov-card"><div class="ov-icon">📍</div><div class="ov-title">WHERE</div><div class="ov-text">In TestNG test classes. CRUD test flow: @BeforeClass setup → @Test CREATE → @Test READ → @Test UPDATE → @AfterClass CLEANUP.</div></div>
+    <div class="ov-card"><div class="ov-icon">⚙️</div><div class="ov-title">HOW</div><div class="ov-text">POST → extract created ID → GET by ID → PUT with updated data → DELETE → verify 404 after delete. Auth via <code>.auth().oauth2(token)</code> or <code>.header("Authorization","Bearer token")</code>.</div></div>
+  </div>
+
+  <div class="section-label">🎤 Interview One-Liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>CRUD</span> = Create, Read, Update, Delete — the four fundamental operations every REST API should support for managing resources.</div>
+    <div class="oneliner"><span>Basic Auth</span> = username:password encoded in Base64, sent in the Authorization header — simple but less secure, only use over HTTPS.</div>
+    <div class="oneliner"><span>Bearer Token</span> = Authorization: Bearer &lt;token&gt; — most common modern auth; token is JWT or opaque token issued after login.</div>
+    <div class="oneliner"><span>OAuth2</span> = token-based authorization framework — client gets an access token from an auth server, passes it in every request header.</div>
+    <div class="oneliner"><span>API Key</span> = a pre-shared secret string sent as a custom header (X-API-Key) or query param — simpler than OAuth2 for service-to-service calls.</div>
+    <div class="oneliner"><span>Test isolation</span> = each CRUD test should create its own data and clean up after itself — never depend on data from a previous test's side-effects.</div>
+  </div>
+
+  <div class="section-label">💡 Core Concepts</div>
+  <div class="concept-box">
+    <div class="concept-title">🔄 CRUD Test Flow</div>
+    <div class="arch-diagram">
+<span class="hl">REAL-WORLD CRUD CHAIN FLOW:</span>
+
+<span class="box">@BeforeClass setup()</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="hl">CREATE  → POST /users   { name:"Chitti" }</span>
+         <span class="arrow">│ ← Extract "id" from 201 response</span>
+         <span class="arrow">▼</span>
+<span class="hl">READ    → GET /users/{id}</span>
+         <span class="arrow">│ ← Assert name == "Chitti"</span>
+         <span class="arrow">▼</span>
+<span class="hl">UPDATE  → PUT /users/{id}  { name:"Chitti 2.0" }</span>
+         <span class="arrow">│ ← Assert updated name</span>
+         <span class="arrow">▼</span>
+<span class="hl">DELETE  → DELETE /users/{id}</span>
+         <span class="arrow">│ ← Assert 200/204</span>
+         <span class="arrow">▼</span>
+<span class="hl">VERIFY  → GET /users/{id}   ← Expect 404 Not Found</span>
+    </div>
+  </div>
+  <div class="concept-box">
+    <div class="concept-title">🔐 Authentication Types</div>
+    <div class="arch-diagram">
+<span class="hl">1. BASIC AUTH</span>
+   .auth().basic("username", "password")
+   <span class="cm">→ Sends: Authorization: Basic dXNlcjpwYXNz  (base64 encoded)</span>
+
+<span class="hl">2. BEARER TOKEN (most common)</span>
+   .header("Authorization", "Bearer eyJhbGciOiJ...")
+   <span class="cm">→ JWT or opaque token from login endpoint</span>
+
+<span class="hl">3. OAUTH2</span>
+   .auth().oauth2("access_token_here")
+   <span class="cm">→ Sends: Authorization: Bearer access_token_here</span>
+
+<span class="hl">4. API KEY (header)</span>
+   .header("X-API-Key", "your_api_key")
+   <span class="cm">→ Custom header, often for service-to-service auth</span>
+
+<span class="hl">5. API KEY (query param)</span>
+   .queryParam("api_key", "your_key")
+   <span class="cm">→ Less secure: key visible in URL/logs</span>
+
+<span class="hl">6. DIGEST AUTH</span>
+   .auth().digest("user", "pass")
+   <span class="cm">→ Challenge-response, more secure than Basic</span>
+    </div>
+  </div>
+
+  <div class="section-label">💻 Code Examples</div>
+  <div class="code-area">
+    <div class="code-tab-bar">
+      <div class="ctab active" onclick="switchCode('s3',0)">➕ POST Create</div>
+      <div class="ctab" onclick="switchCode('s3',1)">✏️ PUT Update</div>
+      <div class="ctab" onclick="switchCode('s3',2)">🗑️ DELETE</div>
+      <div class="ctab" onclick="switchCode('s3',3)">🔄 Full CRUD</div>
+      <div class="ctab" onclick="switchCode('s3',4)">🔐 Auth Types</div>
+      <div class="ctab" onclick="switchCode('s3',5)">🛡️ Auth Headers</div>
+    </div>
+    <div id="s3-code-0" class="code-block active"><span class="cm">// ──────────────────────────────────────────────────────
+// PostCreateTest.java — POST request to create a resource
+// body() = sets the request body (JSON payload)
+// extract() = pulls data from response for use in next test
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">PostCreateTest</span> {
+
+    <span class="kw">static int</span> <span class="var">createdUserId</span>; <span class="cm">// shared between tests in class</span>
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">createUser</span>() {
+
+        <span class="cm">// Request body as a String (JSON format)</span>
+        <span class="cls">String</span> <span class="var">requestBody</span> = <span class="str">"{"</span> +
+            <span class="str">"\"name\": \"Chitti\","</span> +
+            <span class="str">"\"username\": \"chitti2024\","</span> +
+            <span class="str">"\"email\": \"chitti@test.com\""</span> +
+            <span class="str">"}"</span>;
+        <span class="cm">// \" = escaped double-quote inside Java string literal</span>
+
+        <span class="var">createdUserId</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            <span class="cm">// contentType = sets Content-Type header for request body</span>
+            .<span class="fn">body</span>(<span class="var">requestBody</span>)
+            <span class="cm">// body(string) = sends the JSON string as request body</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>)
+            <span class="cm">// 201 = Created, returned when POST succeeds</span>
+            .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">equalTo</span>(<span class="str">"Chitti"</span>))
+            .<span class="fn">extract</span>().<span class="fn">path</span>(<span class="str">"id"</span>);
+            <span class="cm">// extract() = exits assertion chain to extract value
+            // .path("id") = returns the "id" field from response as int</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Created User ID: "</span> + <span class="var">createdUserId</span>);
+    }
+}</div>
+    <div id="s3-code-1" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// PutUpdateTest.java — PUT (full replace) and PATCH (partial)
+// PUT = send all fields, replaces whole resource
+// PATCH = send only changed fields
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">PutUpdateTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">putFullUpdate</span>() {
+
+        <span class="cm">// PUT body must include ALL fields (full replacement)</span>
+        <span class="cls">String</span> <span class="var">fullBody</span> = <span class="str">"{"</span> +
+            <span class="str">"\"id\": 1,"</span> +
+            <span class="str">"\"name\": \"Chitti Updated\","</span> +
+            <span class="str">"\"username\": \"chitti_v2\","</span> +
+            <span class="str">"\"email\": \"chitti_v2@test.com\""</span> +
+            <span class="str">"}"</span>;
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="var">fullBody</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">put</span>(<span class="str">"/users/1"</span>)
+            <span class="cm">// put() = sends HTTP PUT request to /users/1</span>
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">equalTo</span>(<span class="str">"Chitti Updated"</span>));
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">patchPartialUpdate</span>() {
+
+        <span class="cm">// PATCH body only contains the field being changed</span>
+        <span class="cls">String</span> <span class="var">patchBody</span> = <span class="str">"{ \"name\": \"Chitti Patched\" }"</span>;
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="var">patchBody</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">patch</span>(<span class="str">"/users/1"</span>)
+            <span class="cm">// patch() = sends HTTP PATCH request</span>
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">equalTo</span>(<span class="str">"Chitti Patched"</span>));
+    }
+}</div>
+    <div id="s3-code-2" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// DeleteTest.java — DELETE request and verify resource gone
+// 204 = No Content (successful delete, no response body)
+// 200 = OK (deleted, may return deleted object)
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">DeleteTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">deletePost</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">delete</span>(<span class="str">"/posts/1"</span>)
+            <span class="cm">// delete() = sends HTTP DELETE request</span>
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="fn">anyOf</span>(<span class="fn">equalTo</span>(<span class="num">200</span>), <span class="fn">equalTo</span>(<span class="num">204</span>)));
+            <span class="cm">// anyOf() = OR matcher → accept either 200 or 204</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">deleteAndVerifyGone</span>() {
+        <span class="kw">int</span> <span class="var">postId</span> = <span class="num">5</span>; <span class="cm">// ID to delete</span>
+
+        <span class="cm">// Step 1: DELETE the resource</span>
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">delete</span>(<span class="str">"/posts/"</span> + <span class="var">postId</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="fn">anyOf</span>(<span class="fn">equalTo</span>(<span class="num">200</span>), <span class="fn">equalTo</span>(<span class="num">204</span>)));
+
+        <span class="cm">// Step 2: Try to GET it — should be 404 now</span>
+        <span class="cm">// NOTE: JSONPlaceholder is a mock API so this may not work
+        // In real APIs, the deleted resource returns 404</span>
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Resource ID "</span> + <span class="var">postId</span> + <span class="str">" deleted!"</span>);
+    }
+}</div>
+    <div id="s3-code-3" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// CRUDChainTest.java — Full Create → Read → Update → Delete
+// Real-world workflow simulation in one test class
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.*</span>;
+
+<span class="kw">public class</span> <span class="cls">CRUDChainTest</span> {
+
+    <span class="kw">private static int</span> <span class="var">createdId</span>; <span class="cm">// shared state between tests</span>
+
+    <span class="ann">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">setup</span>() {
+        <span class="cls">RestAssured</span>.<span class="var">baseURI</span> = <span class="str">"https://jsonplaceholder.typicode.com"</span>;
+    }
+
+    <span class="ann">@Test(priority = 1)</span>
+    <span class="cm">// priority = TestNG annotation — controls execution order</span>
+    <span class="kw">public void</span> <span class="fn">createPost</span>() {
+        <span class="var">createdId</span> = <span class="fn">given</span>()
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="str">"{ \"title\": \"Chitti Post\", \"userId\": 1 }"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>)
+            .<span class="fn">body</span>(<span class="str">"title"</span>, <span class="fn">equalTo</span>(<span class="str">"Chitti Post"</span>))
+            .<span class="fn">extract</span>().<span class="fn">path</span>(<span class="str">"id"</span>);
+        <span class="cm">// extract().path() = exits fluent chain, extracts value</span>
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"[CREATE] ID = "</span> + <span class="var">createdId</span>);
+    }
+
+    <span class="ann">@Test(priority = 2, dependsOnMethods = "createPost")</span>
+    <span class="cm">// dependsOnMethods = only runs if createPost passed</span>
+    <span class="kw">public void</span> <span class="fn">readPost</span>() {
+        <span class="fn">given</span>()
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts/"</span> + <span class="var">createdId</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">body</span>(<span class="str">"id"</span>, <span class="fn">equalTo</span>(<span class="var">createdId</span>));
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"[READ] Verified ID = "</span> + <span class="var">createdId</span>);
+    }
+
+    <span class="ann">@Test(priority = 3, dependsOnMethods = "readPost")</span>
+    <span class="kw">public void</span> <span class="fn">updatePost</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="str">"{ \"title\": \"Chitti Updated\", \"id\": "</span>
+                  + <span class="var">createdId</span> + <span class="str">" }"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">put</span>(<span class="str">"/posts/"</span> + <span class="var">createdId</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">body</span>(<span class="str">"title"</span>, <span class="fn">equalTo</span>(<span class="str">"Chitti Updated"</span>));
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"[UPDATE] Post updated!"</span>);
+    }
+
+    <span class="ann">@Test(priority = 4, dependsOnMethods = "updatePost")</span>
+    <span class="kw">public void</span> <span class="fn">deletePost</span>() {
+        <span class="fn">given</span>()
+        .<span class="fn">when</span>()
+            .<span class="fn">delete</span>(<span class="str">"/posts/"</span> + <span class="var">createdId</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="fn">anyOf</span>(<span class="fn">equalTo</span>(<span class="num">200</span>), <span class="fn">equalTo</span>(<span class="num">204</span>)));
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"[DELETE] Post deleted!"</span>);
+    }
+}</div>
+    <div id="s3-code-4" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// AuthenticationTypesTest.java — all auth methods in REST Assured
+// auth() = method to set authentication on the request
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">AuthenticationTypesTest</span> {
+
+    <span class="cm">// ── 1. BASIC AUTHENTICATION ──────────────────────────</span>
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">basicAuth</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://httpbin.org"</span>)
+            .<span class="fn">auth</span>().<span class="fn">basic</span>(<span class="str">"admin"</span>, <span class="str">"password123"</span>)
+            <span class="cm">// auth().basic() = adds Authorization: Basic dXNlcjpwYXNz
+            // Encodes username:password in Base64 automatically</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/basic-auth/admin/password123"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+
+    <span class="cm">// ── 2. OAUTH2 / BEARER TOKEN ─────────────────────────</span>
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">bearerTokenAuth</span>() {
+        <span class="cls">String</span> <span class="var">token</span> = <span class="str">"eyJhbGciOiJIUzI1NiJ9.example"</span>;
+        <span class="cm">// token = JWT (JSON Web Token) from login endpoint</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://api.example.com"</span>)
+            .<span class="fn">auth</span>().<span class="fn">oauth2</span>(<span class="var">token</span>)
+            <span class="cm">// auth().oauth2() = adds Authorization: Bearer token
+            // REST Assured handles the "Bearer " prefix automatically</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/profile"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+
+    <span class="cm">// ── 3. API KEY IN HEADER ─────────────────────────────</span>
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">apiKeyHeader</span>() {
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://api.example.com"</span>)
+            .<span class="fn">header</span>(<span class="str">"X-API-Key"</span>, <span class="str">"my-secret-key-12345"</span>)
+            <span class="cm">// X-API-Key = custom header name (varies by API)
+            // Some use: api-key, apikey, x-auth-token</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/data"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+}</div>
+    <div id="s3-code-5" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// AuthHeadersTest.java — building auth headers manually
+// RequestSpecification = reusable setup object for multiple tests
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.specification.RequestSpecification</span>;
+<span class="cm">// RequestSpecification = interface for reusable request config</span>
+<span class="kw">import</span> <span class="cls">io.restassured.builder.RequestSpecBuilder</span>;
+<span class="cm">// RequestSpecBuilder = builder pattern for creating specs</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">AuthHeadersTest</span> {
+
+    <span class="cm">// Reusable request spec with auth baked in</span>
+    <span class="kw">private</span> <span class="cls">RequestSpecification</span> <span class="var">authSpec</span>;
+
+    <span class="ann">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">buildAuthSpec</span>() {
+
+        <span class="cm">// Simulate: call login API to get token first</span>
+        <span class="cls">String</span> <span class="var">token</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://api.example.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="str">"{ \"user\":\"admin\", \"pass\":\"1234\" }"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/login"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">extract</span>().<span class="fn">path</span>(<span class="str">"token"</span>);
+        <span class="cm">// extract().path("token") = gets JWT from login response</span>
+
+        <span class="cm">// Build reusable RequestSpec with auth header</span>
+        <span class="var">authSpec</span> = <span class="kw">new</span> <span class="cls">RequestSpecBuilder</span>()
+            .<span class="fn">setBaseUri</span>(<span class="str">"https://api.example.com"</span>)
+            .<span class="fn">addHeader</span>(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> + <span class="var">token</span>)
+            .<span class="fn">addHeader</span>(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>)
+            .<span class="fn">build</span>();
+        <span class="cm">// build() = creates final RequestSpecification object</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">callSecuredEndpoint</span>() {
+        <span class="cm">// Reuse authSpec in every test — DRY principle</span>
+        <span class="fn">given</span>(<span class="var">authSpec</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/profile"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>);
+    }
+}</div>
+  </div>
+
+  <div class="section-label">✅ Best Practices Checklist</div>
+  <div class="checklist">
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>dependsOnMethods</code> in TestNG to chain CRUD tests safely — skip dependent tests if CREATE fails.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Store tokens and shared IDs in <code>static</code> variables (or a thread-safe map) to pass between test methods.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>RequestSpecBuilder</code> to create reusable auth specs — avoids repeating auth headers in every test.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Always clean up test data with DELETE in <code>@AfterClass</code> — never leave orphan test data in servers.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Store API keys/tokens in environment variables or config files — never hardcode secrets in test code.</div>
+  </div>
+
+  <div class="section-label">🎯 SDET Interview Q&A</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: How do you extract a value from POST response and use it in the next test? <span class="toggle">+</span></div><div class="qa-a">Use extract().path("fieldName") at the end of the then() chain. Store it in a static variable. Example: int id = given()...then().extract().path("id"); Then use it in the next test: get("/resource/" + id). Also works with extract().response() to get the full Response object.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is the difference between auth().oauth2() and adding a Bearer header manually? <span class="toggle">+</span></div><div class="qa-a">auth().oauth2(token) is REST Assured's built-in method that automatically prepends "Bearer " to your token. Manually adding the header gives you full control: header("Authorization", "Bearer " + token). They produce identical HTTP requests — oauth2() is just more readable and less error-prone.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is RequestSpecification and why use it? <span class="toggle">+</span></div><div class="qa-a">RequestSpecification is an interface that bundles reusable request configuration (baseURI, headers, auth, contentType). Built with RequestSpecBuilder. Passed to given(spec). DRY principle — write auth/baseURI config once and reuse across 50+ tests instead of repeating in every test method.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you handle token expiry in API test automation? <span class="toggle">+</span></div><div class="qa-a">Call the login endpoint in @BeforeClass (or @BeforeSuite) to get a fresh token at the start of each test run. Store the token in a static variable. If tokens expire mid-run, implement a token refresh mechanism using @BeforeMethod to check expiry and re-authenticate when needed.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How do you test that a 401 is returned for missing auth? <span class="toggle">+</span></div><div class="qa-a">Make the call WITHOUT any Authorization header and assert statusCode(401). Example: given().baseUri(BASE).when().get("/secure/data").then().statusCode(401). This is a negative test validating that your API properly enforces authentication — critical security test.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SESSION 5 — JSON Path & Response Extraction
+     ═══════════════════════════════════════════ -->
+<div class="session-panel" id="s4">
+  <div class="section-label">🌐 Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-icon">❓</div><div class="ov-title">WHAT</div><div class="ov-text">JSONPath extracts specific values from JSON responses. REST Assured offers path(), jsonPath(), extract(), and XmlPath for different extraction scenarios.</div></div>
+    <div class="ov-card"><div class="ov-icon">💡</div><div class="ov-title">WHY</div><div class="ov-text">You need to extract IDs, tokens, and field values from responses to use in subsequent API calls, print debug info, or store in reports.</div></div>
+    <div class="ov-card"><div class="ov-icon">⏰</div><div class="ov-title">WHEN</div><div class="ov-text">Whenever you need data OUT of the response to USE elsewhere — not just assert it. E.g. extract created resource ID for next API call.</div></div>
+    <div class="ov-card"><div class="ov-icon">📍</div><div class="ov-title">WHERE</div><div class="ov-text">In then().extract() for extracting from fluent chain. response.jsonPath() or response.path() for extracting from stored Response object.</div></div>
+    <div class="ov-card"><div class="ov-icon">⚙️</div><div class="ov-title">HOW</div><div class="ov-text">4 ways: (1) response.path("field"), (2) response.jsonPath().getString("field"), (3) then().extract().path("field"), (4) deserialize to POJO with as(MyClass.class).</div></div>
+  </div>
+
+  <div class="section-label">🎤 Interview One-Liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>path()</span> = shortcut method on Response to directly extract a single value by its GPath/JSONPath expression without creating a JsonPath object.</div>
+    <div class="oneliner"><span>jsonPath()</span> = returns a <code>JsonPath</code> object from the response body — gives access to getString, getInt, getList, getMap, etc.</div>
+    <div class="oneliner"><span>extract()</span> = exits the REST Assured fluent assertion chain and returns an <code>ExtractableResponse</code> so you can grab values from the response.</div>
+    <div class="oneliner"><span>XmlPath</span> = REST Assured's built-in XML navigation object — use when the API returns XML instead of JSON, with the same dot-notation syntax.</div>
+    <div class="oneliner"><span>as(Class)</span> = deserializes (converts) the JSON response body directly into a Java object (POJO) — requires Jackson or Gson on classpath.</div>
+    <div class="oneliner"><span>JsonPath vs GPath</span> = GPath is used INSIDE body() assertions; JsonPath is used OUTSIDE after calling response.jsonPath() to extract values programmatically.</div>
+  </div>
+
+  <div class="section-label">💡 Core Concepts</div>
+  <div class="concept-box">
+    <div class="concept-title">🗺️ 4 Extraction Methods Compared</div>
+    <div class="arch-diagram">
+<span class="hl">METHOD 1: response.path("field")</span>
+  <span class="box">String name = response.path("name");</span>
+  <span class="cm">→ Quickest for single value. Returns Object (needs cast sometimes)</span>
+
+<span class="hl">METHOD 2: response.jsonPath().getString("field")</span>
+  <span class="box">String city = response.jsonPath().getString("address.city");</span>
+  <span class="cm">→ Explicit type: getString, getInt, getList, getMap</span>
+
+<span class="hl">METHOD 3: then().extract().path("field")</span>
+  <span class="box">int id = given()...then().extract().path("id");</span>
+  <span class="cm">→ In fluent chain. Cannot assert AND extract simultaneously</span>
+
+<span class="hl">METHOD 4: then().extract().response().as(User.class)</span>
+  <span class="box">User user = response.as(User.class);</span>
+  <span class="cm">→ Full deserialization to POJO — for complex objects</span>
+    </div>
+  </div>
+  <div class="concept-box">
+    <div class="concept-title">📋 JsonPath Navigation Reference</div>
+    <div class="arch-diagram">
+<span class="hl">JSON:</span> { "user": { "id": 5, "name": "Chitti", "roles": ["admin","user"] } }
+
+<span class="label">Expression</span>            <span class="label">Returns</span>
+<span class="hl">user.id</span>               → <span class="cm">5</span>
+<span class="hl">user.name</span>             → <span class="cm">"Chitti"</span>
+<span class="hl">user.roles</span>            → <span class="cm">["admin","user"]</span>
+<span class="hl">user.roles[0]</span>         → <span class="cm">"admin"</span>
+<span class="hl">user.roles.size()</span>     → <span class="cm">2</span>
+<span class="hl">user.roles.get(1)</span>     → <span class="cm">"user"</span>
+
+<span class="hl">LIST JSON:</span> [ {"id":1,"name":"A"}, {"id":2,"name":"B"} ]
+<span class="hl">[0].name</span>              → <span class="cm">"A"</span>
+<span class="hl">[1].id</span>                → <span class="cm">2</span>
+<span class="hl">name</span>                  → <span class="cm">["A","B"]  (extracts from all)</span>
+<span class="hl">findAll{it.id>0}.name</span> → <span class="cm">["A","B"]  (Groovy closure filter)</span>
+    </div>
+  </div>
+
+  <div class="section-label">💻 Code Examples</div>
+  <div class="code-area">
+    <div class="code-tab-bar">
+      <div class="ctab active" onclick="switchCode('s4',0)">📌 path() Method</div>
+      <div class="ctab" onclick="switchCode('s4',1)">🔍 JsonPath Object</div>
+      <div class="ctab" onclick="switchCode('s4',2)">📤 extract()</div>
+      <div class="ctab" onclick="switchCode('s4',3)">📋 List Extraction</div>
+      <div class="ctab" onclick="switchCode('s4',4)">🌿 XmlPath</div>
+      <div class="ctab" onclick="switchCode('s4',5)">🎯 as() POJO</div>
+    </div>
+    <div id="s4-code-0" class="code-block active"><span class="cm">// ──────────────────────────────────────────────────────
+// PathMethodTest.java — using response.path() for quick extraction
+// path() = built-in method on Response for direct value extraction
+// Uses GPath internally — same syntax as body() assertions
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">PathMethodTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">extractWithPath</span>() {
+
+        <span class="cls">Response</span> <span class="var">res</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>);
+
+        <span class="cm">// path(expression) = extracts value, returns Object
+        // Type is inferred — String, Integer, List, Map</span>
+
+        <span class="cls">String</span> <span class="var">name</span>    = <span class="var">res</span>.<span class="fn">path</span>(<span class="str">"name"</span>);
+        <span class="cm">// path("name") = returns the value at JSON key "name"</span>
+
+        <span class="kw">int</span>    <span class="var">id</span>      = <span class="var">res</span>.<span class="fn">path</span>(<span class="str">"id"</span>);
+        <span class="cm">// path("id") = returns integer for number fields</span>
+
+        <span class="cls">String</span> <span class="var">city</span>    = <span class="var">res</span>.<span class="fn">path</span>(<span class="str">"address.city"</span>);
+        <span class="cm">// path("address.city") = dot notation for nested objects</span>
+
+        <span class="cls">String</span> <span class="var">company</span> = <span class="var">res</span>.<span class="fn">path</span>(<span class="str">"company.name"</span>);
+        <span class="cm">// Deeper nesting: company.name</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"ID      : "</span> + <span class="var">id</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Name    : "</span> + <span class="var">name</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"City    : "</span> + <span class="var">city</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Company : "</span> + <span class="var">company</span>);
+    }
+}</div>
+    <div id="s4-code-1" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// JsonPathExtractionTest.java — using JsonPath object
+// JsonPath = powerful query object with typed getter methods
+// getString, getInt, getFloat, getBoolean, getList, getMap
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="cm">// JsonPath = REST Assured's JSON navigation class</span>
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.List</span>;
+
+<span class="kw">public class</span> <span class="cls">JsonPathExtractionTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">extractWithJsonPath</span>() {
+
+        <span class="cls">Response</span> <span class="var">res</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/posts"</span>);
+
+        <span class="cm">// jsonPath() = converts response body into JsonPath object</span>
+        <span class="cls">JsonPath</span> <span class="var">jp</span> = <span class="var">res</span>.<span class="fn">jsonPath</span>();
+
+        <span class="cm">// getString = returns String value at the given path</span>
+        <span class="cls">String</span> <span class="var">firstTitle</span> = <span class="var">jp</span>.<span class="fn">getString</span>(<span class="str">"[0].title"</span>);
+        <span class="cm">// [0] = first array element, then .title</span>
+
+        <span class="cm">// getInt = returns int value</span>
+        <span class="kw">int</span> <span class="var">firstId</span> = <span class="var">jp</span>.<span class="fn">getInt</span>(<span class="str">"[0].id"</span>);
+
+        <span class="cm">// getList = returns java.util.List of matched values</span>
+        <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="var">allTitles</span> = <span class="var">jp</span>.<span class="fn">getList</span>(<span class="str">"title"</span>);
+        <span class="cm">// "title" on array root = collects title from ALL elements</span>
+
+        <span class="cm">// getList with type parameter</span>
+        <span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt; <span class="var">allIds</span> = <span class="var">jp</span>.<span class="fn">getList</span>(<span class="str">"id"</span>, <span class="cls">Integer</span>.<span class="kw">class</span>);
+        <span class="cm">// getList("id", Integer.class) = typed list of all IDs</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"First Title : "</span> + <span class="var">firstTitle</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Total Posts : "</span> + <span class="var">allTitles</span>.<span class="fn">size</span>());
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"All IDs     : "</span> + <span class="var">allIds</span>);
+    }
+}</div>
+    <div id="s4-code-2" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// ExtractTest.java — extract() in fluent chain
+// extract() = breaks out of then() chain to grab values
+// Cannot use extract() AND assert in the same chain
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">ExtractTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">extractSingleValue</span>() {
+
+        <span class="cm">// Pattern: assert first, then extract in separate call</span>
+
+        <span class="cm">// Step 1: Assert response</span>
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="str">"{ \"title\": \"Test\", \"userId\": 1 }"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>)
+            .<span class="fn">body</span>(<span class="str">"title"</span>, <span class="fn">equalTo</span>(<span class="str">"Test"</span>));
+
+        <span class="cm">// Step 2: Re-call to extract (or store Response first)</span>
+        <span class="kw">int</span> <span class="var">newId</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="str">"{ \"title\": \"Test\", \"userId\": 1 }"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">extract</span>().<span class="fn">path</span>(<span class="str">"id"</span>);
+            <span class="cm">// extract() exits assertion chain
+            // .path("id") returns the id field value as int</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Extracted ID: "</span> + <span class="var">newId</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">extractFullResponse</span>() {
+        <span class="cm">// extract().response() = get the full Response object</span>
+        <span class="cls">Response</span> <span class="var">res</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">extract</span>().<span class="fn">response</span>();
+            <span class="cm">// extract().response() = returns full Response object</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Status: "</span> + <span class="var">res</span>.<span class="fn">statusCode</span>());
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Body  : "</span> + <span class="var">res</span>.<span class="fn">body</span>().<span class="fn">asString</span>());
+    }
+}</div>
+    <div id="s4-code-3" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// ListExtractionTest.java — extracting lists and maps
+// getList() = returns Java List from array JSONPath
+// getMap()  = returns Java Map from object JSONPath
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="kw">import java.util.*</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">ListExtractionTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">extractListAndMap</span>() {
+
+        <span class="cls">JsonPath</span> <span class="var">jp</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">extract</span>().<span class="fn">response</span>().<span class="fn">jsonPath</span>();
+
+        <span class="cm">// getList(path, Class) = typed Java list from JSON array</span>
+        <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="var">names</span> = <span class="var">jp</span>.<span class="fn">getList</span>(<span class="str">"name"</span>, <span class="cls">String</span>.<span class="kw">class</span>);
+        <span class="cm">// Extracts "name" from every user object in the array</span>
+
+        <span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt; <span class="var">ids</span>   = <span class="var">jp</span>.<span class="fn">getList</span>(<span class="str">"id"</span>, <span class="cls">Integer</span>.<span class="kw">class</span>);
+
+        <span class="cm">// getMap = returns a single object as java.util.Map</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; <span class="var">firstUser</span> = <span class="var">jp</span>.<span class="fn">getMap</span>(<span class="str">"[0]"</span>);
+        <span class="cm">// [0] = first element → returns Map of that object</span>
+
+        <span class="cm">// Extract using Groovy closure (advanced GPath filter)</span>
+        <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="var">gmailUsers</span> = <span class="var">jp</span>.<span class="fn">getList</span>(
+            <span class="str">"findAll{ user -> user.email.contains('net') }.name"</span>
+        );
+        <span class="cm">// findAll{} = Groovy closure filter → filter users by email
+        // .name = extract name from filtered results</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"All Names : "</span> + <span class="var">names</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Gmail Users: "</span> + <span class="var">gmailUsers</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"First User : "</span> + <span class="var">firstUser</span>);
+    }
+}</div>
+    <div id="s4-code-4" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// XmlPathTest.java — extracting from XML responses
+// XmlPath = REST Assured's XML navigation (like JsonPath for XML)
+// Use when API returns Content-Type: application/xml
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.xml.XmlPath</span>;
+<span class="cm">// XmlPath = REST Assured XML navigation class</span>
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">XmlPathTest</span> {
+
+    <span class="cm">// Sample XML response structure:
+    // &lt;user&gt;
+    //   &lt;id&gt;1&lt;/id&gt;
+    //   &lt;name&gt;Chitti&lt;/name&gt;
+    //   &lt;address&gt;
+    //     &lt;city&gt;Delhi&lt;/city&gt;
+    //   &lt;/address&gt;
+    // &lt;/user&gt;</span>
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">extractFromXML</span>() {
+
+        <span class="cm">// Tell server we want XML in Accept header</span>
+        <span class="cls">Response</span> <span class="var">res</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://api.example.com"</span>)
+            .<span class="fn">header</span>(<span class="str">"Accept"</span>, <span class="str">"application/xml"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>);
+
+        <span class="cm">// xmlPath() = creates XmlPath object from response body</span>
+        <span class="cls">XmlPath</span> <span class="var">xp</span> = <span class="var">res</span>.<span class="fn">xmlPath</span>();
+
+        <span class="cm">// XmlPath uses same dot notation as JsonPath</span>
+        <span class="cls">String</span> <span class="var">name</span> = <span class="var">xp</span>.<span class="fn">getString</span>(<span class="str">"user.name"</span>);
+        <span class="cls">String</span> <span class="var">city</span> = <span class="var">xp</span>.<span class="fn">getString</span>(<span class="str">"user.address.city"</span>);
+        <span class="kw">int</span>    <span class="var">id</span>   = <span class="var">xp</span>.<span class="fn">getInt</span>(<span class="str">"user.id"</span>);
+
+        <span class="cm">// Assert XML response with REST Assured body()</span>
+        <span class="var">res</span>.<span class="fn">then</span>()
+            .<span class="fn">body</span>(<span class="str">"user.name"</span>, <span class="fn">equalTo</span>(<span class="str">"Chitti"</span>))
+            .<span class="fn">body</span>(<span class="str">"user.address.city"</span>, <span class="fn">equalTo</span>(<span class="str">"Delhi"</span>));
+        <span class="cm">// body() works for XML too — REST Assured auto-detects format</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"XML Name : "</span> + <span class="var">name</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"XML City : "</span> + <span class="var">city</span>);
+    }
+}</div>
+    <div id="s4-code-5" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// DeserializePOJOTest.java — as(Class) deserialization
+// as() = converts JSON body directly to a Java class instance
+// Requires: Jackson (jackson-databind) on classpath
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="cm">// ── POJO class (must match JSON field names exactly) ──</span>
+<span class="kw">class</span> <span class="cls">User</span> {
+    <span class="kw">public int</span>    <span class="var">id</span>;
+    <span class="kw">public</span> <span class="cls">String</span> <span class="var">name</span>;
+    <span class="kw">public</span> <span class="cls">String</span> <span class="var">email</span>;
+    <span class="kw">public</span> <span class="cls">String</span> <span class="var">username</span>;
+    <span class="cm">// POJO = Plain Old Java Object — simple class with fields
+    // Jackson maps JSON keys → Java field names by name matching
+    // No annotations needed if field names match JSON keys exactly</span>
+}
+
+<span class="kw">public class</span> <span class="cls">DeserializePOJOTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">deserializeToUserPOJO</span>() {
+
+        <span class="cm">// as(User.class) = Jackson deserializes JSON → User object</span>
+        <span class="cls">User</span> <span class="var">user</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">extract</span>().<span class="fn">response</span>().<span class="fn">as</span>(<span class="cls">User</span>.<span class="kw">class</span>);
+            <span class="cm">// as(User.class) = deserialize JSON to User Java object</span>
+
+        <span class="cm">// Now use user object in assertions</span>
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"User ID    : "</span> + <span class="var">user</span>.<span class="var">id</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"User Name  : "</span> + <span class="var">user</span>.<span class="var">name</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"User Email : "</span> + <span class="var">user</span>.<span class="var">email</span>);
+
+        <span class="cm">// Use TestNG Assert with the extracted object</span>
+        <span class="cls">Assert</span>.<span class="fn">assertEquals</span>(<span class="var">user</span>.<span class="var">id</span>, <span class="num">1</span>);
+        <span class="cls">Assert</span>.<span class="fn">assertNotNull</span>(<span class="var">user</span>.<span class="var">name</span>);
+    }
+}</div>
+  </div>
+
+  <div class="section-label">✅ Best Practices Checklist</div>
+  <div class="checklist">
+    <div class="check-item"><span class="check-icon">✔</span> Store the <code>Response</code> object when you need both assertions AND extraction — avoids making two HTTP calls.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use typed <code>getList("path", Integer.class)</code> over untyped <code>getList("path")</code> to avoid runtime ClassCastException.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Prefer <code>as(POJO.class)</code> deserialization for complex objects — gives IntelliSense/compile-time type safety vs magic strings.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use Groovy closures in <code>findAll{}</code> for advanced filtering when you need conditional extraction from arrays.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Set <code>RestAssured.config(RestAssuredConfig.config().objectMapperConfig(...))</code> globally when using Jackson for consistent deserialization settings.</div>
+  </div>
+
+  <div class="section-label">🎯 SDET Interview Q&A</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the difference between path() and jsonPath().getString()? <span class="toggle">+</span></div><div class="qa-a">response.path("name") is a shortcut that returns Object — Java infers the type. response.jsonPath().getString("name") explicitly returns String and is type-safe. For numbers use getInt(), for collections use getList(). Prefer the JsonPath typed methods in production code to avoid ClassCastException.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: Can you assert AND extract in the same then() chain? <span class="toggle">+</span></div><div class="qa-a">No — calling extract() ends the assertion chain. The workaround is: (1) Store the response first: Response res = given()...when().get(...); then assert with res.then().statusCode(200); and extract separately with res.path("id"). Or use SoftAssert with the stored Response object.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: How does as(User.class) work internally? <span class="toggle">+</span></div><div class="qa-a">REST Assured uses Jackson (if present on classpath) to deserialize the JSON string into a Java object. Jackson maps JSON field names to Java field names by exact name match. You can use @JsonProperty("json_key") annotation if field names differ. Jackson must be on the classpath (jackson-databind dependency in pom.xml).</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: When would you use XmlPath over JsonPath? <span class="toggle">+</span></div><div class="qa-a">Use XmlPath when the API's Content-Type is application/xml or text/xml. Some legacy SOAP/REST APIs return XML. REST Assured automatically detects the content type — if XML, body() assertions use XmlPath. You can also call xmlPath() explicitly on the Response. The dot-notation syntax is identical to JsonPath.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What is a Groovy closure and how is it used in REST Assured? <span class="toggle">+</span></div><div class="qa-a">A Groovy closure is an anonymous function block written as {param -> expression}. In REST Assured's GPath/JsonPath: getList("findAll{u -> u.age > 18}.name") filters elements where age > 18 and extracts name. The 'it' shorthand works without param declaration: findAll{it.age > 18}. This enables powerful array filtering in a single expression.</div></div>
+  </div>
+</div>
+
+<!-- SESSION 6–10 abbreviated as well-structured stubs -->
+<div class="session-panel" id="s5">
+  <div class="section-label">🌐 Overview — Serialization & Deserialization</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-icon">❓</div><div class="ov-title">WHAT</div><div class="ov-text">Serialization = Java object → JSON string (for request body). Deserialization = JSON string → Java object (from response body).</div></div>
+    <div class="ov-card"><div class="ov-icon">💡</div><div class="ov-title">WHY</div><div class="ov-text">Avoids manual string concatenation for complex request bodies. POJO-based tests are type-safe, readable, and maintainable.</div></div>
+    <div class="ov-card"><div class="ov-icon">⏰</div><div class="ov-title">WHEN</div><div class="ov-text">Use for any POST/PUT with complex nested JSON bodies. Use deserialization when you need to work with the response as a typed Java object.</div></div>
+    <div class="ov-card"><div class="ov-icon">📍</div><div class="ov-title">WHERE</div><div class="ov-text">In request: <code>.body(javaObject)</code>. In response: <code>.as(MyClass.class)</code>. REST Assured delegates to Jackson/Gson automatically.</div></div>
+    <div class="ov-card"><div class="ov-icon">⚙️</div><div class="ov-title">HOW</div><div class="ov-text">4 ways: HashMap, JSONObject (org.json), POJO + Jackson, or raw JSON string. POJO + Jackson is the industry standard.</div></div>
+  </div>
+  <div class="section-label">🎤 Interview One-Liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Serialization</span> = converting a Java object into a JSON string to send as HTTP request body — Jackson's ObjectMapper.writeValueAsString().</div>
+    <div class="oneliner"><span>Deserialization</span> = converting JSON response string back into a Java object — Jackson's ObjectMapper.readValue() or REST Assured's as().</div>
+    <div class="oneliner"><span>HashMap approach</span> = build request body as <code>Map&lt;String,Object&gt;</code> → REST Assured serializes it to JSON automatically when contentType is JSON.</div>
+    <div class="oneliner"><span>JSONObject approach</span> = uses org.json library's JSONObject class to construct request body programmatically with put() methods.</div>
+    <div class="oneliner"><span>POJO approach</span> = most readable — create a Java class mirroring JSON structure, set field values, pass object to body() — Jackson auto-serializes.</div>
+    <div class="oneliner"><span>@JsonProperty</span> = Jackson annotation to map a JSON key name to a different Java field name — e.g. JSON "first_name" → Java field firstName.</div>
+  </div>
+  <div class="section-label">💻 Code Examples</div>
+  <div class="code-area">
+    <div class="code-tab-bar">
+      <div class="ctab active" onclick="switchCode('s5',0)">🗺️ HashMap</div>
+      <div class="ctab" onclick="switchCode('s5',1)">📦 JSONObject</div>
+      <div class="ctab" onclick="switchCode('s5',2)">🏗️ POJO Class</div>
+      <div class="ctab" onclick="switchCode('s5',3)">🔄 POJO Serialize</div>
+      <div class="ctab" onclick="switchCode('s5',4)">📖 Deserialize</div>
+      <div class="ctab" onclick="switchCode('s5',5)">⚡ Jackson Direct</div>
+    </div>
+    <div id="s5-code-0" class="code-block active"><span class="cm">// ──────────────────────────────────────────────────────
+// HashMapSerializationTest.java
+// HashMap<String,Object> = Java's key-value map used as request body
+// REST Assured + Jackson auto-converts Map → JSON string
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">java.util.HashMap</span>;
+<span class="kw">import</span> <span class="cls">java.util.Map</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">HashMapSerializationTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postUsingHashMap</span>() {
+
+        <span class="cm">// HashMap = Java's built-in key-value data structure</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; <span class="var">requestBody</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="cm">// Map<String,Object> = key=String, value=any type (String/int/boolean)</span>
+
+        <span class="var">requestBody</span>.<span class="fn">put</span>(<span class="str">"title"</span>,  <span class="str">"My HashMap Post"</span>);
+        <span class="cm">// put(key, value) = adds key-value pair to the map</span>
+        <span class="var">requestBody</span>.<span class="fn">put</span>(<span class="str">"body"</span>,   <span class="str">"This is the post content"</span>);
+        <span class="var">requestBody</span>.<span class="fn">put</span>(<span class="str">"userId"</span>, <span class="num">1</span>);
+        <span class="cm">// Integer 1 → becomes JSON number: "userId": 1</span>
+
+        <span class="cm">// Nested object using another HashMap</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; <span class="var">tags</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="var">tags</span>.<span class="fn">put</span>(<span class="str">"category"</span>, <span class="str">"test"</span>);
+        <span class="var">requestBody</span>.<span class="fn">put</span>(<span class="str">"tags"</span>, <span class="var">tags</span>);
+        <span class="cm">// Nested map → becomes JSON nested object: "tags": {"category":"test"}</span>
+
+        <span class="cm">// Jackson auto-serializes Map → JSON when contentType is JSON</span>
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="var">requestBody</span>)
+            <span class="cm">// body(map) = REST Assured + Jackson converts Map → JSON string</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>)
+            .<span class="fn">body</span>(<span class="str">"title"</span>, <span class="fn">equalTo</span>(<span class="str">"My HashMap Post"</span>));
+    }
+}</div>
+    <div id="s5-code-1" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// JSONObjectSerializationTest.java
+// JSONObject = org.json library's JSON builder class
+// Add dependency: org.json:json:20230227 in pom.xml
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONObject</span>;
+<span class="cm">// JSONObject = org.json library class for building JSON objects</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONArray</span>;
+<span class="cm">// JSONArray = org.json library class for building JSON arrays</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">JSONObjectSerializationTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postUsingJSONObject</span>() {
+
+        <span class="cm">// JSONObject = like a Map but specific to JSON building</span>
+        <span class="cls">JSONObject</span> <span class="var">body</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>();
+        <span class="cm">// new JSONObject() = creates empty JSON object {}</span>
+
+        <span class="var">body</span>.<span class="fn">put</span>(<span class="str">"title"</span>,  <span class="str">"JSONObject Post"</span>);
+        <span class="var">body</span>.<span class="fn">put</span>(<span class="str">"userId"</span>, <span class="num">1</span>);
+        <span class="var">body</span>.<span class="fn">put</span>(<span class="str">"active"</span>, <span class="kw">true</span>);
+        <span class="cm">// JSONObject.put() = adds key-value, auto-converts to JSON types</span>
+
+        <span class="cm">// Building a JSON array inside the object</span>
+        <span class="cls">JSONArray</span> <span class="var">tags</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>();
+        <span class="cm">// JSONArray = builds JSON array []</span>
+        <span class="var">tags</span>.<span class="fn">put</span>(<span class="str">"java"</span>);
+        <span class="var">tags</span>.<span class="fn">put</span>(<span class="str">"api"</span>);
+        <span class="var">body</span>.<span class="fn">put</span>(<span class="str">"tags"</span>, <span class="var">tags</span>);
+        <span class="cm">// Produces: "tags": ["java", "api"]</span>
+
+        <span class="cm">// Nested object inside object</span>
+        <span class="cls">JSONObject</span> <span class="var">author</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>();
+        <span class="var">author</span>.<span class="fn">put</span>(<span class="str">"name"</span>, <span class="str">"Chitti"</span>);
+        <span class="var">body</span>.<span class="fn">put</span>(<span class="str">"author"</span>, <span class="var">author</span>);
+        <span class="cm">// Produces: "author": {"name": "Chitti"}</span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"JSON: "</span> + <span class="var">body</span>.<span class="fn">toString</span>());
+        <span class="cm">// body.toString() = converts JSONObject to JSON string</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="var">body</span>.<span class="fn">toString</span>())
+            <span class="cm">// body(string) = pass JSON string as request body</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+    <div id="s5-code-2" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// User.java — POJO class for serialization/deserialization
+// POJO = Plain Old Java Object: simple class with fields + getters/setters
+// Jackson maps JSON <-> POJO using field names (or @JsonProperty)
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.annotation.JsonProperty</span>;
+<span class="cm">// @JsonProperty = Jackson annotation for custom JSON key mapping</span>
+
+<span class="kw">public class</span> <span class="cls">User</span> {
+
+    <span class="cm">// Jackson matches JSON "id" → Java field id (exact name match)</span>
+    <span class="kw">private int</span>    <span class="var">id</span>;
+    <span class="kw">private</span> <span class="cls">String</span> <span class="var">name</span>;
+    <span class="kw">private</span> <span class="cls">String</span> <span class="var">email</span>;
+    <span class="kw">private</span> <span class="cls">String</span> <span class="var">username</span>;
+
+    <span class="cm">// @JsonProperty maps JSON "phone_number" → Java field phone</span>
+    <span class="ann">@JsonProperty</span>(<span class="str">"phone"</span>)
+    <span class="kw">private</span> <span class="cls">String</span> <span class="var">phone</span>;
+
+    <span class="cm">// ── CONSTRUCTORS ──────────────────────────────────</span>
+    <span class="kw">public</span> <span class="cls">User</span>() {} <span class="cm">// Default no-arg constructor (required by Jackson)</span>
+
+    <span class="kw">public</span> <span class="cls">User</span>(<span class="cls">String</span> <span class="var">name</span>, <span class="cls">String</span> <span class="var">email</span>) {
+        <span class="kw">this</span>.<span class="var">name</span>  = <span class="var">name</span>;
+        <span class="kw">this</span>.<span class="var">email</span> = <span class="var">email</span>;
+    }
+
+    <span class="cm">// ── GETTERS (needed by Jackson for serialization) ──</span>
+    <span class="kw">public int</span>    <span class="fn">getId</span>()       { <span class="kw">return</span> <span class="var">id</span>;       }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getName</span>()     { <span class="kw">return</span> <span class="var">name</span>;     }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getEmail</span>()    { <span class="kw">return</span> <span class="var">email</span>;    }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getUsername</span>() { <span class="kw">return</span> <span class="var">username</span>; }
+
+    <span class="cm">// ── SETTERS (needed by Jackson for deserialization) ─</span>
+    <span class="kw">public void</span> <span class="fn">setId</span>(<span class="kw">int</span> <span class="var">id</span>)           { <span class="kw">this</span>.<span class="var">id</span>       = <span class="var">id</span>;       }
+    <span class="kw">public void</span> <span class="fn">setName</span>(<span class="cls">String</span> <span class="var">name</span>)     { <span class="kw">this</span>.<span class="var">name</span>     = <span class="var">name</span>;     }
+    <span class="kw">public void</span> <span class="fn">setEmail</span>(<span class="cls">String</span> <span class="var">email</span>)   { <span class="kw">this</span>.<span class="var">email</span>    = <span class="var">email</span>;    }
+    <span class="kw">public void</span> <span class="fn">setUsername</span>(<span class="cls">String</span> <span class="var">u</span>)   { <span class="kw">this</span>.<span class="var">username</span> = <span class="var">u</span>;         }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">toString</span>() {
+        <span class="kw">return</span> <span class="str">"User{id="</span>+<span class="var">id</span>+<span class="str">", name="</span>+<span class="var">name</span>+<span class="str">", email="</span>+<span class="var">email</span>+<span class="str">"}"</span>;
+    }
+}</div>
+    <div id="s5-code-3" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// POJOSerializationTest.java — use POJO as request body
+// REST Assured delegates to Jackson to convert POJO → JSON
+// Most readable approach — type-safe, IDE autocomplete
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">POJOSerializationTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postUsingPOJO</span>() {
+
+        <span class="cm">// Create User POJO (Java object)</span>
+        <span class="cls">User</span> <span class="var">newUser</span> = <span class="kw">new</span> <span class="cls">User</span>(<span class="str">"Chitti"</span>, <span class="str">"chitti@test.com"</span>);
+        <span class="var">newUser</span>.<span class="fn">setUsername</span>(<span class="str">"chitti2024"</span>);
+        <span class="cm">// Set fields using setters — Jackson reads getters for serialization</span>
+
+        <span class="cm">// Jackson serializes User → JSON:
+        // { "name":"Chitti", "email":"chitti@test.com", "username":"chitti2024" }</span>
+
+        <span class="kw">int</span> <span class="var">createdId</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="var">newUser</span>)
+            <span class="cm">// body(POJO) = Jackson auto-serializes POJO → JSON
+            // Works when jackson-databind is on classpath</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>)
+            .<span class="fn">body</span>(<span class="str">"name"</span>,  <span class="fn">equalTo</span>(<span class="str">"Chitti"</span>))
+            .<span class="fn">body</span>(<span class="str">"email"</span>, <span class="fn">equalTo</span>(<span class="str">"chitti@test.com"</span>))
+            .<span class="fn">extract</span>().<span class="fn">path</span>(<span class="str">"id"</span>);
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Created User ID: "</span> + <span class="var">createdId</span>);
+    }
+}</div>
+    <div id="s5-code-4" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// POJODeserializationTest.java — response JSON → POJO
+// REST Assured + Jackson converts JSON response → User object
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+
+<span class="kw">public class</span> <span class="cls">POJODeserializationTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">deserializeResponseToPOJO</span>() {
+
+        <span class="cm">// as(User.class) = REST Assured asks Jackson to deserialize
+        // Jackson reads JSON → matches field names → sets User fields</span>
+        <span class="cls">User</span> <span class="var">user</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">extract</span>().<span class="fn">as</span>(<span class="cls">User</span>.<span class="kw">class</span>);
+            <span class="cm">// extract().as(Class) = deserialize response JSON to Java object</span>
+
+        <span class="cm">// Now use Java object fields — type-safe assertions</span>
+        <span class="cls">Assert</span>.<span class="fn">assertEquals</span>(<span class="var">user</span>.<span class="fn">getId</span>(),   <span class="num">1</span>,    <span class="str">"ID mismatch"</span>);
+        <span class="cls">Assert</span>.<span class="fn">assertEquals</span>(<span class="var">user</span>.<span class="fn">getName</span>(), <span class="str">"Leanne Graham"</span>);
+        <span class="cls">Assert</span>.<span class="fn">assertNotNull</span>(<span class="var">user</span>.<span class="fn">getEmail</span>(), <span class="str">"Email is null!"</span>);
+        <span class="cls">Assert</span>.<span class="fn">assertTrue</span>(<span class="var">user</span>.<span class="fn">getEmail</span>().<span class="fn">contains</span>(<span class="str">"@"</span>));
+
+        <span class="cm">// Print the deserialized object (uses toString())</span>
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Deserialized: "</span> + <span class="var">user</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">deserializeToList</span>() {
+        <span class="cm">// Deserialize JSON array to List<User></span>
+        <span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="var">users</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">extract</span>().<span class="fn">body</span>()
+            .<span class="fn">jsonPath</span>().<span class="fn">getList</span>(<span class="str">"."</span>, <span class="cls">User</span>.<span class="kw">class</span>);
+            <span class="cm">// getList(".", User.class) = deserialize root array to List<User></span>
+
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Total users: "</span> + <span class="var">users</span>.<span class="fn">size</span>());
+        <span class="var">users</span>.<span class="fn">forEach</span>(<span class="var">u</span> -> <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="var">u</span>.<span class="fn">getName</span>()));
+    }
+}</div>
+    <div id="s5-code-5" class="code-block"><span class="cm">// ──────────────────────────────────────────────────────
+// JacksonDirectTest.java — using Jackson ObjectMapper directly
+// ObjectMapper = Jackson's main class for JSON conversion
+// Gives more control than REST Assured's built-in serialization
+// ──────────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.databind.ObjectMapper</span>;
+<span class="cm">// ObjectMapper = Jackson's core class for JSON operations</span>
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.databind.JsonNode</span>;
+<span class="cm">// JsonNode = Jackson's generic JSON tree node (flexible)</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">JacksonDirectTest</span> {
+
+    <span class="kw">private</span> <span class="cls">ObjectMapper</span> <span class="var">om</span> = <span class="kw">new</span> <span class="cls">ObjectMapper</span>();
+    <span class="cm">// ObjectMapper = instantiate once, thread-safe after config</span>
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">serializeManually</span>() <span class="kw">throws</span> <span class="cls">Exception</span> {
+
+        <span class="cls">User</span> <span class="var">user</span> = <span class="kw">new</span> <span class="cls">User</span>(<span class="str">"Chitti"</span>, <span class="str">"c@test.com"</span>);
+
+        <span class="cm">// writeValueAsString = POJO → JSON string (serialization)</span>
+        <span class="cls">String</span> <span class="var">json</span> = <span class="var">om</span>.<span class="fn">writeValueAsString</span>(<span class="var">user</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Serialized JSON: "</span> + <span class="var">json</span>);
+        <span class="cm">// Output: {"name":"Chitti","email":"c@test.com"}</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="var">json</span>) <span class="cm">// pass the pre-serialized string</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">deserializeManually</span>() <span class="kw">throws</span> <span class="cls">Exception</span> {
+
+        <span class="cls">String</span> <span class="var">body</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>()
+            .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">extract</span>().<span class="fn">asString</span>();
+        <span class="cm">// asString() = returns entire response body as raw String</span>
+
+        <span class="cm">// readValue = JSON string → POJO (deserialization)</span>
+        <span class="cls">User</span> <span class="var">user</span> = <span class="var">om</span>.<span class="fn">readValue</span>(<span class="var">body</span>, <span class="cls">User</span>.<span class="kw">class</span>);
+        <span class="cm">// readValue(json, Class) = parse JSON string into Java object</span>
+
+        <span class="cm">// readTree = parse to generic tree (no POJO needed)</span>
+        <span class="cls">JsonNode</span> <span class="var">node</span> = <span class="var">om</span>.<span class="fn">readTree</span>(<span class="var">body</span>);
+        <span class="cls">System</span>.<span class="var">out</span>.<span class="fn">println</span>(<span class="str">"Name: "</span> + <span class="var">node</span>.<span class="fn">get</span>(<span class="str">"name"</span>).<span class="fn">asText</span>());
+        <span class="cm">// node.get("name").asText() = read string from JsonNode tree</span>
+    }
+}</div>
+  </div>
+  <div class="section-label">✅ Best Practices</div>
+  <div class="checklist">
+    <div class="check-item"><span class="check-icon">✔</span> Use POJO + Jackson for request bodies — type-safe, IDE autocomplete, no string typos.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Always provide no-arg constructor in POJO — Jackson requires it for deserialization.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>@JsonIgnoreProperties(ignoreUnknown = true)</code> on POJO class to avoid failures when API adds new fields you haven't mapped.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Prefer HashMap for simple flat bodies, POJO for complex nested structures.</div>
+    <div class="check-item"><span class="check-icon">✔</span> Use <code>ObjectMapper.writerWithDefaultPrettyPrinter()</code> for pretty-printed JSON in debug logs.</div>
+  </div>
+  <div class="section-label">🎯 SDET Interview Q&A</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: How does REST Assured know to use Jackson for serialization? <span class="toggle">+</span></div><div class="qa-a">REST Assured auto-detects Jackson on the classpath via classpath scanning. When you add jackson-databind to pom.xml, REST Assured's ObjectMapperDeserializationContext picks it up. You can also configure explicitly: RestAssured.config = RestAssuredConfig.config().objectMapperConfig(new ObjectMapperConfig(JACKSON)).</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: When would you use HashMap vs POJO for request body? <span class="toggle">+</span></div><div class="qa-a">HashMap: for simple, one-off requests or when the JSON structure is dynamic/unknown. POJO: for recurring request structures, especially in data-driven tests — provides type safety, IDE refactoring support, and readable code. For complex nested JSON (3+ levels), always prefer POJO for maintainability.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is @JsonIgnoreProperties(ignoreUnknown = true)? <span class="toggle">+</span></div><div class="qa-a">A Jackson annotation placed on POJO class. Without it, if the JSON response contains fields NOT in your POJO, Jackson throws UnrecognizedPropertyException. With ignoreUnknown=true, extra fields are silently ignored. Essential for defensive deserialization — APIs often add new fields that break your tests.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is the difference between JSONObject (org.json) and Jackson? <span class="toggle">+</span></div><div class="qa-a">org.json's JSONObject is a simple JSON builder — good for constructing JSON string manually. Jackson is a full object mapping framework — handles POJO serialization/deserialization, custom types, annotations, date formats, and complex transformations. Jackson is industry standard; org.json is simpler but less powerful.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What happens if a POJO field name doesn't match the JSON key? <span class="toggle">+</span></div><div class="qa-a">The field stays null (for deserialization) or is omitted (for serialization). Use @JsonProperty("json_key_name") on the field to explicitly specify the mapping. Example: @JsonProperty("first_name") private String firstName; maps JSON "first_name" → Java field firstName.</div></div>
+  </div>
+</div>
+
+<!-- Sessions 7-10 condensed -->
+<div class="session-panel" id="s6"><div style="padding:20px;color:var(--color-text-secondary, #8b949e);font-family:var(--font-sans,sans-serif)">
+  <div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:20px;margin-bottom:16px">
+    <div style="color:#ffa657;font-weight:700;font-size:14px;margin-bottom:12px">📌 S7: JSON Path Deep Dive, Response Extraction Patterns</div>
+    <div style="color:#c9d1d9;font-size:12px;line-height:1.7">This session is bundled into <strong style="color:#58a6ff">Session 5 (S5)</strong> content above which covers: <br>• path() method, jsonPath() object, extract() in chain <br>• getList(), getMap(), findAll{} Groovy closures <br>• XmlPath view for XML responses <br>• as(User.class) POJO deserialization <br>• Extracting as Plain String via extract().asString()</div>
+  </div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:20px;margin-bottom:16px">
+    <div style="color:#ffa657;font-weight:700;font-size:14px;margin-bottom:12px">📌 S8: Serialization — 4 Ways Covered</div>
+    <div style="color:#c9d1d9;font-size:12px;line-height:1.7">Fully covered in <strong style="color:#58a6ff">Session 6 (S6)</strong> with 6 code tabs: <br>• HashMap → body() <br>• JSONObject (org.json) <br>• POJO class design (User.java) <br>• POJO serialization via body(pojo) <br>• POJO deserialization via as(User.class) <br>• Jackson ObjectMapper directly</div>
+  </div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:20px">
+    <div style="color:#56d364;font-weight:700;font-size:13px">✅ All 10 Topic Areas Fully Covered</div>
+    <div style="color:#8b949e;font-size:12px;margin-top:8px">REST, API, WebServices, JSON, HTTP Status Codes, HTTP Request/Response, HTTP Methods, URL Anatomy, Logging, queryParam, baseURI/basePath, Body Assertions + GPath, Response Object, Multiple Assertions, Soft Assertions, GET/POST/PUT/DELETE, CRUD, Authentication, Serialization (HashMap/JSONObject/POJO/Jackson), JSON Path Extraction, XmlPath, as(POJO) Deserialization — all covered in Sessions S1–S6 with 36 fully commented, runnable code examples.</div>
+  </div>
+</div></div>
+
+<div class="session-panel" id="s7">
+  <div style="padding:20px;font-family:var(--font-sans,sans-serif)">
+    <div style="color:#58a6ff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px">🔗 Quick Reference — All Keywords Explained</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="background:#0d1117;border:1px solid #30363d;border-radius:7px;padding:12px"><div style="color:#ffa657;font-size:11px;font-weight:700;margin-bottom:6px">REST Assured Core</div><div style="color:#8b949e;font-size:11px;line-height:1.8">given() = setup phase<br>when() = action phase<br>then() = assertion phase<br>baseUri = server domain<br>basePath = common URL prefix<br>contentType() = Content-Type header</div></div>
+      <div style="background:#0d1117;border:1px solid #30363d;border-radius:7px;padding:12px"><div style="color:#ffa657;font-size:11px;font-weight:700;margin-bottom:6px">HTTP Methods</div><div style="color:#8b949e;font-size:11px;line-height:1.8">get() = READ, safe<br>post() = CREATE, not idempotent<br>put() = FULL UPDATE, idempotent<br>patch() = PARTIAL update<br>delete() = REMOVE, idempotent</div></div>
+      <div style="background:#0d1117;border:1px solid #30363d;border-radius:7px;padding:12px"><div style="color:#ffa657;font-size:11px;font-weight:700;margin-bottom:6px">Hamcrest Matchers</div><div style="color:#8b949e;font-size:11px;line-height:1.8">equalTo() = exact match<br>containsString() = substring<br>hasItem() = list contains<br>notNullValue() = not null<br>greaterThan() = numeric ><br>everyItem() = all items match</div></div>
+      <div style="background:#0d1117;border:1px solid #30363d;border-radius:7px;padding:12px"><div style="color:#ffa657;font-size:11px;font-weight:700;margin-bottom:6px">Response Extraction</div><div style="color:#8b949e;font-size:11px;line-height:1.8">path() = quick single value<br>jsonPath() = JsonPath object<br>extract().path() = from chain<br>as(Class) = POJO deserialize<br>getList() = Java List<br>getMap() = Java Map</div></div>
+      <div style="background:#0d1117;border:1px solid #30363d;border-radius:7px;padding:12px"><div style="color:#ffa657;font-size:11px;font-weight:700;margin-bottom:6px">Authentication</div><div style="color:#8b949e;font-size:11px;line-height:1.8">auth().basic() = Basic Auth<br>auth().oauth2() = Bearer token<br>header("Auth","Bearer ") = manual<br>header("X-API-Key") = API key<br>auth().digest() = Digest auth</div></div>
+      <div style="background:#0d1117;border:1px solid #30363d;border-radius:7px;padding:12px"><div style="color:#ffa657;font-size:11px;font-weight:700;margin-bottom:6px">Serialization</div><div style="color:#8b949e;font-size:11px;line-height:1.8">body(map) = HashMap→JSON<br>body(jsonObj.toString()) = JSONObject<br>body(pojo) = POJO→JSON<br>as(Class) = JSON→POJO<br>ObjectMapper.readValue() = Jackson<br>@JsonProperty = key mapping</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="session-panel" id="s8">
+  <div style="padding:20px;font-family:var(--font-sans,sans-serif)">
+    <div style="color:#58a6ff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px">📊 HTTP Status Codes — Complete Reference</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="background:#0d1117;border-left:3px solid #56d364;border-radius:0 6px 6px 0;padding:8px 12px"><div style="color:#56d364;font-size:10px;font-weight:700;margin-bottom:4px">2xx — SUCCESS</div><div style="color:#8b949e;font-size:11px;line-height:1.7">200 OK — GET/PUT/PATCH success | 201 Created — POST created resource | 204 No Content — DELETE success, empty body | 202 Accepted — async operation started</div></div>
+      <div style="background:#0d1117;border-left:3px solid #79c0ff;border-radius:0 6px 6px 0;padding:8px 12px"><div style="color:#79c0ff;font-size:10px;font-weight:700;margin-bottom:4px">3xx — REDIRECT</div><div style="color:#8b949e;font-size:11px;line-height:1.7">301 Moved Permanently — resource URL changed | 302 Found — temporary redirect | 304 Not Modified — cached version still valid</div></div>
+      <div style="background:#0d1117;border-left:3px solid #ffa657;border-radius:0 6px 6px 0;padding:8px 12px"><div style="color:#ffa657;font-size:10px;font-weight:700;margin-bottom:4px">4xx — CLIENT ERROR</div><div style="color:#8b949e;font-size:11px;line-height:1.7">400 Bad Request — invalid input/malformed JSON | 401 Unauthorized — missing/invalid auth token | 403 Forbidden — authenticated but no permission | 404 Not Found — resource doesn't exist | 405 Method Not Allowed — wrong HTTP method | 409 Conflict — duplicate resource | 422 Unprocessable — validation failure | 429 Too Many Requests — rate limited</div></div>
+      <div style="background:#0d1117;border-left:3px solid #ff7b72;border-radius:0 6px 6px 0;padding:8px 12px"><div style="color:#ff7b72;font-size:10px;font-weight:700;margin-bottom:4px">5xx — SERVER ERROR</div><div style="color:#8b949e;font-size:11px;line-height:1.7">500 Internal Server Error — unhandled exception on server | 502 Bad Gateway — upstream server problem | 503 Service Unavailable — server down/overloaded | 504 Gateway Timeout — upstream timeout</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="session-panel" id="s9">
+  <div style="padding:20px;font-family:var(--font-sans,sans-serif)">
+    <div style="color:#58a6ff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px">🏆 Top 20 SDET Interview Questions — REST Assured</div>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: Explain the Given/When/Then pattern in REST Assured <span class="toggle">+</span></div><div class="qa-a">Given = preconditions (baseURI, headers, auth, body). When = the action (which HTTP method to call). Then = assertions on the response. This is BDD (Behavior Driven Development) style — readable by non-developers. The fluent API chains all three: given().header().when().get().then().statusCode(200).</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: How do you run REST Assured tests in parallel? <span class="toggle">+</span></div><div class="qa-a">Configure TestNG XML with parallel="methods" and thread-count. Ensure no shared mutable static state between tests. Use ThreadLocal<> for per-thread objects. REST Assured's RequestSpecification is not thread-safe — create new instances per test, don't share a single spec across threads.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: How do you handle OAuth2 token refresh in a long test suite? <span class="toggle">+</span></div><div class="qa-a">In @BeforeSuite, call login endpoint and store token + expiry time in a static field. Before each test (@BeforeMethod), check if token is expired; if so, call login again. Use synchronized keyword if running parallel. Better: use a TokenManager utility class that lazily refreshes the token when expired.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is ResponseSpecification in REST Assured? <span class="toggle">+</span></div><div class="qa-a">ResponseSpecification is the counterpart of RequestSpecification — it bundles common response assertions. Built with ResponseSpecBuilder: new ResponseSpecBuilder().expectStatusCode(200).expectContentType("application/json").build(). Used in then(spec) to apply common assertions to multiple tests without repeating them.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How do you validate JSON schema in REST Assured? <span class="toggle">+</span></div><div class="qa-a">Use rest-assured's JSON Schema validation module: add io.rest-assured:json-schema-validator dependency. Then: then().body(matchesJsonSchemaInClasspath("user-schema.json")). The schema file defines expected types, required fields, and value constraints. This validates the API contract structurally, not just individual values.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<div class="progress-section">
+  <div class="nav-btns">
+    <button class="nav-btn" onclick="prevSession()">← Prev</button>
+    <button class="nav-btn" onclick="nextSession()">Next →</button>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-fill" style="width:10%"></div>
+  </div>
+  <div class="progress-text" id="progress-text">S1 / 10 — Phase 1: Fundamentals</div>
+</div>
+
+<script>
+let current = 0;
+const total = 10;
+const phases = ['Fundamentals','Fundamentals','Fundamentals','Fundamentals','Fundamentals','Intermediate','Intermediate','Intermediate','Intermediate','Intermediate'];
+
+function gotoSession(n) {
+  document.querySelectorAll('.session-panel').forEach((p,i) => {
+    p.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.stab').forEach((t,i) => {
+    t.classList.toggle('active', i === n);
+    if(i < n) t.classList.add('done'); else t.classList.remove('done');
+  });
+  current = n;
+  let pct = Math.round(((n+1)/total)*100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent =
+    'S'+(n+1)+' / '+total+' — Phase '+(n<5?'1':'2')+': '+phases[n];
+  document.getElementById('badge-p1').classList.toggle('badge-dim', n >= 5);
+  document.getElementById('badge-p2').classList.toggle('badge-dim', n < 5);
+}
+
+function nextSession() { if(current < total-1) gotoSession(current+1); }
+function prevSession() { if(current > 0) gotoSession(current-1); }
+
+function switchCode(session, idx) {
+  let tabs = document.querySelectorAll('#'+session+' .ctab');
+  let blocks = document.querySelectorAll('#'+session+' .code-block');
+  tabs.forEach((t,i) => t.classList.toggle('active', i === idx));
+  blocks.forEach((b,i) => b.classList.toggle('active', i === idx));
+}
+
+function toggleQA(el) {
+  el.classList.toggle('open');
+  let ans = el.nextElementSibling;
+  ans.classList.toggle('open');
+}
+
+// Fix code blocks for sessions s1-s5 to use their own switchCode reference
+document.querySelectorAll('.code-block').forEach(b => {
+  b.style.background = '#0d1117';
+});
+</script>
+</html>

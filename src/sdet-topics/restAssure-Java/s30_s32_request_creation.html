@@ -1,0 +1,1444 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;font-size:13px;background:transparent;color:#e6edf3}
+.wrap{border:1px solid #30363d;border-radius:10px;overflow:hidden;background:#0d1117}
+.topbar{background:#161b22;padding:10px 14px 0;border-bottom:1px solid #30363d}
+.badges{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.bdg{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.b1{background:#1f6feb22;color:#58a6ff;border:1px solid #1f6feb}
+.b2{background:#3fb95022;color:#56d364;border:1px solid #3fb950}
+.b3{background:#db6d2822;color:#ffa657;border:1px solid #db6d28}
+.stab-row{display:flex;overflow-x:auto;scrollbar-width:none;gap:2px}
+.stab-row::-webkit-scrollbar{display:none}
+.stab{flex-shrink:0;padding:8px 18px;font-size:11px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;border:1px solid #30363d;border-bottom:none;color:#8b949e;background:#0d1117;white-space:nowrap;user-select:none;transition:all .15s}
+.stab:hover{color:#e6edf3;background:#21262d}
+.stab.active{background:#161b22;color:#fff;border-color:#58a6ff;border-bottom:2px solid #161b22}
+.stab.done::after{content:' ✓';color:#56d364;font-size:9px}
+.session{display:none;background:#161b22}
+.session.active{display:block}
+.sp{padding:16px}
+.sec{font-size:10px;font-weight:700;letter-spacing:1.2px;color:#58a6ff;text-transform:uppercase;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:#30363d}
+.ovg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.ovc{background:#0d1117;border:1px solid #30363d;border-radius:7px;padding:10px}
+.ov-ic{font-size:16px;margin-bottom:3px}
+.ov-t{font-size:10px;font-weight:700;color:#58a6ff;margin-bottom:2px;text-transform:uppercase}
+.ov-tx{font-size:11px;color:#8b949e;line-height:1.5}
+.kw-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.kwi{background:#0d1117;border-left:2px solid #1f6feb;border-radius:0 6px 6px 0;padding:7px 10px}
+.kw-k{font-family:'Courier New',monospace;font-size:11px;color:#58a6ff;font-weight:700;margin-bottom:2px}
+.kw-v{font-size:11px;color:#8b949e;line-height:1.4}
+.ol-list{display:flex;flex-direction:column;gap:5px}
+.ol{background:#0d1117;border-left:2px solid #30363d;border-radius:0 6px 6px 0;padding:7px 12px;font-size:11px;color:#e6edf3;line-height:1.5}
+.ol b{color:#58a6ff}
+.arch-box{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:12px;margin-bottom:8px}
+.arch-t{font-size:12px;font-weight:700;color:#ffa657;margin-bottom:7px}
+.arch{font-family:'Courier New',monospace;font-size:11px;color:#8b949e;line-height:1.8;white-space:pre;overflow-x:auto}
+.arch .hl{color:#56d364}.arch .bl{color:#79c0ff}.arch .or{color:#ffa657}.arch .pk{color:#d2a8ff}.arch .rd{color:#ff7b72}.arch .cm{color:#6e7681;font-style:italic}
+.code-area{background:#0d1117;border-top:1px solid #21262d}
+.ctbar{display:flex;gap:2px;padding:8px 8px 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #21262d}
+.ctbar::-webkit-scrollbar{display:none}
+.ct{flex-shrink:0;padding:5px 12px;font-size:11px;cursor:pointer;border-radius:5px 5px 0 0;border:1px solid #30363d;border-bottom:none;color:#8b949e;background:#161b22;white-space:nowrap;font-weight:600;user-select:none;transition:color .15s}
+.ct:hover{color:#e6edf3;background:#21262d}
+.ct.active{background:#0d1117;color:#e6edf3;border-color:#58a6ff;border-bottom:2px solid #0d1117}
+.fn-hdr{background:#0d1117;padding:4px 14px;font-family:'Courier New',monospace;font-size:11px;color:#79c0ff;border-bottom:1px solid #30363d}
+.cblk{display:none;padding:13px 15px;font-size:11.5px;line-height:1.8;color:#e6edf3;white-space:pre;overflow-x:auto;font-family:'Courier New',monospace;background:#0d1117;min-height:250px}
+.cblk.active{display:block}
+.kw{color:#ff7b72}.cls{color:#ffa657}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cmt{color:#6e7681;font-style:italic}.num{color:#79c0ff}.ann{color:#56d364}.vr{color:#e6edf3}
+.cl{display:flex;flex-direction:column;gap:5px}
+.ci{display:flex;align-items:flex-start;gap:8px;background:#0d1117;border-radius:6px;padding:8px 10px;font-size:11px;color:#c9d1d9;line-height:1.5}
+.ck{color:#56d364;font-size:14px;flex-shrink:0;margin-top:1px}
+.qa-list{display:flex;flex-direction:column;gap:7px}
+.qi{background:#0d1117;border-radius:8px;overflow:hidden;border:1px solid #30363d}
+.qq{background:#161b22;padding:9px 14px;font-size:11px;font-weight:700;color:#58a6ff;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qq:hover{background:#21262d}
+.qtg{color:#8b949e;font-size:15px;flex-shrink:0}
+.qa-a{padding:0 14px;max-height:0;overflow:hidden;font-size:11px;color:#8b949e;line-height:1.65;transition:max-height .3s ease,padding .3s}
+.qa-a.open{padding:10px 14px;max-height:400px}
+.pbar{background:#0d1117;border-top:1px solid #21262d;padding:10px 14px;display:flex;align-items:center;gap:12px}
+.pw{flex:1;background:#21262d;height:5px;border-radius:999px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,#1f6feb,#56d364);border-radius:999px;transition:width .4s}
+.pt{font-size:11px;color:#8b949e;white-space:nowrap}
+.nvb{display:flex;gap:6px}
+.nb{background:transparent;border:1px solid #30363d;color:#e6edf3;padding:5px 14px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600}
+.nb:hover{background:#21262d}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar">
+  <div class="badges">
+    <div class="bdg b1">🔧 REST Assured Request Creation — S30 to S32</div>
+    <div class="bdg b2">JSONObject/JsonPath · Map · Gson+POJO</div>
+    <div class="bdg b3">Complex PUT API · Nested JSON · All Headers &amp; Params</div>
+  </div>
+  <div class="stab-row" id="stabRow">
+    <div class="stab active" data-si="0">S30: JSONObject &amp; JSONArray</div>
+    <div class="stab" data-si="1">S31: Map&lt;String,Object&gt;</div>
+    <div class="stab" data-si="2">S32: Gson + POJO</div>
+  </div>
+</div>
+
+<!-- ===================== S30 ===================== -->
+<div class="session active" id="session-0">
+<div class="sp">
+
+<div class="sec">Overview — JSONObject &amp; JSONArray Request Creation</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">📦</div><div class="ov-t">What</div><div class="ov-tx">org.json's <code>JSONObject</code> and <code>JSONArray</code> build request body JSON explicitly via <code>put()</code> chains — chainable, readable, and preserving insertion order.</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">More readable than raw String concatenation. Explicit JSON construction with type-safe put() — no Jackson dependency needed. String.toString() gives final body.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Use for complex nested PUT/POST bodies where you want explicit control over every field with no POJO class overhead. Good for one-off test payloads.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx"><code>given().body(jsonObject.toString())</code> — JSONObject.toString() gives the JSON string. Must call <code>.toString()</code> explicitly.</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Build bottom-up: deepest JSONObject first → nest via <code>put(key, JSONObject)</code>. Arrays via <code>JSONArray</code> with <code>put(element)</code>. Final: <code>body(root.toString())</code>.</div></div>
+</div>
+
+<div class="sec">Shared PUT API — Complex Request JSON (used in all S30–S32)</div>
+<div class="arch-box">
+  <div class="arch-t">PUT /v2/employees/{empId} — full update with complex nested body</div>
+  <div class="arch"><span class="hl">ENDPOINT:</span>  PUT https://api.hrms.com/v2/employees/{empId}
+<span class="or">PATH PARAM :</span>  empId = "EMP-1001"
+<span class="or">QUERY PARAMS:</span> version=2  &amp;  notify=true  &amp;  audit=strict
+<span class="hl">HEADERS:</span>
+  <span class="pk">Authorization : Bearer eyJhbGciOiJIUzI1NiJ9.payload.sig</span>
+  <span class="pk">Content-Type  : application/json</span>
+  <span class="pk">X-Tenant-ID   : ORG-777</span>
+  <span class="pk">X-Request-ID  : REQ-UPD-20240101</span>
+  <span class="pk">Accept        : application/json</span>
+  <span class="pk">X-Idempotency-Key : IDEM-PUT-9999</span>
+
+<span class="hl">COMPLEX REQUEST BODY (nested JSON — 4 levels deep):</span>
+<span class="bl">{</span>
+  <span class="bl">"empId"      : "EMP-1001",</span>
+  <span class="bl">"firstName"  : "Chitti",</span>
+  <span class="bl">"lastName"   : "SDET",</span>
+  <span class="bl">"email"      : "chitti@hrms.com",</span>
+  <span class="bl">"status"     : "ACTIVE",</span>
+  <span class="bl">"department" : {</span>                              <span class="cm">← Level 2 object</span>
+  <span class="bl">    "deptId"   : "DEPT-ENG",</span>
+  <span class="bl">    "deptName" : "Engineering",</span>
+  <span class="bl">    "costCenter": "CC-4001",</span>
+  <span class="bl">    "location"  : {</span>                            <span class="cm">← Level 3 object</span>
+  <span class="bl">        "city"    : "Delhi",</span>
+  <span class="bl">        "country" : "India",</span>
+  <span class="bl">        "geo"     : { "lat": 28.6139, "lng": 77.2090 }</span>  <span class="cm">← Level 4</span>
+  <span class="bl">    }</span>
+  <span class="bl">  },</span>
+  <span class="bl">"roles"      : ["SDET", "LEAD", "REVIEWER"],</span>   <span class="cm">← String array</span>
+  <span class="bl">"projects"   : [</span>                               <span class="cm">← Array of objects</span>
+  <span class="bl">    { "projectId":"PRJ-101","name":"HRMS Automation","billable":true,"priority":1 },</span>
+  <span class="bl">    { "projectId":"PRJ-202","name":"API Framework",  "billable":false,"priority":2 }</span>
+  <span class="bl">  ],</span>
+  <span class="bl">"compensation": {</span>                             <span class="cm">← Level 2 object</span>
+  <span class="bl">    "currency"  : "INR",</span>
+  <span class="bl">    "ctc"       : 2500000.00,</span>
+  <span class="bl">    "breakdown" : {</span>                            <span class="cm">← Level 3 object</span>
+  <span class="bl">        "basic"  : 1250000.00,</span>
+  <span class="bl">        "hra"    : 500000.00,</span>
+  <span class="bl">        "special": 750000.00</span>
+  <span class="bl">    }</span>
+  <span class="bl">  },</span>
+  <span class="bl">"skills"     : ["Java","REST Assured","TestNG","Jenkins"],</span>
+  <span class="bl">"active"     : true,</span>
+  <span class="bl">"experience" : 5</span>
+<span class="bl">}</span></div>
+</div>
+
+<div class="sec">Keyword Glossary</div>
+<div class="kw-grid">
+  <div class="kwi"><div class="kw-k">JSONObject</div><div class="kw-v">org.json class building JSON objects via put(key, value). Chainable. toString() = final JSON string.</div></div>
+  <div class="kwi"><div class="kw-k">JSONArray</div><div class="kw-v">org.json class building JSON arrays via put(value). Holds strings, numbers, or JSONObjects.</div></div>
+  <div class="kwi"><div class="kw-k">put(key, value)</div><div class="kw-v">JSONObject method — adds a field. Value can be String, int, double, boolean, JSONObject, JSONArray.</div></div>
+  <div class="kwi"><div class="kw-k">put(value)</div><div class="kw-v">JSONArray method — appends an element. Chainable: new JSONArray().put("a").put("b").</div></div>
+  <div class="kwi"><div class="kw-k">toString()</div><div class="kw-v">Converts JSONObject/JSONArray to JSON String — MANDATORY when passing to body(). toString(2) = pretty-printed.</div></div>
+  <div class="kwi"><div class="kw-k">chaining</div><div class="kw-v">put() returns 'this' in both JSONObject and JSONArray — allows fluent builder style: jo.put("a","x").put("b","y").</div></div>
+  <div class="kwi"><div class="kw-k">bottom-up build</div><div class="kw-v">Create deepest nested objects first, then embed them into parent objects. Prevents NPE during construction.</div></div>
+  <div class="kwi"><div class="kw-k">pathParam()</div><div class="kw-v">REST Assured method replacing a {placeholder} in the URL path: pathParam("empId","EMP-1001").</div></div>
+  <div class="kwi"><div class="kw-k">queryParam()</div><div class="kw-v">REST Assured method appending ?key=value to the URL: queryParam("notify","true").</div></div>
+  <div class="kwi"><div class="kw-k">header()</div><div class="kw-v">REST Assured method adding an HTTP header to the request: header("X-Tenant-ID","ORG-777").</div></div>
+</div>
+
+<div class="sec">Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>JSONObject.put(key, JSONObject)</b> = embeds one JSONObject inside another — used to create nested objects. put() returns 'this' enabling method chaining.</div>
+  <div class="ol"><b>JSONArray.put(JSONObject)</b> = appends an object element to a JSON array — used to build arrays of objects like projects[] in the employee body.</div>
+  <div class="ol"><b>body(jo.toString())</b> = MANDATORY: JSONObject doesn't auto-serialize — you must explicitly call toString() before passing to REST Assured body().</div>
+  <div class="ol"><b>Bottom-up construction</b> = always build the deepest nested object first (geo), then embed it into its parent (location), then into the grandparent (department).</div>
+  <div class="ol"><b>toString(2)</b> = pretty-print with 2-space indent — use System.out.println(jo.toString(2)) to verify the exact JSON structure before sending.</div>
+  <div class="ol"><b>pathParam("empId","EMP-1001")</b> = replaces {empId} in the URL. Without this call, REST Assured would send a literal "{empId}" in the URL causing a 404.</div>
+</div>
+
+<div class="sec">Code Examples</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s30">
+    <div class="ct active" data-ci="0" data-cs="s30">JO_FlatAndNestedLevel2.java</div>
+    <div class="ct" data-ci="1" data-cs="s30">JO_Deep4LevelNesting.java</div>
+    <div class="ct" data-ci="2" data-cs="s30">JO_ArraysOfObjects.java</div>
+    <div class="ct" data-ci="3" data-cs="s30">JO_FullComplexBody.java</div>
+  </div>
+  <div class="fn-hdr" id="fh-s30">JO_FlatAndNestedLevel2.java</div>
+
+  <div id="s30-c0" class="cblk active"><span class="cmt">// JO_FlatAndNestedLevel2.java
+// Builds flat + 1 level nested request body with JSONObject
+// Demonstrates all JSONObject.put() value types + pathParam + queryParam + headers
+// org.json dependency required: org.json:json:20231013</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONObject</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">JO_FlatAndNestedLevel2</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_FlatAndLevel2Nested</span>() {
+
+        <span class="cmt">// ── Build Level 2 nested object: department ──────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">department</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"deptId"</span>,    <span class="str">"DEPT-ENG"</span>)
+            .put(<span class="str">"deptName"</span>,  <span class="str">"Engineering"</span>)
+            .put(<span class="str">"costCenter"</span>,<span class="str">"CC-4001"</span>);
+        <span class="cmt">// put() returns 'this' → chainable builder pattern
+        // Each put(key, String) adds a JSON string field</span>
+
+        <span class="cmt">// ── Build Level 2 nested object: compensation ────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">compensation</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"currency"</span>, <span class="str">"INR"</span>)
+            .put(<span class="str">"ctc"</span>,      <span class="num">2500000.00</span>);
+            <span class="cmt">// put(key, double) → JSON number: "ctc": 2500000.0</span>
+
+        <span class="cmt">// ── Build root PUT body ──────────────────────────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"empId"</span>,      <span class="str">"EMP-1001"</span>)
+            .put(<span class="str">"firstName"</span>,  <span class="str">"Chitti"</span>)
+            .put(<span class="str">"lastName"</span>,   <span class="str">"SDET"</span>)
+            .put(<span class="str">"email"</span>,      <span class="str">"chitti@hrms.com"</span>)
+            .put(<span class="str">"status"</span>,     <span class="str">"ACTIVE"</span>)
+            .put(<span class="str">"active"</span>,     <span class="kw">true</span>)
+            <span class="cmt">// put(key, boolean) → JSON boolean: "active": true</span>
+            .put(<span class="str">"experience"</span>, <span class="num">5</span>)
+            <span class="cmt">// put(key, int) → JSON integer: "experience": 5</span>
+            .put(<span class="str">"department"</span>,  <span class="vr">department</span>)
+            <span class="cmt">// put(key, JSONObject) → embeds nested object</span>
+            .put(<span class="str">"compensation"</span>, <span class="vr">compensation</span>);
+            <span class="cmt">// nested JSONObject embedded as value</span>
+
+        <span class="cmt">// Debug: print formatted JSON to verify structure</span>
+        System.out.println(<span class="str">"Request body:\n"</span> + <span class="vr">body</span>.toString(<span class="num">2</span>));
+        <span class="cmt">// toString(2) = pretty-print with 2-space indent</span>
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,     <span class="str">"EMP-1001"</span>)
+            <span class="cmt">// pathParam replaces {empId} in the URL path</span>
+            .queryParam(<span class="str">"version"</span>,  <span class="str">"2"</span>)
+            .queryParam(<span class="str">"notify"</span>,   <span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,    <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,     <span class="str">"Bearer eyJhbGciOiJIUzI1NiJ9.p.s"</span>)
+            .header(<span class="str">"Content-Type"</span>,       <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Tenant-ID"</span>,        <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,       <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,              <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>,  <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">body</span>.toString())
+            <span class="cmt">// MUST call toString() — JSONObject doesn't auto-serialize</span>
+        .when()
+            .put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"empId"</span>,                 equalTo(<span class="str">"EMP-1001"</span>))
+            .body(<span class="str">"status"</span>,                equalTo(<span class="str">"ACTIVE"</span>))
+            .body(<span class="str">"department.deptId"</span>,      equalTo(<span class="str">"DEPT-ENG"</span>))
+            .body(<span class="str">"compensation.currency"</span>,  equalTo(<span class="str">"INR"</span>));
+    }
+}</div>
+
+  <div id="s30-c1" class="cblk"><span class="cmt">// JO_Deep4LevelNesting.java
+// Builds 4-level deep nested JSON: department → location → geo
+// Bottom-up pattern: deepest (geo) first, then embed upward</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONObject</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">JO_Deep4LevelNesting</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_FourLevelNestedBody</span>() {
+
+        <span class="cmt">// ── Level 4: geo (deepest) ────────────────────────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"lat"</span>, <span class="num">28.6139</span>)
+            .put(<span class="str">"lng"</span>, <span class="num">77.2090</span>);
+        <span class="cmt">// put(key, double) → "lat": 28.6139  "lng": 77.2090</span>
+
+        <span class="cmt">// ── Level 3: location (contains geo) ─────────────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">location</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"city"</span>,    <span class="str">"Delhi"</span>)
+            .put(<span class="str">"country"</span>, <span class="str">"India"</span>)
+            .put(<span class="str">"geo"</span>,     <span class="vr">geo</span>);
+            <span class="cmt">// put("geo", geo) = embeds geo JSONObject → creates nested JSON object</span>
+
+        <span class="cmt">// ── Level 2: department (contains location) ───────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">department</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"deptId"</span>,    <span class="str">"DEPT-ENG"</span>)
+            .put(<span class="str">"deptName"</span>,  <span class="str">"Engineering"</span>)
+            .put(<span class="str">"costCenter"</span>, <span class="str">"CC-4001"</span>)
+            .put(<span class="str">"location"</span>,   <span class="vr">location</span>);
+            <span class="cmt">// embeds location (which already contains geo) → 3 levels inside department</span>
+
+        <span class="cmt">// ── Level 2: compensation (contains breakdown) ────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">breakdown</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"basic"</span>,   <span class="num">1250000.00</span>)
+            .put(<span class="str">"hra"</span>,     <span class="num">500000.00</span>)
+            .put(<span class="str">"special"</span>, <span class="num">750000.00</span>);
+
+        <span class="cls">JSONObject</span> <span class="vr">compensation</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"currency"</span>,  <span class="str">"INR"</span>)
+            .put(<span class="str">"ctc"</span>,       <span class="num">2500000.00</span>)
+            .put(<span class="str">"breakdown"</span>, <span class="vr">breakdown</span>);
+
+        <span class="cmt">// ── Root PUT body ─────────────────────────────────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"empId"</span>,       <span class="str">"EMP-1001"</span>)
+            .put(<span class="str">"firstName"</span>,   <span class="str">"Chitti"</span>)
+            .put(<span class="str">"lastName"</span>,    <span class="str">"SDET"</span>)
+            .put(<span class="str">"email"</span>,       <span class="str">"chitti@hrms.com"</span>)
+            .put(<span class="str">"status"</span>,      <span class="str">"ACTIVE"</span>)
+            .put(<span class="str">"active"</span>,      <span class="kw">true</span>)
+            .put(<span class="str">"experience"</span>,  <span class="num">5</span>)
+            .put(<span class="str">"department"</span>,  <span class="vr">department</span>)
+            .put(<span class="str">"compensation"</span>,<span class="vr">compensation</span>);
+
+        System.out.println(<span class="str">"4-Level Nested Body:\n"</span> + <span class="vr">body</span>.toString(<span class="num">2</span>));
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,    <span class="str">"EMP-1001"</span>)
+            .queryParam(<span class="str">"version"</span>, <span class="str">"2"</span>)
+            .queryParam(<span class="str">"notify"</span>,  <span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,   <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .header(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">body</span>.toString())
+        .when()
+            .put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            <span class="cmt">// Assert 4-level deep path using GPath</span>
+            .body(<span class="str">"department.location.city"</span>,    equalTo(<span class="str">"Delhi"</span>))
+            .body(<span class="str">"department.location.geo.lat"</span>,  equalTo(<span class="num">28.6139f</span>))
+            .body(<span class="str">"department.location.geo.lng"</span>,  equalTo(<span class="num">77.2090f</span>))
+            .body(<span class="str">"compensation.breakdown.basic"</span>, equalTo(<span class="num">1250000.0f</span>));
+    }
+}</div>
+
+  <div id="s30-c2" class="cblk"><span class="cmt">// JO_ArraysOfObjects.java
+// Builds string arrays (roles, skills) + array of objects (projects)
+// JSONArray.put(String)     → string array element
+// JSONArray.put(JSONObject) → object array element</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONArray</span>;
+<span class="kw">import</span> <span class="cls">org.json.JSONObject</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">JO_ArraysOfObjects</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_ArrayFields</span>() {
+
+        <span class="cmt">// ── String array: roles ──────────────────────────────────────────</span>
+        <span class="cls">JSONArray</span> <span class="vr">roles</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>()
+            .put(<span class="str">"SDET"</span>)
+            .put(<span class="str">"LEAD"</span>)
+            .put(<span class="str">"REVIEWER"</span>);
+        <span class="cmt">// JSONArray.put(String) appends string element
+        // Produces: ["SDET","LEAD","REVIEWER"]</span>
+
+        <span class="cmt">// ── String array: skills ─────────────────────────────────────────</span>
+        <span class="cls">JSONArray</span> <span class="vr">skills</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>()
+            .put(<span class="str">"Java"</span>)
+            .put(<span class="str">"REST Assured"</span>)
+            .put(<span class="str">"TestNG"</span>)
+            .put(<span class="str">"Jenkins"</span>);
+
+        <span class="cmt">// ── Project 1 (JSONObject for array element) ─────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">proj1</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"projectId"</span>, <span class="str">"PRJ-101"</span>)
+            .put(<span class="str">"name"</span>,      <span class="str">"HRMS Automation"</span>)
+            .put(<span class="str">"billable"</span>,  <span class="kw">true</span>)
+            .put(<span class="str">"priority"</span>,  <span class="num">1</span>);
+            <span class="cmt">// put(key, boolean) → "billable": true
+            // put(key, int)     → "priority": 1</span>
+
+        <span class="cmt">// ── Project 2 ────────────────────────────────────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">proj2</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"projectId"</span>, <span class="str">"PRJ-202"</span>)
+            .put(<span class="str">"name"</span>,      <span class="str">"API Framework"</span>)
+            .put(<span class="str">"billable"</span>,  <span class="kw">false</span>)
+            .put(<span class="str">"priority"</span>,  <span class="num">2</span>);
+
+        <span class="cmt">// ── Array of project objects ─────────────────────────────────────</span>
+        <span class="cls">JSONArray</span> <span class="vr">projects</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>()
+            .put(<span class="vr">proj1</span>)
+            .put(<span class="vr">proj2</span>);
+            <span class="cmt">// JSONArray.put(JSONObject) = append object element
+            // Produces: [{"projectId":"PRJ-101",...},{"projectId":"PRJ-202",...}]</span>
+
+        <span class="cmt">// ── Root PUT body with arrays ────────────────────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"empId"</span>,     <span class="str">"EMP-1001"</span>)
+            .put(<span class="str">"firstName"</span>, <span class="str">"Chitti"</span>)
+            .put(<span class="str">"lastName"</span>,  <span class="str">"SDET"</span>)
+            .put(<span class="str">"email"</span>,     <span class="str">"chitti@hrms.com"</span>)
+            .put(<span class="str">"status"</span>,    <span class="str">"ACTIVE"</span>)
+            .put(<span class="str">"active"</span>,    <span class="kw">true</span>)
+            .put(<span class="str">"experience"</span>,<span class="num">5</span>)
+            .put(<span class="str">"roles"</span>,     <span class="vr">roles</span>)
+            <span class="cmt">// put("roles", JSONArray) → string array in body</span>
+            .put(<span class="str">"skills"</span>,    <span class="vr">skills</span>)
+            .put(<span class="str">"projects"</span>,  <span class="vr">projects</span>);
+            <span class="cmt">// put("projects", JSONArray of JSONObjects) → array of objects</span>
+
+        System.out.println(<span class="str">"Arrays body:\n"</span> + <span class="vr">body</span>.toString(<span class="num">2</span>));
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,    <span class="str">"EMP-1001"</span>)
+            .queryParam(<span class="str">"version"</span>, <span class="str">"2"</span>)
+            .queryParam(<span class="str">"notify"</span>,  <span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,   <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .header(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">body</span>.toString())
+        .when().put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"roles[0]"</span>,           equalTo(<span class="str">"SDET"</span>))
+            .body(<span class="str">"skills"</span>,             hasItem(<span class="str">"Java"</span>))
+            .body(<span class="str">"projects.size()"</span>,    equalTo(<span class="num">2</span>))
+            .body(<span class="str">"projects[0].projectId"</span>,equalTo(<span class="str">"PRJ-101"</span>))
+            .body(<span class="str">"projects[1].billable"</span>, equalTo(<span class="kw">false</span>));
+    }
+}</div>
+
+  <div id="s30-c3" class="cblk"><span class="cmt">// JO_FullComplexBody.java — COMPLETE PUT body: 4-level nesting + arrays of objects
+// Full employee update: department(location(geo)) + compensation(breakdown)
+// + roles[] + skills[] + projects[{...},{...}]</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONArray</span>;
+<span class="kw">import</span> <span class="cls">org.json.JSONObject</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">JO_FullComplexBody</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_FullComplexEmployee</span>() {
+
+        <span class="cmt">// ── Bottom-up: Level 4 first ─────────────────────────────────────</span>
+        <span class="cls">JSONObject</span> <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"lat"</span>, <span class="num">28.6139</span>).put(<span class="str">"lng"</span>, <span class="num">77.2090</span>);
+
+        <span class="cls">JSONObject</span> <span class="vr">location</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"city"</span>, <span class="str">"Delhi"</span>).put(<span class="str">"country"</span>, <span class="str">"India"</span>).put(<span class="str">"geo"</span>, <span class="vr">geo</span>);
+
+        <span class="cls">JSONObject</span> <span class="vr">department</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"deptId"</span>, <span class="str">"DEPT-ENG"</span>).put(<span class="str">"deptName"</span>, <span class="str">"Engineering"</span>)
+            .put(<span class="str">"costCenter"</span>, <span class="str">"CC-4001"</span>).put(<span class="str">"location"</span>, <span class="vr">location</span>);
+
+        <span class="cls">JSONObject</span> <span class="vr">breakdown</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"basic"</span>, <span class="num">1250000.00</span>).put(<span class="str">"hra"</span>, <span class="num">500000.00</span>)
+            .put(<span class="str">"special"</span>, <span class="num">750000.00</span>);
+
+        <span class="cls">JSONObject</span> <span class="vr">compensation</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"currency"</span>, <span class="str">"INR"</span>).put(<span class="str">"ctc"</span>, <span class="num">2500000.00</span>)
+            .put(<span class="str">"breakdown"</span>, <span class="vr">breakdown</span>);
+
+        <span class="cls">JSONArray</span> <span class="vr">roles</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>()
+            .put(<span class="str">"SDET"</span>).put(<span class="str">"LEAD"</span>).put(<span class="str">"REVIEWER"</span>);
+
+        <span class="cls">JSONArray</span> <span class="vr">skills</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>()
+            .put(<span class="str">"Java"</span>).put(<span class="str">"REST Assured"</span>).put(<span class="str">"TestNG"</span>).put(<span class="str">"Jenkins"</span>);
+
+        <span class="cls">JSONArray</span> <span class="vr">projects</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>()
+            .put(<span class="kw">new</span> <span class="cls">JSONObject</span>()
+                .put(<span class="str">"projectId"</span>,<span class="str">"PRJ-101"</span>).put(<span class="str">"name"</span>,<span class="str">"HRMS Automation"</span>)
+                .put(<span class="str">"billable"</span>,<span class="kw">true</span>).put(<span class="str">"priority"</span>,<span class="num">1</span>))
+            .put(<span class="kw">new</span> <span class="cls">JSONObject</span>()
+                .put(<span class="str">"projectId"</span>,<span class="str">"PRJ-202"</span>).put(<span class="str">"name"</span>,<span class="str">"API Framework"</span>)
+                .put(<span class="str">"billable"</span>,<span class="kw">false</span>).put(<span class="str">"priority"</span>,<span class="num">2</span>));
+
+        <span class="cls">JSONObject</span> <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .put(<span class="str">"empId"</span>,       <span class="str">"EMP-1001"</span>).put(<span class="str">"firstName"</span>,<span class="str">"Chitti"</span>)
+            .put(<span class="str">"lastName"</span>,    <span class="str">"SDET"</span>)    .put(<span class="str">"email"</span>,<span class="str">"chitti@hrms.com"</span>)
+            .put(<span class="str">"status"</span>,      <span class="str">"ACTIVE"</span>) .put(<span class="str">"active"</span>,<span class="kw">true</span>)
+            .put(<span class="str">"experience"</span>,  <span class="num">5</span>)
+            .put(<span class="str">"department"</span>,  <span class="vr">department</span>)
+            .put(<span class="str">"compensation"</span>,<span class="vr">compensation</span>)
+            .put(<span class="str">"roles"</span>,       <span class="vr">roles</span>)
+            .put(<span class="str">"skills"</span>,      <span class="vr">skills</span>)
+            .put(<span class="str">"projects"</span>,    <span class="vr">projects</span>);
+
+        System.out.println(<span class="str">"FULL BODY:\n"</span> + <span class="vr">body</span>.toString(<span class="num">2</span>));
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,    <span class="str">"EMP-1001"</span>)
+            .queryParam(<span class="str">"version"</span>, <span class="str">"2"</span>).queryParam(<span class="str">"notify"</span>,<span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,   <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .header(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">body</span>.toString())
+        .when().put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"empId"</span>,                         equalTo(<span class="str">"EMP-1001"</span>))
+            .body(<span class="str">"department.location.city"</span>,        equalTo(<span class="str">"Delhi"</span>))
+            .body(<span class="str">"department.location.geo.lat"</span>,     equalTo(<span class="num">28.6139f</span>))
+            .body(<span class="str">"compensation.breakdown.hra"</span>,      equalTo(<span class="num">500000.0f</span>))
+            .body(<span class="str">"roles[0]"</span>,                      equalTo(<span class="str">"SDET"</span>))
+            .body(<span class="str">"skills"</span>,                         hasItem(<span class="str">"REST Assured"</span>))
+            .body(<span class="str">"projects.size()"</span>,                equalTo(<span class="num">2</span>))
+            .body(<span class="str">"projects[0].projectId"</span>,           equalTo(<span class="str">"PRJ-101"</span>))
+            .body(<span class="str">"projects[1].billable"</span>,            equalTo(<span class="kw">false</span>))
+            .body(<span class="str">"active"</span>,                         equalTo(<span class="kw">true</span>))
+            .body(<span class="str">"experience"</span>,                      equalTo(<span class="num">5</span>));
+    }
+}</div>
+</div>
+
+<div class="sec">Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Always call <code>body(jo.toString())</code> — never pass a JSONObject directly to body() without toString(). REST Assured won't serialize it automatically like Jackson does for POJOs.</div>
+  <div class="ci"><span class="ck">✔</span> Build complex JSONObjects bottom-up — create the deepest nested object first (geo), embed it upward (location → department). This prevents NullPointerException during construction.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>toString(2)</code> during development to print a formatted, readable version of the request body — verify the JSON structure before running assertions.</div>
+  <div class="ci"><span class="ck">✔</span> Prefer JSONArray chaining: <code>new JSONArray().put("A").put("B").put("C")</code> over separate add() calls — keeps array construction concise and readable.</div>
+  <div class="ci"><span class="ck">✔</span> Always verify the final URL using <code>log().uri()</code> when working with path params and query params — confirms {empId} was replaced and all query params were appended correctly.</div>
+</div>
+
+<div class="sec">Interview Q&amp;A</div>
+<div class="qa-list">
+  <div class="qi"><div class="qq">Q1: Why must you call toString() when using JSONObject with body()? <span class="qtg">+</span></div><div class="qa-a">REST Assured's automatic serialization (Jackson-based) works for Map and POJO types. JSONObject from org.json is not a recognized type — REST Assured doesn't know how to serialize it. You must call jo.toString() to produce a raw JSON string, which REST Assured then sends as the body text. Without toString(), REST Assured would call JSONObject.toString() internally via Object.toString() which might not produce valid JSON depending on the implementation.</div></div>
+  <div class="qi"><div class="qq">Q2: What is the bottom-up build pattern for nested JSONObjects? <span class="qtg">+</span></div><div class="qa-a">Always create the deepest nested object first, then embed it into its parent. Example: create GeoObject first, then pass it into LocationObject.put("geo", geoObject), then pass LocationObject into DepartmentObject.put("location", locationObject). If you try to build top-down, you'd be referencing objects that don't exist yet. Bottom-up ensures each object is complete before being embedded.</div></div>
+  <div class="qi"><div class="qq">Q3: What is the difference between JSONArray.put(String) and JSONArray.put(JSONObject)? <span class="qtg">+</span></div><div class="qa-a">JSONArray.put(String) appends a string element — produces ["SDET","LEAD"]. JSONArray.put(JSONObject) appends an entire JSON object as an array element — produces [{"projectId":"PRJ-101","name":"HRMS Automation",...}]. Both return 'this' for chaining. Use put(String) for simple string arrays; use put(JSONObject) for arrays of complex objects like projects[] or items[].</div></div>
+  <div class="qi"><div class="qq">Q4: How do pathParam and queryParam work together in REST Assured? <span class="qtg">+</span></div><div class="qa-a">pathParam("empId","EMP-1001") replaces the {empId} placeholder in the URL template "/v2/employees/{empId}" → produces "/v2/employees/EMP-1001". queryParam("version","2") appends ?version=2 to the URL. Multiple queryParams are joined: ?version=2&notify=true&audit=strict. Both are set on the given() block. The final URL becomes: https://api.hrms.com/v2/employees/EMP-1001?version=2&notify=true&audit=strict.</div></div>
+  <div class="qi"><div class="qq">Q5: JSONObject vs HashMap for request body — when to choose which? <span class="qtg">+</span></div><div class="qa-a">JSONObject: use when you want explicit, readable JSON construction with preserved key order. Requires toString(). Extra org.json dependency. JSONObject.put() returns 'this' — fully chainable. HashMap: use when you want REST Assured + Jackson to auto-serialize — no toString() needed, just pass the Map directly to body(). Jackson serializes it automatically when Content-Type is application/json. For complex nested structures, Jackson-based Map is often preferred since it doesn't need toString().</div></div>
+</div>
+
+</div></div>
+
+<!-- ===================== S31 ===================== -->
+<div class="session" id="session-1">
+<div class="sp">
+
+<div class="sec">Overview — Map&lt;String,Object&gt; Request Creation</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">🗂️</div><div class="ov-t">What</div><div class="ov-tx">Java's built-in <code>HashMap&lt;String,Object&gt;</code> to build request body — REST Assured + Jackson auto-serialize it to JSON when Content-Type is application/json. No toString() needed.</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">No extra dependency — just Java standard library. Jackson auto-serializes Maps. Nested objects = nested Maps. Arrays = Lists. Most common pattern in production test frameworks.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Use for dynamic test data, data-driven tests, or when you want full Jackson auto-serialization without creating POJO classes. Industry-standard approach.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx"><code>given().contentType("application/json").body(map)</code> — REST Assured detects jackson-databind on classpath and serializes the Map automatically.</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Nested JSON object = <code>Map</code> as value. JSON array of strings = <code>List&lt;String&gt;</code>. JSON array of objects = <code>List&lt;Map&gt;</code>. Jackson handles the entire serialization tree.</div></div>
+</div>
+
+<div class="sec">Keyword Glossary</div>
+<div class="kw-grid">
+  <div class="kwi"><div class="kw-k">HashMap&lt;String,Object&gt;</div><div class="kw-v">Java Map implementation — keys are String (JSON field names), values are any Object (String, int, boolean, Map, List).</div></div>
+  <div class="kwi"><div class="kw-k">auto-serialization</div><div class="kw-v">REST Assured + Jackson convert Map → JSON automatically when Content-Type is application/json. No toString() needed.</div></div>
+  <div class="kwi"><div class="kw-k">LinkedHashMap</div><div class="kw-v">Use instead of HashMap to preserve insertion key order in the serialized JSON — important when API validates field order.</div></div>
+  <div class="kwi"><div class="kw-k">put(key, Map)</div><div class="kw-v">Map.put() with a nested Map as value → produces a nested JSON object when Jackson serializes it.</div></div>
+  <div class="kwi"><div class="kw-k">List&lt;String&gt;</div><div class="kw-v">Jackson serializes List&lt;String&gt; as a JSON string array: ["SDET","LEAD","REVIEWER"].</div></div>
+  <div class="kwi"><div class="kw-k">List&lt;Map&gt;</div><div class="kw-v">Jackson serializes List&lt;Map&lt;String,Object&gt;&gt; as a JSON array of objects: [{...},{...}].</div></div>
+  <div class="kwi"><div class="kw-k">Arrays.asList()</div><div class="kw-v">Quick immutable List creation for fixed array fields. Use new ArrayList&lt;&gt;() for dynamic addition.</div></div>
+  <div class="kwi"><div class="kw-k">contentType()</div><div class="kw-v">MANDATORY trigger for Jackson auto-serialization. contentType("application/json") tells REST Assured to use Jackson on the body Map.</div></div>
+  <div class="kwi"><div class="kw-k">log().body()</div><div class="kw-v">REST Assured method printing the serialized request body — use in given() block to verify JSON before sending.</div></div>
+  <div class="kwi"><div class="kw-k">RequestSpecBuilder</div><div class="kw-v">Fluent builder creating a reusable RequestSpecification — bundles baseUri, headers, auth, and content type to avoid repetition.</div></div>
+</div>
+
+<div class="sec">Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>body(map)</b> with contentType("application/json") = REST Assured detects Jackson on classpath and auto-serializes the Map to JSON — no toString() call needed unlike JSONObject.</div>
+  <div class="ol"><b>Nested Map as value</b>: map.put("department", deptMap) = Jackson serializes the inner Map as a nested JSON object — the same pattern works for any depth of nesting.</div>
+  <div class="ol"><b>List&lt;String&gt; as value</b>: map.put("roles", Arrays.asList("SDET","LEAD")) = Jackson serializes the List as a JSON string array: "roles":["SDET","LEAD"].</div>
+  <div class="ol"><b>List&lt;Map&lt;String,Object&gt;&gt; as value</b>: map.put("projects", listOfMaps) = Jackson serializes it as a JSON array of objects — each Map becomes one object in the array.</div>
+  <div class="ol"><b>LinkedHashMap vs HashMap</b>: LinkedHashMap preserves insertion order in the JSON output — use it when API validation or logging depends on field ordering.</div>
+  <div class="ol"><b>log().body()</b> in the given() block prints the exact serialized JSON that will be sent — essential for debugging complex nested request bodies before assertion failures.</div>
+</div>
+
+<div class="sec">Code Examples</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s31">
+    <div class="ct active" data-ci="0" data-cs="s31">Map_FlatAndLevel2.java</div>
+    <div class="ct" data-ci="1" data-cs="s31">Map_Deep4LevelNesting.java</div>
+    <div class="ct" data-ci="2" data-cs="s31">Map_ArrayFields.java</div>
+    <div class="ct" data-ci="3" data-cs="s31">Map_FullComplexBody.java</div>
+  </div>
+  <div class="fn-hdr" id="fh-s31">Map_FlatAndLevel2.java</div>
+
+  <div id="s31-c0" class="cblk active"><span class="cmt">// Map_FlatAndLevel2.java
+// Builds PUT request body using Map&lt;String,Object&gt; — flat + Level 2 nesting
+// contentType("application/json") triggers Jackson auto-serialization
+// No toString() needed — Jackson handles the entire Map → JSON conversion</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.HashMap</span>;
+<span class="kw">import</span> <span class="cls">java.util.Map</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">Map_FlatAndLevel2</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_MapFlatAndLevel2</span>() {
+
+        <span class="cmt">// ── Level 2: department Map ───────────────────────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">department</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">department</span>.put(<span class="str">"deptId"</span>,    <span class="str">"DEPT-ENG"</span>);
+        <span class="vr">department</span>.put(<span class="str">"deptName"</span>,  <span class="str">"Engineering"</span>);
+        <span class="vr">department</span>.put(<span class="str">"costCenter"</span>,<span class="str">"CC-4001"</span>);
+        <span class="cmt">// Map value = String → "deptId":"DEPT-ENG" in JSON</span>
+
+        <span class="cmt">// ── Level 2: compensation Map ────────────────────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">compensation</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">compensation</span>.put(<span class="str">"currency"</span>, <span class="str">"INR"</span>);
+        <span class="vr">compensation</span>.put(<span class="str">"ctc"</span>,      <span class="num">2500000.00</span>);
+        <span class="cmt">// Map value = double → "ctc":2500000.0 in JSON</span>
+
+        <span class="cmt">// ── Root PUT body Map ────────────────────────────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">body</span>.put(<span class="str">"empId"</span>,       <span class="str">"EMP-1001"</span>);
+        <span class="vr">body</span>.put(<span class="str">"firstName"</span>,   <span class="str">"Chitti"</span>);
+        <span class="vr">body</span>.put(<span class="str">"lastName"</span>,    <span class="str">"SDET"</span>);
+        <span class="vr">body</span>.put(<span class="str">"email"</span>,       <span class="str">"chitti@hrms.com"</span>);
+        <span class="vr">body</span>.put(<span class="str">"status"</span>,      <span class="str">"ACTIVE"</span>);
+        <span class="vr">body</span>.put(<span class="str">"active"</span>,      <span class="kw">true</span>);
+        <span class="cmt">// Map value = boolean → "active":true in JSON</span>
+        <span class="vr">body</span>.put(<span class="str">"experience"</span>,  <span class="num">5</span>);
+        <span class="cmt">// Map value = int → "experience":5 in JSON</span>
+        <span class="vr">body</span>.put(<span class="str">"department"</span>,  <span class="vr">department</span>);
+        <span class="cmt">// Map value = Map → nested JSON object: "department":{...}</span>
+        <span class="vr">body</span>.put(<span class="str">"compensation"</span>, <span class="vr">compensation</span>);
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,    <span class="str">"EMP-1001"</span>)
+            .queryParam(<span class="str">"version"</span>, <span class="str">"2"</span>)
+            .queryParam(<span class="str">"notify"</span>,  <span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,   <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .header(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            <span class="cmt">// Content-Type MANDATORY — triggers Jackson to serialize the Map</span>
+            .header(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">body</span>)
+            <span class="cmt">// body(map) — Jackson auto-serializes. NO toString() needed!</span>
+            .log().body()
+            <span class="cmt">// log().body() → prints exact JSON sent. Check structure before assertions.</span>
+        .when()
+            .put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"empId"</span>,                equalTo(<span class="str">"EMP-1001"</span>))
+            .body(<span class="str">"department.deptId"</span>,     equalTo(<span class="str">"DEPT-ENG"</span>))
+            .body(<span class="str">"compensation.currency"</span>, equalTo(<span class="str">"INR"</span>))
+            .body(<span class="str">"active"</span>,               equalTo(<span class="kw">true</span>));
+    }
+}</div>
+
+  <div id="s31-c1" class="cblk"><span class="cmt">// Map_Deep4LevelNesting.java
+// Demonstrates 4-level deep Map nesting: department → location → geo
+// Map inside Map inside Map = nested JSON objects at every level</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.HashMap</span>;
+<span class="kw">import</span> <span class="cls">java.util.Map</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">Map_Deep4LevelNesting</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_FourLevelNestedMap</span>() {
+
+        <span class="cmt">// ── Level 4: geo (deepest) ────────────────────────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">geo</span>.put(<span class="str">"lat"</span>, <span class="num">28.6139</span>);
+        <span class="vr">geo</span>.put(<span class="str">"lng"</span>, <span class="num">77.2090</span>);
+        <span class="cmt">// Jackson: double value → JSON number: "lat": 28.6139</span>
+
+        <span class="cmt">// ── Level 3: location contains geo ──────────────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">location</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">location</span>.put(<span class="str">"city"</span>,    <span class="str">"Delhi"</span>);
+        <span class="vr">location</span>.put(<span class="str">"country"</span>, <span class="str">"India"</span>);
+        <span class="vr">location</span>.put(<span class="str">"geo"</span>,     <span class="vr">geo</span>);
+        <span class="cmt">// Map value = Map → "geo":{"lat":28.6139,"lng":77.2090}</span>
+
+        <span class="cmt">// ── Level 2: department contains location ───────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">department</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">department</span>.put(<span class="str">"deptId"</span>,    <span class="str">"DEPT-ENG"</span>);
+        <span class="vr">department</span>.put(<span class="str">"deptName"</span>,  <span class="str">"Engineering"</span>);
+        <span class="vr">department</span>.put(<span class="str">"costCenter"</span>, <span class="str">"CC-4001"</span>);
+        <span class="vr">department</span>.put(<span class="str">"location"</span>,   <span class="vr">location</span>);
+        <span class="cmt">// 3 levels deep inside department:
+        // "department":{"deptId":"...","location":{"city":"...","geo":{...}}}</span>
+
+        <span class="cmt">// ── Level 2: compensation with Level 3 breakdown ────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">breakdown</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">breakdown</span>.put(<span class="str">"basic"</span>,   <span class="num">1250000.00</span>);
+        <span class="vr">breakdown</span>.put(<span class="str">"hra"</span>,     <span class="num">500000.00</span>);
+        <span class="vr">breakdown</span>.put(<span class="str">"special"</span>, <span class="num">750000.00</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">compensation</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">compensation</span>.put(<span class="str">"currency"</span>,  <span class="str">"INR"</span>);
+        <span class="vr">compensation</span>.put(<span class="str">"ctc"</span>,       <span class="num">2500000.00</span>);
+        <span class="vr">compensation</span>.put(<span class="str">"breakdown"</span>, <span class="vr">breakdown</span>);
+
+        <span class="cmt">// ── Root body ────────────────────────────────────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">body</span>.put(<span class="str">"empId"</span>,       <span class="str">"EMP-1001"</span>);
+        <span class="vr">body</span>.put(<span class="str">"firstName"</span>,   <span class="str">"Chitti"</span>);
+        <span class="vr">body</span>.put(<span class="str">"lastName"</span>,    <span class="str">"SDET"</span>);
+        <span class="vr">body</span>.put(<span class="str">"email"</span>,       <span class="str">"chitti@hrms.com"</span>);
+        <span class="vr">body</span>.put(<span class="str">"status"</span>,      <span class="str">"ACTIVE"</span>);
+        <span class="vr">body</span>.put(<span class="str">"active"</span>,      <span class="kw">true</span>);
+        <span class="vr">body</span>.put(<span class="str">"experience"</span>,  <span class="num">5</span>);
+        <span class="vr">body</span>.put(<span class="str">"department"</span>,  <span class="vr">department</span>);
+        <span class="vr">body</span>.put(<span class="str">"compensation"</span>,<span class="vr">compensation</span>);
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,    <span class="str">"EMP-1001"</span>)
+            .queryParam(<span class="str">"version"</span>, <span class="str">"2"</span>).queryParam(<span class="str">"notify"</span>, <span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,   <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .header(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">body</span>)
+        .when().put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"department.location.city"</span>,     equalTo(<span class="str">"Delhi"</span>))
+            .body(<span class="str">"department.location.geo.lat"</span>,  equalTo(<span class="num">28.6139f</span>))
+            .body(<span class="str">"department.location.geo.lng"</span>,  equalTo(<span class="num">77.2090f</span>))
+            .body(<span class="str">"compensation.breakdown.basic"</span>, equalTo(<span class="num">1250000.0f</span>))
+            .body(<span class="str">"compensation.breakdown.hra"</span>,   equalTo(<span class="num">500000.0f</span>));
+    }
+}</div>
+
+  <div id="s31-c2" class="cblk"><span class="cmt">// Map_ArrayFields.java
+// String arrays = List&lt;String&gt; as Map value
+// Object arrays = List&lt;Map&lt;String,Object&gt;&gt; as Map value
+// Jackson serializes both automatically — no extra code</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.*</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">Map_ArrayFields</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_ArraysInMap</span>() {
+
+        <span class="cmt">// ── String array: roles → List&lt;String&gt; ──────────────────────────</span>
+        <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="vr">roles</span>  = Arrays.asList(<span class="str">"SDET"</span>, <span class="str">"LEAD"</span>, <span class="str">"REVIEWER"</span>);
+        <span class="cmt">// Jackson: List&lt;String&gt; → ["SDET","LEAD","REVIEWER"]</span>
+
+        <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="vr">skills</span> = Arrays.asList(<span class="str">"Java"</span>,<span class="str">"REST Assured"</span>,<span class="str">"TestNG"</span>,<span class="str">"Jenkins"</span>);
+
+        <span class="cmt">// ── Object array: projects → List&lt;Map&lt;String,Object&gt;&gt; ───────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">proj1</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">proj1</span>.put(<span class="str">"projectId"</span>, <span class="str">"PRJ-101"</span>);
+        <span class="vr">proj1</span>.put(<span class="str">"name"</span>,      <span class="str">"HRMS Automation"</span>);
+        <span class="vr">proj1</span>.put(<span class="str">"billable"</span>,  <span class="kw">true</span>);
+        <span class="vr">proj1</span>.put(<span class="str">"priority"</span>,  <span class="num">1</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">proj2</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">proj2</span>.put(<span class="str">"projectId"</span>, <span class="str">"PRJ-202"</span>);
+        <span class="vr">proj2</span>.put(<span class="str">"name"</span>,      <span class="str">"API Framework"</span>);
+        <span class="vr">proj2</span>.put(<span class="str">"billable"</span>,  <span class="kw">false</span>);
+        <span class="vr">proj2</span>.put(<span class="str">"priority"</span>,  <span class="num">2</span>);
+
+        <span class="cls">List</span>&lt;<span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt;&gt; <span class="vr">projects</span> = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        <span class="vr">projects</span>.add(<span class="vr">proj1</span>);
+        <span class="vr">projects</span>.add(<span class="vr">proj2</span>);
+        <span class="cmt">// Jackson: List&lt;Map&gt; → [{"projectId":"PRJ-101",...},{"projectId":"PRJ-202",...}]</span>
+
+        <span class="cmt">// ── Root body ────────────────────────────────────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">body</span>.put(<span class="str">"empId"</span>,     <span class="str">"EMP-1001"</span>);
+        <span class="vr">body</span>.put(<span class="str">"firstName"</span>, <span class="str">"Chitti"</span>);
+        <span class="vr">body</span>.put(<span class="str">"lastName"</span>,  <span class="str">"SDET"</span>);
+        <span class="vr">body</span>.put(<span class="str">"email"</span>,     <span class="str">"chitti@hrms.com"</span>);
+        <span class="vr">body</span>.put(<span class="str">"status"</span>,    <span class="str">"ACTIVE"</span>);
+        <span class="vr">body</span>.put(<span class="str">"active"</span>,    <span class="kw">true</span>);
+        <span class="vr">body</span>.put(<span class="str">"experience"</span>,<span class="num">5</span>);
+        <span class="vr">body</span>.put(<span class="str">"roles"</span>,     <span class="vr">roles</span>);    <span class="cmt">// List&lt;String&gt; → JSON string array</span>
+        <span class="vr">body</span>.put(<span class="str">"skills"</span>,    <span class="vr">skills</span>);   <span class="cmt">// List&lt;String&gt; → JSON string array</span>
+        <span class="vr">body</span>.put(<span class="str">"projects"</span>,  <span class="vr">projects</span>); <span class="cmt">// List&lt;Map&gt; → JSON array of objects</span>
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,    <span class="str">"EMP-1001"</span>)
+            .queryParam(<span class="str">"version"</span>, <span class="str">"2"</span>).queryParam(<span class="str">"notify"</span>, <span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,   <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .header(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">body</span>)
+        .when().put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"roles"</span>,               hasItem(<span class="str">"SDET"</span>))
+            .body(<span class="str">"roles.size()"</span>,        equalTo(<span class="num">3</span>))
+            .body(<span class="str">"skills"</span>,              hasItem(<span class="str">"REST Assured"</span>))
+            .body(<span class="str">"projects.size()"</span>,     equalTo(<span class="num">2</span>))
+            .body(<span class="str">"projects[0].projectId"</span>,equalTo(<span class="str">"PRJ-101"</span>))
+            .body(<span class="str">"projects[1].billable"</span>, equalTo(<span class="kw">false</span>));
+    }
+}</div>
+
+  <div id="s31-c3" class="cblk"><span class="cmt">// Map_FullComplexBody.java — COMPLETE PUT body using Map
+// All nested levels + arrays — uses RequestSpecBuilder for reusable spec
+// Best pattern for data-driven tests: body changes per row, spec reused</span>
+<span class="kw">import</span> <span class="cls">io.restassured.builder.RequestSpecBuilder</span>;
+<span class="kw">import</span> <span class="cls">io.restassured.specification.RequestSpecification</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.*</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.BeforeClass</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">Map_FullComplexBody</span> {
+
+    <span class="cmt">// ── Reusable RequestSpec (DRY — headers + baseUri + params once) ──</span>
+    <span class="kw">private</span> <span class="cls">RequestSpecification</span> <span class="vr">spec</span>;
+
+    <span class="ann">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">buildSpec</span>() {
+        <span class="vr">spec</span> = <span class="kw">new</span> <span class="cls">RequestSpecBuilder</span>()
+            .setBaseUri(<span class="str">"https://api.hrms.com"</span>)
+            .addPathParam(<span class="str">"empId"</span>,      <span class="str">"EMP-1001"</span>)
+            .addQueryParam(<span class="str">"version"</span>,  <span class="str">"2"</span>)
+            .addQueryParam(<span class="str">"notify"</span>,   <span class="str">"true"</span>)
+            .addQueryParam(<span class="str">"audit"</span>,    <span class="str">"strict"</span>)
+            .addHeader(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .addHeader(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            .addHeader(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .addHeader(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .addHeader(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .addHeader(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .build();
+            <span class="cmt">// RequestSpecBuilder = bundles all headers/params → reuse across tests</span>
+    }
+
+    <span class="cmt">// ── Helper: build the full complex body ──────────────────────────</span>
+    <span class="kw">private</span> <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="fn">buildEmployeeBody</span>() {
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">geo</span>  = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">geo</span>.put(<span class="str">"lat"</span>, <span class="num">28.6139</span>); <span class="vr">geo</span>.put(<span class="str">"lng"</span>, <span class="num">77.2090</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">loc</span>  = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">loc</span>.put(<span class="str">"city"</span>,<span class="str">"Delhi"</span>); <span class="vr">loc</span>.put(<span class="str">"country"</span>,<span class="str">"India"</span>); <span class="vr">loc</span>.put(<span class="str">"geo"</span>,<span class="vr">geo</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">dept</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">dept</span>.put(<span class="str">"deptId"</span>,<span class="str">"DEPT-ENG"</span>); <span class="vr">dept</span>.put(<span class="str">"deptName"</span>,<span class="str">"Engineering"</span>);
+        <span class="vr">dept</span>.put(<span class="str">"costCenter"</span>,<span class="str">"CC-4001"</span>); <span class="vr">dept</span>.put(<span class="str">"location"</span>,<span class="vr">loc</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">brkd</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">brkd</span>.put(<span class="str">"basic"</span>,<span class="num">1250000.0</span>); <span class="vr">brkd</span>.put(<span class="str">"hra"</span>,<span class="num">500000.0</span>); <span class="vr">brkd</span>.put(<span class="str">"special"</span>,<span class="num">750000.0</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">comp</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">comp</span>.put(<span class="str">"currency"</span>,<span class="str">"INR"</span>); <span class="vr">comp</span>.put(<span class="str">"ctc"</span>,<span class="num">2500000.0</span>); <span class="vr">comp</span>.put(<span class="str">"breakdown"</span>,<span class="vr">brkd</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">p1</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">p1</span>.put(<span class="str">"projectId"</span>,<span class="str">"PRJ-101"</span>); <span class="vr">p1</span>.put(<span class="str">"name"</span>,<span class="str">"HRMS Automation"</span>);
+        <span class="vr">p1</span>.put(<span class="str">"billable"</span>,<span class="kw">true</span>); <span class="vr">p1</span>.put(<span class="str">"priority"</span>,<span class="num">1</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">p2</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">p2</span>.put(<span class="str">"projectId"</span>,<span class="str">"PRJ-202"</span>); <span class="vr">p2</span>.put(<span class="str">"name"</span>,<span class="str">"API Framework"</span>);
+        <span class="vr">p2</span>.put(<span class="str">"billable"</span>,<span class="kw">false</span>); <span class="vr">p2</span>.put(<span class="str">"priority"</span>,<span class="num">2</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">body</span>.put(<span class="str">"empId"</span>,<span class="str">"EMP-1001"</span>);   <span class="vr">body</span>.put(<span class="str">"firstName"</span>,<span class="str">"Chitti"</span>);
+        <span class="vr">body</span>.put(<span class="str">"lastName"</span>,<span class="str">"SDET"</span>);    <span class="vr">body</span>.put(<span class="str">"email"</span>,<span class="str">"chitti@hrms.com"</span>);
+        <span class="vr">body</span>.put(<span class="str">"status"</span>,<span class="str">"ACTIVE"</span>);   <span class="vr">body</span>.put(<span class="str">"active"</span>,<span class="kw">true</span>);
+        <span class="vr">body</span>.put(<span class="str">"experience"</span>,<span class="num">5</span>);
+        <span class="vr">body</span>.put(<span class="str">"department"</span>,  <span class="vr">dept</span>);
+        <span class="vr">body</span>.put(<span class="str">"compensation"</span>, <span class="vr">comp</span>);
+        <span class="vr">body</span>.put(<span class="str">"roles"</span>, Arrays.asList(<span class="str">"SDET"</span>,<span class="str">"LEAD"</span>,<span class="str">"REVIEWER"</span>));
+        <span class="vr">body</span>.put(<span class="str">"skills"</span>, Arrays.asList(<span class="str">"Java"</span>,<span class="str">"REST Assured"</span>,<span class="str">"TestNG"</span>,<span class="str">"Jenkins"</span>));
+        <span class="vr">body</span>.put(<span class="str">"projects"</span>, Arrays.asList(<span class="vr">p1</span>, <span class="vr">p2</span>));
+        <span class="kw">return</span> <span class="vr">body</span>;
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_FullMapBody</span>() {
+        given(<span class="vr">spec</span>)
+            .body(<span class="fn">buildEmployeeBody</span>()).log().body()
+        .when().put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"department.location.geo.lat"</span>,  equalTo(<span class="num">28.6139f</span>))
+            .body(<span class="str">"compensation.breakdown.basic"</span>, equalTo(<span class="num">1250000.0f</span>))
+            .body(<span class="str">"roles[0]"</span>,                    equalTo(<span class="str">"SDET"</span>))
+            .body(<span class="str">"projects[0].projectId"</span>,        equalTo(<span class="str">"PRJ-101"</span>))
+            .body(<span class="str">"projects[1].billable"</span>,         equalTo(<span class="kw">false</span>))
+            .body(<span class="str">"active"</span>,                       equalTo(<span class="kw">true</span>));
+    }
+}</div>
+</div>
+
+<div class="sec">Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Always set <code>contentType("application/json")</code> when using Map as body — without it, REST Assured will not trigger Jackson serialization and may send form-encoded data instead.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>LinkedHashMap</code> instead of <code>HashMap</code> when field ordering matters — Jackson preserves LinkedHashMap's insertion order in the serialized JSON output.</div>
+  <div class="ci"><span class="ck">✔</span> Extract repeated request setup into a <code>RequestSpecBuilder</code> — keeps test methods focused on data/assertions, not on headers and params repetition.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>log().body()</code> in the given() block during development — prints the exact JSON Jackson will send, making it easy to spot missing fields or incorrect nesting.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>Arrays.asList()</code> for fixed string arrays and <code>new ArrayList&lt;&gt;()</code> when you need to add items dynamically — Arrays.asList() returns a fixed-size list that throws on add().</div>
+</div>
+
+<div class="sec">Interview Q&amp;A</div>
+<div class="qa-list">
+  <div class="qi"><div class="qq">Q1: Why is contentType("application/json") mandatory when using Map as request body? <span class="qtg">+</span></div><div class="qa-a">Without contentType("application/json"), REST Assured doesn't know the desired format for the body. It may send the Map as URL-encoded form parameters (key1=val1&key2=val2) instead of JSON. The content type header signals REST Assured to use Jackson's ObjectMapper for serialization, which converts the Map tree into a proper JSON string for the request body.</div></div>
+  <div class="qi"><div class="qq">Q2: How does Jackson handle nested Maps vs nested JSONObjects? <span class="qtg">+</span></div><div class="qa-a">For Map: Jackson automatically traverses the Map tree. When it encounters a Map value, it recursively serializes it as a nested JSON object. When it sees a List, it serializes it as a JSON array. No toString() needed — Jackson handles the entire tree. For JSONObject: Jackson doesn't recognize org.json's JSONObject type as a special type — you must call toString() to get the JSON string first, then pass that string to body().</div></div>
+  <div class="qi"><div class="qq">Q3: What is the difference between Arrays.asList() and new ArrayList<>()? <span class="qtg">+</span></div><div class="qa-a">Arrays.asList() returns a fixed-size List backed by the array — you cannot add or remove elements (throws UnsupportedOperationException). Use it for static, known-at-compile-time arrays. new ArrayList&lt;&gt;() creates a mutable List — you can add/remove elements dynamically. Use it when building arrays in loops or when the size is unknown. Both serialize identically to JSON arrays when Jackson processes them.</div></div>
+  <div class="qi"><div class="qq">Q4: How do you represent a JSON array of objects using Map approach? <span class="qtg">+</span></div><div class="qa-a">Create each object as Map&lt;String,Object&gt;. Add all objects to a List&lt;Map&lt;String,Object&gt;&gt;. Put that list as a Map value: body.put("projects", listOfMaps). Jackson serializes List&lt;Map&gt; as a JSON array of objects: "projects":[{"projectId":"PRJ-101",...},{"projectId":"PRJ-202",...}]. This is equivalent to JSONArray of JSONObjects in the org.json approach.</div></div>
+  <div class="qi"><div class="qq">Q5: What does RequestSpecBuilder provide over repeating headers in every test? <span class="qtg">+</span></div><div class="qa-a">RequestSpecBuilder creates a reusable RequestSpecification that bundles baseUri, headers, query params, and path params. You call given(spec) instead of repeating .header(), .queryParam() etc. in every test method. Benefits: (1) DRY — change the token in one place, (2) consistency — every test uses identical headers, (3) readability — test methods focus on body data and assertions, not boilerplate setup, (4) thread safety when spec is created per-thread in parallel tests.</div></div>
+</div>
+
+</div></div>
+
+<!-- ===================== S32 ===================== -->
+<div class="session" id="session-2">
+<div class="sp">
+
+<div class="sec">Overview — Gson + POJO Request Creation</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">☕</div><div class="ov-t">What</div><div class="ov-tx">Design Java POJO classes mirroring the PUT request JSON structure, populate them, then use <code>gson.toJson(pojo)</code> to serialize to JSON string for the request body.</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">Type-safe request construction — IDE autocomplete, compile-time field checks, refactoring support. Gson doesn't need getters — simpler POJOs than Jackson-based approach.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Use for recurring complex request schemas used across multiple test classes. Define POJOs once, reuse everywhere. Best for enterprise frameworks with a defined API contract.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx"><code>given().body(gson.toJson(employeePojo))</code> — toJson() converts the POJO graph to JSON string. Alternatively configure REST Assured to use Gson auto-detection.</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Define nested POJO classes (bottom-up). Populate fields directly (no setters needed). Gson.toJson(root) traverses the entire object graph and produces the complete JSON string.</div></div>
+</div>
+
+<div class="sec">Keyword Glossary</div>
+<div class="kw-grid">
+  <div class="kwi"><div class="kw-k">Gson</div><div class="kw-v">Google's JSON library — toJson(pojo) serializes any Java object graph to JSON string. No getters required.</div></div>
+  <div class="kwi"><div class="kw-k">toJson(obj)</div><div class="kw-v">Gson serialization method — Java POJO → JSON string. Traverses nested POJO fields recursively.</div></div>
+  <div class="kwi"><div class="kw-k">@SerializedName</div><div class="kw-v">Maps a Java field name to a different JSON key. Used when API uses snake_case but Java uses camelCase.</div></div>
+  <div class="kwi"><div class="kw-k">field access</div><div class="kw-v">Gson reads/writes POJO fields directly via reflection — no getters or setters needed in POJO classes.</div></div>
+  <div class="kwi"><div class="kw-k">nested POJO field</div><div class="kw-v">A POJO field typed as another POJO — Gson serializes it as a nested JSON object recursively.</div></div>
+  <div class="kwi"><div class="kw-k">List&lt;String&gt; field</div><div class="kw-v">A POJO field typed as List&lt;String&gt; — Gson serializes it as a JSON string array.</div></div>
+  <div class="kwi"><div class="kw-k">List&lt;POJO&gt; field</div><div class="kw-v">A POJO field typed as List&lt;ProjectModel&gt; — Gson serializes it as a JSON array of objects.</div></div>
+  <div class="kwi"><div class="kw-k">GsonBuilder</div><div class="kw-v">Factory for custom Gson — serializeNulls(), setPrettyPrinting(), setFieldNamingPolicy() etc.</div></div>
+  <div class="kwi"><div class="kw-k">serializeNulls()</div><div class="kw-v">GsonBuilder option — include null POJO fields in JSON output. Default: null fields excluded.</div></div>
+  <div class="kwi"><div class="kw-k">bottom-up POJO design</div><div class="kw-v">Define innermost POJO class first (GeoModel), then the class that contains it (LocationModel), etc.</div></div>
+</div>
+
+<div class="sec">Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>Gson.toJson(pojo)</b> = serializes the entire POJO object graph to a JSON string — Gson traverses all nested POJO fields recursively without any configuration.</div>
+  <div class="ol"><b>Gson POJOs need NO getters</b> = unlike Jackson which uses getter methods for serialization, Gson accesses fields directly via reflection — simpler class definitions.</div>
+  <div class="ol"><b>body(gson.toJson(emp))</b> = pass the JSON string to REST Assured body() — like JSONObject, Gson requires explicit toJson() call since REST Assured doesn't auto-detect Gson by default.</div>
+  <div class="ol"><b>@SerializedName("dept_id")</b> = maps JSON key "dept_id" to Java field "deptId" — Gson's equivalent of Jackson's @JsonProperty. Used when API uses snake_case naming.</div>
+  <div class="ol"><b>GsonBuilder.serializeNulls()</b> = include null fields in serialized JSON — important when API schema requires all fields present even if null (e.g. PATCH vs full PUT).</div>
+  <div class="ol"><b>POJO design rule</b> = create one POJO class per JSON object level, bottom-up: GeoModel first, then LocationModel (contains GeoModel), then DepartmentModel (contains LocationModel).</div>
+</div>
+
+<div class="sec">Code Examples</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s32">
+    <div class="ct active" data-ci="0" data-cs="s32">Gson_POJOHierarchy.java</div>
+    <div class="ct" data-ci="1" data-cs="s32">Gson_SerializeAndSend.java</div>
+    <div class="ct" data-ci="2" data-cs="s32">Gson_SerializedNameAndNull.java</div>
+    <div class="ct" data-ci="3" data-cs="s32">Gson_FullComplexPUT.java</div>
+  </div>
+  <div class="fn-hdr" id="fh-s32">Gson_POJOHierarchy.java</div>
+
+  <div id="s32-c0" class="cblk active"><span class="cmt">// Gson_POJOHierarchy.java
+// Defines the complete POJO class hierarchy for the PUT /v2/employees/{empId} body
+// Gson rules: NO getters needed | NO no-arg constructor needed | fields accessed directly
+// Define bottom-up: GeoModel → LocationModel → DepartmentModel → EmployeeModel</span>
+<span class="kw">import</span> <span class="cls">com.google.gson.annotations.SerializedName</span>;
+<span class="kw">import</span> <span class="cls">java.util.List</span>;
+
+<span class="cmt">// ── Level 4: GeoModel (deepest) ───────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="cls">GeoModel</span> {
+    <span class="kw">double</span> lat;
+    <span class="kw">double</span> lng;
+    <span class="cmt">// Gson serializes: "lat":28.6139, "lng":77.2090
+    // No getters, no annotations — field names match JSON keys exactly</span>
+}
+
+<span class="cmt">// ── Level 3: LocationModel (contains GeoModel) ────────────────────────────</span>
+<span class="kw">class</span> <span class="cls">LocationModel</span> {
+    <span class="cls">String</span>   city;
+    <span class="cls">String</span>   country;
+    <span class="cls">GeoModel</span> geo;
+    <span class="cmt">// Nested POJO field — Gson serializes GeoModel as nested JSON object
+    // "geo": {"lat":28.6139,"lng":77.2090}</span>
+}
+
+<span class="cmt">// ── Level 2: DepartmentModel (contains LocationModel) ─────────────────────</span>
+<span class="kw">class</span> <span class="cls">DepartmentModel</span> {
+    <span class="cls">String</span>        deptId;
+    <span class="cls">String</span>        deptName;
+    <span class="cls">String</span>        costCenter;
+    <span class="cls">LocationModel</span> location;
+    <span class="cmt">// Gson serializes location as 2-level deep nested object
+    // "location":{"city":"Delhi","geo":{"lat":28.6,...}}</span>
+}
+
+<span class="cmt">// ── Level 2: BreakdownModel ───────────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="cls">BreakdownModel</span> {
+    <span class="kw">double</span> basic;
+    <span class="kw">double</span> hra;
+    <span class="kw">double</span> special;
+}
+
+<span class="cmt">// ── Level 2: CompensationModel (contains BreakdownModel) ─────────────────</span>
+<span class="kw">class</span> <span class="cls">CompensationModel</span> {
+    <span class="cls">String</span>        currency;
+    <span class="kw">double</span>        ctc;
+    <span class="cls">BreakdownModel</span> breakdown;
+    <span class="cmt">// "compensation":{"currency":"INR","ctc":2500000.0,"breakdown":{...}}</span>
+}
+
+<span class="cmt">// ── ProjectModel (array element) ─────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="cls">ProjectModel</span> {
+    <span class="cls">String</span>  projectId;
+    <span class="cls">String</span>  name;
+    <span class="kw">boolean</span> billable;
+    <span class="kw">int</span>     priority;
+    <span class="cmt">// Each instance becomes one element in the projects JSON array</span>
+}
+
+<span class="cmt">// ── Root: EmployeeModel ───────────────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="cls">EmployeeModel</span> {
+    <span class="cls">String</span>          empId;
+    <span class="cls">String</span>          firstName;
+    <span class="cls">String</span>          lastName;
+    <span class="cls">String</span>          email;
+    <span class="cls">String</span>          status;
+    <span class="kw">boolean</span>         active;
+    <span class="kw">int</span>             experience;
+
+    <span class="cls">DepartmentModel</span>  department;   <span class="cmt">// nested POJO → nested JSON object</span>
+    <span class="cls">CompensationModel</span> compensation; <span class="cmt">// nested POJO → nested JSON object</span>
+
+    <span class="cls">List</span>&lt;<span class="cls">String</span>&gt;      roles;        <span class="cmt">// List&lt;String&gt; → JSON string array</span>
+    <span class="cls">List</span>&lt;<span class="cls">String</span>&gt;      skills;       <span class="cmt">// List&lt;String&gt; → JSON string array</span>
+    <span class="cls">List</span>&lt;<span class="cls">ProjectModel</span>&gt; projects;    <span class="cmt">// List&lt;POJO&gt; → JSON array of objects</span>
+
+    <span class="cmt">// GSON NOTE: No constructor, getters, setters, or annotations required!
+    // Gson reads and writes fields directly via Java reflection.
+    // Compare with Jackson which needs: no-arg constructor + getters + setters</span>
+}</div>
+
+  <div id="s32-c1" class="cblk"><span class="cmt">// Gson_SerializeAndSend.java
+// Populates the POJO hierarchy and sends PUT request using gson.toJson()
+// Shows: populate fields directly | toJson() converts entire graph | send</span>
+<span class="kw">import</span> <span class="cls">com.google.gson.Gson</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.Arrays</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">Gson_SerializeAndSend</span> {
+
+    <span class="kw">private final</span> <span class="cls">Gson</span> <span class="vr">gson</span> = <span class="kw">new</span> <span class="cls">Gson</span>();
+    <span class="cmt">// Gson is thread-safe after construction — create once, reuse</span>
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_GsonPOJOSerialization</span>() {
+
+        <span class="cmt">// ── Populate POJO hierarchy bottom-up ────────────────────────────</span>
+        <span class="cls">GeoModel</span> <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">GeoModel</span>();
+        <span class="vr">geo</span>.lat = <span class="num">28.6139</span>;
+        <span class="vr">geo</span>.lng = <span class="num">77.2090</span>;
+        <span class="cmt">// Direct field assignment — no setters needed with Gson POJOs</span>
+
+        <span class="cls">LocationModel</span> <span class="vr">location</span> = <span class="kw">new</span> <span class="cls">LocationModel</span>();
+        <span class="vr">location</span>.city    = <span class="str">"Delhi"</span>;
+        <span class="vr">location</span>.country = <span class="str">"India"</span>;
+        <span class="vr">location</span>.geo     = <span class="vr">geo</span>;
+        <span class="cmt">// Assign GeoModel instance → Gson will serialize it as nested object</span>
+
+        <span class="cls">DepartmentModel</span> <span class="vr">dept</span> = <span class="kw">new</span> <span class="cls">DepartmentModel</span>();
+        <span class="vr">dept</span>.deptId     = <span class="str">"DEPT-ENG"</span>;
+        <span class="vr">dept</span>.deptName   = <span class="str">"Engineering"</span>;
+        <span class="vr">dept</span>.costCenter = <span class="str">"CC-4001"</span>;
+        <span class="vr">dept</span>.location   = <span class="vr">location</span>;
+
+        <span class="cls">BreakdownModel</span> <span class="vr">brkd</span> = <span class="kw">new</span> <span class="cls">BreakdownModel</span>();
+        <span class="vr">brkd</span>.basic   = <span class="num">1250000.00</span>;
+        <span class="vr">brkd</span>.hra     = <span class="num">500000.00</span>;
+        <span class="vr">brkd</span>.special = <span class="num">750000.00</span>;
+
+        <span class="cls">CompensationModel</span> <span class="vr">comp</span> = <span class="kw">new</span> <span class="cls">CompensationModel</span>();
+        <span class="vr">comp</span>.currency  = <span class="str">"INR"</span>;
+        <span class="vr">comp</span>.ctc       = <span class="num">2500000.00</span>;
+        <span class="vr">comp</span>.breakdown = <span class="vr">brkd</span>;
+
+        <span class="cmt">// ── Root EmployeeModel ───────────────────────────────────────────</span>
+        <span class="cls">EmployeeModel</span> <span class="vr">emp</span> = <span class="kw">new</span> <span class="cls">EmployeeModel</span>();
+        <span class="vr">emp</span>.empId       = <span class="str">"EMP-1001"</span>;
+        <span class="vr">emp</span>.firstName   = <span class="str">"Chitti"</span>;
+        <span class="vr">emp</span>.lastName    = <span class="str">"SDET"</span>;
+        <span class="vr">emp</span>.email       = <span class="str">"chitti@hrms.com"</span>;
+        <span class="vr">emp</span>.status      = <span class="str">"ACTIVE"</span>;
+        <span class="vr">emp</span>.active      = <span class="kw">true</span>;
+        <span class="vr">emp</span>.experience  = <span class="num">5</span>;
+        <span class="vr">emp</span>.department  = <span class="vr">dept</span>;
+        <span class="vr">emp</span>.compensation= <span class="vr">comp</span>;
+        <span class="vr">emp</span>.roles       = Arrays.asList(<span class="str">"SDET"</span>, <span class="str">"LEAD"</span>, <span class="str">"REVIEWER"</span>);
+        <span class="vr">emp</span>.skills      = Arrays.asList(<span class="str">"Java"</span>, <span class="str">"REST Assured"</span>, <span class="str">"TestNG"</span>, <span class="str">"Jenkins"</span>);
+
+        <span class="cmt">// ── gson.toJson() = serialize entire POJO graph → JSON string ────</span>
+        <span class="cls">String</span> <span class="vr">jsonBody</span> = <span class="vr">gson</span>.toJson(<span class="vr">emp</span>);
+        <span class="cmt">// Gson traverses: EmployeeModel → DepartmentModel → LocationModel → GeoModel
+        // Produces the complete 4-level deep JSON in one call</span>
+        System.out.println(<span class="str">"Gson body:\n"</span> + <span class="vr">jsonBody</span>);
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,    <span class="str">"EMP-1001"</span>)
+            .queryParam(<span class="str">"version"</span>, <span class="str">"2"</span>)
+            .queryParam(<span class="str">"notify"</span>,  <span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,   <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .header(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">jsonBody</span>)
+            <span class="cmt">// body(String) — REST Assured sends it as-is, no further serialization</span>
+        .when()
+            .put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"department.location.city"</span>,   equalTo(<span class="str">"Delhi"</span>))
+            .body(<span class="str">"department.location.geo.lat"</span>, equalTo(<span class="num">28.6139f</span>))
+            .body(<span class="str">"compensation.breakdown.hra"</span>,  equalTo(<span class="num">500000.0f</span>))
+            .body(<span class="str">"roles[0]"</span>,                   equalTo(<span class="str">"SDET"</span>));
+    }
+}</div>
+
+  <div id="s32-c2" class="cblk"><span class="cmt">// Gson_SerializedNameAndNull.java
+// @SerializedName = map Java field → different JSON key
+// GsonBuilder.serializeNulls() = include null fields in JSON output
+// GsonBuilder.setPrettyPrinting() = formatted JSON for debugging</span>
+<span class="kw">import</span> <span class="cls">com.google.gson.Gson</span>;
+<span class="kw">import</span> <span class="cls">com.google.gson.GsonBuilder</span>;
+<span class="kw">import</span> <span class="cls">com.google.gson.annotations.SerializedName</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.Arrays</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="cmt">// POJO with @SerializedName — maps Java camelCase → JSON snake_case</span>
+<span class="kw">class</span> <span class="cls">EmpRequestAnnotated</span> {
+
+    <span class="ann">@SerializedName</span>(<span class="str">"emp_id"</span>)
+    <span class="cls">String</span> empId;
+    <span class="cmt">// Java field "empId" → JSON key "emp_id"</span>
+
+    <span class="ann">@SerializedName</span>(<span class="str">"first_name"</span>)
+    <span class="cls">String</span> firstName;
+    <span class="cmt">// Java "firstName" → JSON "first_name"</span>
+
+    <span class="ann">@SerializedName</span>(<span class="str">"last_name"</span>)
+    <span class="cls">String</span> lastName;
+
+    <span class="cls">String</span> email;      <span class="cmt">// exact match — no annotation needed</span>
+    <span class="cls">String</span> status;
+    <span class="kw">boolean</span> active;
+    <span class="kw">int</span>     experience;
+
+    <span class="ann">@SerializedName</span>(<span class="str">"dept_info"</span>)
+    <span class="cls">DepartmentModel</span> department;
+    <span class="cmt">// Java "department" field → JSON key "dept_info"</span>
+
+    <span class="cls">String</span> promoCode;
+    <span class="cmt">// null field — by default Gson EXCLUDES null fields from JSON
+    // Use GsonBuilder.serializeNulls() to include them</span>
+}
+
+<span class="kw">public class</span> <span class="cls">Gson_SerializedNameAndNull</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_SerializedNameDemo</span>() {
+
+        <span class="cls">GeoModel</span> <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">GeoModel</span>(); <span class="vr">geo</span>.lat=<span class="num">28.6139</span>; <span class="vr">geo</span>.lng=<span class="num">77.2090</span>;
+        <span class="cls">LocationModel</span> <span class="vr">loc</span> = <span class="kw">new</span> <span class="cls">LocationModel</span>();
+        <span class="vr">loc</span>.city=<span class="str">"Delhi"</span>; <span class="vr">loc</span>.country=<span class="str">"India"</span>; <span class="vr">loc</span>.geo=<span class="vr">geo</span>;
+        <span class="cls">DepartmentModel</span> <span class="vr">dept</span> = <span class="kw">new</span> <span class="cls">DepartmentModel</span>();
+        <span class="vr">dept</span>.deptId=<span class="str">"DEPT-ENG"</span>; <span class="vr">dept</span>.deptName=<span class="str">"Engineering"</span>;
+        <span class="vr">dept</span>.costCenter=<span class="str">"CC-4001"</span>; <span class="vr">dept</span>.location=<span class="vr">loc</span>;
+
+        <span class="cls">EmpRequestAnnotated</span> <span class="vr">req</span> = <span class="kw">new</span> <span class="cls">EmpRequestAnnotated</span>();
+        <span class="vr">req</span>.empId      = <span class="str">"EMP-1001"</span>;  <span class="cmt">// → JSON "emp_id":"EMP-1001"</span>
+        <span class="vr">req</span>.firstName  = <span class="str">"Chitti"</span>;    <span class="cmt">// → JSON "first_name":"Chitti"</span>
+        <span class="vr">req</span>.lastName   = <span class="str">"SDET"</span>;      <span class="cmt">// → JSON "last_name":"SDET"</span>
+        <span class="vr">req</span>.email      = <span class="str">"c@hrms.com"</span>;
+        <span class="vr">req</span>.status     = <span class="str">"ACTIVE"</span>;
+        <span class="vr">req</span>.active     = <span class="kw">true</span>;
+        <span class="vr">req</span>.experience = <span class="num">5</span>;
+        <span class="vr">req</span>.department = <span class="vr">dept</span>;       <span class="cmt">// → JSON "dept_info":{...}</span>
+        <span class="vr">req</span>.promoCode  = <span class="kw">null</span>;       <span class="cmt">// null — excluded by default Gson</span>
+
+        <span class="cmt">// Default Gson: null fields excluded</span>
+        <span class="cls">Gson</span> <span class="vr">defaultGson</span> = <span class="kw">new</span> <span class="cls">Gson</span>();
+        System.out.println(<span class="str">"Default (no nulls):\n"</span> + <span class="vr">defaultGson</span>.toJson(<span class="vr">req</span>));
+        <span class="cmt">// promoCode NOT in output</span>
+
+        <span class="cmt">// GsonBuilder with serializeNulls + pretty printing</span>
+        <span class="cls">Gson</span> <span class="vr">nullGson</span> = <span class="kw">new</span> <span class="cls">GsonBuilder</span>()
+            .serializeNulls()      <span class="cmt">// include null fields: "promoCode":null</span>
+            .setPrettyPrinting()   <span class="cmt">// formatted output for debugging</span>
+            .create();
+        System.out.println(<span class="str">"With nulls:\n"</span> + <span class="vr">nullGson</span>.toJson(<span class="vr">req</span>));
+        <span class="cmt">// promoCode IS in output: "promoCode": null</span>
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,    <span class="str">"EMP-1001"</span>)
+            .queryParam(<span class="str">"version"</span>, <span class="str">"2"</span>).queryParam(<span class="str">"notify"</span>, <span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,   <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .header(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">defaultGson</span>.toJson(<span class="vr">req</span>))
+        .when().put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"emp_id"</span>,             equalTo(<span class="str">"EMP-1001"</span>))
+            .body(<span class="str">"first_name"</span>,         equalTo(<span class="str">"Chitti"</span>))
+            .body(<span class="str">"dept_info.deptId"</span>,   equalTo(<span class="str">"DEPT-ENG"</span>));
+    }
+}</div>
+
+  <div id="s32-c3" class="cblk"><span class="cmt">// Gson_FullComplexPUT.java — COMPLETE PUT with all nested levels + arrays
+// Uses Gson + POJO to build the full EmployeeModel request body
+// Most production-grade pattern: reusable builder method + Gson serialization</span>
+<span class="kw">import</span> <span class="cls">com.google.gson.Gson</span>;
+<span class="kw">import</span> <span class="cls">com.google.gson.GsonBuilder</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.Arrays</span>;
+<span class="kw">import</span> <span class="cls">java.util.ArrayList</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">Gson_FullComplexPUT</span> {
+
+    <span class="kw">private final</span> <span class="cls">Gson</span> <span class="vr">gson</span> = <span class="kw">new</span> <span class="cls">Gson</span>();
+
+    <span class="cmt">// ── Builder method: creates complete EmployeeModel ────────────────</span>
+    <span class="kw">private</span> <span class="cls">EmployeeModel</span> <span class="fn">buildEmployee</span>(<span class="cls">String</span> <span class="vr">id</span>, <span class="cls">String</span> <span class="vr">name</span>, <span class="cls">String</span> <span class="vr">status</span>) {
+
+        <span class="cmt">// Level 4 → 3 → 2 build (bottom-up)</span>
+        <span class="cls">GeoModel</span> <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">GeoModel</span>(); <span class="vr">geo</span>.lat=<span class="num">28.6139</span>; <span class="vr">geo</span>.lng=<span class="num">77.2090</span>;
+
+        <span class="cls">LocationModel</span> <span class="vr">loc</span> = <span class="kw">new</span> <span class="cls">LocationModel</span>();
+        <span class="vr">loc</span>.city=<span class="str">"Delhi"</span>; <span class="vr">loc</span>.country=<span class="str">"India"</span>; <span class="vr">loc</span>.geo=<span class="vr">geo</span>;
+
+        <span class="cls">DepartmentModel</span> <span class="vr">dept</span> = <span class="kw">new</span> <span class="cls">DepartmentModel</span>();
+        <span class="vr">dept</span>.deptId=<span class="str">"DEPT-ENG"</span>; <span class="vr">dept</span>.deptName=<span class="str">"Engineering"</span>;
+        <span class="vr">dept</span>.costCenter=<span class="str">"CC-4001"</span>; <span class="vr">dept</span>.location=<span class="vr">loc</span>;
+
+        <span class="cls">BreakdownModel</span> <span class="vr">brkd</span> = <span class="kw">new</span> <span class="cls">BreakdownModel</span>();
+        <span class="vr">brkd</span>.basic=<span class="num">1250000.0</span>; <span class="vr">brkd</span>.hra=<span class="num">500000.0</span>; <span class="vr">brkd</span>.special=<span class="num">750000.0</span>;
+
+        <span class="cls">CompensationModel</span> <span class="vr">comp</span> = <span class="kw">new</span> <span class="cls">CompensationModel</span>();
+        <span class="vr">comp</span>.currency=<span class="str">"INR"</span>; <span class="vr">comp</span>.ctc=<span class="num">2500000.0</span>; <span class="vr">comp</span>.breakdown=<span class="vr">brkd</span>;
+
+        <span class="cls">ProjectModel</span> <span class="vr">p1</span> = <span class="kw">new</span> <span class="cls">ProjectModel</span>();
+        <span class="vr">p1</span>.projectId=<span class="str">"PRJ-101"</span>; <span class="vr">p1</span>.name=<span class="str">"HRMS Automation"</span>;
+        <span class="vr">p1</span>.billable=<span class="kw">true</span>;  <span class="vr">p1</span>.priority=<span class="num">1</span>;
+
+        <span class="cls">ProjectModel</span> <span class="vr">p2</span> = <span class="kw">new</span> <span class="cls">ProjectModel</span>();
+        <span class="vr">p2</span>.projectId=<span class="str">"PRJ-202"</span>; <span class="vr">p2</span>.name=<span class="str">"API Framework"</span>;
+        <span class="vr">p2</span>.billable=<span class="kw">false</span>; <span class="vr">p2</span>.priority=<span class="num">2</span>;
+
+        <span class="cls">EmployeeModel</span> <span class="vr">emp</span> = <span class="kw">new</span> <span class="cls">EmployeeModel</span>();
+        <span class="vr">emp</span>.empId=<span class="vr">id</span>; <span class="vr">emp</span>.firstName=<span class="vr">name</span>;
+        <span class="vr">emp</span>.lastName=<span class="str">"SDET"</span>;  <span class="vr">emp</span>.email=<span class="str">"chitti@hrms.com"</span>;
+        <span class="vr">emp</span>.status=<span class="vr">status</span>;   <span class="vr">emp</span>.active=<span class="kw">true</span>; <span class="vr">emp</span>.experience=<span class="num">5</span>;
+        <span class="vr">emp</span>.department  = <span class="vr">dept</span>;
+        <span class="vr">emp</span>.compensation= <span class="vr">comp</span>;
+        <span class="vr">emp</span>.roles  = Arrays.asList(<span class="str">"SDET"</span>,<span class="str">"LEAD"</span>,<span class="str">"REVIEWER"</span>);
+        <span class="vr">emp</span>.skills = Arrays.asList(<span class="str">"Java"</span>,<span class="str">"REST Assured"</span>,<span class="str">"TestNG"</span>,<span class="str">"Jenkins"</span>);
+        <span class="vr">emp</span>.projects = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;(Arrays.asList(<span class="vr">p1</span>, <span class="vr">p2</span>));
+        <span class="kw">return</span> <span class="vr">emp</span>;
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">put_FullGsonComplexBody</span>() {
+
+        <span class="cls">EmployeeModel</span> <span class="vr">emp</span> = <span class="fn">buildEmployee</span>(<span class="str">"EMP-1001"</span>, <span class="str">"Chitti"</span>, <span class="str">"ACTIVE"</span>);
+
+        <span class="cmt">// gson.toJson(emp) = serialize entire POJO graph in ONE call
+        // Gson recursively traverses: EmployeeModel → CompensationModel
+        //   → BreakdownModel, DepartmentModel → LocationModel → GeoModel
+        //   and List&lt;ProjectModel&gt; → JSON array of objects</span>
+        <span class="cls">String</span> <span class="vr">jsonBody</span> = <span class="vr">gson</span>.toJson(<span class="vr">emp</span>);
+        System.out.println(<span class="str">"Full POJO body:\n"</span>
+            + <span class="kw">new</span> <span class="cls">GsonBuilder</span>().setPrettyPrinting().create().toJson(<span class="vr">emp</span>));
+        <span class="cmt">// Pretty-printed for debug; compact for actual request</span>
+
+        given()
+            .baseUri(<span class="str">"https://api.hrms.com"</span>)
+            .pathParam(<span class="str">"empId"</span>,    emp.empId)
+            <span class="cmt">// Use POJO field value directly in pathParam!</span>
+            .queryParam(<span class="str">"version"</span>, <span class="str">"2"</span>).queryParam(<span class="str">"notify"</span>,<span class="str">"true"</span>)
+            .queryParam(<span class="str">"audit"</span>,   <span class="str">"strict"</span>)
+            .header(<span class="str">"Authorization"</span>,    <span class="str">"Bearer token"</span>)
+            .header(<span class="str">"Content-Type"</span>,      <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Tenant-ID"</span>,       <span class="str">"ORG-777"</span>)
+            .header(<span class="str">"X-Request-ID"</span>,      <span class="str">"REQ-UPD-20240101"</span>)
+            .header(<span class="str">"Accept"</span>,             <span class="str">"application/json"</span>)
+            .header(<span class="str">"X-Idempotency-Key"</span>, <span class="str">"IDEM-PUT-9999"</span>)
+            .body(<span class="vr">jsonBody</span>)
+        .when()
+            .put(<span class="str">"/v2/employees/{empId}"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"empId"</span>,                         equalTo(<span class="str">"EMP-1001"</span>))
+            .body(<span class="str">"department.location.city"</span>,        equalTo(<span class="str">"Delhi"</span>))
+            .body(<span class="str">"department.location.geo.lat"</span>,     equalTo(<span class="num">28.6139f</span>))
+            .body(<span class="str">"compensation.breakdown.basic"</span>,    equalTo(<span class="num">1250000.0f</span>))
+            .body(<span class="str">"compensation.breakdown.hra"</span>,      equalTo(<span class="num">500000.0f</span>))
+            .body(<span class="str">"roles[0]"</span>,                       equalTo(<span class="str">"SDET"</span>))
+            .body(<span class="str">"skills"</span>,                         hasItem(<span class="str">"REST Assured"</span>))
+            .body(<span class="str">"projects.size()"</span>,                equalTo(<span class="num">2</span>))
+            .body(<span class="str">"projects[0].projectId"</span>,           equalTo(<span class="str">"PRJ-101"</span>))
+            .body(<span class="str">"projects[1].billable"</span>,            equalTo(<span class="kw">false</span>))
+            .body(<span class="str">"active"</span>,                         equalTo(<span class="kw">true</span>))
+            .body(<span class="str">"experience"</span>,                      equalTo(<span class="num">5</span>));
+    }
+}</div>
+</div>
+
+<div class="sec">Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Define POJO classes bottom-up — create the innermost class first (GeoModel), then the class that contains it (LocationModel). This makes the dependency chain clear and prevents forward-reference issues.</div>
+  <div class="ci"><span class="ck">✔</span> Use a dedicated builder method (like <code>buildEmployee()</code>) that returns a fully populated POJO — keeps test methods clean and enables easy data-driven testing by passing different parameters.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>new GsonBuilder().setPrettyPrinting().create().toJson(pojo)</code> only for debugging/logging — send the compact <code>new Gson().toJson(pojo)</code> in the actual request for smaller payload size.</div>
+  <div class="ci"><span class="ck">✔</span> Apply <code>@SerializedName</code> when the API uses snake_case JSON keys but Java convention requires camelCase field names — keeps both the POJO and the JSON contract correct.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>emp.empId</code> directly in <code>pathParam("empId", emp.empId)</code> — cross-references the POJO data to ensure the URL path parameter matches the request body ID field exactly.</div>
+</div>
+
+<div class="sec">Interview Q&amp;A</div>
+<div class="qa-list">
+  <div class="qi"><div class="qq">Q1: Compare JSONObject, Map, and Gson+POJO for PUT request body creation. <span class="qtg">+</span></div><div class="qa-a">JSONObject: explicit construction via put() chains, preserves key order, requires toString() before body(). Extra org.json dependency. Good for one-off requests. Map: most common, no extra dependency, Jackson auto-serializes (no toString()), nested via nested Maps, arrays via Lists. Industry-standard. Gson+POJO: most type-safe, compile-time checking, IDE autocomplete, Gson reads fields directly without getters, requires toJson() like JSONObject. Best for recurring request schemas shared across multiple tests. Choose Map for simple flexible cases; Gson+POJO for complex recurring structures.</div></div>
+  <div class="qi"><div class="qq">Q2: Why does Gson not require getters for serialization unlike Jackson? <span class="qtg">+</span></div><div class="qa-a">Gson uses Java reflection to directly access POJO fields regardless of their access modifier (public, private, protected). It doesn't rely on JavaBeans conventions (getter/setter patterns) that Jackson uses by default. Jackson needs getters because it follows the JavaBeans standard — it discovers properties by looking for public getXxx() methods. Gson bypasses this by directly reading field values via Field.setAccessible(true) and Field.get(object).</div></div>
+  <div class="qi"><div class="qq">Q3: What does GsonBuilder.serializeNulls() do to the request body? <span class="qtg">+</span></div><div class="qa-a">By default, Gson excludes POJO fields that have null values from the JSON output — they simply don't appear. GsonBuilder.serializeNulls() overrides this and includes null fields as "fieldName": null. Use it when the API schema requires all fields to be present even if null (e.g. a full PUT that must explicitly null out optional fields). Without serializeNulls(), null fields are silently omitted — which might leave the server with old values if it only updates provided fields.</div></div>
+  <div class="qi"><div class="qq">Q4: How does Gson serialize a List&lt;POJO&gt; field in the request? <span class="qtg">+</span></div><div class="qa-a">Gson automatically serializes a List&lt;ProjectModel&gt; field as a JSON array of objects. For each ProjectModel instance in the list, Gson creates a JSON object with the fields of that POJO. No TypeToken is needed for serialization — TypeToken is only required for DESERIALIZATION when Gson needs to know the element type to create instances. For serialization, Gson inspects the actual runtime type of each List element and serializes it accordingly.</div></div>
+  <div class="qi"><div class="qq">Q5: When should you choose Gson+POJO over Map for request creation in a production framework? <span class="qtg">+</span></div><div class="qa-a">Choose Gson+POJO when: (1) the same complex request schema is reused across 10+ test methods or test classes — define the POJO once, reuse everywhere, (2) compile-time validation is important — typos in field names cause compilation errors not runtime failures, (3) IDE support is critical — autocomplete on pojo.department.location shows all available fields, (4) refactoring — renaming a JSON field requires only one POJO change, not hunting through all Map.put() calls. Use Map for: quick prototyping, dynamic/unknown schemas, or one-off test requests where creating POJO classes is overkill.</div></div>
+</div>
+
+</div></div>
+
+</div><!-- end .wrap -->
+<div class="pbar">
+  <div class="nvb">
+    <button class="nb" id="prevBtn">← Prev</button>
+    <button class="nb" id="nextBtn">Next →</button>
+  </div>
+  <div class="pw"><div class="pf" id="pf" style="width:33%"></div></div>
+  <div class="pt" id="pt">S30 / 3 — JSONObject &amp; JSONArray Request Creation</div>
+</div>
+</div>
+
+<script>
+(function(){
+  var cur = 0;
+  var total = 3;
+  var labels = [
+    'S30 / 3 — JSONObject & JSONArray Request Creation',
+    'S31 / 3 — Map<String,Object> Request Creation',
+    'S32 / 3 — Gson + POJO Request Creation'
+  ];
+  var files = {
+    s30:['JO_FlatAndNestedLevel2.java','JO_Deep4LevelNesting.java','JO_ArraysOfObjects.java','JO_FullComplexBody.java'],
+    s31:['Map_FlatAndLevel2.java','Map_Deep4LevelNesting.java','Map_ArrayFields.java','Map_FullComplexBody.java'],
+    s32:['Gson_POJOHierarchy.java','Gson_SerializeAndSend.java','Gson_SerializedNameAndNull.java','Gson_FullComplexPUT.java']
+  };
+
+  function goS(n) {
+    cur = n;
+    document.querySelectorAll('.session').forEach(function(el,i){ el.classList.toggle('active', i===n); });
+    document.querySelectorAll('#stabRow .stab').forEach(function(el,i){
+      el.classList.toggle('active', i===n);
+      if(i < n) el.classList.add('done'); else el.classList.remove('done');
+    });
+    document.getElementById('pf').style.width = (((n+1)/total)*100) + '%';
+    document.getElementById('pt').textContent = labels[n];
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', function(){ if(cur>0) goS(cur-1); });
+  document.getElementById('nextBtn').addEventListener('click', function(){ if(cur<total-1) goS(cur+1); });
+
+  document.getElementById('stabRow').addEventListener('click', function(e){
+    var t = e.target.closest('.stab');
+    if(!t) return;
+    var si = parseInt(t.getAttribute('data-si'));
+    if(!isNaN(si)) goS(si);
+  });
+
+  document.querySelectorAll('.ctbar').forEach(function(bar){
+    bar.addEventListener('click', function(e){
+      var t = e.target.closest('.ct');
+      if(!t) return;
+      var ci = parseInt(t.getAttribute('data-ci'));
+      var cs = t.getAttribute('data-cs');
+      if(isNaN(ci)||!cs) return;
+      bar.querySelectorAll('.ct').forEach(function(c){ c.classList.remove('active'); });
+      t.classList.add('active');
+      var sess = bar.closest('.session');
+      sess.querySelectorAll('.cblk').forEach(function(b){ b.classList.remove('active'); });
+      var tgt = document.getElementById(cs+'-c'+ci);
+      if(tgt) tgt.classList.add('active');
+      var fh = document.getElementById('fh-'+cs);
+      if(fh && files[cs] && files[cs][ci]) fh.textContent = files[cs][ci];
+    });
+  });
+
+  document.querySelectorAll('.qq').forEach(function(qq){
+    qq.addEventListener('click', function(){
+      qq.classList.toggle('open');
+      var a = qq.nextElementSibling;
+      if(a) a.classList.toggle('open');
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

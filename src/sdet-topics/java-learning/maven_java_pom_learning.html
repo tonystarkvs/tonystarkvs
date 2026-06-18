@@ -1,0 +1,1329 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans, 'Segoe UI', sans-serif); background: transparent; color: var(--color-text-primary); font-size: 14px; }
+
+/* SESSION TAB BAR */
+.session-bar {
+  display: flex; gap: 6px; padding: 14px 16px 0;
+  overflow-x: auto; border-bottom: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+}
+.s-tab {
+  padding: 6px 14px; border-radius: 6px 6px 0 0; cursor: pointer;
+  font-size: 12px; font-weight: 500; border: 0.5px solid var(--color-border-tertiary);
+  border-bottom: none; background: var(--color-background-primary);
+  color: var(--color-text-secondary); transition: all .2s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.s-tab.active { background: #1a1a2e; color: #7dd3fc; border-color: #7dd3fc; }
+.s-tab .badge {
+  font-size: 9px; padding: 2px 5px; border-radius: 10px;
+  background: var(--color-background-info); color: var(--color-text-info); font-weight: 600;
+}
+.s-tab.active .badge { background: #0f3460; color: #7dd3fc; }
+
+/* MAIN CONTENT */
+.content { padding: 20px 16px; }
+
+/* CODE EDITOR BLOCK */
+.editor-area {
+  background: #0d1117; border-radius: 10px; overflow: hidden;
+  border: 1px solid #30363d; margin: 14px 0;
+}
+.editor-tabs { display: flex; gap: 0; background: #161b22; border-bottom: 1px solid #30363d; overflow-x: auto; }
+.e-tab {
+  padding: 8px 14px; font-size: 11px; cursor: pointer; white-space: nowrap;
+  color: #8b949e; border-right: 1px solid #30363d; transition: all .2s;
+  display: flex; align-items: center; gap: 5px;
+}
+.e-tab.active { background: #0d1117; color: #e6edf3; }
+.e-tab .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.code-pane { display: none; padding: 16px; font-family: var(--font-mono, monospace); font-size: 12.5px; line-height: 1.7; overflow-x: auto; }
+.code-pane.active { display: block; }
+
+/* Syntax colors */
+.kw   { color: #ff7b72; }  /* keywords */
+.kw2  { color: #79c0ff; }  /* xml tags */
+.kw3  { color: #ffa657; }  /* scope, lifecycle */
+.str  { color: #a5d6ff; }  /* strings / values */
+.cmt  { color: #8b949e; font-style: italic; }  /* comments */
+.fn   { color: #d2a8ff; }  /* functions / phases */
+.attr { color: #7ee787; }  /* attributes */
+.num  { color: #f2cc60; }  /* numbers / versions */
+
+/* OVERVIEW SECTION */
+.overview-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px; margin: 12px 0;
+}
+.ov-card {
+  background: var(--color-background-secondary); border-radius: 8px;
+  border: 0.5px solid var(--color-border-tertiary); padding: 12px;
+}
+.ov-card .icon { font-size: 20px; margin-bottom: 6px; }
+.ov-card .label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .05em; }
+.ov-card .val { font-size: 13px; color: var(--color-text-primary); line-height: 1.5; margin-top: 4px; }
+
+/* INTERVIEW ONELINERS */
+.oneliners { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.oneliner {
+  background: var(--color-background-secondary); border-left: 3px solid #7dd3fc;
+  border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; line-height: 1.5;
+}
+.oneliner strong { color: #7dd3fc; }
+
+/* CONCEPTS */
+.concept-block { margin: 12px 0; }
+.concept-title { font-size: 14px; font-weight: 500; color: #7dd3fc; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.concept-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; padding: 10px 14px; background: var(--color-background-secondary); border-radius: 8px; border: 0.5px solid var(--color-border-tertiary); }
+
+/* DIAGRAM */
+.diagram-box {
+  background: #0d1117; border: 1px solid #30363d; border-radius: 10px;
+  padding: 16px; margin: 12px 0; overflow-x: auto;
+}
+
+/* BEST PRACTICES */
+.bp-list { list-style: none; display: flex; flex-direction: column; gap: 7px; margin: 12px 0; }
+.bp-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; padding: 9px 12px; background: var(--color-background-secondary); border-radius: 8px; border: 0.5px solid var(--color-border-tertiary); }
+.bp-item .tick { color: #7ee787; font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.bp-item .warn { color: #ffa657; font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+/* Q&A */
+.qa-list { display: flex; flex-direction: column; gap: 12px; margin: 12px 0; }
+.qa-item { border: 0.5px solid var(--color-border-tertiary); border-radius: 10px; overflow: hidden; }
+.qa-q { padding: 10px 14px; background: var(--color-background-secondary); font-weight: 500; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.qa-q .arrow { font-size: 12px; color: var(--color-text-secondary); transition: transform .2s; }
+.qa-a { display: none; padding: 10px 14px; font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; border-top: 0.5px solid var(--color-border-tertiary); }
+.qa-a.open { display: block; }
+.qa-item.open .arrow { transform: rotate(180deg); }
+
+/* SECTION HEADINGS */
+.sec-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 8px; display: flex; align-items: center; gap: 6px; }
+.sec-title::after { content: ''; flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+
+/* SECTION PANEL */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* KEYWORD PILL */
+.kpill { display: inline-block; background: #0f3460; color: #7dd3fc; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin: 2px 3px; font-family: var(--font-mono, monospace); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- SESSION TAB BAR -->
+<div class="session-bar" id="sessionBar">
+  <div class="s-tab active" onclick="goSession(0)">S1 <span class="badge">Phase 1</span></div>
+  <div class="s-tab" onclick="goSession(1)">S2 <span class="badge">Phase 1</span></div>
+  <div class="s-tab" onclick="goSession(2)">S3 <span class="badge">Phase 1</span></div>
+  <div class="s-tab" onclick="goSession(3)">S4 <span class="badge">Phase 2</span></div>
+  <div class="s-tab" onclick="goSession(4)">S5 <span class="badge">Phase 2</span></div>
+  <div class="s-tab" onclick="goSession(5)">S6 <span class="badge">Phase 2</span></div>
+  <div class="s-tab" onclick="goSession(6)">S7 <span class="badge">Phase 2</span></div>
+  <div class="s-tab" onclick="goSession(7)">S8 <span class="badge">Phase 2</span></div>
+  <div class="s-tab" onclick="goSession(8)">S9 <span class="badge">Phase 2</span></div>
+  <div class="s-tab" onclick="goSession(9)">S10 <span class="badge">Phase 2</span></div>
+</div>
+
+<div class="content">
+
+<!-- ===== S1: What is Maven ===== -->
+<div class="panel active" id="s0">
+  <div class="sec-title">📦 Overview — What / Why / When / Where / How</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="label">What</div><div class="val">Maven is a <strong>build automation & dependency management</strong> tool for Java projects</div></div>
+    <div class="ov-card"><div class="label">Why</div><div class="val">Automates compiling, testing, packaging, and deploying Java code without manual steps</div></div>
+    <div class="ov-card"><div class="label">When</div><div class="val">Used in every Java/Selenium/TestNG SDET project to manage JARs and run builds</div></div>
+    <div class="ov-card"><div class="label">Where</div><div class="val">Runs locally via CLI or inside CI/CD pipelines (Jenkins, GitHub Actions, GitLab)</div></div>
+    <div class="ov-card"><div class="label">How</div><div class="val">Reads <span class="kpill">pom.xml</span> file, downloads dependencies from <span class="kpill">Maven Central</span>, executes lifecycle phases</div></div>
+  </div>
+
+  <div class="sec-title">💬 5 Interview One-Liners</div>
+  <div class="oneliners">
+    <div class="oneliner"><strong>Q:</strong> What is Maven? → <em>Maven is a build &amp; dependency management tool that automates Java project compilation, testing, and packaging using pom.xml.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is pom.xml? → <em>Project Object Model — the XML file that describes project config, dependencies, plugins, and build settings.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is Maven Central? → <em>A public online repository where Maven downloads all dependency JARs automatically.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is a Maven repository? → <em>A storage location for JARs — can be Local (~/.m2), Central (internet), or Remote (private Nexus/Artifactory).</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is a Maven Lifecycle? → <em>An ordered sequence of build phases like validate → compile → test → package → install → deploy.</em></div>
+  </div>
+
+  <div class="sec-title">🔍 Key Concept: Maven Architecture</div>
+  <div class="diagram-box">
+    <svg width="100%" viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#7dd3fc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <!-- Developer -->
+      <rect x="20" y="80" width="110" height="44" rx="8" fill="#0f3460" stroke="#7dd3fc" stroke-width="0.8"/>
+      <text x="75" y="98" text-anchor="middle" fill="#7dd3fc" font-size="12" font-weight="500">Developer</text>
+      <text x="75" y="114" text-anchor="middle" fill="#a0aec0" font-size="10">runs mvn cmd</text>
+      <!-- Arrow to Maven -->
+      <line x1="130" y1="102" x2="175" y2="102" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar)"/>
+      <!-- Maven Engine -->
+      <rect x="176" y="65" width="130" height="74" rx="8" fill="#1a1a2e" stroke="#f2cc60" stroke-width="1"/>
+      <text x="241" y="88" text-anchor="middle" fill="#f2cc60" font-size="13" font-weight="500">Maven Engine</text>
+      <text x="241" y="106" text-anchor="middle" fill="#a0aec0" font-size="10">reads pom.xml</text>
+      <text x="241" y="122" text-anchor="middle" fill="#a0aec0" font-size="10">executes lifecycle</text>
+      <!-- Arrow to repos -->
+      <line x1="306" y1="102" x2="350" y2="70" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar)"/>
+      <line x1="306" y1="102" x2="350" y2="102" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar)"/>
+      <line x1="306" y1="102" x2="350" y2="150" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar)"/>
+      <!-- Local -->
+      <rect x="351" y="48" width="120" height="40" rx="8" fill="#0f3460" stroke="#7ee787" stroke-width="0.8"/>
+      <text x="411" y="63" text-anchor="middle" fill="#7ee787" font-size="11" font-weight="500">~/.m2 Local Repo</text>
+      <text x="411" y="79" text-anchor="middle" fill="#a0aec0" font-size="9">cached JARs</text>
+      <!-- Central -->
+      <rect x="351" y="82" width="120" height="40" rx="8" fill="#0f3460" stroke="#ffa657" stroke-width="0.8"/>
+      <text x="411" y="97" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="500">Maven Central</text>
+      <text x="411" y="113" text-anchor="middle" fill="#a0aec0" font-size="9">public internet repo</text>
+      <!-- Remote -->
+      <rect x="351" y="130" width="120" height="40" rx="8" fill="#0f3460" stroke="#d2a8ff" stroke-width="0.8"/>
+      <text x="411" y="145" text-anchor="middle" fill="#d2a8ff" font-size="11" font-weight="500">Remote Repo</text>
+      <text x="411" y="161" text-anchor="middle" fill="#a0aec0" font-size="9">Nexus / Artifactory</text>
+      <!-- Output -->
+      <line x1="471" y1="102" x2="510" y2="102" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar)"/>
+      <rect x="511" y="80" width="110" height="44" rx="8" fill="#0f3460" stroke="#7dd3fc" stroke-width="0.8"/>
+      <text x="566" y="98" text-anchor="middle" fill="#7dd3fc" font-size="11" font-weight="500">Build Output</text>
+      <text x="566" y="114" text-anchor="middle" fill="#a0aec0" font-size="10">JAR / WAR / ZIP</text>
+      <!-- labels -->
+      <text x="320" y="50" text-anchor="middle" fill="#a0aec0" font-size="9">1st: local cache</text>
+      <text x="320" y="100" text-anchor="middle" fill="#a0aec0" font-size="9">2nd: central</text>
+      <text x="320" y="160" text-anchor="middle" fill="#a0aec0" font-size="9">3rd: remote</text>
+      <text x="320" y="200" text-anchor="middle" fill="#8b949e" font-size="10">Maven checks repos in order: Local → Central → Remote</text>
+    </svg>
+  </div>
+
+  <div class="sec-title">🔑 Keywords Explained</div>
+  <div class="concept-body">
+    <span class="kpill">pom.xml</span> Project Object Model file — the heart of Maven config<br>
+    <span class="kpill">dependency</span> External library your project needs (e.g. Selenium JAR)<br>
+    <span class="kpill">artifact</span> The output of a build — JAR, WAR, or ZIP file<br>
+    <span class="kpill">groupId</span> Company/organization ID (e.g. com.company.project)<br>
+    <span class="kpill">artifactId</span> Unique name for your project/module<br>
+    <span class="kpill">version</span> The version of your artifact (e.g. 1.0.0, SNAPSHOT)<br>
+    <span class="kpill">repository</span> Storage location for JARs — Local, Central, or Remote
+  </div>
+</div>
+
+<!-- ===== S2: POM.xml Structure ===== -->
+<div class="panel" id="s1">
+  <div class="sec-title">📄 POM.xml — Full Structure with Comments</div>
+  <div class="editor-area">
+    <div class="editor-tabs">
+      <div class="e-tab active" onclick="switchCode('s1','c0',this)"><span class="dot" style="background:#f2cc60"></span>pom.xml</div>
+      <div class="e-tab" onclick="switchCode('s1','c1',this)"><span class="dot" style="background:#7ee787"></span>minimal-pom.xml</div>
+      <div class="e-tab" onclick="switchCode('s1','c2',this)"><span class="dot" style="background:#7dd3fc"></span>with-selenium.xml</div>
+      <div class="e-tab" onclick="switchCode('s1','c3',this)"><span class="dot" style="background:#d2a8ff"></span>properties.xml</div>
+      <div class="e-tab" onclick="switchCode('s1','c4',this)"><span class="dot" style="background:#ffa657"></span>multi-module.xml</div>
+    </div>
+    <div id="s1-c0" class="code-pane active">
+<span class="cmt">&lt;!-- pom.xml — Full Structure --&gt;</span>
+<span class="kw2">&lt;project</span> <span class="attr">xmlns</span>=<span class="str">"http://maven.apache.org/POM/4.0.0"</span><span class="kw2">&gt;</span>
+
+  <span class="cmt">&lt;!-- POM version — always 4.0.0 for Maven 2/3 --&gt;</span>
+  <span class="kw2">&lt;modelVersion&gt;</span><span class="num">4.0.0</span><span class="kw2">&lt;/modelVersion&gt;</span>
+
+  <span class="cmt">&lt;!-- PROJECT COORDINATES (GAV = GroupId + ArtifactId + Version) --&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">com.mycompany.project</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">my-selenium-framework</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">1.0.0-SNAPSHOT</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="cmt">&lt;!-- packaging: jar (default), war, pom --&gt;</span>
+  <span class="kw2">&lt;packaging&gt;</span><span class="str">jar</span><span class="kw2">&lt;/packaging&gt;</span>
+
+  <span class="cmt">&lt;!-- PROPERTIES — reusable variables, like constants --&gt;</span>
+  <span class="kw2">&lt;properties&gt;</span>
+    <span class="kw2">&lt;java.version&gt;</span><span class="num">11</span><span class="kw2">&lt;/java.version&gt;</span>
+    <span class="kw2">&lt;selenium.version&gt;</span><span class="num">4.18.1</span><span class="kw2">&lt;/selenium.version&gt;</span>
+    <span class="kw2">&lt;testng.version&gt;</span><span class="num">7.9.0</span><span class="kw2">&lt;/testng.version&gt;</span>
+  <span class="kw2">&lt;/properties&gt;</span>
+
+  <span class="cmt">&lt;!-- DEPENDENCIES — external JARs your project needs --&gt;</span>
+  <span class="kw2">&lt;dependencies&gt;</span>
+    <span class="kw2">&lt;dependency&gt;</span>
+      <span class="kw2">&lt;groupId&gt;</span><span class="str">org.seleniumhq.selenium</span><span class="kw2">&lt;/groupId&gt;</span>
+      <span class="kw2">&lt;artifactId&gt;</span><span class="str">selenium-java</span><span class="kw2">&lt;/artifactId&gt;</span>
+      <span class="kw2">&lt;version&gt;</span><span class="num">${selenium.version}</span><span class="kw2">&lt;/version&gt;</span>
+      <span class="cmt">&lt;!-- scope: compile(default), test, provided, runtime --&gt;</span>
+      <span class="kw2">&lt;scope&gt;</span><span class="kw3">compile</span><span class="kw2">&lt;/scope&gt;</span>
+    <span class="kw2">&lt;/dependency&gt;</span>
+  <span class="kw2">&lt;/dependencies&gt;</span>
+
+  <span class="cmt">&lt;!-- BUILD — plugins that do extra build tasks --&gt;</span>
+  <span class="kw2">&lt;build&gt;</span>
+    <span class="kw2">&lt;plugins&gt;</span>
+      <span class="kw2">&lt;plugin&gt;</span>
+        <span class="kw2">&lt;groupId&gt;</span><span class="str">org.apache.maven.plugins</span><span class="kw2">&lt;/groupId&gt;</span>
+        <span class="kw2">&lt;artifactId&gt;</span><span class="str">maven-surefire-plugin</span><span class="kw2">&lt;/artifactId&gt;</span>
+        <span class="kw2">&lt;version&gt;</span><span class="num">3.2.5</span><span class="kw2">&lt;/version&gt;</span>
+      <span class="kw2">&lt;/plugin&gt;</span>
+    <span class="kw2">&lt;/plugins&gt;</span>
+  <span class="kw2">&lt;/build&gt;</span>
+<span class="kw2">&lt;/project&gt;</span>
+    </div>
+    <div id="s1-c1" class="code-pane">
+<span class="cmt">&lt;!-- Minimal pom.xml — bare minimum required --&gt;</span>
+<span class="kw2">&lt;project&gt;</span>
+  <span class="kw2">&lt;modelVersion&gt;</span><span class="num">4.0.0</span><span class="kw2">&lt;/modelVersion&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">com.example</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">hello-world</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">1.0</span><span class="kw2">&lt;/version&gt;</span>
+<span class="kw2">&lt;/project&gt;</span>
+
+<span class="cmt">/* These 3 tags = GAV coordinates
+   groupId    → who made it   (like a package name)
+   artifactId → project name  (like the class name)
+   version    → release tag   (SNAPSHOT = in-progress) */</span>
+    </div>
+    <div id="s1-c2" class="code-pane">
+<span class="cmt">&lt;!-- pom.xml with Selenium + TestNG for SDET --&gt;</span>
+<span class="kw2">&lt;dependencies&gt;</span>
+
+  <span class="cmt">&lt;!-- Selenium WebDriver for browser automation --&gt;</span>
+  <span class="kw2">&lt;dependency&gt;</span>
+    <span class="kw2">&lt;groupId&gt;</span><span class="str">org.seleniumhq.selenium</span><span class="kw2">&lt;/groupId&gt;</span>
+    <span class="kw2">&lt;artifactId&gt;</span><span class="str">selenium-java</span><span class="kw2">&lt;/artifactId&gt;</span>
+    <span class="kw2">&lt;version&gt;</span><span class="num">4.18.1</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;/dependency&gt;</span>
+
+  <span class="cmt">&lt;!-- TestNG — test framework (scope=test: only for tests) --&gt;</span>
+  <span class="kw2">&lt;dependency&gt;</span>
+    <span class="kw2">&lt;groupId&gt;</span><span class="str">org.testng</span><span class="kw2">&lt;/groupId&gt;</span>
+    <span class="kw2">&lt;artifactId&gt;</span><span class="str">testng</span><span class="kw2">&lt;/artifactId&gt;</span>
+    <span class="kw2">&lt;version&gt;</span><span class="num">7.9.0</span><span class="kw2">&lt;/version&gt;</span>
+    <span class="kw2">&lt;scope&gt;</span><span class="kw3">test</span><span class="kw2">&lt;/scope&gt;</span>
+    <span class="cmt">&lt;!-- scope=test → JAR NOT included in final build --&gt;</span>
+  <span class="kw2">&lt;/dependency&gt;</span>
+
+  <span class="cmt">&lt;!-- ExtentReports — test reporting library --&gt;</span>
+  <span class="kw2">&lt;dependency&gt;</span>
+    <span class="kw2">&lt;groupId&gt;</span><span class="str">com.aventstack</span><span class="kw2">&lt;/groupId&gt;</span>
+    <span class="kw2">&lt;artifactId&gt;</span><span class="str">extentreports</span><span class="kw2">&lt;/artifactId&gt;</span>
+    <span class="kw2">&lt;version&gt;</span><span class="num">5.1.1</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;/dependency&gt;</span>
+
+<span class="kw2">&lt;/dependencies&gt;</span>
+    </div>
+    <div id="s1-c3" class="code-pane">
+<span class="cmt">&lt;!-- Properties — define once, use everywhere --&gt;</span>
+<span class="kw2">&lt;properties&gt;</span>
+  <span class="cmt">&lt;!-- Java version for compiler --&gt;</span>
+  <span class="kw2">&lt;maven.compiler.source&gt;</span><span class="num">11</span><span class="kw2">&lt;/maven.compiler.source&gt;</span>
+  <span class="kw2">&lt;maven.compiler.target&gt;</span><span class="num">11</span><span class="kw2">&lt;/maven.compiler.target&gt;</span>
+
+  <span class="cmt">&lt;!-- File encoding —prevents garbled characters in logs --&gt;</span>
+  <span class="kw2">&lt;project.build.sourceEncoding&gt;</span><span class="str">UTF-8</span><span class="kw2">&lt;/project.build.sourceEncoding&gt;</span>
+
+  <span class="cmt">&lt;!-- Custom variable — reference it as ${selenium.version} --&gt;</span>
+  <span class="kw2">&lt;selenium.version&gt;</span><span class="num">4.18.1</span><span class="kw2">&lt;/selenium.version&gt;</span>
+<span class="kw2">&lt;/properties&gt;</span>
+
+<span class="cmt">/* ${selenium.version} → Maven replaces this
+   with 4.18.1 at build time.
+   Change version in ONE place, updated everywhere! */</span>
+    </div>
+    <div id="s1-c4" class="code-pane">
+<span class="cmt">&lt;!-- Parent pom.xml for multi-module project --&gt;</span>
+<span class="kw2">&lt;project&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">com.company</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">parent-project</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">1.0.0</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="cmt">&lt;!-- packaging must be "pom" for parent --&gt;</span>
+  <span class="kw2">&lt;packaging&gt;</span><span class="str">pom</span><span class="kw2">&lt;/packaging&gt;</span>
+
+  <span class="cmt">&lt;!-- List of child modules --&gt;</span>
+  <span class="kw2">&lt;modules&gt;</span>
+    <span class="kw2">&lt;module&gt;</span><span class="str">web-tests</span><span class="kw2">&lt;/module&gt;</span>
+    <span class="kw2">&lt;module&gt;</span><span class="str">api-tests</span><span class="kw2">&lt;/module&gt;</span>
+    <span class="kw2">&lt;module&gt;</span><span class="str">utils-module</span><span class="kw2">&lt;/module&gt;</span>
+  <span class="kw2">&lt;/modules&gt;</span>
+<span class="kw2">&lt;/project&gt;</span>
+
+<span class="cmt">/* Running "mvn test" from parent
+   runs ALL child modules together */</span>
+    </div>
+  </div>
+
+  <div class="sec-title">💬 5 Interview One-Liners</div>
+  <div class="oneliners">
+    <div class="oneliner"><strong>Q:</strong> What are GAV coordinates? → <em>groupId + artifactId + version — uniquely identifies every Maven artifact globally.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is SNAPSHOT? → <em>A version ending in -SNAPSHOT means the artifact is still in development, not a final release.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is dependency scope? → <em>Scope controls when a dependency is available — compile (always), test (test-only), provided (by server).</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is a Maven property? → <em>A variable defined in &lt;properties&gt; and reused with ${name} syntax to avoid hardcoding values.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is packaging in pom.xml? → <em>Defines build output type — jar (default library), war (web app), pom (parent/aggregator project).</em></div>
+  </div>
+</div>
+
+<!-- ===== S3: Maven Lifecycle ===== -->
+<div class="panel" id="s2">
+  <div class="sec-title">🔄 Maven Build Lifecycle — 6 Key Phases</div>
+  <div class="diagram-box">
+    <svg width="100%" viewBox="0 0 640 130" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#7dd3fc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <rect x="10"  y="44" width="80" height="36" rx="7" fill="#0f3460" stroke="#7ee787" stroke-width="0.8"/>
+      <text x="50"  y="57" text-anchor="middle" fill="#7ee787" font-size="11" font-weight="500">validate</text>
+      <text x="50"  y="71" text-anchor="middle" fill="#a0aec0" font-size="9">check pom</text>
+      <line x1="90" y1="62" x2="104" y2="62" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar3)"/>
+      <rect x="105" y="44" width="80" height="36" rx="7" fill="#0f3460" stroke="#f2cc60" stroke-width="0.8"/>
+      <text x="145" y="57" text-anchor="middle" fill="#f2cc60" font-size="11" font-weight="500">compile</text>
+      <text x="145" y="71" text-anchor="middle" fill="#a0aec0" font-size="9">.java → .class</text>
+      <line x1="185" y1="62" x2="199" y2="62" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar3)"/>
+      <rect x="200" y="44" width="80" height="36" rx="7" fill="#0f3460" stroke="#7dd3fc" stroke-width="0.8"/>
+      <text x="240" y="57" text-anchor="middle" fill="#7dd3fc" font-size="11" font-weight="500">test</text>
+      <text x="240" y="71" text-anchor="middle" fill="#a0aec0" font-size="9">runs unit tests</text>
+      <line x1="280" y1="62" x2="294" y2="62" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar3)"/>
+      <rect x="295" y="44" width="80" height="36" rx="7" fill="#0f3460" stroke="#ffa657" stroke-width="0.8"/>
+      <text x="335" y="57" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="500">package</text>
+      <text x="335" y="71" text-anchor="middle" fill="#a0aec0" font-size="9">creates JAR/WAR</text>
+      <line x1="375" y1="62" x2="389" y2="62" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar3)"/>
+      <rect x="390" y="44" width="80" height="36" rx="7" fill="#0f3460" stroke="#d2a8ff" stroke-width="0.8"/>
+      <text x="430" y="57" text-anchor="middle" fill="#d2a8ff" font-size="11" font-weight="500">install</text>
+      <text x="430" y="71" text-anchor="middle" fill="#a0aec0" font-size="9">→ ~/.m2 local</text>
+      <line x1="470" y1="62" x2="484" y2="62" stroke="#7dd3fc" stroke-width="1" marker-end="url(#ar3)"/>
+      <rect x="485" y="44" width="80" height="36" rx="7" fill="#0f3460" stroke="#ff7b72" stroke-width="0.8"/>
+      <text x="525" y="57" text-anchor="middle" fill="#ff7b72" font-size="11" font-weight="500">deploy</text>
+      <text x="525" y="71" text-anchor="middle" fill="#a0aec0" font-size="9">→ remote repo</text>
+      <text x="320" y="108" text-anchor="middle" fill="#8b949e" font-size="10">Each phase runs ALL previous phases too — mvn package = validate+compile+test+package</text>
+    </svg>
+  </div>
+
+  <div class="sec-title">⌨️ Maven Commands</div>
+  <div class="editor-area">
+    <div class="editor-tabs">
+      <div class="e-tab active" onclick="switchCode('s2','c0',this)"><span class="dot" style="background:#7ee787"></span>common-commands.sh</div>
+      <div class="e-tab" onclick="switchCode('s2','c1',this)"><span class="dot" style="background:#f2cc60"></span>skip-tests.sh</div>
+      <div class="e-tab" onclick="switchCode('s2','c2',this)"><span class="dot" style="background:#d2a8ff"></span>run-specific.sh</div>
+      <div class="e-tab" onclick="switchCode('s2','c3',this)"><span class="dot" style="background:#ffa657"></span>clean-build.sh</div>
+      <div class="e-tab" onclick="switchCode('s2','c4',this)"><span class="dot" style="background:#ff7b72"></span>profiles.sh</div>
+    </div>
+    <div id="s2-c0" class="code-pane active">
+<span class="cmt"># Most used Maven commands for SDET</span>
+
+<span class="fn">mvn validate</span>       <span class="cmt"># validate pom.xml is correct</span>
+<span class="fn">mvn compile</span>        <span class="cmt"># compile .java to .class files</span>
+<span class="fn">mvn test</span>           <span class="cmt"># run all test classes</span>
+<span class="fn">mvn package</span>        <span class="cmt"># create JAR/WAR in /target folder</span>
+<span class="fn">mvn install</span>        <span class="cmt"># package + copy to ~/.m2 local repo</span>
+<span class="fn">mvn deploy</span>         <span class="cmt"># install + push to remote repo</span>
+<span class="fn">mvn clean</span>          <span class="cmt"># delete /target folder (clean slate)</span>
+<span class="fn">mvn clean install</span>  <span class="cmt"># clean then full install — most common</span>
+    </div>
+    <div id="s2-c1" class="code-pane">
+<span class="cmt"># Skip tests when you only want to build</span>
+
+<span class="cmt"># -DskipTests = compile test code but DON'T run</span>
+<span class="fn">mvn package</span> <span class="kw">-DskipTests</span>
+
+<span class="cmt"># -Dmaven.test.skip=true = skip compile AND run</span>
+<span class="fn">mvn package</span> <span class="kw">-Dmaven.test.skip=true</span>
+
+<span class="cmt"># Difference:
+# -DskipTests → test code compiled but not run
+# -Dmaven.test.skip → test code not even compiled
+# For SDET: use -DskipTests to catch compile errors</span>
+    </div>
+    <div id="s2-c2" class="code-pane">
+<span class="cmt"># Run specific test class or method</span>
+
+<span class="cmt"># Run specific test class</span>
+<span class="fn">mvn test</span> <span class="kw">-Dtest=</span><span class="str">LoginTest</span>
+
+<span class="cmt"># Run specific test method in a class</span>
+<span class="fn">mvn test</span> <span class="kw">-Dtest=</span><span class="str">LoginTest#testValidLogin</span>
+
+<span class="cmt"># Run tests matching a pattern (wildcard)</span>
+<span class="fn">mvn test</span> <span class="kw">-Dtest=</span><span class="str">"Login*"</span>
+
+<span class="cmt"># Run multiple test classes</span>
+<span class="fn">mvn test</span> <span class="kw">-Dtest=</span><span class="str">"LoginTest,RegisterTest"</span>
+
+<span class="cmt"># Useful in CI when only certain tests should run</span>
+    </div>
+    <div id="s2-c3" class="code-pane">
+<span class="cmt"># Clean build — removes old compiled files first</span>
+
+<span class="cmt"># Always use clean + install for fresh builds</span>
+<span class="fn">mvn clean install</span>
+
+<span class="cmt"># clean + package (no install to local repo)</span>
+<span class="fn">mvn clean package</span>
+
+<span class="cmt"># Verbose output for debugging build issues</span>
+<span class="fn">mvn clean install</span> <span class="kw">-X</span>
+
+<span class="cmt"># Quiet — only show errors</span>
+<span class="fn">mvn clean install</span> <span class="kw">-q</span>
+
+<span class="cmt"># Offline mode (no internet) — use cached JARs</span>
+<span class="fn">mvn clean install</span> <span class="kw">-o</span>
+    </div>
+    <div id="s2-c4" class="code-pane">
+<span class="cmt"># Maven Profiles — run different configs</span>
+
+<span class="cmt"># Activate a profile named "staging"</span>
+<span class="fn">mvn test</span> <span class="kw">-P</span><span class="str">staging</span>
+
+<span class="cmt"># In pom.xml — profile definition:</span>
+<span class="kw2">&lt;profiles&gt;</span>
+  <span class="kw2">&lt;profile&gt;</span>
+    <span class="kw2">&lt;id&gt;</span><span class="str">staging</span><span class="kw2">&lt;/id&gt;</span>
+    <span class="kw2">&lt;properties&gt;</span>
+      <span class="kw2">&lt;env.url&gt;</span><span class="str">https://staging.myapp.com</span><span class="kw2">&lt;/env.url&gt;</span>
+    <span class="kw2">&lt;/properties&gt;</span>
+  <span class="kw2">&lt;/profile&gt;</span>
+<span class="kw2">&lt;/profiles&gt;</span>
+<span class="cmt"># SDET use: switch between dev/staging/prod URLs</span>
+    </div>
+  </div>
+
+  <div class="sec-title">💬 5 Interview One-Liners</div>
+  <div class="oneliners">
+    <div class="oneliner"><strong>Q:</strong> What is the Maven default lifecycle? → <em>validate → compile → test → package → verify → install → deploy — each phase runs all previous ones.</em></div>
+    <div class="oneliner"><strong>Q:</strong> Difference between install and deploy? → <em>install copies artifact to local ~/.m2 repo; deploy pushes to a remote repo for other teams to use.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What does mvn clean do? → <em>Deletes the /target directory — all previously compiled files — so next build starts fresh.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is a Maven profile? → <em>A set of config overrides (properties, plugins) activated with -P flag to support different environments.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is the difference between -DskipTests and -Dmaven.test.skip? → <em>-DskipTests compiles tests but doesn't run them; -Dmaven.test.skip skips both compilation and execution.</em></div>
+  </div>
+</div>
+
+<!-- ===== S4: Dependency Scopes ===== -->
+<div class="panel" id="s3">
+  <div class="sec-title">🔭 Dependency Scopes — When is a JAR Available?</div>
+  <div class="editor-area">
+    <div class="editor-tabs">
+      <div class="e-tab active" onclick="switchCode('s3','c0',this)"><span class="dot" style="background:#7ee787"></span>scopes.xml</div>
+      <div class="e-tab" onclick="switchCode('s3','c1',this)"><span class="dot" style="background:#ffa657"></span>compile-scope.xml</div>
+      <div class="e-tab" onclick="switchCode('s3','c2',this)"><span class="dot" style="background:#7dd3fc"></span>test-scope.xml</div>
+      <div class="e-tab" onclick="switchCode('s3','c3',this)"><span class="dot" style="background:#d2a8ff"></span>provided-scope.xml</div>
+      <div class="e-tab" onclick="switchCode('s3','c4',this)"><span class="dot" style="background:#ff7b72"></span>runtime-scope.xml</div>
+    </div>
+    <div id="s3-c0" class="code-pane active">
+<span class="cmt">/* SCOPE SUMMARY TABLE
+   Scope     | Compile | Test | Runtime | In JAR
+   ----------|---------|------|---------|-------
+   compile   |   YES   |  YES |   YES   |  YES  (default)
+   test      |   NO    |  YES |   NO    |  NO
+   provided  |   YES   |  YES |   NO    |  NO   (by server)
+   runtime   |   NO    |  YES |   YES   |  YES
+   system    |   YES   |  YES |   NO    |  NO   (local path)
+*/</span>
+<span class="kw2">&lt;dependency&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">any-library</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="cmt">&lt;!-- No scope tag = defaults to "compile" --&gt;</span>
+<span class="kw2">&lt;/dependency&gt;</span>
+    </div>
+    <div id="s3-c1" class="code-pane">
+<span class="cmt">&lt;!-- compile scope (DEFAULT) --&gt;</span>
+<span class="kw2">&lt;dependency&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">org.seleniumhq.selenium</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">selenium-java</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">4.18.1</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;scope&gt;</span><span class="kw3">compile</span><span class="kw2">&lt;/scope&gt;</span>
+  <span class="cmt">&lt;!-- Available: compile + test + runtime
+       Included in final JAR/WAR output
+       Example: Selenium (needed to run app) --&gt;</span>
+<span class="kw2">&lt;/dependency&gt;</span>
+    </div>
+    <div id="s3-c2" class="code-pane">
+<span class="cmt">&lt;!-- test scope — only for test code --&gt;</span>
+<span class="kw2">&lt;dependency&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">org.testng</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">testng</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">7.9.0</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;scope&gt;</span><span class="kw3">test</span><span class="kw2">&lt;/scope&gt;</span>
+  <span class="cmt">&lt;!-- NOT available in main source code
+       NOT included in final JAR output
+       Example: TestNG, JUnit, Mockito --&gt;</span>
+<span class="kw2">&lt;/dependency&gt;</span>
+    </div>
+    <div id="s3-c3" class="code-pane">
+<span class="cmt">&lt;!-- provided scope — server gives it at runtime --&gt;</span>
+<span class="kw2">&lt;dependency&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">javax.servlet</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">javax.servlet-api</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">4.0.1</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;scope&gt;</span><span class="kw3">provided</span><span class="kw2">&lt;/scope&gt;</span>
+  <span class="cmt">&lt;!-- Compile: YES (use API in code)
+       Final JAR: NO (Tomcat provides it)
+       Example: Servlet API, JSF --&gt;</span>
+<span class="kw2">&lt;/dependency&gt;</span>
+    </div>
+    <div id="s3-c4" class="code-pane">
+<span class="cmt">&lt;!-- runtime scope — needed only at execution --&gt;</span>
+<span class="kw2">&lt;dependency&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">mysql</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">mysql-connector-java</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">8.0.33</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;scope&gt;</span><span class="kw3">runtime</span><span class="kw2">&lt;/scope&gt;</span>
+  <span class="cmt">&lt;!-- Not needed to compile (use JDBC interface)
+       Needed to execute DB queries at runtime
+       Example: DB drivers (MySQL, PostgreSQL) --&gt;</span>
+<span class="kw2">&lt;/dependency&gt;</span>
+    </div>
+  </div>
+
+  <div class="sec-title">💬 5 Interview One-Liners</div>
+  <div class="oneliners">
+    <div class="oneliner"><strong>Q:</strong> What is dependency scope? → <em>Controls at which build phases a dependency is on the classpath and whether it's included in the final artifact.</em></div>
+    <div class="oneliner"><strong>Q:</strong> When to use test scope? → <em>For libraries only used in test code — TestNG, JUnit, Mockito — so they don't bloat the production JAR.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is provided scope? → <em>Dependency is needed to compile but provided by the runtime container (e.g. Tomcat provides Servlet API).</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is transitive dependency? → <em>When A depends on B, and B depends on C — Maven automatically pulls in C as a transitive dependency.</em></div>
+    <div class="oneliner"><strong>Q:</strong> How to exclude a transitive dependency? → <em>Use the &lt;exclusions&gt; block inside the dependency to explicitly exclude unwanted transitive JARs.</em></div>
+  </div>
+</div>
+
+<!-- ===== S5: Plugins ===== -->
+<div class="panel" id="s4">
+  <div class="sec-title">🔌 Maven Plugins — SDET Essential Plugins</div>
+  <div class="editor-area">
+    <div class="editor-tabs">
+      <div class="e-tab active" onclick="switchCode('s4','c0',this)"><span class="dot" style="background:#7dd3fc"></span>surefire-plugin.xml</div>
+      <div class="e-tab" onclick="switchCode('s4','c1',this)"><span class="dot" style="background:#7ee787"></span>compiler-plugin.xml</div>
+      <div class="e-tab" onclick="switchCode('s4','c2',this)"><span class="dot" style="background:#f2cc60"></span>failsafe-plugin.xml</div>
+      <div class="e-tab" onclick="switchCode('s4','c3',this)"><span class="dot" style="background:#d2a8ff"></span>allure-plugin.xml</div>
+      <div class="e-tab" onclick="switchCode('s4','c4',this)"><span class="dot" style="background:#ffa657"></span>exec-plugin.xml</div>
+    </div>
+    <div id="s4-c0" class="code-pane active">
+<span class="cmt">&lt;!-- Surefire Plugin — runs unit tests (mvn test) --&gt;</span>
+<span class="kw2">&lt;plugin&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">org.apache.maven.plugins</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">maven-surefire-plugin</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">3.2.5</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;configuration&gt;</span>
+    <span class="cmt">&lt;!-- Point to TestNG suite XML file --&gt;</span>
+    <span class="kw2">&lt;suiteXmlFiles&gt;</span>
+      <span class="kw2">&lt;suiteXmlFile&gt;</span><span class="str">testng.xml</span><span class="kw2">&lt;/suiteXmlFile&gt;</span>
+    <span class="kw2">&lt;/suiteXmlFiles&gt;</span>
+    <span class="cmt">&lt;!-- Keep running after test failures --&gt;</span>
+    <span class="kw2">&lt;testFailureIgnore&gt;</span><span class="kw3">true</span><span class="kw2">&lt;/testFailureIgnore&gt;</span>
+    <span class="cmt">&lt;!-- Run tests in parallel --&gt;</span>
+    <span class="kw2">&lt;parallel&gt;</span><span class="str">methods</span><span class="kw2">&lt;/parallel&gt;</span>
+    <span class="kw2">&lt;threadCount&gt;</span><span class="num">4</span><span class="kw2">&lt;/threadCount&gt;</span>
+  <span class="kw2">&lt;/configuration&gt;</span>
+<span class="kw2">&lt;/plugin&gt;</span>
+    </div>
+    <div id="s4-c1" class="code-pane">
+<span class="cmt">&lt;!-- Compiler Plugin — controls Java version used --&gt;</span>
+<span class="kw2">&lt;plugin&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">org.apache.maven.plugins</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">maven-compiler-plugin</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">3.12.1</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;configuration&gt;</span>
+    <span class="cmt">&lt;!-- source: Java version of your code --&gt;</span>
+    <span class="kw2">&lt;source&gt;</span><span class="num">11</span><span class="kw2">&lt;/source&gt;</span>
+    <span class="cmt">&lt;!-- target: Java version of compiled .class --&gt;</span>
+    <span class="kw2">&lt;target&gt;</span><span class="num">11</span><span class="kw2">&lt;/target&gt;</span>
+    <span class="cmt">&lt;!-- encoding prevents garbled char issues --&gt;</span>
+    <span class="kw2">&lt;encoding&gt;</span><span class="str">UTF-8</span><span class="kw2">&lt;/encoding&gt;</span>
+  <span class="kw2">&lt;/configuration&gt;</span>
+<span class="kw2">&lt;/plugin&gt;</span>
+    </div>
+    <div id="s4-c2" class="code-pane">
+<span class="cmt">&lt;!-- Failsafe Plugin — runs integration tests (IT) --&gt;</span>
+<span class="kw2">&lt;plugin&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">maven-failsafe-plugin</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">3.2.5</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;executions&gt;</span>
+    <span class="kw2">&lt;execution&gt;</span>
+      <span class="kw2">&lt;goals&gt;</span>
+        <span class="cmt">&lt;!-- integration-test phase: runs *IT.java files --&gt;</span>
+        <span class="kw2">&lt;goal&gt;</span><span class="fn">integration-test</span><span class="kw2">&lt;/goal&gt;</span>
+        <span class="cmt">&lt;!-- verify: fails build if IT tests failed --&gt;</span>
+        <span class="kw2">&lt;goal&gt;</span><span class="fn">verify</span><span class="kw2">&lt;/goal&gt;</span>
+      <span class="kw2">&lt;/goals&gt;</span>
+    <span class="kw2">&lt;/execution&gt;</span>
+  <span class="kw2">&lt;/executions&gt;</span>
+<span class="kw2">&lt;/plugin&gt;</span>
+<span class="cmt">/* Surefire = unit tests (*Test.java)
+   Failsafe = integration tests (*IT.java) */</span>
+    </div>
+    <div id="s4-c3" class="code-pane">
+<span class="cmt">&lt;!-- Allure Plugin — beautiful test reports --&gt;</span>
+<span class="kw2">&lt;plugin&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">io.qameta.allure</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">allure-maven</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">2.12.0</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;configuration&gt;</span>
+    <span class="kw2">&lt;reportVersion&gt;</span><span class="num">2.24.0</span><span class="kw2">&lt;/reportVersion&gt;</span>
+  <span class="kw2">&lt;/configuration&gt;</span>
+<span class="kw2">&lt;/plugin&gt;</span>
+
+<span class="cmt"># Generate Allure report:</span>
+<span class="fn">mvn allure:report</span>
+<span class="fn">mvn allure:serve</span>   <span class="cmt"># opens in browser</span>
+
+<span class="cmt">/* Also add allure-testng dependency for
+   @Step, @Attachment annotations in tests */</span>
+    </div>
+    <div id="s4-c4" class="code-pane">
+<span class="cmt">&lt;!-- Exec Plugin — run main class from Maven --&gt;</span>
+<span class="kw2">&lt;plugin&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">org.codehaus.mojo</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">exec-maven-plugin</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">3.1.1</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;configuration&gt;</span>
+    <span class="kw2">&lt;mainClass&gt;</span><span class="str">com.mycompany.MainRunner</span><span class="kw2">&lt;/mainClass&gt;</span>
+  <span class="kw2">&lt;/configuration&gt;</span>
+<span class="kw2">&lt;/plugin&gt;</span>
+
+<span class="cmt"># Run the main class:</span>
+<span class="fn">mvn exec:java</span>
+
+<span class="cmt">/* Useful when you want to trigger a
+   test suite runner from command line */</span>
+    </div>
+  </div>
+
+  <div class="sec-title">💬 5 Interview One-Liners</div>
+  <div class="oneliners">
+    <div class="oneliner"><strong>Q:</strong> What is a Maven plugin? → <em>A plugin adds extra goals/tasks to Maven — e.g., Surefire runs tests, Compiler compiles code, Allure generates reports.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is maven-surefire-plugin? → <em>The plugin responsible for running unit tests during the test phase — supports TestNG and JUnit.</em></div>
+    <div class="oneliner"><strong>Q:</strong> Difference between Surefire and Failsafe? → <em>Surefire runs unit tests (*Test.java) in the test phase; Failsafe runs integration tests (*IT.java) in verify phase.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is a plugin goal? → <em>A specific action within a plugin — like surefire:test or compiler:compile — bound to a lifecycle phase.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is plugin configuration? → <em>The &lt;configuration&gt; block inside a plugin where you pass settings like thread count, suite file path, or Java version.</em></div>
+  </div>
+</div>
+
+<!-- ===== S6-S10 Compact panels ===== -->
+<div class="panel" id="s5">
+  <div class="sec-title">🏗️ Project Structure & Directory Layout</div>
+  <div class="editor-area">
+    <div class="editor-tabs">
+      <div class="e-tab active" onclick="switchCode('s5','c0',this)"><span class="dot" style="background:#7ee787"></span>project-structure.txt</div>
+      <div class="e-tab" onclick="switchCode('s5','c1',this)"><span class="dot" style="background:#7dd3fc"></span>standard-layout.txt</div>
+      <div class="e-tab" onclick="switchCode('s5','c2',this)"><span class="dot" style="background:#f2cc60"></span>target-folder.txt</div>
+      <div class="e-tab" onclick="switchCode('s5','c3',this)"><span class="dot" style="background:#d2a8ff"></span>resources.txt</div>
+      <div class="e-tab" onclick="switchCode('s5','c4',this)"><span class="dot" style="background:#ffa657"></span>create-project.sh</div>
+    </div>
+    <div id="s5-c0" class="code-pane active">
+<span class="cmt"># Maven Standard Directory Layout</span>
+my-selenium-project/
+├── <span class="fn">pom.xml</span>                      <span class="cmt"># Maven config</span>
+├── src/
+│   ├── <span class="kw3">main/</span>                    <span class="cmt"># Production code</span>
+│   │   ├── <span class="str">java/</span>                <span class="cmt"># .java source files</span>
+│   │   └── <span class="str">resources/</span>           <span class="cmt"># config files, logs</span>
+│   └── <span class="kw3">test/</span>                    <span class="cmt"># Test code</span>
+│       ├── <span class="str">java/</span>                <span class="cmt"># Test .java files</span>
+│       └── <span class="str">resources/</span>           <span class="cmt"># test data, testng.xml</span>
+└── <span class="fn">target/</span>                      <span class="cmt"># Generated by Maven</span>
+    ├── classes/                 <span class="cmt"># Compiled .class files</span>
+    ├── test-classes/            <span class="cmt"># Compiled test .class</span>
+    └── <span class="num">my-project-1.0.jar</span>       <span class="cmt"># Final artifact</span>
+    </div>
+    <div id="s5-c1" class="code-pane">
+<span class="cmt"># Where to put what — SDET Framework</span>
+
+<span class="kw3">src/main/java/</span>
+  com/company/pages/       <span class="cmt"># Page Object classes</span>
+  com/company/utils/       <span class="cmt"># Helper utilities</span>
+  com/company/config/      <span class="cmt"># Config reader classes</span>
+
+<span class="kw3">src/test/java/</span>
+  com/company/tests/       <span class="cmt"># Test classes (*Test.java)</span>
+  com/company/base/        <span class="cmt"># BaseTest setup</span>
+
+<span class="kw3">src/test/resources/</span>
+  testng.xml               <span class="cmt"># TestNG suite file</span>
+  config.properties        <span class="cmt"># URLs, credentials</span>
+  testdata/                <span class="cmt"># Excel, JSON test data</span>
+
+<span class="cmt"># Rule: test scope files go in test/resources</span>
+    </div>
+    <div id="s5-c2" class="code-pane">
+<span class="cmt"># /target folder — generated by Maven builds</span>
+
+<span class="kw">target/</span>
+├── <span class="fn">classes/</span>               <span class="cmt"># main java compiled here</span>
+├── <span class="fn">test-classes/</span>          <span class="cmt"># test java compiled here</span>
+├── <span class="fn">surefire-reports/</span>      <span class="cmt"># XML/HTML test reports</span>
+├── <span class="fn">allure-results/</span>        <span class="cmt"># allure raw data</span>
+└── <span class="num">project-1.0.jar</span>        <span class="cmt"># final packaged artifact</span>
+
+<span class="cmt"># target/ is ALWAYS in .gitignore
+# "mvn clean" deletes this entire folder
+# Never commit compiled code to git!</span>
+
+<span class="cmt"># .gitignore entry:</span>
+<span class="str">target/</span>
+    </div>
+    <div id="s5-c3" class="code-pane">
+<span class="cmt"># Resources — config files Maven bundles in JAR</span>
+
+<span class="cmt"># src/main/resources/config.properties</span>
+<span class="attr">browser</span>=<span class="str">chrome</span>
+<span class="attr">base.url</span>=<span class="str">https://myapp.com</span>
+<span class="attr">timeout</span>=<span class="num">30</span>
+
+<span class="cmt"># Read in Java code:</span>
+<span class="kw">Properties</span> props = <span class="kw">new</span> <span class="fn">Properties</span>();
+props.<span class="fn">load</span>(<span class="kw">getClass</span>().<span class="fn">getResourceAsStream</span>(
+  <span class="str">"/config.properties"</span>));
+<span class="kw">String</span> url = props.<span class="fn">getProperty</span>(<span class="str">"base.url"</span>);
+
+<span class="cmt"># Maven automatically copies resources/
+# into target/classes/ during build</span>
+    </div>
+    <div id="s5-c4" class="code-pane">
+<span class="cmt"># Create a new Maven project from archetype</span>
+
+<span class="fn">mvn archetype:generate</span> \
+  <span class="kw">-DgroupId=</span><span class="str">com.mycompany</span> \
+  <span class="kw">-DartifactId=</span><span class="str">my-selenium-project</span> \
+  <span class="kw">-DarchetypeArtifactId=</span><span class="str">maven-archetype-quickstart</span> \
+  <span class="kw">-DinteractiveMode=</span><span class="str">false</span>
+
+<span class="cmt"># archetype = project template
+# quickstart = simple Java project template
+# This creates the entire folder structure
+# with a sample App.java and AppTest.java</span>
+
+<span class="cmt"># Then navigate into project:</span>
+<span class="fn">cd</span> my-selenium-project
+<span class="fn">mvn compile</span>
+    </div>
+  </div>
+  <div class="sec-title">💬 5 Interview One-Liners</div>
+  <div class="oneliners">
+    <div class="oneliner"><strong>Q:</strong> What is Maven Standard Directory Layout? → <em>src/main/java for production code, src/test/java for test code, target/ for compiled output — a convention all Maven projects follow.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is the target folder? → <em>Maven's output directory where compiled classes, test reports, and the final JAR/WAR are placed — always in .gitignore.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is a Maven archetype? → <em>A project template that generates the standard folder structure and boilerplate pom.xml for a new project.</em></div>
+    <div class="oneliner"><strong>Q:</strong> Where do you put testng.xml in Maven? → <em>In src/test/resources/ — Maven auto-copies it to target/test-classes/ where Surefire plugin reads it.</em></div>
+    <div class="oneliner"><strong>Q:</strong> Why is target/ in .gitignore? → <em>Target contains compiled/generated files — they should be reproducible by running Maven, not version-controlled.</em></div>
+  </div>
+</div>
+
+<!-- S7: Dependency Management -->
+<div class="panel" id="s6">
+  <div class="sec-title">🔗 Dependency Management & Exclusions</div>
+  <div class="editor-area">
+    <div class="editor-tabs">
+      <div class="e-tab active" onclick="switchCode('s6','c0',this)"><span class="dot" style="background:#ffa657"></span>dep-management.xml</div>
+      <div class="e-tab" onclick="switchCode('s6','c1',this)"><span class="dot" style="background:#ff7b72"></span>exclusions.xml</div>
+      <div class="e-tab" onclick="switchCode('s6','c2',this)"><span class="dot" style="background:#7dd3fc"></span>bom.xml</div>
+      <div class="e-tab" onclick="switchCode('s6','c3',this)"><span class="dot" style="background:#7ee787"></span>version-resolve.sh</div>
+      <div class="e-tab" onclick="switchCode('s6','c4',this)"><span class="dot" style="background:#d2a8ff"></span>dep-tree.sh</div>
+    </div>
+    <div id="s6-c0" class="code-pane active">
+<span class="cmt">&lt;!-- dependencyManagement: centralize versions
+     Define version here, inherit in child pom --&gt;</span>
+<span class="kw2">&lt;dependencyManagement&gt;</span>
+  <span class="kw2">&lt;dependencies&gt;</span>
+    <span class="kw2">&lt;dependency&gt;</span>
+      <span class="kw2">&lt;groupId&gt;</span><span class="str">org.seleniumhq.selenium</span><span class="kw2">&lt;/groupId&gt;</span>
+      <span class="kw2">&lt;artifactId&gt;</span><span class="str">selenium-java</span><span class="kw2">&lt;/artifactId&gt;</span>
+      <span class="kw2">&lt;version&gt;</span><span class="num">4.18.1</span><span class="kw2">&lt;/version&gt;</span>
+    <span class="kw2">&lt;/dependency&gt;</span>
+  <span class="kw2">&lt;/dependencies&gt;</span>
+<span class="kw2">&lt;/dependencyManagement&gt;</span>
+
+<span class="cmt">&lt;!-- Child pom: use without version --&gt;</span>
+<span class="kw2">&lt;dependencies&gt;</span>
+  <span class="kw2">&lt;dependency&gt;</span>
+    <span class="kw2">&lt;groupId&gt;</span><span class="str">org.seleniumhq.selenium</span><span class="kw2">&lt;/groupId&gt;</span>
+    <span class="kw2">&lt;artifactId&gt;</span><span class="str">selenium-java</span><span class="kw2">&lt;/artifactId&gt;</span>
+    <span class="cmt">&lt;!-- version inherited from parent! --&gt;</span>
+  <span class="kw2">&lt;/dependency&gt;</span>
+<span class="kw2">&lt;/dependencies&gt;</span>
+    </div>
+    <div id="s6-c1" class="code-pane">
+<span class="cmt">&lt;!-- Exclude transitive dependency --&gt;</span>
+<span class="kw2">&lt;dependency&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">com.some.library</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">some-lib</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">1.0.0</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;exclusions&gt;</span>
+    <span class="kw2">&lt;exclusion&gt;</span>
+      <span class="cmt">&lt;!-- Remove an unwanted transitive dep --&gt;</span>
+      <span class="kw2">&lt;groupId&gt;</span><span class="str">log4j</span><span class="kw2">&lt;/groupId&gt;</span>
+      <span class="kw2">&lt;artifactId&gt;</span><span class="str">log4j</span><span class="kw2">&lt;/artifactId&gt;</span>
+    <span class="kw2">&lt;/exclusion&gt;</span>
+  <span class="kw2">&lt;/exclusions&gt;</span>
+<span class="kw2">&lt;/dependency&gt;</span>
+
+<span class="cmt">/* Use case: library A uses log4j 1.x
+   but you want log4j 2.x — exclude old one */</span>
+    </div>
+    <div id="s6-c2" class="code-pane">
+<span class="cmt">&lt;!-- BOM (Bill of Materials) — import versions
+     from a published set, e.g. Spring Boot BOM --&gt;</span>
+<span class="kw2">&lt;dependencyManagement&gt;</span>
+  <span class="kw2">&lt;dependencies&gt;</span>
+    <span class="kw2">&lt;dependency&gt;</span>
+      <span class="kw2">&lt;groupId&gt;</span><span class="str">org.springframework.boot</span><span class="kw2">&lt;/groupId&gt;</span>
+      <span class="kw2">&lt;artifactId&gt;</span><span class="str">spring-boot-dependencies</span><span class="kw2">&lt;/artifactId&gt;</span>
+      <span class="kw2">&lt;version&gt;</span><span class="num">3.2.4</span><span class="kw2">&lt;/version&gt;</span>
+      <span class="cmt">&lt;!-- type=pom + scope=import = BOM import --&gt;</span>
+      <span class="kw2">&lt;type&gt;</span><span class="kw3">pom</span><span class="kw2">&lt;/type&gt;</span>
+      <span class="kw2">&lt;scope&gt;</span><span class="kw3">import</span><span class="kw2">&lt;/scope&gt;</span>
+    <span class="kw2">&lt;/dependency&gt;</span>
+  <span class="kw2">&lt;/dependencies&gt;</span>
+<span class="kw2">&lt;/dependencyManagement&gt;</span>
+    </div>
+    <div id="s6-c3" class="code-pane">
+<span class="cmt"># Check effective POM (merged with parent)</span>
+<span class="fn">mvn help:effective-pom</span>
+
+<span class="cmt"># Show resolved dependency versions</span>
+<span class="fn">mvn dependency:resolve</span>
+
+<span class="cmt"># Copy all dependency JARs to target/dependency</span>
+<span class="fn">mvn dependency:copy-dependencies</span>
+
+<span class="cmt"># Display dependency tree with versions</span>
+<span class="fn">mvn dependency:tree</span>
+
+<span class="cmt"># Check for newer versions available</span>
+<span class="fn">mvn versions:display-dependency-updates</span>
+
+<span class="cmt"># Force update SNAPSHOT versions from remote</span>
+<span class="fn">mvn clean install</span> <span class="kw">-U</span>
+    </div>
+    <div id="s6-c4" class="code-pane">
+<span class="cmt"># mvn dependency:tree — shows full tree</span>
+<span class="fn">mvn dependency:tree</span>
+
+<span class="cmt"># Example output:</span>
+com.mycompany:my-project:jar:1.0.0
+<span class="fn">+-- org.seleniumhq.selenium:selenium-java:4.18.1</span>
+    <span class="kw">+-- com.google.guava:guava:33.0</span>   <span class="cmt">&lt;-- transitive</span>
+    <span class="kw">+-- org.apache.commons:commons-lang3</span>
+
+<span class="cmt"># Filter tree for specific dependency:</span>
+<span class="fn">mvn dependency:tree</span> \
+  <span class="kw">-Dincludes=</span><span class="str">org.seleniumhq.selenium:*</span>
+
+<span class="cmt"># Use to diagnose:
+# - version conflicts
+# - unexpected transitive JARs
+# - duplicate class issues (ClassNotFoundException)</span>
+    </div>
+  </div>
+  <div class="sec-title">💬 5 Interview One-Liners</div>
+  <div class="oneliners">
+    <div class="oneliner"><strong>Q:</strong> What is dependencyManagement? → <em>A section in parent pom.xml to declare dependency versions once — child modules inherit them without specifying versions.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is a BOM in Maven? → <em>Bill of Materials — a pom imported with type=pom/scope=import that provides a curated set of compatible dependency versions.</em></div>
+    <div class="oneliner"><strong>Q:</strong> How do you resolve dependency conflicts? → <em>Run mvn dependency:tree to find conflicts, then use &lt;exclusions&gt; or force a version in dependencyManagement.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is mvn dependency:tree? → <em>Command that prints all direct and transitive dependencies as a tree, showing their versions and relationships.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What does -U flag do? → <em>Forces Maven to check remote repos for updated SNAPSHOT versions instead of using locally cached ones.</em></div>
+  </div>
+</div>
+
+<!-- S8: Repositories -->
+<div class="panel" id="s7">
+  <div class="sec-title">🗄️ Repositories — Local, Central, Remote</div>
+  <div class="editor-area">
+    <div class="editor-tabs">
+      <div class="e-tab active" onclick="switchCode('s7','c0',this)"><span class="dot" style="background:#7dd3fc"></span>repo-config.xml</div>
+      <div class="e-tab" onclick="switchCode('s7','c1',this)"><span class="dot" style="background:#7ee787"></span>settings.xml</div>
+      <div class="e-tab" onclick="switchCode('s7','c2',this)"><span class="dot" style="background:#f2cc60"></span>nexus-repo.xml</div>
+      <div class="e-tab" onclick="switchCode('s7','c3',this)"><span class="dot" style="background:#ffa657"></span>local-repo.sh</div>
+      <div class="e-tab" onclick="switchCode('s7','c4',this)"><span class="dot" style="background:#d2a8ff"></span>snapshot-release.xml</div>
+    </div>
+    <div id="s7-c0" class="code-pane active">
+<span class="cmt">&lt;!-- Custom repository in pom.xml --&gt;</span>
+<span class="kw2">&lt;repositories&gt;</span>
+  <span class="kw2">&lt;repository&gt;</span>
+    <span class="cmt">&lt;!-- id: unique name for this repo --&gt;</span>
+    <span class="kw2">&lt;id&gt;</span><span class="str">company-nexus</span><span class="kw2">&lt;/id&gt;</span>
+    <span class="kw2">&lt;name&gt;</span><span class="str">Company Nexus Repository</span><span class="kw2">&lt;/name&gt;</span>
+    <span class="kw2">&lt;url&gt;</span><span class="str">https://nexus.company.com/repository/maven-releases/</span><span class="kw2">&lt;/url&gt;</span>
+    <span class="kw2">&lt;releases&gt;</span>
+      <span class="kw2">&lt;enabled&gt;</span><span class="kw3">true</span><span class="kw2">&lt;/enabled&gt;</span>
+    <span class="kw2">&lt;/releases&gt;</span>
+    <span class="kw2">&lt;snapshots&gt;</span>
+      <span class="cmt">&lt;!-- Disable SNAPSHOTs from releases repo --&gt;</span>
+      <span class="kw2">&lt;enabled&gt;</span><span class="kw3">false</span><span class="kw2">&lt;/enabled&gt;</span>
+    <span class="kw2">&lt;/snapshots&gt;</span>
+  <span class="kw2">&lt;/repository&gt;</span>
+<span class="kw2">&lt;/repositories&gt;</span>
+    </div>
+    <div id="s7-c1" class="code-pane">
+<span class="cmt">&lt;!-- settings.xml — Maven user config (~/.m2/settings.xml) --&gt;</span>
+<span class="kw2">&lt;settings&gt;</span>
+  <span class="cmt">&lt;!-- Change local repo location (default: ~/.m2) --&gt;</span>
+  <span class="kw2">&lt;localRepository&gt;</span><span class="str">/custom/path/.m2/repository</span><span class="kw2">&lt;/localRepository&gt;</span>
+
+  <span class="cmt">&lt;!-- Server credentials for private repos --&gt;</span>
+  <span class="kw2">&lt;servers&gt;</span>
+    <span class="kw2">&lt;server&gt;</span>
+      <span class="kw2">&lt;id&gt;</span><span class="str">company-nexus</span><span class="kw2">&lt;/id&gt;</span>
+      <span class="kw2">&lt;username&gt;</span><span class="str">jenkins-user</span><span class="kw2">&lt;/username&gt;</span>
+      <span class="kw2">&lt;password&gt;</span><span class="str">${env.NEXUS_PASSWORD}</span><span class="kw2">&lt;/password&gt;</span>
+    <span class="kw2">&lt;/server&gt;</span>
+  <span class="kw2">&lt;/servers&gt;</span>
+<span class="kw2">&lt;/settings&gt;</span>
+
+<span class="cmt">/* settings.xml = global Maven config
+   pom.xml     = project-specific config */</span>
+    </div>
+    <div id="s7-c2" class="code-pane">
+<span class="cmt">&lt;!-- Deploy artifact to Nexus --&gt;</span>
+<span class="kw2">&lt;distributionManagement&gt;</span>
+  <span class="kw2">&lt;repository&gt;</span>
+    <span class="cmt">&lt;!-- id must match server id in settings.xml --&gt;</span>
+    <span class="kw2">&lt;id&gt;</span><span class="str">company-nexus</span><span class="kw2">&lt;/id&gt;</span>
+    <span class="kw2">&lt;url&gt;</span><span class="str">https://nexus.company.com/maven-releases</span><span class="kw2">&lt;/url&gt;</span>
+  <span class="kw2">&lt;/repository&gt;</span>
+  <span class="kw2">&lt;snapshotRepository&gt;</span>
+    <span class="kw2">&lt;id&gt;</span><span class="str">company-nexus</span><span class="kw2">&lt;/id&gt;</span>
+    <span class="kw2">&lt;url&gt;</span><span class="str">https://nexus.company.com/maven-snapshots</span><span class="kw2">&lt;/url&gt;</span>
+  <span class="kw2">&lt;/snapshotRepository&gt;</span>
+<span class="kw2">&lt;/distributionManagement&gt;</span>
+
+<span class="cmt"># Run: mvn deploy  → uploads to Nexus</span>
+    </div>
+    <div id="s7-c3" class="code-pane">
+<span class="cmt"># Local repository (~/.m2/repository)</span>
+
+<span class="cmt"># View local repo location:</span>
+<span class="fn">ls ~/.m2/repository/</span>
+
+<span class="cmt"># Example: Selenium JAR cached at:</span>
+<span class="str">~/.m2/repository/org/seleniumhq/selenium/
+  selenium-java/4.18.1/
+    selenium-java-4.18.1.jar
+    selenium-java-4.18.1.pom</span>
+
+<span class="cmt"># Delete local cache (force re-download):</span>
+<span class="fn">rm -rf ~/.m2/repository</span>
+<span class="fn">mvn clean install</span>  <span class="cmt"># re-downloads everything</span>
+
+<span class="cmt"># List installed JARs in local repo:</span>
+<span class="fn">find ~/.m2/repository -name "*.jar" | head -20</span>
+    </div>
+    <div id="s7-c4" class="code-pane">
+<span class="cmt">&lt;!-- SNAPSHOT vs RELEASE versions --&gt;</span>
+
+<span class="cmt">&lt;!-- SNAPSHOT = in-development, can change --&gt;</span>
+<span class="kw2">&lt;version&gt;</span><span class="num">1.0.0-SNAPSHOT</span><span class="kw2">&lt;/version&gt;</span>
+<span class="cmt">&lt;!-- Maven re-downloads SNAPSHOT frequently
+     (based on updatePolicy in settings.xml) --&gt;</span>
+
+<span class="cmt">&lt;!-- RELEASE = stable, immutable version --&gt;</span>
+<span class="kw2">&lt;version&gt;</span><span class="num">1.0.0</span><span class="kw2">&lt;/version&gt;</span>
+<span class="cmt">&lt;!-- Maven caches RELEASE forever in ~/.m2 --&gt;</span>
+
+<span class="cmt">/* Rule:
+   - Use SNAPSHOT during development
+   - Remove -SNAPSHOT before releasing
+   - Production artifacts should NEVER be SNAPSHOT */</span>
+    </div>
+  </div>
+  <div class="sec-title">💬 5 Interview One-Liners</div>
+  <div class="oneliners">
+    <div class="oneliner"><strong>Q:</strong> What is settings.xml? → <em>Maven's user-level global config file at ~/.m2/settings.xml — defines local repo path, server credentials, and mirrors.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is distributionManagement? → <em>POM section that defines where to deploy artifacts — the remote repo URL for releases and snapshots.</em></div>
+    <div class="oneliner"><strong>Q:</strong> Difference between SNAPSHOT and RELEASE? → <em>SNAPSHOT versions are re-downloaded each build (in-development); RELEASE versions are immutable and cached permanently.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is Nexus/Artifactory? → <em>Private artifact repository managers that companies run internally to store their own JARs and proxy Maven Central.</em></div>
+    <div class="oneliner"><strong>Q:</strong> How does Maven resolve dependencies? → <em>Checks local ~/.m2 first, then Maven Central, then remote repos listed in pom.xml — in that order.</em></div>
+  </div>
+</div>
+
+<!-- S9: Inheritance -->
+<div class="panel" id="s8">
+  <div class="sec-title">👨‍👧 Parent-Child POM Inheritance</div>
+  <div class="editor-area">
+    <div class="editor-tabs">
+      <div class="e-tab active" onclick="switchCode('s8','c0',this)"><span class="dot" style="background:#f2cc60"></span>parent-pom.xml</div>
+      <div class="e-tab" onclick="switchCode('s8','c1',this)"><span class="dot" style="background:#7dd3fc"></span>child-pom.xml</div>
+      <div class="e-tab" onclick="switchCode('s8','c2',this)"><span class="dot" style="background:#7ee787"></span>override.xml</div>
+      <div class="e-tab" onclick="switchCode('s8','c3',this)"><span class="dot" style="background:#d2a8ff"></span>spring-parent.xml</div>
+      <div class="e-tab" onclick="switchCode('s8','c4',this)"><span class="dot" style="background:#ffa657"></span>effective-pom.sh</div>
+    </div>
+    <div id="s8-c0" class="code-pane active">
+<span class="cmt">&lt;!-- parent/pom.xml — shared config for all modules --&gt;</span>
+<span class="kw2">&lt;project&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">com.company</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">test-framework-parent</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">1.0.0</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;packaging&gt;</span><span class="str">pom</span><span class="kw2">&lt;/packaging&gt;</span>
+
+  <span class="kw2">&lt;properties&gt;</span>
+    <span class="kw2">&lt;selenium.version&gt;</span><span class="num">4.18.1</span><span class="kw2">&lt;/selenium.version&gt;</span>
+    <span class="kw2">&lt;java.version&gt;</span><span class="num">11</span><span class="kw2">&lt;/java.version&gt;</span>
+  <span class="kw2">&lt;/properties&gt;</span>
+
+  <span class="cmt">&lt;!-- Declare version once for all children --&gt;</span>
+  <span class="kw2">&lt;dependencyManagement&gt;</span>
+    <span class="kw2">&lt;dependencies&gt;</span>
+      <span class="kw2">&lt;dependency&gt;</span>
+        <span class="kw2">&lt;groupId&gt;</span><span class="str">org.seleniumhq.selenium</span><span class="kw2">&lt;/groupId&gt;</span>
+        <span class="kw2">&lt;artifactId&gt;</span><span class="str">selenium-java</span><span class="kw2">&lt;/artifactId&gt;</span>
+        <span class="kw2">&lt;version&gt;</span><span class="num">${selenium.version}</span><span class="kw2">&lt;/version&gt;</span>
+      <span class="kw2">&lt;/dependency&gt;</span>
+    <span class="kw2">&lt;/dependencies&gt;</span>
+  <span class="kw2">&lt;/dependencyManagement&gt;</span>
+<span class="kw2">&lt;/project&gt;</span>
+    </div>
+    <div id="s8-c1" class="code-pane">
+<span class="cmt">&lt;!-- web-tests/pom.xml — child module --&gt;</span>
+<span class="kw2">&lt;project&gt;</span>
+  <span class="cmt">&lt;!-- Declare parent reference --&gt;</span>
+  <span class="kw2">&lt;parent&gt;</span>
+    <span class="kw2">&lt;groupId&gt;</span><span class="str">com.company</span><span class="kw2">&lt;/groupId&gt;</span>
+    <span class="kw2">&lt;artifactId&gt;</span><span class="str">test-framework-parent</span><span class="kw2">&lt;/artifactId&gt;</span>
+    <span class="kw2">&lt;version&gt;</span><span class="num">1.0.0</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;/parent&gt;</span>
+
+  <span class="cmt">&lt;!-- Only need artifactId — groupId+version inherited --&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">web-tests</span><span class="kw2">&lt;/artifactId&gt;</span>
+
+  <span class="kw2">&lt;dependencies&gt;</span>
+    <span class="kw2">&lt;dependency&gt;</span>
+      <span class="kw2">&lt;groupId&gt;</span><span class="str">org.seleniumhq.selenium</span><span class="kw2">&lt;/groupId&gt;</span>
+      <span class="kw2">&lt;artifactId&gt;</span><span class="str">selenium-java</span><span class="kw2">&lt;/artifactId&gt;</span>
+      <span class="cmt">&lt;!-- No version needed — inherited from parent! --&gt;</span>
+    <span class="kw2">&lt;/dependency&gt;</span>
+  <span class="kw2">&lt;/dependencies&gt;</span>
+<span class="kw2">&lt;/project&gt;</span>
+    </div>
+    <div id="s8-c2" class="code-pane">
+<span class="cmt">&lt;!-- Child can OVERRIDE parent properties --&gt;</span>
+<span class="kw2">&lt;project&gt;</span>
+  <span class="kw2">&lt;parent&gt;</span>
+    <span class="kw2">&lt;artifactId&gt;</span><span class="str">parent-project</span><span class="kw2">&lt;/artifactId&gt;</span>
+    <span class="kw2">&lt;version&gt;</span><span class="num">1.0.0</span><span class="kw2">&lt;/version&gt;</span>
+  <span class="kw2">&lt;/parent&gt;</span>
+
+  <span class="cmt">&lt;!-- Override parent's Java version --&gt;</span>
+  <span class="kw2">&lt;properties&gt;</span>
+    <span class="kw2">&lt;java.version&gt;</span><span class="num">17</span><span class="kw2">&lt;/java.version&gt;</span>
+  <span class="kw2">&lt;/properties&gt;</span>
+
+  <span class="cmt">&lt;!-- Override specific dep version --&gt;</span>
+  <span class="kw2">&lt;dependencies&gt;</span>
+    <span class="kw2">&lt;dependency&gt;</span>
+      <span class="kw2">&lt;groupId&gt;</span><span class="str">org.seleniumhq.selenium</span><span class="kw2">&lt;/groupId&gt;</span>
+      <span class="kw2">&lt;artifactId&gt;</span><span class="str">selenium-java</span><span class="kw2">&lt;/artifactId&gt;</span>
+      <span class="cmt">&lt;!-- Explicit version overrides parent's --&gt;</span>
+      <span class="kw2">&lt;version&gt;</span><span class="num">4.19.0</span><span class="kw2">&lt;/version&gt;</span>
+    <span class="kw2">&lt;/dependency&gt;</span>
+  <span class="kw2">&lt;/dependencies&gt;</span>
+<span class="kw2">&lt;/project&gt;</span>
+    </div>
+    <div id="s8-c3" class="code-pane">
+<span class="cmt">&lt;!-- Inheriting from Spring Boot Parent --&gt;</span>
+<span class="kw2">&lt;parent&gt;</span>
+  <span class="kw2">&lt;groupId&gt;</span><span class="str">org.springframework.boot</span><span class="kw2">&lt;/groupId&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">spring-boot-starter-parent</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;version&gt;</span><span class="num">3.2.4</span><span class="kw2">&lt;/version&gt;</span>
+<span class="kw2">&lt;/parent&gt;</span>
+
+<span class="cmt">/* Spring Boot parent gives you:
+   - Java version properties
+   - Dependency version management  
+   - Plugin configuration (Surefire, etc)
+   - UTF-8 encoding defaults
+   All pre-configured, production-ready! */</span>
+    </div>
+    <div id="s8-c4" class="code-pane">
+<span class="cmt"># See the full merged/effective pom.xml</span>
+<span class="fn">mvn help:effective-pom</span>
+
+<span class="cmt"># Output shows:
+# - All inherited parent properties
+# - Merged dependencies
+# - Default plugin versions added by Maven
+# - Resolved property values (${x} replaced)
+
+# Save to file for review:</span>
+<span class="fn">mvn help:effective-pom</span> <span class="kw">-Doutput=</span><span class="str">effective.xml</span>
+
+<span class="cmt"># Super useful for debugging:
+# "Why is this version being used?"
+# "Where does this plugin come from?"</span>
+    </div>
+  </div>
+  <div class="sec-title">💬 5 Interview One-Liners</div>
+  <div class="oneliners">
+    <div class="oneliner"><strong>Q:</strong> What is a parent pom? → <em>A pom.xml with packaging=pom that centralizes shared config — properties, plugin versions, dependency versions — for child modules to inherit.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is the effective POM? → <em>The final merged pom.xml (parent + child + defaults) that Maven actually uses — view it with mvn help:effective-pom.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What does a child module inherit? → <em>groupId, version, properties, dependencyManagement, pluginManagement, and default plugin configs from parent.</em></div>
+    <div class="oneliner"><strong>Q:</strong> Can a child override parent config? → <em>Yes — declaring a property or dependency version in the child pom overrides the parent's value for that module only.</em></div>
+    <div class="oneliner"><strong>Q:</strong> What is Spring Boot Starter Parent? → <em>A well-configured parent pom from Spring that pre-configures Java version, encoding, dependency versions, and plugin settings.</em></div>
+  </div>
+</div>
+
+<!-- S10: CI/CD & SDET QA -->
+<div class="panel" id="s9">
+  <div class="sec-title">🚀 Maven in CI/CD — Jenkins / GitHub Actions</div>
+  <div class="editor-area">
+    <div class="editor-tabs">
+      <div class="e-tab active" onclick="switchCode('s9','c0',this)"><span class="dot" style="background:#7ee787"></span>github-actions.yml</div>
+      <div class="e-tab" onclick="switchCode('s9','c1',this)"><span class="dot" style="background:#7dd3fc"></span>jenkins-pipeline.groovy</div>
+      <div class="e-tab" onclick="switchCode('s9','c2',this)"><span class="dot" style="background:#f2cc60"></span>parallel-tests.xml</div>
+      <div class="e-tab" onclick="switchCode('s9','c3',this)"><span class="dot" style="background:#d2a8ff"></span>env-specific.sh</div>
+      <div class="e-tab" onclick="switchCode('s9','c4',this)"><span class="dot" style="background:#ffa657"></span>test-reports.sh</div>
+    </div>
+    <div id="s9-c0" class="code-pane active">
+<span class="cmt"># .github/workflows/test.yml</span>
+<span class="attr">name:</span> <span class="str">Selenium Tests</span>
+<span class="attr">on:</span> [push, pull_request]
+
+<span class="attr">jobs:</span>
+  <span class="attr">test:</span>
+    <span class="attr">runs-on:</span> <span class="str">ubuntu-latest</span>
+    <span class="attr">steps:</span>
+      - <span class="attr">uses:</span> <span class="str">actions/checkout@v4</span>
+
+      - <span class="attr">name:</span> <span class="str">Setup Java 11</span>
+        <span class="attr">uses:</span> <span class="str">actions/setup-java@v4</span>
+        <span class="attr">with:</span>
+          <span class="attr">java-version:</span> <span class="str">'11'</span>
+          <span class="attr">distribution:</span> <span class="str">temurin</span>
+
+      <span class="cmt"># Cache Maven dependencies → faster builds</span>
+      - <span class="attr">name:</span> <span class="str">Cache Maven</span>
+        <span class="attr">uses:</span> <span class="str">actions/cache@v4</span>
+        <span class="attr">with:</span>
+          <span class="attr">path:</span> <span class="str">~/.m2/repository</span>
+          <span class="attr">key:</span> <span class="str">maven-${{ hashFiles('**/pom.xml') }}</span>
+
+      - <span class="attr">name:</span> <span class="str">Run Tests</span>
+        <span class="attr">run:</span> <span class="fn">mvn clean test -P staging</span>
+    </div>
+    <div id="s9-c1" class="code-pane">
+<span class="cmt">// Jenkins Declarative Pipeline</span>
+<span class="kw">pipeline</span> {
+  <span class="kw">agent</span> any
+  <span class="kw">tools</span> {
+    <span class="fn">maven</span> <span class="str">'Maven-3.9'</span>   <span class="cmt">// Maven tool configured in Jenkins</span>
+    <span class="fn">jdk</span> <span class="str">'JDK-11'</span>
+  }
+  <span class="kw">stages</span> {
+    <span class="kw">stage</span>(<span class="str">'Build'</span>) {
+      <span class="kw">steps</span> {
+        <span class="fn">sh</span> <span class="str">'mvn clean compile'</span>
+      }
+    }
+    <span class="kw">stage</span>(<span class="str">'Test'</span>) {
+      <span class="kw">steps</span> {
+        <span class="fn">sh</span> <span class="str">'mvn test -Pstaging'</span>
+      }
+      <span class="kw">post</span> {
+        <span class="kw">always</span> {
+          <span class="cmt">// Publish TestNG/Surefire reports</span>
+          <span class="fn">junit</span> <span class="str">'target/surefire-reports/*.xml'</span>
+        }
+      }
+    }
+  }
+}
+    </div>
+    <div id="s9-c2" class="code-pane">
+<span class="cmt">&lt;!-- Run TestNG tests in parallel via Surefire --&gt;</span>
+<span class="kw2">&lt;plugin&gt;</span>
+  <span class="kw2">&lt;artifactId&gt;</span><span class="str">maven-surefire-plugin</span><span class="kw2">&lt;/artifactId&gt;</span>
+  <span class="kw2">&lt;configuration&gt;</span>
+    <span class="cmt">&lt;!-- parallel: methods, tests, classes, suites --&gt;</span>
+    <span class="kw2">&lt;parallel&gt;</span><span class="str">methods</span><span class="kw2">&lt;/parallel&gt;</span>
+    <span class="kw2">&lt;threadCount&gt;</span><span class="num">4</span><span class="kw2">&lt;/threadCount&gt;</span>
+    <span class="cmt">&lt;!-- testng.xml with parallel config --&gt;</span>
+    <span class="kw2">&lt;suiteXmlFiles&gt;</span>
+      <span class="kw2">&lt;suiteXmlFile&gt;</span><span class="str">src/test/resources/testng.xml</span><span class="kw2">&lt;/suiteXmlFile&gt;</span>
+    <span class="kw2">&lt;/suiteXmlFiles&gt;</span>
+    <span class="cmt">&lt;!-- Continue after failures (for CI reports) --&gt;</span>
+    <span class="kw2">&lt;testFailureIgnore&gt;</span><span class="kw3">true</span><span class="kw2">&lt;/testFailureIgnore&gt;</span>
+  <span class="kw2">&lt;/configuration&gt;</span>
+<span class="kw2">&lt;/plugin&gt;</span>
+    </div>
+    <div id="s9-c3" class="code-pane">
+<span class="cmt"># Environment-specific test runs using profiles</span>
+
+<span class="cmt"># Run tests on DEV environment:</span>
+<span class="fn">mvn test</span> <span class="kw">-P</span><span class="str">dev</span>
+
+<span class="cmt"># Run tests on STAGING:</span>
+<span class="fn">mvn test</span> <span class="kw">-P</span><span class="str">staging</span>
+
+<span class="cmt"># Run smoke tests only on PROD:</span>
+<span class="fn">mvn test</span> <span class="kw">-P</span><span class="str">prod</span> <span class="kw">-Dgroups=</span><span class="str">smoke</span>
+
+<span class="cmt"># Pass system properties (override config at runtime):</span>
+<span class="fn">mvn test</span> <span class="kw">-Dbase.url=</span><span class="str">https://staging.app.com</span> \
+          <span class="kw">-Dbrowser=</span><span class="str">firefox</span>
+
+<span class="cmt"># In Java code: System.getProperty("base.url")</span>
+<span class="kw">String</span> url = <span class="fn">System</span>.<span class="fn">getProperty</span>(<span class="str">"base.url"</span>,
+                               <span class="str">"http://localhost"</span>);
+    </div>
+    <div id="s9-c4" class="code-pane">
+<span class="cmt"># Test report locations after mvn test</span>
+
+<span class="cmt"># Surefire XML reports:</span>
+<span class="str">target/surefire-reports/*.xml</span>
+
+<span class="cmt"># Surefire HTML reports:</span>
+<span class="str">target/surefire-reports/index.html</span>
+
+<span class="cmt"># Generate Allure report after tests:</span>
+<span class="fn">mvn allure:report</span>
+<span class="cmt"># Opens at: target/site/allure-maven-plugin/</span>
+
+<span class="cmt"># Generate Allure report and open in browser:</span>
+<span class="fn">mvn allure:serve</span>
+
+<span class="cmt"># Generate site with all reports:</span>
+<span class="fn">mvn site</span>
+<span class="cmt"># → target/site/index.html</span>
+    </div>
+  </div>
+  <div class="sec-title">🎯 5 SDET Interview Q&A</div>
+  <div class="qa-list">
+    <div class="qa-item" id="qa0">
+      <div class="qa-q" onclick="toggleQA(0)">Q1: How do you integrate Maven with Jenkins for running Selenium tests? <span class="arrow">▼</span></div>
+      <div class="qa-a" id="qa0a">In Jenkins, I use a Declarative Pipeline with Maven as a configured tool. The pipeline stages include: 1) checkout from Git, 2) mvn clean compile, 3) mvn test -P{environment} to run Selenium tests, and 4) publish JUnit XML reports from target/surefire-reports/ using the junit step. I also cache ~/.m2/repository to speed up builds.</div>
+    </div>
+    <div class="qa-item" id="qa1">
+      <div class="qa-q" onclick="toggleQA(1)">Q2: How do you run only regression tests in CI using Maven? <span class="arrow">▼</span></div>
+      <div class="qa-a" id="qa1a">I use Maven profiles and TestNG groups. In pom.xml, I define a profile named "regression" pointing to a regression-testng.xml suite file. In CI, I run: mvn test -Pregression. Alternatively I use: mvn test -Dgroups=regression to run only TestNG tests tagged with @Test(groups="regression").</div>
+    </div>
+    <div class="qa-item" id="qa2">
+      <div class="qa-q" onclick="toggleQA(2)">Q3: What happens when two dependencies have different versions of the same transitive JAR? <span class="arrow">▼</span></div>
+      <div class="qa-a" id="qa2a">Maven applies "nearest wins" — whichever version is declared closer to the root of the dependency tree wins. To verify: run mvn dependency:tree to see which version is selected. To enforce a specific version: declare it explicitly in &lt;dependencyManagement&gt; which always takes highest priority.</div>
+    </div>
+    <div class="qa-item" id="qa3">
+      <div class="qa-q" onclick="toggleQA(3)">Q4: How do you pass environment-specific URLs to tests from Maven? <span class="arrow">▼</span></div>
+      <div class="qa-a" id="qa3a">Two approaches: 1) Maven profiles — define a profile with &lt;properties&gt;&lt;base.url&gt; per environment, activate with -Pstaging. 2) System properties — pass with -Dbase.url=https://staging.app.com at runtime. In Java: System.getProperty("base.url", "http://default") reads the value. I prefer profiles for team-wide config and -D for quick overrides.</div>
+    </div>
+    <div class="qa-item" id="qa4">
+      <div class="qa-q" onclick="toggleQA(4)">Q5: How do you make Maven not fail the build if some tests fail? <span class="arrow">▼</span></div>
+      <div class="qa-a" id="qa4a">Set &lt;testFailureIgnore&gt;true&lt;/testFailureIgnore&gt; in the Surefire plugin configuration. This ensures Maven continues after test failures and generates the full report. In CI, I still mark the pipeline as UNSTABLE (not FAILED) using post-build steps that read the XML report — so failures are visible without blocking deployments.</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end content -->
+
+<script>
+function goSession(idx) {
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  document.querySelectorAll('.s-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+}
+
+function switchCode(session, codeId, tabEl) {
+  const prefix = session + '-';
+  document.querySelectorAll('[id^="'+prefix+'"]').forEach(p => p.classList.remove('active'));
+  document.getElementById(prefix+codeId).classList.add('active');
+  tabEl.parentElement.querySelectorAll('.e-tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+}
+
+function toggleQA(idx) {
+  const item = document.getElementById('qa'+idx);
+  const ans  = document.getElementById('qa'+idx+'a');
+  item.classList.toggle('open');
+  ans.classList.toggle('open');
+}
+</script>
+</body>
+</html>

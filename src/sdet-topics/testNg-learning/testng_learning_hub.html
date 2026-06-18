@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestNG Learning Hub — SDET Edition</title>
+</head>
+<body>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --font-sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Cascadia Code','Fira Code','Consolas',monospace;
+  --color-text-primary:#1a1a2e;
+  --color-text-secondary:#555770;
+  --color-text-tertiary:#8e90a6;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f4f8;
+  --color-border-primary:#534AB7;
+  --color-border-secondary:#d1d1db;
+  --color-border-tertiary:#e4e4eb;
+  --border-radius-md:8px;
+  --border-radius-lg:12px
+}
+
+body{font-family:var(--font-sans,sans-serif);color:var(--color-text-primary)}
+.hub{max-width:680px}
+.phase-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.phase-pill{font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid;font-weight:500}
+.phase-fund{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.phase-inter{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.phase-adv{background:#FAECE7;color:#993C1D;border-color:#F0997B}
+.progress-bar{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
+.tab-btn{flex:none;padding:8px 12px;border-radius:var(--border-radius-md,8px);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);font-size:12px;cursor:pointer;transition:all .15s;color:var(--color-text-secondary);white-space:nowrap}
+.tab-btn.active{background:var(--color-background-primary);border-color:var(--color-border-primary);color:var(--color-text-primary);font-weight:500}
+.tab-btn.done{background:var(--color-background-secondary)}
+.tab-btn.done::after{content:" ✓";color:#1D9E75;font-size:11px}
+.session{display:none}.session.active{display:block}
+.section{margin-bottom:24px}
+.sec-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:6px}
+.overview-box{background:var(--color-background-secondary);border-radius:var(--border-radius-lg,12px);padding:14px 16px;border:0.5px solid var(--color-border-tertiary)}
+.overview-box p{font-size:14px;line-height:1.7;color:var(--color-text-primary)}
+.def-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.def-card{background:var(--color-background-primary);border-radius:var(--border-radius-md,8px);border:0.5px solid var(--color-border-tertiary);padding:10px;font-size:12px}
+.def-card .label{font-weight:500;color:var(--color-text-secondary);font-size:11px;margin-bottom:4px}
+.def-card .val{color:var(--color-text-primary);line-height:1.5}
+.oneliner-list{display:flex;flex-direction:column;gap:6px}
+.oneliner{background:var(--color-background-secondary);border-left:3px solid #7F77DD;border-radius:0 var(--border-radius-md,8px) var(--border-radius-md,8px) 0;padding:9px 12px;font-size:13px;line-height:1.5;color:var(--color-text-primary)}
+.code-block{background:var(--color-background-secondary);border-radius:var(--border-radius-md,8px);border:0.5px solid var(--color-border-tertiary);margin-bottom:12px;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.code-title{font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.code-badge{font-size:10px;padding:2px 8px;background:#E1F5EE;color:#085041;border-radius:10px;border:0.5px solid #5DCAA5}
+.code-body{padding:12px;overflow-x:auto}
+.code-body pre{font-family:var(--font-mono,monospace);font-size:12px;line-height:1.6;color:var(--color-text-primary);white-space:pre}
+.kw{color:#534AB7}.ann{color:#0F6E56}.str{color:#993C1D}.cmt{color:#888780;font-style:italic}.num{color:#854F0B}
+.bp-list{display:flex;flex-direction:column;gap:6px}
+.bp-item{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md,8px);border:0.5px solid var(--color-border-tertiary);font-size:13px;line-height:1.5}
+.bp-icon{color:#1D9E75;font-size:14px;margin-top:1px;flex-shrink:0}
+.qa-list{display:flex;flex-direction:column;gap:8px}
+.qa-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md,8px);overflow:hidden}
+.qa-q{padding:10px 12px;background:var(--color-background-secondary);font-size:13px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--color-text-primary)}
+.qa-q:hover{background:var(--color-background-primary)}
+.qa-a{padding:10px 12px;font-size:13px;line-height:1.6;color:var(--color-text-secondary);border-top:0.5px solid var(--color-border-tertiary);display:none}
+.qa-a.open{display:block}
+.chevron{transition:transform .2s;font-size:12px}
+.chevron.open{transform:rotate(180deg)}
+.concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.concept-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md,8px);padding:10px 12px}
+.concept-card h4{font-size:13px;font-weight:500;margin-bottom:4px;color:var(--color-text-primary)}
+.concept-card p{font-size:12px;line-height:1.5;color:var(--color-text-secondary)}
+.nav-row{display:flex;justify-content:space-between;margin-top:20px}
+.nav-btn{padding:8px 18px;border-radius:var(--border-radius-md,8px);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);font-size:13px;cursor:pointer;color:var(--color-text-primary);transition:background .15s}
+.nav-btn:hover{background:var(--color-background-primary)}
+.nav-btn.primary{background:#534AB7;color:#fff;border-color:#534AB7}
+.nav-btn.primary:hover{background:#3C3489}
+.prog-track{display:flex;align-items:center;gap:4px;margin-bottom:16px}
+.prog-dot{width:8px;height:8px;border-radius:50%;background:var(--color-border-secondary);transition:background .2s}
+.prog-dot.done{background:#1D9E75}
+.prog-dot.active{background:#534AB7}
+.arch-svg{width:100%;margin:8px 0}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;margin-right:4px}
+.tag-blue{background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB}
+.tag-green{background:#EAF3DE;color:#27500A;border:0.5px solid #97C459}
+.tag-amber{background:#FAEEDA;color:#633806;border:0.5px solid #EF9F27}
+.tag-red{background:#FCEBEB;color:#791F1F;border:0.5px solid #F09595}
+
+/* SVG diagram element classes */
+.c-purple rect{fill:#EEEDFE;stroke:#AFA9EC;stroke-width:1.5}
+.c-teal rect{fill:#E1F5EE;stroke:#5DCAA5;stroke-width:1.5}
+.c-coral rect{fill:#FAECE7;stroke:#F0997B;stroke-width:1.5}
+.c-amber rect{fill:#FAEEDA;stroke:#EF9F27;stroke-width:1.5}
+.c-blue rect{fill:#E6F1FB;stroke:#85B7EB;stroke-width:1.5}
+.c-green rect{fill:#EAF3DE;stroke:#97C459;stroke-width:1.5}
+svg .th{font-weight:600;fill:var(--color-text-primary);font-family:var(--font-sans);font-size:13px}
+svg .ts{font-size:11px;fill:var(--color-text-secondary);font-family:var(--font-sans)}
+
+/* Accessibility: screen reader only */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+
+<div class="hub">
+<h2 class="sr-only">TestNG Learning Hub — 8 structured sessions covering fundamentals through advanced concepts</h2>
+
+<div class="phase-bar">
+  <span class="phase-pill phase-fund">Phase 1: Fundamentals — Sessions 1–3</span>
+  <span class="phase-pill phase-inter">Phase 2: Intermediate — Sessions 4–6</span>
+  <span class="phase-pill phase-adv">Phase 3: Advanced — Sessions 7–8</span>
+</div>
+
+<div class="progress-bar" id="tabBar">
+  <button class="tab-btn active" onclick="goTo(0)">S1 · Intro</button>
+  <button class="tab-btn" onclick="goTo(1)">S2 · Annotations</button>
+  <button class="tab-btn" onclick="goTo(2)">S3 · XML Suite</button>
+  <button class="tab-btn" onclick="goTo(3)">S4 · Groups & Priority</button>
+  <button class="tab-btn" onclick="goTo(4)">S5 · Parameters</button>
+  <button class="tab-btn" onclick="goTo(5)">S6 · Data Providers</button>
+  <button class="tab-btn" onclick="goTo(6)">S7 · Listeners</button>
+  <button class="tab-btn" onclick="goTo(7)">S8 · Dependencies & Parallel</button>
+</div>
+
+<div class="prog-track" id="progTrack">
+  <span id="progLabel" style="font-size:11px;color:var(--color-text-secondary);margin-right:4px">Session 1 of 8</span>
+  <div class="prog-dot active" id="pd0"></div>
+  <div class="prog-dot" id="pd1"></div>
+  <div class="prog-dot" id="pd2"></div>
+  <div class="prog-dot" id="pd3"></div>
+  <div class="prog-dot" id="pd4"></div>
+  <div class="prog-dot" id="pd5"></div>
+  <div class="prog-dot" id="pd6"></div>
+  <div class="prog-dot" id="pd7"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SESSION 1 ═══ -->
+<div class="session active" id="s0">
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-book-2" aria-hidden="true"></i> Overview</div>
+    <div class="overview-box">
+      <p><strong>TestNG</strong> (Test Next Generation) is a testing framework for Java, inspired by JUnit and NUnit, designed to cover all categories of tests — unit, functional, end-to-end, integration.</p>
+      <div class="def-row">
+        <div class="def-card"><div class="label">What</div><div class="val">Java test framework with annotations, grouping, parameterization & parallel execution</div></div>
+        <div class="def-card"><div class="label">Why</div><div class="val">More powerful than JUnit — supports data-driven tests, test dependencies, parallel runs</div></div>
+        <div class="def-card"><div class="label">When</div><div class="val">Whenever you need structured, configurable test suites in Java/Selenium projects</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-microphone-2" aria-hidden="true"></i> Spoken Lines in Interview</div>
+    <div class="oneliner-list">
+      <div class="oneliner">"TestNG is a Java testing framework that supports annotations, grouping, parallel execution, and data-driven testing out of the box."</div>
+      <div class="oneliner">"I prefer TestNG over JUnit because it gives me more control over test configuration through testng.xml."</div>
+      <div class="oneliner">"TestNG generates detailed HTML and XML reports automatically after every test run without any extra setup."</div>
+      <div class="oneliner">"In TestNG, all test configuration is done through annotations — no need for inheritance or rigid class hierarchies."</div>
+      <div class="oneliner">"TestNG integrates seamlessly with Maven, Gradle, and CI tools like Jenkins, making it production-ready."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-topology-star-3" aria-hidden="true"></i> Architecture Diagram</div>
+    <svg class="arch-svg" viewBox="0 0 640 320" role="img"><title>TestNG architecture overview</title><desc>Shows testng.xml driving the TestNG engine which controls Suite, Test, Class, and Method layers</desc>
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-purple"><rect x="20" y="130" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="85" y="151" text-anchor="middle" dominant-baseline="central">testng.xml</text><text class="ts" x="85" y="167" text-anchor="middle" dominant-baseline="central">Suite config file</text></g>
+      <line x1="150" y1="155" x2="195" y2="155" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+      <g class="c-teal"><rect x="197" y="120" width="140" height="70" rx="8" stroke-width="0.5"/><text class="th" x="267" y="148" text-anchor="middle" dominant-baseline="central">TestNG Engine</text><text class="ts" x="267" y="166" text-anchor="middle" dominant-baseline="central">Runs &amp; coordinates</text></g>
+      <line x1="337" y1="155" x2="382" y2="90" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+      <line x1="337" y1="155" x2="382" y2="155" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+      <line x1="337" y1="155" x2="382" y2="220" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+      <g class="c-coral"><rect x="384" y="62" width="120" height="44" rx="8" stroke-width="0.5"/><text class="th" x="444" y="84" text-anchor="middle" dominant-baseline="central">Suite</text></g>
+      <g class="c-blue"><rect x="384" y="130" width="120" height="44" rx="8" stroke-width="0.5"/><text class="th" x="444" y="152" text-anchor="middle" dominant-baseline="central">Test (Class)</text></g>
+      <g class="c-green"><rect x="384" y="198" width="120" height="44" rx="8" stroke-width="0.5"/><text class="th" x="444" y="220" text-anchor="middle" dominant-baseline="central">Method</text></g>
+      <line x1="504" y1="220" x2="556" y2="155" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+      <g class="c-amber"><rect x="558" y="130" width="60" height="44" rx="8" stroke-width="0.5"/><text class="th" x="588" y="152" text-anchor="middle" dominant-baseline="central">Reports</text></g>
+      <text class="ts" x="320" y="300" text-anchor="middle">testng.xml → Engine → Hierarchy → HTML/XML Reports</text>
+    </svg>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 1 — Maven dependency (pom.xml)</span><span class="code-badge">Setup</span></div>
+      <div class="code-body"><pre><span class="cmt">/* Step 1: Add TestNG to your Maven project */</span>
+<span class="cmt">/* In pom.xml inside &lt;dependencies&gt; block */</span>
+
+<span class="kw">&lt;dependency&gt;</span>
+    <span class="ann">&lt;groupId&gt;</span>org.testng<span class="ann">&lt;/groupId&gt;</span>
+    <span class="ann">&lt;artifactId&gt;</span>testng<span class="ann">&lt;/artifactId&gt;</span>
+    <span class="ann">&lt;version&gt;</span>7.8.0<span class="ann">&lt;/version&gt;</span>   <span class="cmt">// latest stable</span>
+    <span class="ann">&lt;scope&gt;</span>test<span class="ann">&lt;/scope&gt;</span>         <span class="cmt">// only used in test scope</span>
+<span class="kw">&lt;/dependency&gt;</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 2 — Your very first TestNG test class</span><span class="code-badge">Basics</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.annotations.Test;   <span class="cmt">// import @Test annotation</span>
+<span class="kw">import</span> org.testng.Assert;              <span class="cmt">// import assertion utility</span>
+
+<span class="kw">public class</span> <span class="ann">FirstTest</span> {
+
+    <span class="ann">@Test</span>   <span class="cmt">// marks this method as a test case</span>
+    <span class="kw">public void</span> verifyTitle() {
+        String actual   = <span class="str">"TestNG"</span>;
+        String expected = <span class="str">"TestNG"</span>;
+        Assert.assertEquals(actual, expected);  <span class="cmt">// fails if not equal</span>
+    }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 3 — Assert methods cheat-sheet</span><span class="code-badge">Assertions</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.Assert;
+
+Assert.assertEquals(actual, expected);    <span class="cmt">// checks equality</span>
+Assert.assertNotEquals(a, b);             <span class="cmt">// checks inequality</span>
+Assert.assertTrue(condition);             <span class="cmt">// checks condition is true</span>
+Assert.assertFalse(condition);            <span class="cmt">// checks condition is false</span>
+Assert.assertNull(object);               <span class="cmt">// checks object is null</span>
+Assert.assertNotNull(object);            <span class="cmt">// checks object is not null</span>
+Assert.fail(<span class="str">"force fail message"</span>);      <span class="cmt">// manually fail a test</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 4 — Test with description & expected exception</span><span class="code-badge">Test Attrs</span></div>
+      <div class="code-body"><pre><span class="ann">@Test</span>(
+    description = <span class="str">"Verifies divide by zero throws exception"</span>,
+    <span class="cmt">// expectedExceptions = tells TestNG this exception is EXPECTED</span>
+    expectedExceptions = ArithmeticException.<span class="kw">class</span>
+)
+<span class="kw">public void</span> divideByZeroTest() {
+    <span class="kw">int</span> result = <span class="num">10</span> / <span class="num">0</span>;  <span class="cmt">// throws ArithmeticException — test PASSES</span>
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 5 — Soft assertions (don't stop on failure)</span><span class="code-badge">SoftAssert</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.asserts.SoftAssert;
+
+<span class="ann">@Test</span>
+<span class="kw">public void</span> softAssertDemo() {
+    SoftAssert sa = <span class="kw">new</span> SoftAssert(); <span class="cmt">// create soft assert object</span>
+
+    sa.assertEquals(<span class="str">"abc"</span>, <span class="str">"abc"</span>);    <span class="cmt">// continues even on failure</span>
+    sa.assertTrue(<span class="num">2</span> > <span class="num">5</span>);             <span class="cmt">// records failure, doesn't stop</span>
+    sa.assertNotNull(null);             <span class="cmt">// records failure, continues</span>
+
+    sa.assertAll(); <span class="cmt">// MUST call at end — throws all collected failures</span>
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices</div>
+    <div class="bp-list">
+      <div class="bp-item"><span class="bp-icon">✓</span>Always use <code>SoftAssert</code> when you need to check multiple conditions in one test without stopping execution.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Add a <code>description</code> attribute to every <code>@Test</code> — it appears in reports and makes failures self-explanatory.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Never instantiate TestNG manually — always run via testng.xml or Maven Surefire plugin.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Keep test methods short and focused — one logical assertion per test is the ideal.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Use <code>Assert.fail()</code> with a clear message rather than letting tests silently pass on wrong state.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&amp;A</div>
+    <div class="qa-list" id="qa0">
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is TestNG and how is it different from JUnit? <span class="chevron">▼</span></div><div class="qa-a">TestNG is a Java testing framework inspired by JUnit, but more powerful. Unlike JUnit, TestNG supports grouping of tests, parallel execution, data providers, test dependencies, and flexible configuration via testng.xml — all without needing extra extensions.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What are hard assertions vs soft assertions? <span class="chevron">▼</span></div><div class="qa-a">Hard assertions (Assert.*) immediately stop the test on failure. Soft assertions (SoftAssert.*) collect all failures and report them together when assertAll() is called — useful when validating multiple fields on one page.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: How does TestNG generate reports? <span class="chevron">▼</span></div><div class="qa-a">TestNG automatically generates two reports after a test run: an HTML report (index.html) and an XML results file (testng-results.xml) in the test-output folder — no extra configuration needed.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: Can TestNG work with Maven? How? <span class="chevron">▼</span></div><div class="qa-a">Yes. Add TestNG as a dependency in pom.xml with scope 'test'. Use the maven-surefire-plugin to point to your testng.xml file so Maven executes it during the 'test' phase.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What happens when an expectedExceptions test throws a different exception? <span class="chevron">▼</span></div><div class="qa-a">TestNG marks the test as FAILED. The expectedExceptions attribute only passes if the exact specified exception class is thrown. Any other exception or no exception at all results in a test failure.</div></div>
+    </div>
+  </div>
+  <div class="nav-row"><span></span><button class="nav-btn primary" onclick="goTo(1)">Next: Annotations →</button></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SESSION 2 ═══ -->
+<div class="session" id="s1">
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-book-2" aria-hidden="true"></i> Overview — TestNG Annotations</div>
+    <div class="overview-box">
+      <p>Annotations are special markers placed above methods/classes that tell TestNG what to do and when to do it. They control the entire test lifecycle — setup, teardown, and test execution order.</p>
+      <div class="def-row">
+        <div class="def-card"><div class="label">What</div><div class="val">Java metadata markers (@Before*, @After*, @Test) controlling execution lifecycle</div></div>
+        <div class="def-card"><div class="label">Why</div><div class="val">Remove boilerplate; declarative setup/teardown at Suite, Test, Class, and Method scope</div></div>
+        <div class="def-card"><div class="label">Scope order</div><div class="val">Suite → Test → Class → Method (before) | Method → Class → Test → Suite (after)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-microphone-2" aria-hidden="true"></i> Spoken Lines in Interview</div>
+    <div class="oneliner-list">
+      <div class="oneliner">"TestNG has four levels of setup/teardown: Suite, Test, Class, and Method — each mapping to @BeforeSuite, @BeforeTest, @BeforeClass, and @BeforeMethod."</div>
+      <div class="oneliner">"@BeforeClass runs once before all test methods in a class, while @BeforeMethod runs before each individual test method."</div>
+      <div class="oneliner">"I use @BeforeSuite to launch the browser once and @AfterSuite to quit it, so the browser doesn't restart for every test."</div>
+      <div class="oneliner">"The @Test annotation is the core marker — without it, TestNG ignores the method entirely."</div>
+      <div class="oneliner">"@AfterMethod is perfect for taking screenshots on failure because it runs after every test regardless of pass/fail."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-topology-star-3" aria-hidden="true"></i> Annotation Lifecycle Flow</div>
+    <svg class="arch-svg" viewBox="0 0 640 380" role="img"><title>TestNG annotation execution order</title><desc>Vertical flow showing @BeforeSuite through @AfterSuite execution order</desc>
+      <defs><marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-purple"><rect x="220" y="10" width="200" height="38" rx="8" stroke-width="0.5"/><text class="th" x="320" y="29" text-anchor="middle" dominant-baseline="central">@BeforeSuite</text></g>
+      <line x1="320" y1="48" x2="320" y2="62" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr2)" fill="none"/>
+      <g class="c-teal"><rect x="220" y="64" width="200" height="38" rx="8" stroke-width="0.5"/><text class="th" x="320" y="83" text-anchor="middle" dominant-baseline="central">@BeforeTest</text></g>
+      <line x1="320" y1="102" x2="320" y2="116" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr2)" fill="none"/>
+      <g class="c-blue"><rect x="220" y="118" width="200" height="38" rx="8" stroke-width="0.5"/><text class="th" x="320" y="137" text-anchor="middle" dominant-baseline="central">@BeforeClass</text></g>
+      <line x1="320" y1="156" x2="320" y2="170" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr2)" fill="none"/>
+      <g class="c-green"><rect x="220" y="172" width="200" height="38" rx="8" stroke-width="0.5"/><text class="th" x="320" y="191" text-anchor="middle" dominant-baseline="central">@BeforeMethod</text></g>
+      <line x1="320" y1="210" x2="320" y2="224" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr2)" fill="none"/>
+      <g class="c-amber"><rect x="200" y="226" width="240" height="38" rx="8" stroke-width="1"/><text class="th" x="320" y="245" text-anchor="middle" dominant-baseline="central">@Test (your test)</text></g>
+      <line x1="320" y1="264" x2="320" y2="278" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr2)" fill="none"/>
+      <g class="c-green"><rect x="220" y="280" width="200" height="38" rx="8" stroke-width="0.5"/><text class="th" x="320" y="299" text-anchor="middle" dominant-baseline="central">@AfterMethod</text></g>
+      <line x1="320" y1="318" x2="320" y2="332" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr2)" fill="none"/>
+      <g class="c-blue"><rect x="220" y="334" width="200" height="38" rx="8" stroke-width="0.5"/><text class="th" x="320" y="353" text-anchor="middle" dominant-baseline="central">@AfterClass / @AfterTest / @AfterSuite</text></g>
+      <text class="ts" x="90" y="245" text-anchor="middle">Runs</text>
+      <text class="ts" x="90" y="260" text-anchor="middle">repeatedly</text>
+      <rect x="30" y="168" width="60" height="130" rx="6" fill="none" stroke="var(--color-text-tertiary)" stroke-width="0.5" stroke-dasharray="4 3" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 1 — Complete lifecycle in one class</span><span class="code-badge">Lifecycle</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.annotations.*;
+
+<span class="kw">public class</span> <span class="ann">LifecycleDemo</span> {
+
+    <span class="ann">@BeforeSuite</span>   <span class="cmt">// runs ONCE before entire suite starts</span>
+    <span class="kw">public void</span> suiteSetup() { System.out.println(<span class="str">"Suite Start"</span>); }
+
+    <span class="ann">@BeforeTest</span>    <span class="cmt">// runs before each &lt;test&gt; tag in testng.xml</span>
+    <span class="kw">public void</span> testSetup() { System.out.println(<span class="str">"Test Start"</span>); }
+
+    <span class="ann">@BeforeClass</span>   <span class="cmt">// runs once before first method in this class</span>
+    <span class="kw">public void</span> classSetup() { System.out.println(<span class="str">"Class Start"</span>); }
+
+    <span class="ann">@BeforeMethod</span>  <span class="cmt">// runs before EACH @Test method</span>
+    <span class="kw">public void</span> methodSetup() { System.out.println(<span class="str">"Method Start"</span>); }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> test1() { System.out.println(<span class="str">"Test 1 running"</span>); }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> test2() { System.out.println(<span class="str">"Test 2 running"</span>); }
+
+    <span class="ann">@AfterMethod</span>   <span class="cmt">// runs after EACH @Test method</span>
+    <span class="kw">public void</span> methodTeardown() { System.out.println(<span class="str">"Method End"</span>); }
+
+    <span class="ann">@AfterClass</span>   <span class="cmt">// runs once after last method in class</span>
+    <span class="kw">public void</span> classTeardown() { System.out.println(<span class="str">"Class End"</span>); }
+
+    <span class="ann">@AfterSuite</span>   <span class="cmt">// runs ONCE after entire suite ends</span>
+    <span class="kw">public void</span> suiteTeardown() { System.out.println(<span class="str">"Suite End"</span>); }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 2 — @Test attributes: enabled, timeout, retryAnalyzer</span><span class="code-badge">@Test Attrs</span></div>
+      <div class="code-body"><pre><span class="ann">@Test</span>(enabled = <span class="kw">false</span>)          <span class="cmt">// SKIP this test (won't run)</span>
+<span class="kw">public void</span> skippedTest() { }
+
+<span class="ann">@Test</span>(timeOut = <span class="num">3000</span>)            <span class="cmt">// FAIL if test takes > 3 seconds</span>
+<span class="kw">public void</span> slowTest() <span class="kw">throws</span> Exception {
+    Thread.sleep(<span class="num">1000</span>);          <span class="cmt">// passes — under 3s limit</span>
+}
+
+<span class="ann">@Test</span>(invocationCount = <span class="num">3</span>)       <span class="cmt">// run this test 3 times</span>
+<span class="kw">public void</span> runMultipleTimes() {
+    System.out.println(<span class="str">"Running..."</span>);
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 3 — Selenium + TestNG BeforeMethod/AfterMethod pattern</span><span class="code-badge">Real World</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.openqa.selenium.WebDriver;
+<span class="kw">import</span> org.openqa.selenium.chrome.ChromeDriver;
+<span class="kw">import</span> org.testng.annotations.*;
+
+<span class="kw">public class</span> <span class="ann">SeleniumBase</span> {
+
+    <span class="kw">protected</span> WebDriver driver;   <span class="cmt">// protected — child classes can use it</span>
+
+    <span class="ann">@BeforeMethod</span>
+    <span class="kw">public void</span> openBrowser() {
+        driver = <span class="kw">new</span> ChromeDriver();  <span class="cmt">// fresh browser for every test</span>
+        driver.manage().window().maximize();
+    }
+
+    <span class="ann">@AfterMethod</span>
+    <span class="kw">public void</span> closeBrowser() {
+        <span class="kw">if</span> (driver != <span class="kw">null</span>) driver.quit(); <span class="cmt">// close browser after each test</span>
+    }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 4 — @BeforeClass vs @BeforeMethod: when to use which</span><span class="code-badge">Difference</span></div>
+      <div class="code-body"><pre><span class="kw">public class</span> <span class="ann">LoginTests</span> {
+
+    <span class="ann">@BeforeClass</span>   <span class="cmt">// DB connection — expensive, do ONCE for whole class</span>
+    <span class="kw">public void</span> connectDB() {
+        System.out.println(<span class="str">"DB connected"</span>);
+    }
+
+    <span class="ann">@BeforeMethod</span>  <span class="cmt">// navigate to login page before EACH test</span>
+    <span class="kw">public void</span> goToLogin() {
+        System.out.println(<span class="str">"Opening login page"</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> validLogin()   { System.out.println(<span class="str">"Valid login"</span>); }
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> invalidLogin() { System.out.println(<span class="str">"Invalid login"</span>); }
+    <span class="cmt">// goToLogin() will run before BOTH validLogin and invalidLogin</span>
+    <span class="cmt">// connectDB() runs only ONCE before the first test starts</span>
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 5 — alwaysRun = true in @AfterMethod</span><span class="code-badge">Always Run</span></div>
+      <div class="code-body"><pre><span class="ann">@AfterMethod</span>(alwaysRun = <span class="kw">true</span>)  <span class="cmt">// runs even if test FAILS or SKIPS</span>
+<span class="kw">public void</span> takeScreenshotOnFailure(ITestResult result) {
+    <span class="kw">if</span> (result.getStatus() == ITestResult.FAILURE) {
+        <span class="cmt">// capture screenshot logic here</span>
+        System.out.println(<span class="str">"Screenshot taken for: "</span> + result.getName());
+    }
+}
+<span class="cmt">// Without alwaysRun=true, @AfterMethod is skipped when @BeforeMethod fails</span></pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices</div>
+    <div class="bp-list">
+      <div class="bp-item"><span class="bp-icon">✓</span>Use <code>@BeforeSuite</code> for one-time global setup (browser launch, DB connect) and <code>@AfterSuite</code> for cleanup.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Always mark <code>@AfterMethod</code> with <code>alwaysRun=true</code> so teardown runs even when a test fails.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Never put assertions inside <code>@BeforeMethod</code> — if it throws, <code>@AfterMethod</code> won't run without alwaysRun.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Keep setup/teardown methods concise — they are not test methods, so don't add test logic in them.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Use <code>enabled=false</code> to temporarily skip a test instead of commenting it out — it still shows in reports as skipped.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&amp;A</div>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the difference between @BeforeClass and @BeforeMethod? <span class="chevron">▼</span></div><div class="qa-a">@BeforeClass runs once before the first test method in a class — ideal for expensive setup like DB connections. @BeforeMethod runs before every single @Test method — ideal for navigating to a page or resetting state.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What happens if @BeforeMethod fails? <span class="chevron">▼</span></div><div class="qa-a">The @Test method is marked as SKIPPED (not failed). The @AfterMethod runs only if alwaysRun=true is set. Without it, @AfterMethod is also skipped, which can leave browsers or connections open.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is the purpose of alwaysRun=true? <span class="chevron">▼</span></div><div class="qa-a">It forces the annotated method (usually @AfterMethod or @AfterSuite) to execute even if a dependent setup method failed or a test was skipped. This is critical for cleanup methods like closing browsers or taking screenshots.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: Can you have multiple @BeforeMethod methods in one class? <span class="chevron">▼</span></div><div class="qa-a">Yes. If multiple @BeforeMethod methods exist in a class, TestNG runs all of them before each test, but the execution order between them is not guaranteed unless you use dependsOnMethods or priority.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What is the execution order when a child class extends a base class with @Before annotations? <span class="chevron">▼</span></div><div class="qa-a">Parent's @BeforeClass runs first, then child's @BeforeClass. For @BeforeMethod, parent's runs before child's. For @After methods, the order reverses — child's @AfterMethod runs first, then parent's.</div></div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="nav-btn" onclick="goTo(0)">← Previous</button><button class="nav-btn primary" onclick="goTo(2)">Next: XML Suite →</button></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SESSION 3 ═══ -->
+<div class="session" id="s2">
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-book-2" aria-hidden="true"></i> Overview — testng.xml Suite Configuration</div>
+    <div class="overview-box">
+      <p><strong>testng.xml</strong> is the master configuration file that tells TestNG which tests to run, in what order, and with which settings. It is the backbone of every professional TestNG setup.</p>
+      <div class="def-row">
+        <div class="def-card"><div class="label">What</div><div class="val">XML file defining suites, tests, classes, and methods to execute</div></div>
+        <div class="def-card"><div class="label">Why</div><div class="val">Run specific subsets of tests without changing code; configure parallel execution, groups, parameters</div></div>
+        <div class="def-card"><div class="label">Where</div><div class="val">Root of project (src/test/resources or project root); referenced by Maven Surefire plugin</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-microphone-2" aria-hidden="true"></i> Spoken Lines in Interview</div>
+    <div class="oneliner-list">
+      <div class="oneliner">"testng.xml is the heart of a TestNG project — it controls which classes, methods, and groups are executed."</div>
+      <div class="oneliner">"I can have multiple &lt;test&gt; tags inside one suite to logically separate regression, smoke, and sanity runs."</div>
+      <div class="oneliner">"Using the &lt;include&gt; and &lt;exclude&gt; tags in testng.xml, I can run specific test methods without touching the code."</div>
+      <div class="oneliner">"The verbose attribute in testng.xml controls how much detail TestNG prints to the console — I usually set it to 2."</div>
+      <div class="oneliner">"testng.xml supports passing runtime parameters via &lt;parameter&gt; tags, which my tests read using @Parameters."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 1 — Basic testng.xml structure</span><span class="code-badge">Structure</span></div>
+      <div class="code-body"><pre><span class="cmt">&lt;!-- Every testng.xml MUST start with this DOCTYPE declaration --&gt;</span>
+<span class="kw">&lt;!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd"&gt;</span>
+
+<span class="cmt">&lt;!-- &lt;suite&gt; = top-level container; name is shown in reports --&gt;</span>
+<span class="ann">&lt;suite</span> name=<span class="str">"My Regression Suite"</span> verbose=<span class="str">"2"</span><span class="ann">&gt;</span>
+
+  <span class="cmt">&lt;!-- &lt;test&gt; = logical grouping of test classes --&gt;</span>
+  <span class="ann">&lt;test</span> name=<span class="str">"Login Module Tests"</span><span class="ann">&gt;</span>
+    <span class="kw">&lt;classes&gt;</span>
+      <span class="cmt">&lt;!-- fully qualified class name --&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.LoginTest"</span><span class="ann">/&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.RegisterTest"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+
+<span class="ann">&lt;/suite&gt;</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 2 — Include/Exclude specific methods</span><span class="code-badge">Fine-grained</span></div>
+      <div class="code-body"><pre><span class="ann">&lt;suite</span> name=<span class="str">"Selective Run"</span><span class="ann">&gt;</span>
+  <span class="ann">&lt;test</span> name=<span class="str">"Smoke Tests"</span><span class="ann">&gt;</span>
+    <span class="kw">&lt;classes&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.PaymentTest"</span><span class="ann">&gt;</span>
+        <span class="kw">&lt;methods&gt;</span>
+          <span class="cmt">&lt;!-- Only run these two methods from this class --&gt;</span>
+          <span class="ann">&lt;include</span> name=<span class="str">"testCreditCard"</span><span class="ann">/&gt;</span>
+          <span class="ann">&lt;include</span> name=<span class="str">"testPayPal"</span><span class="ann">/&gt;</span>
+          <span class="cmt">&lt;!-- This method will NOT run --&gt;</span>
+          <span class="ann">&lt;exclude</span> name=<span class="str">"testCryptoPay"</span><span class="ann">/&gt;</span>
+        <span class="kw">&lt;/methods&gt;</span>
+      <span class="ann">&lt;/class&gt;</span>
+    <span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+<span class="ann">&lt;/suite&gt;</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 3 — Multiple &lt;test&gt; tags in one suite</span><span class="code-badge">Multi-test</span></div>
+      <div class="code-body"><pre><span class="ann">&lt;suite</span> name=<span class="str">"Full Regression"</span><span class="ann">&gt;</span>
+
+  <span class="cmt">&lt;!-- First logical group -- smoke tests run first --&gt;</span>
+  <span class="ann">&lt;test</span> name=<span class="str">"Smoke Tests"</span><span class="ann">&gt;</span>
+    <span class="kw">&lt;classes&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.SmokeTest"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+
+  <span class="cmt">&lt;!-- Second group -- regression tests run after smoke --&gt;</span>
+  <span class="ann">&lt;test</span> name=<span class="str">"Regression Tests"</span><span class="ann">&gt;</span>
+    <span class="kw">&lt;classes&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.LoginTest"</span><span class="ann">/&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.CheckoutTest"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+
+<span class="ann">&lt;/suite&gt;</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 4 — Passing parameters via testng.xml</span><span class="code-badge">Parameters</span></div>
+      <div class="code-body"><pre><span class="cmt">&lt;!-- testng.xml: define the parameter at suite or test level --&gt;</span>
+<span class="ann">&lt;suite</span> name=<span class="str">"Browser Suite"</span><span class="ann">&gt;</span>
+  <span class="ann">&lt;parameter</span> name=<span class="str">"browser"</span> value=<span class="str">"chrome"</span><span class="ann">/&gt;</span>  <span class="cmt">&lt;!-- suite-level param --&gt;</span>
+  <span class="ann">&lt;test</span> name=<span class="str">"Web Tests"</span><span class="ann">&gt;</span>
+    <span class="kw">&lt;classes&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.BrowserTest"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+<span class="ann">&lt;/suite&gt;</span>
+
+<span class="cmt">// Java class reading the parameter:</span>
+<span class="ann">@Parameters</span>(<span class="str">"browser"</span>)   <span class="cmt">// name must match XML &lt;parameter name&gt;</span>
+<span class="ann">@BeforeMethod</span>
+<span class="kw">public void</span> setup(String browser) {
+    System.out.println(<span class="str">"Launching: "</span> + browser); <span class="cmt">// prints "chrome"</span>
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 5 — Using packages instead of listing every class</span><span class="code-badge">Package Scan</span></div>
+      <div class="code-body"><pre><span class="ann">&lt;suite</span> name=<span class="str">"Auto Discovery Suite"</span><span class="ann">&gt;</span>
+  <span class="ann">&lt;test</span> name=<span class="str">"All Tests in Package"</span><span class="ann">&gt;</span>
+    <span class="kw">&lt;packages&gt;</span>
+      <span class="cmt">&lt;!-- TestNG will find ALL test classes in this package --&gt;</span>
+      <span class="ann">&lt;package</span> name=<span class="str">"com.tests"</span><span class="ann">/&gt;</span>
+      <span class="ann">&lt;package</span> name=<span class="str">"com.tests.api"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;/packages&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+<span class="ann">&lt;/suite&gt;</span>
+<span class="cmt">&lt;!-- Advantage: no need to update XML when adding new test classes --&gt;</span></pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices</div>
+    <div class="bp-list">
+      <div class="bp-item"><span class="bp-icon">✓</span>Always use a meaningful <code>name</code> attribute on <code>&lt;suite&gt;</code> and <code>&lt;test&gt;</code> — it appears in reports and Jenkins dashboards.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Use <code>&lt;packages&gt;</code> scanning for large projects so you don't manually list every class in XML.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Set <code>verbose="2"</code> locally for debug output; use <code>verbose="0"</code> in CI to keep logs clean.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Create separate testng.xml files for different environments (smoke.xml, regression.xml, api.xml) rather than one giant file.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Pass environment-specific values (URL, browser, credentials) as <code>&lt;parameter&gt;</code> tags rather than hardcoding in Java.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&amp;A</div>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the difference between &lt;suite&gt; and &lt;test&gt; in testng.xml? <span class="chevron">▼</span></div><div class="qa-a">A &lt;suite&gt; is the outermost container — it represents the entire test run (e.g. "Full Regression"). A &lt;test&gt; is a logical group inside the suite (e.g. "Smoke", "Regression"). You can have multiple &lt;test&gt; tags in one suite, each with different classes and configurations.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: How do you skip a specific test method using testng.xml? <span class="chevron">▼</span></div><div class="qa-a">Use the &lt;exclude name="methodName"/&gt; tag inside the &lt;methods&gt; block of that class. This excludes only that method while keeping all others in the same class active.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: Where should testng.xml be placed in a Maven project? <span class="chevron">▼</span></div><div class="qa-a">Typically in src/test/resources or the project root. In pom.xml, the maven-surefire-plugin references it via &lt;suiteXmlFiles&gt;&lt;suiteXmlFile&gt;testng.xml&lt;/suiteXmlFile&gt;&lt;/suiteXmlFiles&gt;.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do &lt;parameter&gt; tags help in cross-browser testing? <span class="chevron">▼</span></div><div class="qa-a">You define &lt;parameter name="browser" value="firefox"/&gt; in testng.xml and read it in Java with @Parameters("browser"). By creating two &lt;test&gt; blocks with different browser values, you can run the same tests on multiple browsers from one XML file.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What is the verbose attribute in testng.xml? <span class="chevron">▼</span></div><div class="qa-a">verbose controls console output verbosity. Level 0 = silent (only failures), Level 1 = test names, Level 2 = test names + method names (most common for debugging), Level 10 = maximum detail including internal TestNG events.</div></div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="nav-btn" onclick="goTo(1)">← Previous</button><button class="nav-btn primary" onclick="goTo(3)">Next: Groups & Priority →</button></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SESSION 4 ═══ -->
+<div class="session" id="s3">
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-book-2" aria-hidden="true"></i> Overview — Groups & Test Priority</div>
+    <div class="overview-box">
+      <p><strong>Groups</strong> let you tag tests with logical labels (smoke, regression, api) and run only matching tests. <strong>Priority</strong> controls the execution order of test methods within a class.</p>
+      <div class="def-row">
+        <div class="def-card"><div class="label">Groups</div><div class="val">Logical tags on @Test methods; run subsets via testng.xml &lt;groups&gt;</div></div>
+        <div class="def-card"><div class="label">Priority</div><div class="val">Integer value on @Test; lower number = runs first. Default is 0.</div></div>
+        <div class="def-card"><div class="label">Use case</div><div class="val">Run only "smoke" group in CI; run "regression" nightly; order login → search → checkout</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-microphone-2" aria-hidden="true"></i> Spoken Lines in Interview</div>
+    <div class="oneliner-list">
+      <div class="oneliner">"I use TestNG groups to tag tests as smoke, sanity, or regression — then run only the required group in CI pipelines."</div>
+      <div class="oneliner">"Priority in TestNG is an integer — tests with lower priority numbers run first; tests with equal priority run in alphabetical order."</div>
+      <div class="oneliner">"A test method can belong to multiple groups simultaneously — for example, a login test can be both 'smoke' and 'regression'."</div>
+      <div class="oneliner">"Without priority set, TestNG does NOT guarantee test execution order — it runs them alphabetically within a class."</div>
+      <div class="oneliner">"I can include a group in one testng.xml and exclude it in another — giving me full flexibility across environments."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 1 — Assigning groups to @Test methods</span><span class="code-badge">Groups</span></div>
+      <div class="code-body"><pre><span class="kw">public class</span> <span class="ann">ShoppingTests</span> {
+
+    <span class="ann">@Test</span>(groups = <span class="str">"smoke"</span>)         <span class="cmt">// belongs to 'smoke' group</span>
+    <span class="kw">public void</span> verifyHomePage() { }
+
+    <span class="ann">@Test</span>(groups = {<span class="str">"smoke"</span>, <span class="str">"regression"</span>})  <span class="cmt">// belongs to BOTH groups</span>
+    <span class="kw">public void</span> verifyLogin() { }
+
+    <span class="ann">@Test</span>(groups = <span class="str">"regression"</span>)    <span class="cmt">// only in regression group</span>
+    <span class="kw">public void</span> verifyCheckout() { }
+
+    <span class="ann">@Test</span>(groups = <span class="str">"api"</span>)           <span class="cmt">// only in api group</span>
+    <span class="kw">public void</span> verifyOrderAPI() { }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 2 — Running groups from testng.xml</span><span class="code-badge">XML Config</span></div>
+      <div class="code-body"><pre><span class="cmt">&lt;!-- Run ONLY smoke tests --&gt;</span>
+<span class="ann">&lt;suite</span> name=<span class="str">"Smoke Run"</span><span class="ann">&gt;</span>
+  <span class="ann">&lt;test</span> name=<span class="str">"Smoke Tests"</span><span class="ann">&gt;</span>
+    <span class="kw">&lt;groups&gt;</span>
+      <span class="kw">&lt;run&gt;</span>
+        <span class="ann">&lt;include</span> name=<span class="str">"smoke"</span><span class="ann">/&gt;</span>      <span class="cmt">&lt;!-- only smoke group runs --&gt;</span>
+        <span class="ann">&lt;exclude</span> name=<span class="str">"api"</span><span class="ann">/&gt;</span>        <span class="cmt">&lt;!-- explicitly exclude api --&gt;</span>
+      <span class="kw">&lt;/run&gt;</span>
+    <span class="kw">&lt;/groups&gt;</span>
+    <span class="kw">&lt;classes&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.ShoppingTests"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+<span class="ann">&lt;/suite&gt;</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 3 — priority attribute to control order</span><span class="code-badge">Priority</span></div>
+      <div class="code-body"><pre><span class="kw">public class</span> <span class="ann">OrderFlowTest</span> {
+
+    <span class="ann">@Test</span>(priority = <span class="num">1</span>)   <span class="cmt">// runs FIRST (lowest number = first)</span>
+    <span class="kw">public void</span> login() {
+        System.out.println(<span class="str">"Step 1: Login"</span>);
+    }
+
+    <span class="ann">@Test</span>(priority = <span class="num">2</span>)   <span class="cmt">// runs SECOND</span>
+    <span class="kw">public void</span> addToCart() {
+        System.out.println(<span class="str">"Step 2: Add to Cart"</span>);
+    }
+
+    <span class="ann">@Test</span>(priority = <span class="num">3</span>)   <span class="cmt">// runs THIRD</span>
+    <span class="kw">public void</span> checkout() {
+        System.out.println(<span class="str">"Step 3: Checkout"</span>);
+    }
+
+    <span class="ann">@Test</span>                  <span class="cmt">// no priority = default 0, runs BEFORE priority=1!</span>
+    <span class="kw">public void</span> openSite() {
+        System.out.println(<span class="str">"Step 0: Open Site"</span>);
+    }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 4 — Class-level group using @Test on class</span><span class="code-badge">Class Groups</span></div>
+      <div class="code-body"><pre><span class="cmt">// Apply group to ALL methods in a class using class-level @Test</span>
+<span class="ann">@Test</span>(groups = <span class="str">"regression"</span>)   <span class="cmt">// every method in this class = regression</span>
+<span class="kw">public class</span> <span class="ann">CheckoutTests</span> {
+
+    <span class="kw">public void</span> testGuestCheckout()   { }  <span class="cmt">// inherits 'regression' group</span>
+    <span class="kw">public void</span> testLoggedInCheckout(){ }  <span class="cmt">// inherits 'regression' group</span>
+
+    <span class="cmt">// Override: add extra group to specific method</span>
+    <span class="ann">@Test</span>(groups = {<span class="str">"regression"</span>, <span class="str">"smoke"</span>})
+    <span class="kw">public void</span> testBasicCheckout()   { }  <span class="cmt">// has both groups</span>
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 5 — Group of groups in testng.xml</span><span class="code-badge">Meta Groups</span></div>
+      <div class="code-body"><pre><span class="cmt">&lt;!-- Define a meta-group 'all-ui' that includes smoke + regression --&gt;</span>
+<span class="ann">&lt;suite</span> name=<span class="str">"UI Suite"</span><span class="ann">&gt;</span>
+  <span class="ann">&lt;test</span> name=<span class="str">"All UI Tests"</span><span class="ann">&gt;</span>
+    <span class="kw">&lt;groups&gt;</span>
+      <span class="kw">&lt;define</span> name=<span class="str">"all-ui"</span><span class="kw">&gt;</span>           <span class="cmt">&lt;!-- create a combined group --&gt;</span>
+        <span class="ann">&lt;include</span> name=<span class="str">"smoke"</span><span class="ann">/&gt;</span>
+        <span class="ann">&lt;include</span> name=<span class="str">"regression"</span><span class="ann">/&gt;</span>
+      <span class="kw">&lt;/define&gt;</span>
+      <span class="kw">&lt;run&gt;</span>
+        <span class="ann">&lt;include</span> name=<span class="str">"all-ui"</span><span class="ann">/&gt;</span>        <span class="cmt">&lt;!-- now run the combined group --&gt;</span>
+      <span class="kw">&lt;/run&gt;</span>
+    <span class="kw">&lt;/groups&gt;</span>
+    <span class="kw">&lt;classes&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.ShoppingTests"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+<span class="ann">&lt;/suite&gt;</span></pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices</div>
+    <div class="bp-list">
+      <div class="bp-item"><span class="bp-icon">✓</span>Standardize group names across your team — use "smoke", "regression", "sanity", "api" consistently.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Use <code>priority</code> only when test order truly matters (like an e2e flow). Avoid overusing it — it creates coupling.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Remember default priority is 0 — methods without priority run before those with priority=1,2,3...</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Prefer <code>dependsOnMethods</code> (Session 8) over <code>priority</code> for true sequential e2e flows — it's more explicit.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Create dedicated testng.xml files per group — smoke.xml, regression.xml — so CI jobs can trigger each independently.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&amp;A</div>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the default priority of a @Test method? <span class="chevron">▼</span></div><div class="qa-a">The default priority is 0. This means any @Test method without an explicit priority runs before those with priority=1,2,3 etc. Methods with the same priority run in alphabetical order of method name.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: Can a test method belong to multiple groups? <span class="chevron">▼</span></div><div class="qa-a">Yes. Use groups = {"smoke", "regression"} to assign multiple groups. This allows the same test to be included in both a quick smoke run and a full regression suite.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is the difference between groups and priority? <span class="chevron">▼</span></div><div class="qa-a">Groups are labels for filtering which tests to run. Priority is a number that controls the execution order within a class. They solve different problems — groups are about selection, priority is about sequencing.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you run only smoke tests from a Maven command? <span class="chevron">▼</span></div><div class="qa-a">Point the maven-surefire-plugin to a smoke.xml file that has &lt;include name="smoke"/&gt; in its groups section, then run mvn test. Alternatively, use -Dgroups=smoke with the surefire plugin configured to accept it.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What is a "group of groups" in TestNG? <span class="chevron">▼</span></div><div class="qa-a">It is a meta-group defined in testng.xml using &lt;define name="all-ui"&gt; that aggregates multiple existing groups. Instead of including smoke and regression separately in every XML, you include the combined all-ui group.</div></div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="nav-btn" onclick="goTo(2)">← Previous</button><button class="nav-btn primary" onclick="goTo(4)">Next: Parameters →</button></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SESSION 5 ═══ -->
+<div class="session" id="s4">
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-book-2" aria-hidden="true"></i> Overview — @Parameters</div>
+    <div class="overview-box">
+      <p><strong>@Parameters</strong> allows you to pass external values from testng.xml directly into test methods. This is the simple parameterization approach — one set of values per run, ideal for environment configs.</p>
+      <div class="def-row">
+        <div class="def-card"><div class="label">What</div><div class="val">Pass static values from testng.xml &lt;parameter&gt; tags into Java methods</div></div>
+        <div class="def-card"><div class="label">Why</div><div class="val">Avoid hardcoding browser, URL, credentials in code; switch environments without recompiling</div></div>
+        <div class="def-card"><div class="label">Limit</div><div class="val">Only one value per parameter per run — use @DataProvider for multiple rows</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-microphone-2" aria-hidden="true"></i> Spoken Lines in Interview</div>
+    <div class="oneliner-list">
+      <div class="oneliner">"@Parameters reads values defined in testng.xml and injects them as method arguments — no hardcoding needed."</div>
+      <div class="oneliner">"I use @Parameters for browser name, base URL, and environment — changing environment means only updating testng.xml."</div>
+      <div class="oneliner">"@Parameters works on @Test, @BeforeMethod, @BeforeClass — any TestNG-annotated method can receive parameters."</div>
+      <div class="oneliner">"The @Optional annotation lets me define a default value so the test doesn't fail if a parameter is missing from XML."</div>
+      <div class="oneliner">"@Parameters is for static, single-value config; @DataProvider is for multiple data sets — they serve different purposes."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 1 — Basic @Parameters usage</span><span class="code-badge">Basics</span></div>
+      <div class="code-body"><pre><span class="cmt">// testng.xml defines: &lt;parameter name="username" value="admin"/&gt;</span>
+
+<span class="kw">import</span> org.testng.annotations.Parameters;
+<span class="kw">import</span> org.testng.annotations.Test;
+
+<span class="kw">public class</span> <span class="ann">LoginTest</span> {
+
+    <span class="ann">@Parameters</span>({<span class="str">"username"</span>, <span class="str">"password"</span>}) <span class="cmt">// names match XML param names</span>
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> loginTest(String username, String password) {
+        <span class="cmt">// username = "admin", password = "pass123" from XML</span>
+        System.out.println(<span class="str">"Logging in as: "</span> + username);
+        Assert.assertNotNull(username);
+    }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 2 — @Parameters on @BeforeMethod for browser setup</span><span class="code-badge">Cross-browser</span></div>
+      <div class="code-body"><pre><span class="cmt">// testng.xml: &lt;parameter name="browser" value="firefox"/&gt;</span>
+
+<span class="kw">public class</span> <span class="ann">BrowserTest</span> {
+
+    WebDriver driver;
+
+    <span class="ann">@Parameters</span>(<span class="str">"browser"</span>)     <span class="cmt">// inject browser name into setup</span>
+    <span class="ann">@BeforeMethod</span>
+    <span class="kw">public void</span> setup(String browser) {
+        <span class="kw">if</span> (browser.equals(<span class="str">"chrome"</span>)) {
+            driver = <span class="kw">new</span> ChromeDriver();
+        } <span class="kw">else if</span> (browser.equals(<span class="str">"firefox"</span>)) {
+            driver = <span class="kw">new</span> FirefoxDriver();
+        }
+        driver.get(<span class="str">"https://example.com"</span>);
+    }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 3 — @Optional: default value if param is missing</span><span class="code-badge">@Optional</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.annotations.Optional;
+
+<span class="ann">@Parameters</span>(<span class="str">"env"</span>)
+<span class="ann">@BeforeMethod</span>
+<span class="kw">public void</span> setEnvironment(
+        <span class="ann">@Optional</span>(<span class="str">"staging"</span>) String env) {  <span class="cmt">// default = "staging"</span>
+    <span class="cmt">// If testng.xml has &lt;parameter name="env" value="prod"/&gt;, uses "prod"</span>
+    <span class="cmt">// If testng.xml has NO 'env' parameter, uses default "staging"</span>
+    System.out.println(<span class="str">"Running on: "</span> + env);
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 4 — Two testng.xml files for two environments</span><span class="code-badge">Multi-env</span></div>
+      <div class="code-body"><pre><span class="cmt">&lt;!-- staging.xml --&gt;</span>
+<span class="ann">&lt;suite</span> name=<span class="str">"Staging Run"</span><span class="ann">&gt;</span>
+  <span class="ann">&lt;parameter</span> name=<span class="str">"baseUrl"</span> value=<span class="str">"https://staging.myapp.com"</span><span class="ann">/&gt;</span>
+  <span class="ann">&lt;parameter</span> name=<span class="str">"browser"</span> value=<span class="str">"chrome"</span><span class="ann">/&gt;</span>
+  ...
+<span class="ann">&lt;/suite&gt;</span>
+
+<span class="cmt">&lt;!-- production.xml --&gt;</span>
+<span class="ann">&lt;suite</span> name=<span class="str">"Production Run"</span><span class="ann">&gt;</span>
+  <span class="ann">&lt;parameter</span> name=<span class="str">"baseUrl"</span> value=<span class="str">"https://myapp.com"</span><span class="ann">/&gt;</span>
+  <span class="ann">&lt;parameter</span> name=<span class="str">"browser"</span> value=<span class="str">"firefox"</span><span class="ann">/&gt;</span>
+  ...
+<span class="ann">&lt;/suite&gt;</span>
+
+<span class="cmt">// Java code stays identical — only XML file changes per environment</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 5 — Overriding suite parameter at test level</span><span class="code-badge">Override</span></div>
+      <div class="code-body"><pre><span class="ann">&lt;suite</span> name=<span class="str">"Override Demo"</span><span class="ann">&gt;</span>
+  <span class="cmt">&lt;!-- Suite-level parameter: default browser = chrome --&gt;</span>
+  <span class="ann">&lt;parameter</span> name=<span class="str">"browser"</span> value=<span class="str">"chrome"</span><span class="ann">/&gt;</span>
+
+  <span class="ann">&lt;test</span> name=<span class="str">"Firefox Tests"</span><span class="ann">&gt;</span>
+    <span class="cmt">&lt;!-- test-level override: only this &lt;test&gt; uses firefox --&gt;</span>
+    <span class="ann">&lt;parameter</span> name=<span class="str">"browser"</span> value=<span class="str">"firefox"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;classes&gt;</span>
+      <span class="ann">&lt;class</span> name=<span class="str">"com.tests.BrowserTest"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+<span class="ann">&lt;/suite&gt;</span>
+<span class="cmt">&lt;!-- test-level parameters override suite-level for that &lt;test&gt; block --&gt;</span></pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices</div>
+    <div class="bp-list">
+      <div class="bp-item"><span class="bp-icon">✓</span>Always use <code>@Optional</code> with sensible defaults so tests don't break when running locally without a full testng.xml.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Pass <code>baseUrl</code>, <code>browser</code>, and <code>env</code> as parameters — never hardcode these values in Java code.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Use test-level <code>&lt;parameter&gt;</code> to override suite-level values for specific test blocks (e.g. run one block on Firefox).</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Don't use @Parameters for test data (multiple rows) — use @DataProvider for that (Session 6).</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Keep parameter names consistent across all testng.xml files in your project — use a naming convention like <code>app.browser</code>, <code>app.env</code>.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&amp;A</div>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the difference between @Parameters and @DataProvider? <span class="chevron">▼</span></div><div class="qa-a">@Parameters reads a single value from testng.xml — best for environment config. @DataProvider feeds multiple rows of test data into the same test method, running it once per row — best for data-driven testing.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What happens if a @Parameters parameter is not defined in testng.xml? <span class="chevron">▼</span></div><div class="qa-a">TestNG throws a TestNGException and the test fails. To prevent this, annotate the parameter with @Optional("defaultValue") so TestNG uses the default when the XML parameter is missing.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: Can @Parameters be used on @BeforeClass methods? <span class="chevron">▼</span></div><div class="qa-a">Yes. @Parameters works on any TestNG-annotated method — @Test, @BeforeMethod, @BeforeClass, @BeforeSuite, etc. This is commonly used to initialize WebDriver once in @BeforeClass with a browser parameter.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you pass multiple parameters to a single method? <span class="chevron">▼</span></div><div class="qa-a">List all parameter names in the @Parameters annotation array: @Parameters({"browser", "url", "username"}). The Java method must have matching parameters in the same order as the annotation array.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: Where does test-level parameter override suite-level parameter? <span class="chevron">▼</span></div><div class="qa-a">When the same parameter name is defined at both &lt;suite&gt; and &lt;test&gt; level, the &lt;test&gt; level value takes precedence for classes inside that &lt;test&gt; block. Classes outside that block use the suite-level value.</div></div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="nav-btn" onclick="goTo(3)">← Previous</button><button class="nav-btn primary" onclick="goTo(5)">Next: DataProvider →</button></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SESSION 6 ═══ -->
+<div class="session" id="s5">
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-book-2" aria-hidden="true"></i> Overview — @DataProvider (Data-Driven Testing)</div>
+    <div class="overview-box">
+      <p><strong>@DataProvider</strong> is TestNG's built-in data-driven mechanism. It feeds multiple rows of data into a single test method — the method executes once per data row. Perfect for login combinations, form validations, and API payloads.</p>
+      <div class="def-row">
+        <div class="def-card"><div class="label">What</div><div class="val">Method returning Object[][] that supplies multiple data sets to @Test</div></div>
+        <div class="def-card"><div class="label">Why</div><div class="val">Run one test with N data sets without duplicating test code — true data-driven testing</div></div>
+        <div class="def-card"><div class="label">Return type</div><div class="val">Object[][] or Iterator&lt;Object[]&gt; — each inner array = one method invocation</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-microphone-2" aria-hidden="true"></i> Spoken Lines in Interview</div>
+    <div class="oneliner-list">
+      <div class="oneliner">"@DataProvider returns an Object[][] where each row is one invocation of the test — enabling true data-driven testing."</div>
+      <div class="oneliner">"I use @DataProvider to test login with valid, invalid, and empty credentials — one test method, three executions."</div>
+      <div class="oneliner">"DataProvider can be placed in a separate utility class and shared across multiple test classes using dataProviderClass attribute."</div>
+      <div class="oneliner">"Setting parallel=true on @DataProvider runs all data rows concurrently — great for speeding up large data sets."</div>
+      <div class="oneliner">"Unlike @Parameters which is one value per run, @DataProvider runs the test N times — once per data row."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 1 — Basic @DataProvider with Object[][]</span><span class="code-badge">Basics</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.annotations.DataProvider;
+<span class="kw">import</span> org.testng.annotations.Test;
+
+<span class="kw">public class</span> <span class="ann">LoginDataTest</span> {
+
+    <span class="cmt">// @DataProvider returns Object[][] — each inner array = one test run</span>
+    <span class="ann">@DataProvider</span>(name = <span class="str">"loginData"</span>)  <span class="cmt">// name is referenced in @Test</span>
+    <span class="kw">public</span> Object[][] getLoginData() {
+        <span class="kw">return new</span> Object[][] {
+            { <span class="str">"admin"</span>,   <span class="str">"admin123"</span>,  <span class="kw">true</span>  },  <span class="cmt">// row 1: valid user</span>
+            { <span class="str">"user1"</span>,   <span class="str">"wrongpass"</span>, <span class="kw">false</span> },  <span class="cmt">// row 2: wrong password</span>
+            { <span class="str">""</span>,        <span class="str">""</span>,           <span class="kw">false</span> },  <span class="cmt">// row 3: empty fields</span>
+        };
+    }
+
+    <span class="cmt">// This test runs 3 times — once per row above</span>
+    <span class="ann">@Test</span>(dataProvider = <span class="str">"loginData"</span>)  <span class="cmt">// must match @DataProvider name</span>
+    <span class="kw">public void</span> loginTest(String user, String pass, <span class="kw">boolean</span> expected) {
+        System.out.println(<span class="str">"Testing: "</span> + user + <span class="str">" | expected: "</span> + expected);
+        <span class="cmt">// your login logic here</span>
+    }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 2 — Shared DataProvider in a separate class</span><span class="code-badge">External DP</span></div>
+      <div class="code-body"><pre><span class="cmt">// Separate utility class for reusable data providers</span>
+<span class="kw">public class</span> <span class="ann">TestData</span> {
+
+    <span class="ann">@DataProvider</span>(name = <span class="str">"searchTerms"</span>)
+    <span class="kw">public static</span> Object[][] searchData() {  <span class="cmt">// MUST be static when external</span>
+        <span class="kw">return new</span> Object[][] {
+            { <span class="str">"laptop"</span> },
+            { <span class="str">"mobile"</span> },
+            { <span class="str">"tablet"</span> }
+        };
+    }
+}
+
+<span class="cmt">// In your test class — reference external class:</span>
+<span class="ann">@Test</span>(
+    dataProvider     = <span class="str">"searchTerms"</span>,
+    dataProviderClass = TestData.<span class="kw">class</span>   <span class="cmt">// point to external class</span>
+)
+<span class="kw">public void</span> searchTest(String term) {
+    System.out.println(<span class="str">"Searching for: "</span> + term);
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 3 — Parallel DataProvider execution</span><span class="code-badge">Parallel DP</span></div>
+      <div class="code-body"><pre><span class="cmt">// parallel=true runs all data rows simultaneously in separate threads</span>
+<span class="ann">@DataProvider</span>(name = <span class="str">"credentials"</span>, parallel = <span class="kw">true</span>)
+<span class="kw">public</span> Object[][] credentials() {
+    <span class="kw">return new</span> Object[][] {
+        { <span class="str">"user1"</span>, <span class="str">"pass1"</span> },
+        { <span class="str">"user2"</span>, <span class="str">"pass2"</span> },
+        { <span class="str">"user3"</span>, <span class="str">"pass3"</span> }
+    };
+    <span class="cmt">// All 3 rows run in parallel — cuts execution time from 3x to ~1x</span>
+}
+
+<span class="ann">@Test</span>(dataProvider = <span class="str">"credentials"</span>)
+<span class="kw">public void</span> parallelLogin(String user, String pass) {
+    System.out.println(Thread.currentThread().getId() + <span class="str">": "</span> + user);
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 4 — Read data from Excel/CSV via DataProvider</span><span class="code-badge">File Data</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.apache.poi.ss.usermodel.*;  <span class="cmt">// Apache POI for Excel</span>
+
+<span class="ann">@DataProvider</span>(name = <span class="str">"excelData"</span>)
+<span class="kw">public</span> Object[][] getExcelData() <span class="kw">throws</span> Exception {
+    Workbook wb = WorkbookFactory.create(
+        <span class="kw">new</span> File(<span class="str">"src/test/resources/testdata.xlsx"</span>)
+    );
+    Sheet sheet = wb.getSheetAt(<span class="num">0</span>);        <span class="cmt">// first sheet</span>
+    <span class="kw">int</span> rows = sheet.getPhysicalNumberOfRows() - <span class="num">1</span>; <span class="cmt">// skip header row</span>
+    Object[][] data = <span class="kw">new</span> Object[rows][<span class="num">2</span>];
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i <= rows; i++) {  <span class="cmt">// start at row 1 = skip header</span>
+        data[i-<span class="num">1</span>][<span class="num">0</span>] = sheet.getRow(i).getCell(<span class="num">0</span>).getStringCellValue();
+        data[i-<span class="num">1</span>][<span class="num">1</span>] = sheet.getRow(i).getCell(<span class="num">1</span>).getStringCellValue();
+    }
+    <span class="kw">return</span> data;
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 5 — Using ITestContext to filter data in DataProvider</span><span class="code-badge">Dynamic DP</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.ITestContext;
+
+<span class="cmt">// DataProvider can receive ITestContext to access XML parameters</span>
+<span class="ann">@DataProvider</span>(name = <span class="str">"envUsers"</span>)
+<span class="kw">public</span> Object[][] getUsers(ITestContext ctx) {
+    String env = ctx.getCurrentXmlTest()
+                    .getParameter(<span class="str">"env"</span>);  <span class="cmt">// read from testng.xml</span>
+
+    <span class="kw">if</span> (<span class="str">"staging"</span>.equals(env)) {
+        <span class="kw">return new</span> Object[][] {{ <span class="str">"stg_user"</span>, <span class="str">"stg_pass"</span> }};
+    } <span class="kw">else</span> {
+        <span class="kw">return new</span> Object[][] {{ <span class="str">"prod_user"</span>, <span class="str">"prod_pass"</span> }};
+    }
+    <span class="cmt">// Returns different data based on environment — powerful combo!</span>
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices</div>
+    <div class="bp-list">
+      <div class="bp-item"><span class="bp-icon">✓</span>Store @DataProvider methods in a dedicated <code>TestDataProvider</code> class so test classes stay focused on logic, not data.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Use <code>parallel=true</code> on DataProvider only when your test is thread-safe — ensure each thread has its own WebDriver instance.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>For large datasets, use <code>Iterator&lt;Object[]&gt;</code> return type instead of Object[][] — it's memory-efficient for 1000+ rows.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Keep external data (Excel/CSV) in <code>src/test/resources</code> so Maven includes it in the classpath automatically.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Always include at least one negative/boundary test row in every DataProvider — don't just test happy paths.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&amp;A</div>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What does Object[][] mean in a DataProvider? <span class="chevron">▼</span></div><div class="qa-a">Object[][] is a 2D array. The outer array represents test invocations (rows). The inner array represents the method arguments for that invocation (columns). So Object[3][2] means the test runs 3 times, each time receiving 2 arguments.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: How do you use a DataProvider from a different class? <span class="chevron">▼</span></div><div class="qa-a">Use dataProviderClass attribute: @Test(dataProvider="myData", dataProviderClass=DataUtil.class). The DataProvider method in the external class must be declared static for this to work.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is the difference between @Parameters and @DataProvider? <span class="chevron">▼</span></div><div class="qa-a">@Parameters reads a single static value from testng.xml at runtime — it does not cause the test to repeat. @DataProvider causes the test to execute once per data row — it is for multi-row data-driven execution.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: Can a DataProvider run in parallel? How? <span class="chevron">▼</span></div><div class="qa-a">Yes. Set parallel=true in @DataProvider. TestNG creates a thread per data row and runs them concurrently. You must ensure each test invocation is thread-safe — particularly that each thread has its own WebDriver instance via ThreadLocal.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How would you read test data from an Excel file for a DataProvider? <span class="chevron">▼</span></div><div class="qa-a">Use Apache POI library to open the .xlsx file, iterate rows (skipping the header), read each cell value, populate an Object[][] and return it. This is a very common interview coding question — know the WorkbookFactory.create() pattern.</div></div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="nav-btn" onclick="goTo(4)">← Previous</button><button class="nav-btn primary" onclick="goTo(6)">Next: Listeners →</button></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SESSION 7 ═══ -->
+<div class="session" id="s6">
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-book-2" aria-hidden="true"></i> Overview — Listeners</div>
+    <div class="overview-box">
+      <p><strong>Listeners</strong> intercept TestNG events (test start, pass, fail, skip) and let you add custom behavior — like taking screenshots, sending reports, or retrying failed tests — without modifying test code.</p>
+      <div class="def-row">
+        <div class="def-card"><div class="label">What</div><div class="val">Interfaces that hook into TestNG lifecycle events for custom actions</div></div>
+        <div class="def-card"><div class="label">Key interfaces</div><div class="val">ITestListener, ISuiteListener, IRetryAnalyzer, IAnnotationTransformer</div></div>
+        <div class="def-card"><div class="label">How to register</div><div class="val">Via @Listeners annotation, testng.xml &lt;listeners&gt; tag, or ServiceLoader</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-microphone-2" aria-hidden="true"></i> Spoken Lines in Interview</div>
+    <div class="oneliner-list">
+      <div class="oneliner">"I implement ITestListener to capture screenshots automatically whenever a test fails — zero code changes in test classes."</div>
+      <div class="oneliner">"IRetryAnalyzer lets TestNG retry a failed test up to N times before marking it as a final failure."</div>
+      <div class="oneliner">"Registering listeners in testng.xml applies them globally to all tests — using @Listeners on a class applies them only to that class."</div>
+      <div class="oneliner">"IAnnotationTransformer is a powerful listener that can dynamically modify @Test annotations at runtime — for example, injecting a retry analyzer."</div>
+      <div class="oneliner">"Listeners follow the Observer pattern — TestNG fires events and all registered listeners react to them independently."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 1 — ITestListener: screenshot on failure</span><span class="code-badge">ITestListener</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.*;
+
+<span class="kw">public class</span> <span class="ann">ScreenshotListener</span> <span class="kw">implements</span> ITestListener {
+
+    <span class="cmt">// Called when a test FAILS</span>
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> onTestFailure(ITestResult result) {
+        System.out.println(<span class="str">"FAILED: "</span> + result.getName());
+        <span class="cmt">// Take screenshot: TakesScreenshot ts = (TakesScreenshot) driver;</span>
+        <span class="cmt">// File src = ts.getScreenshotAs(OutputType.FILE);</span>
+    }
+
+    <span class="cmt">// Called when a test PASSES</span>
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> onTestSuccess(ITestResult result) {
+        System.out.println(<span class="str">"PASSED: "</span> + result.getName());
+    }
+
+    <span class="cmt">// Called when a test is SKIPPED</span>
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> onTestSkipped(ITestResult result) {
+        System.out.println(<span class="str">"SKIPPED: "</span> + result.getName());
+    }
+    <span class="cmt">// Other methods: onStart, onFinish, onTestStart — can leave empty</span>
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 2 — Register listener via @Listeners annotation</span><span class="code-badge">Register</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.annotations.Listeners;
+
+<span class="cmt">// Apply listener to this specific class only</span>
+<span class="ann">@Listeners</span>(ScreenshotListener.<span class="kw">class</span>)
+<span class="kw">public class</span> <span class="ann">MyTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> test1() {
+        Assert.fail(<span class="str">"deliberate fail"</span>); <span class="cmt">// triggers onTestFailure above</span>
+    }
+}
+
+<span class="cmt">// OR register globally in testng.xml (applies to ALL tests):</span>
+<span class="cmt">&lt;listeners&gt;</span>
+<span class="cmt">  &lt;listener class-name="com.listeners.ScreenshotListener"/&gt;</span>
+<span class="cmt">&lt;/listeners&gt;</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 3 — IRetryAnalyzer: retry failed tests</span><span class="code-badge">Retry</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.IRetryAnalyzer;
+<span class="kw">import</span> org.testng.ITestResult;
+
+<span class="kw">public class</span> <span class="ann">RetryAnalyzer</span> <span class="kw">implements</span> IRetryAnalyzer {
+
+    <span class="kw">private int</span> retryCount = <span class="num">0</span>;
+    <span class="kw">private static final int</span> MAX_RETRY = <span class="num">2</span>;  <span class="cmt">// retry max 2 times</span>
+
+    <span class="ann">@Override</span>
+    <span class="kw">public boolean</span> retry(ITestResult result) {
+        <span class="kw">if</span> (retryCount < MAX_RETRY) {
+            retryCount++;
+            System.out.println(<span class="str">"Retrying: "</span> + result.getName()
+                               + <span class="str">" attempt: "</span> + retryCount);
+            <span class="kw">return true</span>;   <span class="cmt">// true = retry the test</span>
+        }
+        <span class="kw">return false</span>;  <span class="cmt">// false = final failure, stop retrying</span>
+    }
+}
+
+<span class="cmt">// Attach to @Test:</span>
+<span class="ann">@Test</span>(retryAnalyzer = RetryAnalyzer.<span class="kw">class</span>)
+<span class="kw">public void</span> flakeyTest() { <span class="cmt">/* will retry up to 2 times if it fails */</span> }</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 4 — IAnnotationTransformer: auto-inject retry globally</span><span class="code-badge">Transformer</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.IAnnotationTransformer;
+<span class="kw">import</span> org.testng.annotations.ITestAnnotation;
+<span class="kw">import</span> java.lang.reflect.*;
+
+<span class="cmt">// Automatically adds RetryAnalyzer to EVERY @Test — no code changes needed</span>
+<span class="kw">public class</span> <span class="ann">GlobalRetryTransformer</span> <span class="kw">implements</span> IAnnotationTransformer {
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> transform(ITestAnnotation annotation,
+                          Class testClass, Constructor tc, Method m) {
+        <span class="cmt">// Inject RetryAnalyzer into every @Test annotation at runtime</span>
+        annotation.setRetryAnalyzer(RetryAnalyzer.<span class="kw">class</span>);
+    }
+}
+
+<span class="cmt">&lt;!-- Register in testng.xml (must be listener, not class-level annotation) --&gt;</span>
+<span class="cmt">&lt;listeners&gt;</span>
+<span class="cmt">  &lt;listener class-name="com.listeners.GlobalRetryTransformer"/&gt;</span>
+<span class="cmt">&lt;/listeners&gt;</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 5 — ISuiteListener: log suite start/end</span><span class="code-badge">Suite Events</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> org.testng.ISuiteListener;
+<span class="kw">import</span> org.testng.ISuite;
+
+<span class="kw">public class</span> <span class="ann">SuiteLogger</span> <span class="kw">implements</span> ISuiteListener {
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> onStart(ISuite suite) {
+        System.out.println(<span class="str">"Suite STARTED: "</span> + suite.getName());
+        <span class="cmt">// setup Slack notification, DB logging, etc.</span>
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> onFinish(ISuite suite) {
+        System.out.println(<span class="str">"Suite FINISHED: "</span> + suite.getName());
+        <span class="cmt">// send email report, post results to dashboard, etc.</span>
+    }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices</div>
+    <div class="bp-list">
+      <div class="bp-item"><span class="bp-icon">✓</span>Register global listeners (screenshot, retry) in testng.xml, not via @Listeners — so they apply to all tests automatically.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Use <code>IAnnotationTransformer</code> to inject <code>RetryAnalyzer</code> globally — avoids adding <code>retryAnalyzer=</code> to every single @Test.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Keep retry count low (max 2) — if a test needs >3 retries, it signals a real bug, not flakiness.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>In <code>onTestFailure</code>, log the method name, class, and exception message — not just "test failed".</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Never share state between listener methods — listeners can run in parallel; use ThreadLocal for thread safety.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&amp;A</div>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What interface do you implement to take a screenshot on test failure? <span class="chevron">▼</span></div><div class="qa-a">Implement ITestListener and override onTestFailure(ITestResult result). Inside the method, cast your WebDriver to TakesScreenshot and save the screenshot file. Register the listener in testng.xml for global coverage.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is IRetryAnalyzer and when should you use it? <span class="chevron">▼</span></div><div class="qa-a">IRetryAnalyzer is an interface that lets TestNG re-run a failed test up to a configured number of times. Use it for flaky tests caused by network issues or timing problems — not for tests that fail due to real bugs.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is the difference between @Listeners and testng.xml &lt;listeners&gt;? <span class="chevron">▼</span></div><div class="qa-a">@Listeners(MyListener.class) applies the listener only to the annotated test class. &lt;listeners&gt;&lt;listener class-name="..."/&gt;&lt;/listeners&gt; in testng.xml applies it globally to every test in the suite — the preferred approach for screenshot and retry listeners.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is IAnnotationTransformer? <span class="chevron">▼</span></div><div class="qa-a">IAnnotationTransformer lets you modify TestNG annotations programmatically at runtime before tests run. The most common use is calling annotation.setRetryAnalyzer() in the transform method to globally inject retry logic without touching individual @Test annotations.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How does the retry count get reset between different test methods? <span class="chevron">▼</span></div><div class="qa-a">Each @Test method gets its own IRetryAnalyzer instance, so retryCount naturally resets. However, if you declare retryCount as static, it shares state across tests — a common bug. Always use instance variables (not static) for retryCount.</div></div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="nav-btn" onclick="goTo(5)">← Previous</button><button class="nav-btn primary" onclick="goTo(7)">Next: Dependencies & Parallel →</button></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SESSION 8 ═══ -->
+<div class="session" id="s7">
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-book-2" aria-hidden="true"></i> Overview — Dependencies & Parallel Execution</div>
+    <div class="overview-box">
+      <p><strong>dependsOnMethods / dependsOnGroups</strong> create explicit execution chains. <strong>Parallel execution</strong> runs tests simultaneously across threads — both are essential for professional, fast test suites.</p>
+      <div class="def-row">
+        <div class="def-card"><div class="label">Dependencies</div><div class="val">@Test(dependsOnMethods="login") — skip if dependency fails</div></div>
+        <div class="def-card"><div class="label">Parallel modes</div><div class="val">methods, classes, tests, instances — set in testng.xml</div></div>
+        <div class="def-card"><div class="label">Thread safety</div><div class="val">Use ThreadLocal&lt;WebDriver&gt; to isolate WebDriver per thread</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-microphone-2" aria-hidden="true"></i> Spoken Lines in Interview</div>
+    <div class="oneliner-list">
+      <div class="oneliner">"dependsOnMethods creates an explicit dependency chain — if the upstream test fails, all downstream tests are marked as skipped."</div>
+      <div class="oneliner">"I set parallel='methods' in testng.xml with thread-count to run multiple test methods simultaneously and cut suite time."</div>
+      <div class="oneliner">"ThreadLocal&lt;WebDriver&gt; is mandatory for parallel Selenium tests — each thread gets its own isolated WebDriver instance."</div>
+      <div class="oneliner">"parallel='tests' runs each &lt;test&gt; tag in testng.xml on its own thread — perfect for cross-browser parallel execution."</div>
+      <div class="oneliner">"dependsOnGroups is better than dependsOnMethods for large suites — it creates module-level dependencies rather than brittle method-level ones."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-topology-star-3" aria-hidden="true"></i> Parallel Modes Visual</div>
+    <svg class="arch-svg" viewBox="0 0 640 200" role="img"><title>TestNG parallel execution modes</title><desc>Four parallel modes: methods, classes, tests, instances shown side by side</desc>
+      <defs><marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-purple"><rect x="20"  y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="85"  y="50" text-anchor="middle" dominant-baseline="central">methods</text><text class="ts" x="85"  y="66" text-anchor="middle" dominant-baseline="central">Each method = 1 thread</text></g>
+      <g class="c-teal"><rect x="170" y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="235" y="50" text-anchor="middle" dominant-baseline="central">classes</text><text class="ts" x="235" y="66" text-anchor="middle" dominant-baseline="central">Each class = 1 thread</text></g>
+      <g class="c-blue"><rect x="320" y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="385" y="50" text-anchor="middle" dominant-baseline="central">tests</text><text class="ts" x="385" y="66" text-anchor="middle" dominant-baseline="central">Each &lt;test&gt; tag = 1 thread</text></g>
+      <g class="c-amber"><rect x="470" y="30" width="150" height="50" rx="8" stroke-width="0.5"/><text class="th" x="545" y="50" text-anchor="middle" dominant-baseline="central">instances</text><text class="ts" x="545" y="66" text-anchor="middle" dominant-baseline="central">Each class instance = 1 thread</text></g>
+      <text class="ts" x="320" y="130" text-anchor="middle">Set via: &lt;suite parallel="methods" thread-count="4"&gt;</text>
+      <text class="ts" x="320" y="155" text-anchor="middle">Most common for Selenium: parallel="tests" — one browser per &lt;test&gt; block</text>
+      <text class="ts" x="320" y="178" text-anchor="middle">Always use ThreadLocal&lt;WebDriver&gt; to prevent thread collision</text>
+    </svg>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 1 — dependsOnMethods: skip if login fails</span><span class="code-badge">Dependencies</span></div>
+      <div class="code-body"><pre><span class="kw">public class</span> <span class="ann">E2EFlowTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> login() {
+        System.out.println(<span class="str">"Logged in"</span>);
+        <span class="cmt">// if this FAILS, all dependent tests below are SKIPPED</span>
+    }
+
+    <span class="ann">@Test</span>(dependsOnMethods = <span class="str">"login"</span>)   <span class="cmt">// only runs if login() passes</span>
+    <span class="kw">public void</span> addToCart() {
+        System.out.println(<span class="str">"Added to cart"</span>);
+    }
+
+    <span class="ann">@Test</span>(dependsOnMethods = <span class="str">"addToCart"</span>)  <span class="cmt">// chain: login → cart → checkout</span>
+    <span class="kw">public void</span> checkout() {
+        System.out.println(<span class="str">"Checked out"</span>);
+    }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 2 — alwaysRun with dependencies</span><span class="code-badge">alwaysRun</span></div>
+      <div class="code-body"><pre><span class="ann">@Test</span>
+<span class="kw">public void</span> login() {
+    Assert.fail(<span class="str">"Login failed"</span>);  <span class="cmt">// intentional fail</span>
+}
+
+<span class="cmt">// Without alwaysRun: this is SKIPPED when login fails</span>
+<span class="ann">@Test</span>(dependsOnMethods = <span class="str">"login"</span>, alwaysRun = <span class="kw">true</span>)
+<span class="kw">public void</span> cleanupTest() {
+    System.out.println(<span class="str">"Cleanup runs even though login failed"</span>);
+    <span class="cmt">// alwaysRun=true forces execution regardless of dependency status</span>
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 3 — dependsOnGroups (module-level)</span><span class="code-badge">Group Deps</span></div>
+      <div class="code-body"><pre><span class="kw">public class</span> <span class="ann">CheckoutTests</span> {
+
+    <span class="ann">@Test</span>(groups = <span class="str">"login"</span>)
+    <span class="kw">public void</span> doLogin() { System.out.println(<span class="str">"Login"</span>); }
+
+    <span class="cmt">// Runs only after ALL methods in 'login' group pass</span>
+    <span class="ann">@Test</span>(groups = <span class="str">"checkout"</span>, dependsOnGroups = <span class="str">"login"</span>)
+    <span class="kw">public void</span> doCheckout() { System.out.println(<span class="str">"Checkout"</span>); }
+
+    <span class="cmt">// Multiple group dependencies:</span>
+    <span class="ann">@Test</span>(dependsOnGroups = {<span class="str">"login"</span>, <span class="str">"checkout"</span>})
+    <span class="kw">public void</span> generateReport() { System.out.println(<span class="str">"Report"</span>); }
+}</pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 4 — Parallel execution in testng.xml</span><span class="code-badge">Parallel XML</span></div>
+      <div class="code-body"><pre><span class="cmt">&lt;!-- parallel="tests" runs each &lt;test&gt; block on its own thread --&gt;</span>
+<span class="ann">&lt;suite</span> name=<span class="str">"Parallel Suite"</span>
+       parallel=<span class="str">"tests"</span>         <span class="cmt">&lt;!-- methods | classes | tests | instances --&gt;</span>
+       thread-count=<span class="str">"3"</span><span class="ann">&gt;</span>        <span class="cmt">&lt;!-- max 3 threads at once --&gt;</span>
+
+  <span class="ann">&lt;test</span> name=<span class="str">"Chrome Tests"</span><span class="ann">&gt;</span>   <span class="cmt">&lt;!-- Thread 1: Chrome browser --&gt;</span>
+    <span class="ann">&lt;parameter</span> name=<span class="str">"browser"</span> value=<span class="str">"chrome"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;classes&gt;</span><span class="ann">&lt;class</span> name=<span class="str">"com.tests.LoginTest"</span><span class="ann">/&gt;</span><span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+
+  <span class="ann">&lt;test</span> name=<span class="str">"Firefox Tests"</span><span class="ann">&gt;</span>  <span class="cmt">&lt;!-- Thread 2: Firefox browser --&gt;</span>
+    <span class="ann">&lt;parameter</span> name=<span class="str">"browser"</span> value=<span class="str">"firefox"</span><span class="ann">/&gt;</span>
+    <span class="kw">&lt;classes&gt;</span><span class="ann">&lt;class</span> name=<span class="str">"com.tests.LoginTest"</span><span class="ann">/&gt;</span><span class="kw">&lt;/classes&gt;</span>
+  <span class="ann">&lt;/test&gt;</span>
+
+<span class="ann">&lt;/suite&gt;</span></pre></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-title">Example 5 — ThreadLocal WebDriver for thread-safe parallel tests</span><span class="code-badge">ThreadLocal</span></div>
+      <div class="code-body"><pre><span class="kw">public class</span> <span class="ann">ThreadSafeBase</span> {
+
+    <span class="cmt">// ThreadLocal ensures each thread gets its OWN WebDriver instance</span>
+    <span class="kw">private static</span> ThreadLocal&lt;WebDriver&gt; driverThread =
+        <span class="kw">new</span> ThreadLocal&lt;&gt;();
+
+    <span class="ann">@Parameters</span>(<span class="str">"browser"</span>)
+    <span class="ann">@BeforeMethod</span>
+    <span class="kw">public void</span> setup(String browser) {
+        WebDriver driver = browser.equals(<span class="str">"chrome"</span>)
+            ? <span class="kw">new</span> ChromeDriver()
+            : <span class="kw">new</span> FirefoxDriver();
+        driverThread.set(driver);   <span class="cmt">// store in THIS thread's slot</span>
+    }
+
+    <span class="cmt">// Static getter — each thread retrieves ITS OWN driver</span>
+    <span class="kw">public static</span> WebDriver getDriver() {
+        <span class="kw">return</span> driverThread.get();
+    }
+
+    <span class="ann">@AfterMethod</span>(alwaysRun = <span class="kw">true</span>)
+    <span class="kw">public void</span> teardown() {
+        <span class="kw">if</span> (driverThread.get() != <span class="kw">null</span>) {
+            driverThread.get().quit();
+            driverThread.remove(); <span class="cmt">// MUST remove to prevent memory leaks</span>
+        }
+    }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices</div>
+    <div class="bp-list">
+      <div class="bp-item"><span class="bp-icon">✓</span>Always call <code>driverThread.remove()</code> in @AfterMethod to prevent memory leaks in thread pools.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Use <code>dependsOnGroups</code> over <code>dependsOnMethods</code> in large suites — method names change; group names are more stable.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Start with <code>parallel="tests"</code> before <code>parallel="methods"</code> — it's easier to reason about and less prone to race conditions.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Never use shared static state (non-ThreadLocal) in parallel tests — it causes random, hard-to-debug failures.</div>
+      <div class="bp-item"><span class="bp-icon">✓</span>Combine <code>parallel="tests"</code> with per-test <code>&lt;parameter name="browser"&gt;</code> for a clean cross-browser parallel setup.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&amp;A</div>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What happens when a dependent test fails in TestNG? <span class="chevron">▼</span></div><div class="qa-a">When a test specified in dependsOnMethods fails, all tests that depend on it are automatically marked as SKIPPED (not failed). They will not execute at all. This prevents cascading failures in an e2e flow.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What are the four parallel modes in TestNG? <span class="chevron">▼</span></div><div class="qa-a">methods — each @Test method runs in its own thread. classes — all methods in a class share one thread, but classes run in parallel. tests — each &lt;test&gt; tag in testng.xml gets its own thread. instances — each class instance gets its own thread.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: Why is ThreadLocal needed for parallel WebDriver? <span class="chevron">▼</span></div><div class="qa-a">Without ThreadLocal, all parallel threads share the same WebDriver object. One thread might call driver.get() while another calls driver.findElement(), causing NullPointerException or wrong-page errors. ThreadLocal gives each thread its own private WebDriver copy.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is the difference between dependsOnMethods and dependsOnGroups? <span class="chevron">▼</span></div><div class="qa-a">dependsOnMethods names a specific method — fragile because renaming the method breaks the dependency. dependsOnGroups names a group tag — more maintainable because many methods can be in that group and any of them can satisfy the dependency.</div></div>
+      <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How do you run the same test class on Chrome and Firefox in parallel? <span class="chevron">▼</span></div><div class="qa-a">Create two &lt;test&gt; blocks in testng.xml — one with &lt;parameter name="browser" value="chrome"/&gt; and one with value="firefox". Both include the same class. Set parallel="tests" and thread-count="2". Use ThreadLocal&lt;WebDriver&gt; and @Parameters("browser") in the base class. Each &lt;test&gt; block runs its own thread with its own browser.</div></div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="nav-btn" onclick="goTo(6)">← Previous</button><button class="nav-btn primary" onclick="sendPrompt('I have completed all 8 TestNG sessions. Can you give me a comprehensive revision quiz with 10 mixed questions?')">🎓 Take Final Quiz ↗</button></div>
+</div>
+
+</div>
+
+<script>
+let current = 0;
+const total = 8;
+const done = new Set();
+
+function goTo(n) {
+  done.add(current);
+  document.getElementById('s'+current).classList.remove('active');
+  document.getElementById('s'+n).classList.add('active');
+  current = n;
+  updateUI();
+}
+
+function updateUI() {
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach((t,i) => {
+    t.classList.toggle('active', i === current);
+    t.classList.toggle('done', done.has(i) && i !== current);
+  });
+  document.getElementById('progLabel').textContent = 'Session '+(current+1)+' of '+total;
+  for(let i=0;i<total;i++){
+    const d = document.getElementById('pd'+i);
+    d.classList.remove('active','done');
+    if(i===current) d.classList.add('active');
+    else if(done.has(i)) d.classList.add('done');
+  }
+  document.querySelector('.hub').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function toggleQA(el) {
+  const ans = el.nextElementSibling;
+  const chev = el.querySelector('.chevron');
+  ans.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+function sendPrompt(msg) {
+  if (window.parent && window.parent.postMessage) {
+    window.parent.postMessage({ type: 'sendPrompt', message: msg }, '*');
+  }
+  console.log(msg);
+}
+</script>
+
+</body>
+</html>

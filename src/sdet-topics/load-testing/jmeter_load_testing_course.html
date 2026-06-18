@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jmeter load testing course</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:0.5rem 0;font-family:var(--font-sans)}
+.phase-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.pill{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;border:0.5px solid}
+.pf{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.pi{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.pa{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;margin-bottom:16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.tabs::-webkit-scrollbar{height:3px}
+.tabs::-webkit-scrollbar-thumb{background:var(--color-border-secondary);border-radius:2px}
+.tb{flex-shrink:0;font-size:12px;padding:6px 11px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tb:hover{background:var(--color-background-secondary)}
+.tb.act{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.tb.done{border-color:#5DCAA5;color:#085041}
+.tb.done.act{background:#E1F5EE}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.prog-bar{flex:1;height:5px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:#534AB7;border-radius:3px;transition:width .4s}
+.prog-txt{font-size:12px;color:var(--color-text-secondary);min-width:62px;text-align:right}
+.ses{display:none}
+.ses.act{display:block;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.ses-hdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;padding:13px 15px;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary)}
+.ses-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.ses-meta h2{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.ses-meta p{font-size:12px;color:var(--color-text-secondary)}
+.sec-ttl{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 9px;display:flex;align-items:center;gap:6px}
+.sec-ttl::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:13px 15px;margin-bottom:9px}
+.card p,.card li{font-size:13px;line-height:1.7;color:var(--color-text-primary)}
+.card ul,.card ol{padding-left:16px}
+.card li{margin-bottom:3px}
+.ol{background:var(--color-background-secondary);border-left:3px solid #534AB7;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:7px 11px;margin-bottom:7px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.cb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:11px 13px;margin-bottom:11px;font-family:var(--font-mono);font-size:11.5px;line-height:1.75;overflow-x:auto;white-space:pre;color:var(--color-text-primary)}
+.cm{color:var(--color-text-secondary)}
+.kw{color:#534AB7}
+.st{color:#0F6E56}
+.nm{color:#854F0B}
+.fn{color:#993556}
+.qa-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:7px;overflow:hidden}
+.qa-q{padding:9px 13px;font-size:13px;font-weight:500;cursor:pointer;background:var(--color-background-secondary);display:flex;justify-content:space-between;align-items:center;color:var(--color-text-primary)}
+.qa-q .arr{transition:transform .2s;font-size:11px}
+.qa-a{display:none;padding:9px 13px;font-size:13px;line-height:1.7;color:var(--color-text-secondary);border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.qa-item.open .qa-a{display:block}
+.qa-item.open .arr{transform:rotate(90deg)}
+.chk{display:flex;align-items:flex-start;gap:7px;padding:5px 0;font-size:13px;color:var(--color-text-primary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.chk:last-child{border-bottom:none}
+.chk-ic{color:#1D9E75;font-size:13px;flex-shrink:0;margin-top:2px}
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:9px 0}
+.fst{padding:7px 10px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);white-space:nowrap}
+.farr{padding:0 5px;color:var(--color-text-tertiary);font-size:12px}
+.arch{display:flex;gap:0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary);margin:9px 0}
+.an{flex:1;padding:9px 7px;text-align:center;font-size:11px;font-weight:500;border-right:0.5px solid var(--color-border-tertiary)}
+.an:last-child{border-right:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.g2c{padding:9px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)}
+.g2c p:first-child{font-size:11px;font-weight:500;margin-bottom:3px}
+.g2c p:last-child{font-size:11px;color:var(--color-text-secondary)}
+.btm{margin-top:18px;display:flex;justify-content:space-between;align-items:center}
+.btn-done{padding:7px 16px;border:0.5px solid #5DCAA5;border-radius:var(--border-radius-md);background:transparent;color:#085041;cursor:pointer;font-size:12px}
+.btn-done:hover{background:#E1F5EE}
+.btn-next{padding:7px 16px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);cursor:pointer;font-size:12px}
+.btn-next:hover{background:var(--color-background-secondary)}
+.lbl-p{display:inline-block;font-size:11px;padding:2px 7px;border-radius:10px;background:#EEEDFE;color:#3C3489;margin:2px}
+.lbl-g{display:inline-block;font-size:11px;padding:2px 7px;border-radius:10px;background:#EAF3DE;color:#27500A;margin:2px}
+.lbl-a{display:inline-block;font-size:11px;padding:2px 7px;border-radius:10px;background:#FAEEDA;color:#633806;margin:2px}
+.lbl-r{display:inline-block;font-size:11px;padding:2px 7px;border-radius:10px;background:#FCEBEB;color:#A32D2D;margin:2px}
+.cp{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+<h2 style="position:absolute;left:-9999px">JMeter Load and Performance Testing — 10-Session Course</h2>
+
+<div class="phase-bar">
+  <span class="pill pf">Phase 1: Fundamentals — Sessions 1–3</span>
+  <span class="pill pi">Phase 2: Intermediate — Sessions 4–7</span>
+  <span class="pill pa">Phase 3: Advanced — Sessions 8–10</span>
+</div>
+
+<div class="prog-row">
+  <div class="prog-bar"><div class="prog-fill" id="pf" style="width:10%"></div></div>
+  <span class="prog-txt" id="pt">Session 1 / 10</span>
+</div>
+
+<div class="tabs" id="tabbar">
+  <button class="tb act" onclick="gt(0)">01 · JMeter Intro</button>
+  <button class="tb" onclick="gt(1)">02 · Architecture</button>
+  <button class="tb" onclick="gt(2)">03 · Test Plan</button>
+  <button class="tb" onclick="gt(3)">04 · Samplers</button>
+  <button class="tb" onclick="gt(4)">05 · Listeners</button>
+  <button class="tb" onclick="gt(5)">06 · Config Elements</button>
+  <button class="tb" onclick="gt(6)">07 · Logic Controllers</button>
+  <button class="tb" onclick="gt(7)">08 · Functions & Variables</button>
+  <button class="tb" onclick="gt(8)">09 · Scripting & Groovy</button>
+  <button class="tb" onclick="gt(9)">10 · CLI & CI/CD</button>
+</div>
+
+<!-- ===== SESSION 1 ===== -->
+<div class="ses act" id="s0">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#EEEDFE;color:#3C3489">01</div>
+    <div class="ses-meta"><h2>JMeter Introduction — What, Why & How</h2><p>Installation · GUI overview · Core concepts · JMeter vs other tools</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p><span style="font-weight:500">Simple definition:</span> Apache JMeter is a 100% Java-based, open-source load and performance testing tool designed to measure and analyze the performance of web applications, APIs, databases, and other services under simulated load.</p>
+    <ul style="margin-top:9px">
+      <li><span style="font-weight:500">What:</span> A desktop GUI + CLI tool that generates concurrent HTTP/HTTPS, JDBC, FTP, SOAP, REST, WebSocket, and TCP traffic to measure system performance.</li>
+      <li><span style="font-weight:500">Why:</span> To find bottlenecks, validate SLAs, prevent production failures under traffic spikes, and measure scalability before go-live.</li>
+      <li><span style="font-weight:500">When:</span> After functional testing; before every major release; continuously in CI/CD pipelines.</li>
+      <li><span style="font-weight:500">Where:</span> REST/SOAP APIs, web applications, databases (via JDBC), message queues, microservices, FTP servers.</li>
+      <li><span style="font-weight:500">How:</span> Define a Test Plan → add Thread Groups (virtual users) → add Samplers (requests) → add Listeners (results) → run and analyze.</li>
+    </ul>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"Apache JMeter is an open-source, Java-based load testing tool that simulates concurrent users to measure system performance under defined workloads."</div>
+  <div class="ol">"JMeter supports multi-protocol testing — HTTP, HTTPS, JDBC, LDAP, FTP, SOAP, REST, and WebSocket — making it a versatile performance engineering platform."</div>
+  <div class="ol">"JMeter is both a GUI tool for test design and a headless CLI tool for CI/CD pipeline execution via the -n (non-GUI) mode."</div>
+  <div class="ol">"Unlike browser-based tools, JMeter operates at the protocol level — it simulates HTTP traffic, not browser rendering, which makes it efficient for API and server load testing."</div>
+  <div class="ol">"JMeter's distributed testing feature allows a master node to coordinate multiple slave nodes, generating millions of concurrent requests from a cluster."</div>
+
+  <div class="sec-ttl"><i class="ti ti-topology-star" aria-hidden="true"></i> Concepts — JMeter architecture flow</div>
+  <div class="card">
+    <p style="font-weight:500;margin-bottom:8px">JMeter execution model:</p>
+    <div class="flow">
+      <div class="fst">Test Plan</div><div class="farr">→</div>
+      <div class="fst">Thread Group</div><div class="farr">→</div>
+      <div class="fst">Sampler</div><div class="farr">→</div>
+      <div class="fst">HTTP Request</div><div class="farr">→</div>
+      <div class="fst">Server</div><div class="farr">→</div>
+      <div class="fst">Response</div><div class="farr">→</div>
+      <div class="fst">Listener</div>
+    </div>
+    <p style="font-size:12px;color:var(--color-text-secondary);margin-top:8px">Every JMeter test is a hierarchy: Test Plan contains Thread Groups which contain Samplers which are enriched by Config Elements, Assertions, Timers, Pre/Post Processors, and monitored by Listeners.</p>
+  </div>
+  <div class="card">
+    <p style="font-weight:500;margin-bottom:8px">JMeter vs alternatives:</p>
+    <div class="grid2">
+      <div class="g2c"><p style="color:#3C3489">JMeter</p><p>Java GUI + CLI, huge plugin ecosystem, free, steep learning curve, excellent for API + protocol testing</p></div>
+      <div class="g2c"><p style="color:#085041">k6</p><p>JavaScript-based, code-first, modern CI/CD native, no GUI, best for developers</p></div>
+      <div class="g2c"><p style="color:#633806">Gatling</p><p>Scala DSL, excellent HTML reports, code-first, good for high concurrency</p></div>
+      <div class="g2c"><p style="color:#3C3489">Locust</p><p>Python-based, distributed, code-first, great for custom protocols</p></div>
+    </div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — JMeter startup command (GUI vs headless)</p>
+  <div class="cb"><span class="cm"># GUI mode — only for test design, NEVER for load generation</span>
+<span class="cm"># Location: /apache-jmeter-5.6/bin/</span>
+./jmeter                           <span class="cm"># Linux/Mac — opens GUI</span>
+jmeter.bat                         <span class="cm"># Windows — opens GUI</span>
+
+<span class="cm"># Non-GUI (headless) mode — use for ALL actual load test runs</span>
+<span class="cm"># -n = non-GUI mode (headless)</span>
+<span class="cm"># -t = path to .jmx Test Plan file</span>
+<span class="cm"># -l = path for results log (.jtl file)</span>
+<span class="cm"># -e = generate HTML report after run</span>
+<span class="cm"># -o = output folder for HTML report</span>
+jmeter -n -t my_test.jmx -l results.jtl -e -o ./html_report/
+
+<span class="cm"># Increase JMeter heap memory for large tests (edit jmeter.sh/bat):</span>
+<span class="cm"># JVM_ARGS="-Xms1g -Xmx4g"</span>
+<span class="cm"># -Xms = initial heap size | -Xmx = maximum heap size</span></div>
+
+  <p class="cp">Example 2 — jmeter.properties key settings</p>
+  <div class="cb"><span class="cm"># File: /bin/jmeter.properties — global JMeter configuration</span>
+
+<span class="cm"># Summariser — prints summary every N seconds to console</span>
+summariser.name=summary            <span class="cm"># label shown in console output</span>
+summariser.interval=30             <span class="cm"># print stats every 30 seconds</span>
+summariser.log=true                <span class="cm"># also write to jmeter.log</span>
+
+<span class="cm"># Results file format — CSV is preferred over XML (faster I/O)</span>
+jmeter.save.saveservice.output_format=csv
+jmeter.save.saveservice.response_code=true   <span class="cm"># save HTTP status code</span>
+jmeter.save.saveservice.latency=true         <span class="cm"># save latency</span>
+jmeter.save.saveservice.connect_time=true    <span class="cm"># save TCP connect time</span>
+jmeter.save.saveservice.timestamp_format=ms  <span class="cm"># epoch millis timestamp</span>
+
+<span class="cm"># Thread timing</span>
+jmeter.save.saveservice.thread_counts=true   <span class="cm"># active/started/finished VU count</span></div>
+
+  <p class="cp">Example 3 — Minimal Test Plan XML (.jmx) structure</p>
+  <div class="cb"><span class="cm">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cm">&lt;!-- A .jmx file is a standard XML document — you can edit it in any text editor --&gt;</span>
+<span class="kw">&lt;jmeterTestPlan</span> version=<span class="st">"1.2"</span> properties=<span class="st">"5.0"</span> jmeter=<span class="st">"5.6.3"</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;hashTree&gt;</span>                    <span class="cm">&lt;!-- hashTree wraps EVERY element and its children --&gt;</span>
+    <span class="kw">&lt;TestPlan</span> guiclass=<span class="st">"TestPlanGui"</span>
+             testclass=<span class="st">"TestPlan"</span>
+             testname=<span class="st">"My API Load Test"</span>
+             enabled=<span class="st">"true"</span><span class="kw">&gt;</span>
+      <span class="cm">&lt;!-- functionalMode=false = performance mode (no response data saved) --&gt;</span>
+      <span class="kw">&lt;boolProp</span> name=<span class="st">"TestPlan.functional_mode"</span><span class="kw">&gt;</span>false<span class="kw">&lt;/boolProp&gt;</span>
+      <span class="cm">&lt;!-- serialize_threadgroups=false = run all Thread Groups in parallel --&gt;</span>
+      <span class="kw">&lt;boolProp</span> name=<span class="st">"TestPlan.serialize_threadgroups"</span><span class="kw">&gt;</span>false<span class="kw">&lt;/boolProp&gt;</span>
+    <span class="kw">&lt;/TestPlan&gt;</span>
+    <span class="kw">&lt;hashTree/&gt;</span>                   <span class="cm">&lt;!-- empty hashTree = no children yet --&gt;</span>
+  <span class="kw">&lt;/hashTree&gt;</span>
+<span class="kw">&lt;/jmeterTestPlan&gt;</span></div>
+
+  <p class="cp">Example 4 — Thread Group XML (virtual users definition)</p>
+  <div class="cb"><span class="cm">&lt;!-- Thread Group = pool of virtual users --&gt;</span>
+<span class="kw">&lt;ThreadGroup</span> guiclass=<span class="st">"ThreadGroupGui"</span>
+             testname=<span class="st">"API Users"</span>
+             enabled=<span class="st">"true"</span><span class="kw">&gt;</span>
+
+  <span class="cm">&lt;!-- num_threads = total Virtual Users (VUs) --&gt;</span>
+  <span class="kw">&lt;intProp</span> name=<span class="st">"ThreadGroup.num_threads"</span><span class="kw">&gt;</span>100<span class="kw">&lt;/intProp&gt;</span>
+
+  <span class="cm">&lt;!-- ramp_time = seconds to gradually add all VUs (prevents thundering herd) --&gt;</span>
+  <span class="kw">&lt;intProp</span> name=<span class="st">"ThreadGroup.ramp_time"</span><span class="kw">&gt;</span>60<span class="kw">&lt;/intProp&gt;</span>
+
+  <span class="cm">&lt;!-- loops = how many times each VU runs the sampler sequence --&gt;</span>
+  <span class="kw">&lt;elementProp</span> name=<span class="st">"ThreadGroup.main_controller"</span> elementType=<span class="st">"LoopController"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;boolProp</span> name=<span class="st">"LoopController.continue_forever"</span><span class="kw">&gt;</span>false<span class="kw">&lt;/boolProp&gt;</span>
+    <span class="kw">&lt;intProp</span> name=<span class="st">"LoopController.loops"</span><span class="kw">&gt;</span>10<span class="kw">&lt;/intProp&gt;</span>  <span class="cm">&lt;!-- each VU loops 10 times --&gt;</span>
+  <span class="kw">&lt;/elementProp&gt;</span>
+
+  <span class="cm">&lt;!-- on_sample_error: continue / startnextloop / stopthread / stoptest / stoptestnow --&gt;</span>
+  <span class="kw">&lt;stringProp</span> name=<span class="st">"ThreadGroup.on_sample_error"</span><span class="kw">&gt;</span>continue<span class="kw">&lt;/stringProp&gt;</span>
+<span class="kw">&lt;/ThreadGroup&gt;</span></div>
+
+  <p class="cp">Example 5 — User.properties — per-user JMeter settings</p>
+  <div class="cb"><span class="cm"># File: /bin/user.properties — overrides jmeter.properties without editing core files</span>
+<span class="cm"># Use this file for environment-specific settings — commit to Git safely</span>
+
+<span class="cm"># Override base URL for different environments</span>
+<span class="nm">base.url</span>=<span class="st">https://api.staging.myapp.com</span>
+<span class="nm">base.port</span>=<span class="nm">443</span>
+
+<span class="cm"># Throughput controller granularity</span>
+throughput.controller.reportEachIteration=<span class="kw">true</span>
+
+<span class="cm"># Connect timeout and response timeout in milliseconds</span>
+<span class="nm">HTTPSampler.connect_timeout</span>=<span class="nm">5000</span>   <span class="cm"># 5s TCP connect timeout</span>
+<span class="nm">HTTPSampler.response_timeout</span>=<span class="nm">30000</span> <span class="cm"># 30s response read timeout</span>
+
+<span class="cm"># CSV Data Set encoding</span>
+csvdataset.file.encoding=<span class="st">UTF-8</span></div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Never run actual load tests from JMeter GUI — GUI consumes extra resources. Always use -n (non-GUI/headless) mode for real runs.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Always increase JMeter JVM heap (-Xmx) before large tests — default 512MB will cause OutOfMemoryError above ~300 threads.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Store .jmx files in Git — they are plain XML and fully version-controllable. Parameterize all environment-specific values.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Disable all Listeners during load runs (except Simple Data Writer) — Listeners that display graphs consume significant CPU and memory.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use JMeter plugins (via JMeter Plugins Manager) for advanced Thread Groups, extra metrics, and better reports.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: What is JMeter and why is it preferred for performance testing? <span class="arr">›</span></div><div class="qa-a">Apache JMeter is a free, open-source Java desktop application designed for load and performance testing. It is preferred because: it supports multiple protocols (HTTP, JDBC, FTP, LDAP, SOAP, REST, WebSocket), has a rich plugin ecosystem (500+ plugins), runs headlessly for CI/CD integration, supports distributed testing across multiple machines, and requires no licensing cost. Its XML-based .jmx format enables full version control and programmatic generation.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: What is the difference between GUI mode and Non-GUI mode in JMeter? <span class="arr">›</span></div><div class="qa-a">GUI mode (-g flag, or just running jmeter) opens the graphical interface — it is used ONLY for designing test plans, debugging scripts, and reviewing results post-run. GUI mode itself consumes significant CPU/memory from the JMeter JVM, artificially throttling load generation. Non-GUI mode (jmeter -n -t test.jmx -l results.jtl) runs JMeter headlessly — it devotes all resources to generating load, producing accurate results at scale. Industry rule: design in GUI, execute in non-GUI.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: What protocols does JMeter support? <span class="arr">›</span></div><div class="qa-a">Built-in: HTTP/HTTPS, FTP, JDBC (databases), LDAP, SMTP/POP3/IMAP (mail), TCP, JMS (message queues), OS shell/local processes. Via plugins: WebSocket, gRPC, Kafka, MQTT, Selenium/WebDriver (browser-level), MongoDB, Redis. JMeter's extensibility through Java allows custom samplers for any protocol not natively supported.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: What is a .jmx file and how is it structured? <span class="arr">›</span></div><div class="qa-a">A .jmx file is a JMeter Test Plan saved as a standard XML document. It follows a nested hashTree structure where every JMeter element (Thread Group, Sampler, Listener, etc.) is wrapped in a hashTree node that contains its children. The root is jmeterTestPlan, which contains a hashTree with a TestPlan element. You can edit .jmx files directly in any text editor, generate them programmatically, or use them with Maven/Gradle JMeter plugins for build-time test execution.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: How does JMeter handle virtual users (threads)? <span class="arr">›</span></div><div class="qa-a">Each virtual user in JMeter is a Java thread. A Thread Group defines: num_threads (total VUs), ramp_time (seconds to gradually start all threads — prevents thundering herd), and loop count (how many iterations each thread runs). JMeter uses the JVM thread scheduler, so each thread is a real OS thread — this limits JMeter to roughly 200–500 threads per machine before OS context-switching overhead affects results. For higher concurrency, use distributed testing or async samplers.</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(0)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="btn-next" onclick="gt(1)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ===== SESSION 2 ===== -->
+<div class="ses" id="s1">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#EEEDFE;color:#3C3489">02</div>
+    <div class="ses-meta"><h2>JMeter Architecture — All Keywords & Elements</h2><p>Complete element reference: Thread Groups, Samplers, Listeners, Controllers, Timers, Assertions</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>JMeter has 8 categories of elements. Every performance test is built by combining these. Understanding all element types and their execution order is the foundation of JMeter mastery.</p>
+    <div class="arch" style="margin-top:10px">
+      <div class="an" style="background:#EEEDFE;color:#3C3489">Thread Group<br><span style="font-size:10px;font-weight:400">Virtual users</span></div>
+      <div class="an" style="background:#E1F5EE;color:#085041">Samplers<br><span style="font-size:10px;font-weight:400">Send requests</span></div>
+      <div class="an" style="background:#FAEEDA;color:#633806">Config Elem.<br><span style="font-size:10px;font-weight:400">Setup data</span></div>
+      <div class="an" style="background:#FCEBEB;color:#A32D2D">Assertions<br><span style="font-size:10px;font-weight:400">Validate resp.</span></div>
+    </div>
+    <div class="arch">
+      <div class="an" style="background:#EAF3DE;color:#27500A">Timers<br><span style="font-size:10px;font-weight:400">Add delays</span></div>
+      <div class="an" style="background:#FAECE7;color:#993C1D">Controllers<br><span style="font-size:10px;font-weight:400">Control flow</span></div>
+      <div class="an" style="background:#FBEAF0;color:#993556">Pre/Post Proc.<br><span style="font-size:10px;font-weight:400">Transform data</span></div>
+      <div class="an" style="background:#F1EFE8;color:#444441">Listeners<br><span style="font-size:10px;font-weight:400">Collect results</span></div>
+    </div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"JMeter's execution order per request is: Config Elements → Pre-Processors → Timer → Sampler → Post-Processors → Assertions → Listeners."</div>
+  <div class="ol">"A Thread Group defines the load profile — number of threads, ramp-up time, loop count, and scheduler duration."</div>
+  <div class="ol">"Assertions in JMeter validate the response — Response Code Assertion, Response Body Assertion, Duration Assertion, and Size Assertion are the four core types."</div>
+  <div class="ol">"Logic Controllers (If, While, Loop, ForEach, Transaction, Random, Throughput) control the order and conditions under which Samplers execute."</div>
+  <div class="ol">"A Transaction Controller groups multiple samplers into one logical transaction — its response time is the sum of all child samplers, measuring end-to-end user journey time."</div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — Complete Thread Group types reference</p>
+  <div class="cb"><span class="cm">&lt;!-- 1. Standard Thread Group — basic VU pool --&gt;</span>
+<span class="kw">&lt;ThreadGroup&gt;</span>
+  ThreadGroup.num_threads = <span class="nm">100</span>     <span class="cm">&lt;!-- 100 virtual users --&gt;</span>
+  ThreadGroup.ramp_time   = <span class="nm">60</span>      <span class="cm">&lt;!-- add 1 new VU per 0.6 seconds over 60s --&gt;</span>
+  LoopController.loops    = <span class="nm">-1</span>      <span class="cm">&lt;!-- -1 = loop forever (use scheduler below) --&gt;</span>
+  ThreadGroup.scheduler   = <span class="kw">true</span>    <span class="cm">&lt;!-- enable duration-based stop --&gt;</span>
+  ThreadGroup.duration    = <span class="nm">300</span>     <span class="cm">&lt;!-- run for 300 seconds (5 minutes) --&gt;</span>
+  ThreadGroup.delay       = <span class="nm">0</span>       <span class="cm">&lt;!-- seconds before this thread group starts --&gt;</span>
+<span class="kw">&lt;/ThreadGroup&gt;</span>
+
+<span class="cm">&lt;!-- 2. Stepping Thread Group (plugin) — gradual ramp steps --&gt;</span>
+<span class="cm">&lt;!-- Start 0 users, add 10 every 30s up to 100, then hold 300s, then stop --&gt;</span>
+<span class="kw">&lt;kg.apc.jmeter.threads.SteppingThreadGroup&gt;</span>
+  Start_users_count        = <span class="nm">0</span>
+  Start_users_count_burst  = <span class="nm">0</span>
+  Add_user_count_to_burst  = <span class="nm">10</span>    <span class="cm">&lt;!-- add 10 VUs per step --&gt;</span>
+  Start_users_period       = <span class="nm">30</span>    <span class="cm">&lt;!-- seconds between steps --&gt;</span>
+  Stop_users_count         = <span class="nm">10</span>    <span class="cm">&lt;!-- remove 10 VUs per step during ramp-down --&gt;</span>
+  flighttime               = <span class="nm">300</span>   <span class="cm">&lt;!-- hold duration at peak --&gt;</span>
+<span class="kw">&lt;/kg.apc.jmeter.threads.SteppingThreadGroup&gt;</span></div>
+
+  <p class="cp">Example 2 — All Assertion types with XML properties</p>
+  <div class="cb"><span class="cm">&lt;!-- 1. Response Assertion — validate status code and/or body text --&gt;</span>
+<span class="kw">&lt;ResponseAssertion&gt;</span>
+  <span class="cm">&lt;!-- testField: RESPONSE_CODE / RESPONSE_DATA / RESPONSE_HEADERS / REQUEST_HEADERS --&gt;</span>
+  Assertion.test_field   = <span class="st">Assertion.response_code</span>
+  <span class="cm">&lt;!-- testType: 2=contains, 1=matches(regex), 8=equals, 16=substring, 4096=not --&gt;</span>
+  Assertion.test_type    = <span class="nm">8</span>            <span class="cm">&lt;!-- 8 = equals --&gt;</span>
+  testStrings            = <span class="st">200</span>          <span class="cm">&lt;!-- expected HTTP status code --&gt;</span>
+<span class="kw">&lt;/ResponseAssertion&gt;</span>
+
+<span class="cm">&lt;!-- 2. Duration Assertion — SLA check on response time --&gt;</span>
+<span class="kw">&lt;DurationAssertion&gt;</span>
+  DurationAssertion.duration = <span class="nm">2000</span>    <span class="cm">&lt;!-- fail if response > 2000ms --&gt;</span>
+<span class="kw">&lt;/DurationAssertion&gt;</span>
+
+<span class="cm">&lt;!-- 3. Size Assertion — validate response body size --&gt;</span>
+<span class="kw">&lt;SizeAssertion&gt;</span>
+  SizeAssertion.size        = <span class="nm">100</span>      <span class="cm">&lt;!-- expected size in bytes --&gt;</span>
+  <span class="cm">&lt;!-- operator: 1=greater, 2=less, 3=equal, 4=notequal, 5=greatereq, 6=lesseq --&gt;</span>
+  SizeAssertion.operator    = <span class="nm">5</span>        <span class="cm">&lt;!-- 5 = >= 100 bytes --&gt;</span>
+  SizeAssertion.type        = <span class="nm">0</span>        <span class="cm">&lt;!-- 0=full response, 1=headers, 2=body --&gt;</span>
+<span class="kw">&lt;/SizeAssertion&gt;</span>
+
+<span class="cm">&lt;!-- 4. JSON Assertion — validate JSON path exists / has value --&gt;</span>
+<span class="kw">&lt;JSONPathAssertion&gt;</span>
+  JSON_PATH                 = <span class="st">$.data.id</span>  <span class="cm">&lt;!-- JSONPath expression --&gt;</span>
+  EXPECTED_VALUE            = <span class="st">123</span>         <span class="cm">&lt;!-- expected value (empty=just check exists) --&gt;</span>
+  JSONVALIDATION            = <span class="kw">true</span>        <span class="cm">&lt;!-- validate the value --&gt;</span>
+  INVERT                    = <span class="kw">false</span>       <span class="cm">&lt;!-- false=must match, true=must NOT match --&gt;</span>
+<span class="kw">&lt;/JSONPathAssertion&gt;</span></div>
+
+  <p class="cp">Example 3 — Timer types (think time simulation)</p>
+  <div class="cb"><span class="cm">&lt;!-- Timers add a pause BEFORE each sampler in scope --&gt;</span>
+
+<span class="cm">&lt;!-- 1. Constant Timer — fixed delay --&gt;</span>
+<span class="kw">&lt;ConstantTimer&gt;</span>
+  ConstantTimer.delay = <span class="nm">1000</span>     <span class="cm">&lt;!-- wait exactly 1000ms before next request --&gt;</span>
+<span class="kw">&lt;/ConstantTimer&gt;</span>
+
+<span class="cm">&lt;!-- 2. Gaussian Random Timer — random delay around a mean --&gt;</span>
+<span class="kw">&lt;GaussianRandomTimer&gt;</span>
+  ConstantTimer.delay      = <span class="nm">1000</span>   <span class="cm">&lt;!-- base offset (constant part) --&gt;</span>
+  GaussianRandomTimer.range = <span class="nm">500</span>   <span class="cm">&lt;!-- ±500ms gaussian variance --&gt;</span>
+  <span class="cm">&lt;!-- effective delay = 1000 + gaussian(0, 500) ms --&gt;</span>
+<span class="kw">&lt;/GaussianRandomTimer&gt;</span>
+
+<span class="cm">&lt;!-- 3. Uniform Random Timer — flat random range --&gt;</span>
+<span class="kw">&lt;UniformRandomTimer&gt;</span>
+  ConstantTimer.delay          = <span class="nm">500</span>   <span class="cm">&lt;!-- minimum delay --&gt;</span>
+  RandomTimer.range             = <span class="nm">1500</span>  <span class="cm">&lt;!-- random add-on: 0 to 1500ms --&gt;</span>
+  <span class="cm">&lt;!-- effective delay: 500ms to 2000ms uniformly distributed --&gt;</span>
+<span class="kw">&lt;/UniformRandomTimer&gt;</span>
+
+<span class="cm">&lt;!-- 4. Throughput Shaping Timer (plugin) — precise TPS control --&gt;</span>
+<span class="cm">&lt;!-- Define steps: start TPS, end TPS, duration in seconds --&gt;</span>
+<span class="cm">&lt;!-- Step 1: ramp 10→100 TPS over 60s | Step 2: hold 100 TPS for 300s --&gt;</span>
+<span class="kw">&lt;kg.apc.jmeter.timers.VariableThroughputTimer&gt;</span>
+  load_profile = <span class="st">10 100 60 100 100 300</span>
+<span class="kw">&lt;/kg.apc.jmeter.timers.VariableThroughputTimer&gt;</span></div>
+
+  <p class="cp">Example 4 — Logic Controllers reference</p>
+  <div class="cb"><span class="cm">&lt;!-- 1. If Controller — conditional execution --&gt;</span>
+<span class="kw">&lt;IfController&gt;</span>
+  <span class="cm">&lt;!-- condition: JavaScript/Groovy expression that returns true/false --&gt;</span>
+  IfController.condition  = <span class="st">"${statusCode}" == "200"</span>
+  IfController.evaluateAll = <span class="kw">false</span>   <span class="cm">&lt;!-- true=evaluate per sampler, false=once per loop --&gt;</span>
+  IfController.useExpression = <span class="kw">true</span>  <span class="cm">&lt;!-- true=use groovy expression engine --&gt;</span>
+<span class="kw">&lt;/IfController&gt;</span>
+
+<span class="cm">&lt;!-- 2. While Controller — loop until condition becomes false --&gt;</span>
+<span class="kw">&lt;WhileController&gt;</span>
+  WhileController.condition = <span class="st">"${jobStatus}" != "completed"</span>
+<span class="kw">&lt;/WhileController&gt;</span>
+
+<span class="cm">&lt;!-- 3. Loop Controller — repeat N times --&gt;</span>
+<span class="kw">&lt;LoopController&gt;</span>
+  LoopController.loops = <span class="nm">5</span>             <span class="cm">&lt;!-- run children 5 times --&gt;</span>
+  LoopController.continue_forever = <span class="kw">false</span>
+<span class="kw">&lt;/LoopController&gt;</span>
+
+<span class="cm">&lt;!-- 4. Transaction Controller — group samplers as one transaction --&gt;</span>
+<span class="kw">&lt;TransactionController&gt;</span>
+  TransactionController.parent      = <span class="kw">true</span>   <span class="cm">&lt;!-- parent=true: include child times in total --&gt;</span>
+  TransactionController.includeTimers = <span class="kw">false</span> <span class="cm">&lt;!-- false: exclude timer delays from TX time --&gt;</span>
+<span class="kw">&lt;/TransactionController&gt;</span>
+
+<span class="cm">&lt;!-- 5. ForEach Controller — iterate over CSV variable set --&gt;</span>
+<span class="kw">&lt;ForeachController&gt;</span>
+  ForeachController.inputVal  = <span class="st">product</span>   <span class="cm">&lt;!-- base variable name: product_1, product_2 --&gt;</span>
+  ForeachController.returnVal = <span class="st">currentProduct</span>
+  ForeachController.useSeparator = <span class="kw">true</span>   <span class="cm">&lt;!-- use _ as separator (product_1, product_2) --&gt;</span>
+<span class="kw">&lt;/ForeachController&gt;</span></div>
+
+  <p class="cp">Example 5 — Listener types (results collection)</p>
+  <div class="cb"><span class="cm">&lt;!-- IMPORTANT: Disable all GUI listeners during real load runs!
+     They consume CPU/RAM. Only keep Simple Data Writer enabled. --&gt;</span>
+
+<span class="cm">&lt;!-- 1. Simple Data Writer — writes results to .jtl file (ALWAYS use this) --&gt;</span>
+<span class="kw">&lt;ResultSaver&gt;</span>
+  filename = <span class="st">./results/load_test_${__time(yyyyMMdd_HHmmss)}.jtl</span>
+<span class="kw">&lt;/ResultSaver&gt;</span>
+
+<span class="cm">&lt;!-- 2. View Results Tree — shows every request/response (DEBUG ONLY!) --&gt;</span>
+<span class="kw">&lt;ResultAction&gt;</span>
+  <span class="cm">&lt;!-- Set enabled=false during load runs, true only for debugging --&gt;</span>
+  enabled = <span class="kw">false</span>
+<span class="kw">&lt;/ResultAction&gt;</span>
+
+<span class="cm">&lt;!-- 3. Aggregate Report — real-time summary statistics --&gt;</span>
+<span class="cm">&lt;!-- Shows: samples, avg, min, max, 90th/95th/99th pct, error%, throughput --&gt;</span>
+<span class="kw">&lt;StatVisualizer&gt;</span> <span class="cm">&lt;!-- AggregateReport --&gt;</span>
+  filename = <span class="st">./results/aggregate.csv</span>   <span class="cm">&lt;!-- also save to file --&gt;</span>
+<span class="kw">&lt;/StatVisualizer&gt;</span>
+
+<span class="cm">&lt;!-- 4. Backend Listener → send metrics to InfluxDB/Grafana in real-time --&gt;</span>
+<span class="kw">&lt;BackendListener&gt;</span>
+  classname = <span class="st">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</span>
+  influxdbUrl  = <span class="st">http://localhost:8086/write?db=jmeter</span>
+  application  = <span class="st">MyApp</span>
+  measurement  = <span class="st">jmeter</span>
+  summaryOnly  = <span class="kw">false</span>             <span class="cm">&lt;!-- false = per-sampler metrics --&gt;</span>
+  samplersRegex = <span class="st">.*</span>               <span class="cm">&lt;!-- regex to filter which samplers to send --&gt;</span>
+<span class="kw">&lt;/BackendListener&gt;</span></div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Add a Duration Assertion to every sampler — it acts as an automatic SLA gate, marking requests as failed when they exceed the threshold.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use Transaction Controllers to group all requests in a user journey — this gives you end-to-end journey response time, not just individual endpoint times.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Prefer Gaussian or Uniform Random Timers over Constant Timer — fixed delays create unrealistic synchronized load patterns.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use Backend Listener + InfluxDB + Grafana for real-time dashboards during long runs — post-run reports miss live anomalies.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Scope your elements correctly — a Timer placed at Thread Group level applies to ALL samplers; place it inside a specific sampler's scope for targeted delays.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: What is the execution order of JMeter elements? <span class="arr">›</span></div><div class="qa-a">JMeter executes elements in this order per sample: (1) Configuration Elements (setup headers, CSV data, HTTP defaults), (2) Pre-Processors (modify request before sending), (3) Timers (pause/think time), (4) Sampler (send the actual request), (5) Post-Processors (extract data from response — Regex, JSON Extractor), (6) Assertions (validate the response), (7) Listeners (record the result). Understanding this order is critical — placing a Post-Processor after an Assertion means it still runs even if the assertion fails.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: What is a Transaction Controller and why use it? <span class="arr">›</span></div><div class="qa-a">A Transaction Controller is a Logic Controller that groups multiple child Samplers into a single named "transaction." Its response time is the sum of all child sampler times. Set parent=true so the controller itself appears as a sample in results, and includeTimers=false to exclude timer delays from the business transaction time. Use it to measure end-to-end user journey performance — for example, the total time for login + search + add-to-cart + checkout as one "Purchase Journey" transaction.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: How does a Duration Assertion work as an SLA gate? <span class="arr">›</span></div><div class="qa-a">A Duration Assertion marks a sample as FAILED if its response time exceeds the configured threshold (in milliseconds). When placed under a Sampler, it automatically enforces the SLA for that request — failed samples are counted in the error rate and appear as failures in the Aggregate Report. This is cleaner than post-processing results manually because failures are visible in real-time during the run and in all standard reports without custom scripting.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: What is the Backend Listener and why is it important? <span class="arr">›</span></div><div class="qa-a">The Backend Listener is a real-time metrics forwarding component that sends JMeter sample results to an external time-series database (InfluxDB, Graphite, or Prometheus via plugin) as the test runs. This enables Grafana dashboards showing live throughput, response time, and error rate. Its critical advantage over file-based Listeners: you can observe performance degradation in real-time and stop a test early if thresholds are breached, rather than discovering issues only after a 30-minute run completes.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: When should you use an If Controller vs a Switch Controller? <span class="arr">›</span></div><div class="qa-a">If Controller: use when you have a single binary condition (if status == 200, execute the next request; else skip). It evaluates a Groovy/JavaScript expression returning true/false. Switch Controller: use when you have multiple named branches — it selches the branch whose name matches the variable value (like switch-case in programming). Example: switch on ${userType} to execute Admin/Viewer/Guest request sequences. Switch is more efficient than nested If Controllers for multi-branch logic.</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(1)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="btn-next" onclick="gt(2)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ===== SESSION 3 ===== -->
+<div class="ses" id="s2">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#EEEDFE;color:#3C3489">03</div>
+    <div class="ses-meta"><h2>Test Plan Design — Protocols & Performance Types</h2><p>HTTP/REST · JDBC · Test types · Load profiles · NFR mapping</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>A well-designed Test Plan maps every business requirement to a test type and load profile. This session covers how to design test plans for HTTP APIs and databases, choose the correct performance test type, and define load profiles from SLA documents.</p>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"A JMeter Test Plan is the container for the entire test — it defines serial vs parallel Thread Group execution and classpath libraries."</div>
+  <div class="ol">"HTTP Request Defaults is a Config Element that sets server, port, and path defaults for all HTTP samplers — avoiding duplication and enabling single-point environment switching."</div>
+  <div class="ol">"JDBC Request sampler requires a JDBC Connection Configuration with pool settings — connection pool size must match the test's thread count."</div>
+  <div class="ol">"Parameterizing the base URL in HTTP Request Defaults via ${base_url} allows the same Test Plan to run against dev, staging, or production by changing one variable."</div>
+  <div class="ol">"Load test, stress test, soak test, spike test, and scalability test are the five core performance test types — each answers a different question about system capacity."</div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — HTTP Request Defaults (Config Element)</p>
+  <div class="cb"><span class="cm">&lt;!-- HTTP Request Defaults sets common properties for ALL HTTP samplers below it --&gt;</span>
+<span class="cm">&lt;!-- This is the single point of control for the target environment --&gt;</span>
+<span class="kw">&lt;ConfigTestElement&gt;</span> <span class="cm">&lt;!-- class: HttpDefaultsGui --&gt;</span>
+
+  <span class="cm">&lt;!-- Server name: use JMeter variable for environment switching --&gt;</span>
+  HTTPSampler.domain   = <span class="st">${base_url}</span>    <span class="cm">&lt;!-- e.g. api.staging.myapp.com --&gt;</span>
+  HTTPSampler.port     = <span class="st">${base_port}</span>   <span class="cm">&lt;!-- e.g. 443 --&gt;</span>
+  HTTPSampler.protocol = <span class="st">https</span>           <span class="cm">&lt;!-- http or https --&gt;</span>
+
+  <span class="cm">&lt;!-- Connection timeouts (ms) --&gt;</span>
+  HTTPSampler.connect_timeout  = <span class="nm">5000</span>    <span class="cm">&lt;!-- TCP connection timeout --&gt;</span>
+  HTTPSampler.response_timeout = <span class="nm">30000</span>   <span class="cm">&lt;!-- response read timeout --&gt;</span>
+
+  <span class="cm">&lt;!-- HTTP implementation: HttpClient4 (default) or Java --&gt;</span>
+  HTTPSampler.implementation   = <span class="st">HttpClient4</span>
+
+<span class="kw">&lt;/ConfigTestElement&gt;</span></div>
+
+  <p class="cp">Example 2 — Full HTTP Request Sampler (REST API)</p>
+  <div class="cb"><span class="cm">&lt;!-- HTTP Request Sampler — sends an actual HTTP request --&gt;</span>
+<span class="kw">&lt;HTTPSamplerProxy&gt;</span>
+  HTTPSampler.method        = <span class="st">POST</span>          <span class="cm">&lt;!-- GET POST PUT PATCH DELETE HEAD OPTIONS --&gt;</span>
+  HTTPSampler.path          = <span class="st">/api/v1/orders</span>  <span class="cm">&lt;!-- URI path (base URL from Defaults) --&gt;</span>
+  HTTPSampler.auto_redirects= <span class="kw">false</span>          <span class="cm">&lt;!-- do NOT follow 3xx redirects --&gt;</span>
+  HTTPSampler.follow_redirects = <span class="kw">true</span>        <span class="cm">&lt;!-- DO follow redirects --&gt;</span>
+  HTTPSampler.use_keepalive = <span class="kw">true</span>           <span class="cm">&lt;!-- reuse TCP connection (HTTP/1.1 keep-alive) --&gt;</span>
+  HTTPSampler.DO_MULTIPART_POST = <span class="kw">false</span>      <span class="cm">&lt;!-- true for file upload (multipart) --&gt;</span>
+  HTTPSampler.postBodyRaw   = <span class="kw">true</span>           <span class="cm">&lt;!-- true = send raw body (JSON) --&gt;</span>
+  
+  <span class="cm">&lt;!-- Raw JSON body — uses JMeter variables for dynamic data --&gt;</span>
+  <span class="kw">&lt;stringProp</span> name=<span class="st">"Argument.value"</span><span class="kw">&gt;</span>
+    {
+      "productId": <span class="st">${productId}</span>,      <span class="cm">&lt;!-- from CSV Data Set --&gt;</span>
+      "quantity":  <span class="st">${quantity}</span>,
+      "customerId": <span class="st">${__Random(1000,9999)}</span>,  <span class="cm">&lt;!-- JMeter built-in function --&gt;</span>
+      "requestId":  <span class="st">"${__UUID()}"</span>             <span class="cm">&lt;!-- unique UUID per request --&gt;</span>
+    }
+  <span class="kw">&lt;/stringProp&gt;</span>
+
+  <span class="cm">&lt;!-- Headers (also add via HTTP Header Manager Config Element) --&gt;</span>
+  Content-Type:  <span class="st">application/json</span>
+  Authorization: <span class="st">Bearer ${authToken}</span>
+<span class="kw">&lt;/HTTPSamplerProxy&gt;</span></div>
+
+  <p class="cp">Example 3 — JDBC Connection Configuration + JDBC Request</p>
+  <div class="cb"><span class="cm">&lt;!-- Step 1: JDBC Connection Configuration (Config Element) --&gt;</span>
+<span class="kw">&lt;JDBCDataSource&gt;</span>
+  <span class="cm">&lt;!-- Pool name — must match the "Variable Name" in JDBC Request --&gt;</span>
+  variableName   = <span class="st">myDB</span>
+
+  <span class="cm">&lt;!-- JDBC URL format depends on database --&gt;</span>
+  <span class="cm">&lt;!-- MySQL:      jdbc:mysql://host:3306/dbname --&gt;</span>
+  <span class="cm">&lt;!-- PostgreSQL: jdbc:postgresql://host:5432/dbname --&gt;</span>
+  <span class="cm">&lt;!-- Oracle:     jdbc:oracle:thin:@host:1521:SID --&gt;</span>
+  dbUrl          = <span class="st">jdbc:mysql://db.staging.com:3306/myappdb</span>
+
+  username       = <span class="st">${db_user}</span>           <span class="cm">&lt;!-- from JMeter property/env var --&gt;</span>
+  password       = <span class="st">${db_pass}</span>
+  driverClass    = <span class="st">com.mysql.cj.jdbc.Driver</span>   <span class="cm">&lt;!-- JAR must be in /lib/ext/ --&gt;</span>
+
+  <span class="cm">&lt;!-- Connection pool settings --&gt;</span>
+  poolMax        = <span class="nm">10</span>          <span class="cm">&lt;!-- max pool size — match thread count --&gt;</span>
+  timeout        = <span class="nm">10000</span>       <span class="cm">&lt;!-- ms to wait for available connection --&gt;</span>
+  keepAlive      = <span class="kw">true</span>        <span class="cm">&lt;!-- send keep-alive queries to maintain pool --&gt;</span>
+<span class="kw">&lt;/JDBCDataSource&gt;</span>
+
+<span class="cm">&lt;!-- Step 2: JDBC Request Sampler --&gt;</span>
+<span class="kw">&lt;JDBCSampler&gt;</span>
+  dataSource     = <span class="st">myDB</span>        <span class="cm">&lt;!-- MUST match variableName above --&gt;</span>
+  <span class="cm">&lt;!-- queryType: Select Statement / Update Statement / Callable Statement / Prepared Select Statement --&gt;</span>
+  queryType      = <span class="st">Select Statement</span>
+  query          = <span class="st">SELECT id, name FROM users WHERE region = '${region}' LIMIT 100</span>
+  <span class="cm">&lt;!-- result variable: stores result set as JMeter variable --&gt;</span>
+  resultVariable = <span class="st">userResults</span>
+  queryTimeout   = <span class="nm">5</span>           <span class="cm">&lt;!-- query timeout in seconds (0=no timeout) --&gt;</span>
+<span class="kw">&lt;/JDBCSampler&gt;</span></div>
+
+  <p class="cp">Example 4 — Load profile patterns for 5 test types</p>
+  <div class="cb"><span class="cm"># JMeter Thread Group settings for each performance test type
+# Configure via Thread Group GUI or Stepping Thread Group plugin</span>
+
+<span class="cm"># 1. SMOKE TEST — verify script works, 1-5 VUs</span>
+num_threads=1  ramp_time=1   duration=60    <span class="cm"># 1 VU, 60 seconds</span>
+
+<span class="cm"># 2. LOAD TEST — validate SLA at expected peak load</span>
+num_threads=100  ramp_time=60  duration=300  <span class="cm"># ramp 100 VUs over 1min, hold 5min</span>
+
+<span class="cm"># 3. STRESS TEST — find breaking point (escalate until failure)</span>
+<span class="cm"># Use Stepping Thread Group plugin:</span>
+<span class="cm"># Start:0 → +10 VUs every 30s → max 500 VUs → hold 60s each step</span>
+start_users=0  step_users=10  step_duration=30  max_users=500
+
+<span class="cm"># 4. SOAK TEST — endurance run for memory/leak detection</span>
+num_threads=80  ramp_time=120  duration=28800  <span class="cm"># 80 VUs for 8 hours (28800s)</span>
+
+<span class="cm"># 5. SPIKE TEST — sudden burst simulation</span>
+<span class="cm"># Use Stepping Thread Group: 0→500 VUs in 5 seconds, hold 60s, drop to 0</span>
+<span class="cm"># Or use Ultimate Thread Group (plugin) for precise ramp shapes</span>
+start_users=0  target_users=500  ramp_time=5  hold_time=60  ramp_down=5</div>
+
+  <p class="cp">Example 5 — HTTP Header Manager (Config Element)</p>
+  <div class="cb"><span class="cm">&lt;!-- HTTP Header Manager — adds headers to all samplers in scope --&gt;</span>
+<span class="cm">&lt;!-- Place at Thread Group level for global headers --&gt;</span>
+<span class="cm">&lt;!-- Place under a specific sampler for that sampler only --&gt;</span>
+<span class="kw">&lt;HeaderManager&gt;</span>
+  <span class="cm">&lt;!-- Each header is a Header element with name + value --&gt;</span>
+  Header:
+    name  = <span class="st">Content-Type</span>
+    value = <span class="st">application/json</span>
+
+  Header:
+    name  = <span class="st">Accept</span>
+    value = <span class="st">application/json</span>
+
+  Header:
+    name  = <span class="st">Authorization</span>
+    value = <span class="st">Bearer ${authToken}</span>   <span class="cm">&lt;!-- dynamic from JSON Extractor post-login --&gt;</span>
+
+  Header:
+    name  = <span class="st">X-Correlation-ID</span>
+    value = <span class="st">${__UUID()}</span>            <span class="cm">&lt;!-- unique ID per request via JMeter function --&gt;</span>
+
+  Header:
+    name  = <span class="st">X-JMeter-Thread</span>
+    value = <span class="st">${__threadNum}</span>         <span class="cm">&lt;!-- thread number for debugging --&gt;</span>
+<span class="kw">&lt;/HeaderManager&gt;</span></div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Always use HTTP Request Defaults — setting server/port/protocol once prevents inconsistency and enables single-point environment switching.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>For JDBC tests, set pool size equal to thread count — too small a pool causes connection wait time to inflate response time metrics.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Run a smoke test first with 1 thread before any load test — validate all samplers pass before scaling up concurrency.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use Stepping Thread Group plugin instead of standard Thread Group for stress tests — it provides precise step-by-step ramp control.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Parameterize ALL environment-specific values (URL, port, credentials) as JMeter properties — pass them via CLI: -Jbase_url=api.prod.com.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: How do you parameterize JMeter tests for different environments? <span class="arr">›</span></div><div class="qa-a">Three methods: (1) JMeter Properties — define ${__P(base_url, localhost)} in the test plan; pass values via CLI: jmeter -n -t test.jmx -Jbase_url=api.staging.com. (2) User-Defined Variables — define at Test Plan level and override at runtime using CSV Data Set. (3) Property file — create env-specific .properties files and load via -q flag: jmeter -n -t test.jmx -q staging.properties. Method 1 (CLI -J flag) is most CI/CD friendly since Jenkins/GitHub Actions can pass environment-specific values dynamically.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: How do you test a SOAP web service in JMeter? <span class="arr">›</span></div><div class="qa-a">Use HTTP Request Sampler with method=POST. Set Content-Type header to text/xml;charset=UTF-8. In the request body, paste the SOAP XML envelope directly. Add SOAPAction header (required by most SOAP services). Use Regex Extractor in Post-Processors to extract values from the XML response. For HTTPS, configure a Keystore Config for client certificate authentication if required. JMeter does not have a dedicated SOAP sampler — it treats SOAP as an HTTP POST with an XML body.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: What is the difference between ramp-up time and think time? <span class="arr">›</span></div><div class="qa-a">Ramp-up time (Thread Group.ramp_time) is how long JMeter takes to start ALL threads — it staggers VU creation to prevent all threads from hitting the server simultaneously at test start (thundering herd). Think time (Timer elements) is a per-iteration pause between requests within a single VU session, simulating a real user reading a page or filling a form. Ramp-up is about VU startup sequencing; think time is about realistic inter-request pacing within a session.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: How does JMeter measure "throughput"? <span class="arr">›</span></div><div class="qa-a">JMeter calculates throughput (requests/sec or transactions/sec) as: total completed samples / total elapsed time since first sample. It appears in the Aggregate Report as "Throughput" column. For Transaction Controllers, throughput measures full transactions per second. Note: JMeter's reported throughput is the actual achieved rate — not the configured target. If you want precise TPS control (e.g., exactly 100 RPS), use the Throughput Shaping Timer (plugin) which throttles threads to meet a target rate.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: How do you test a REST API with OAuth2 authentication in JMeter? <span class="arr">›</span></div><div class="qa-a">Step 1: Create an HTTP Request sampler for POST /oauth/token with client_id, client_secret, grant_type=client_credentials in the request body. Step 2: Add a JSON Extractor post-processor extracting access_token → stored as ${authToken}. Step 3: Add an HTTP Header Manager at Thread Group level with Authorization: Bearer ${authToken}. Step 4: For token expiry handling in soak tests, use a Setup Thread Group to refresh the token periodically and store in a JMeter property (${__P(token)}) accessible across thread groups.</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(2)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="btn-next" onclick="gt(3)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ===== SESSION 4 ===== -->
+<div class="ses" id="s3">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#E1F5EE;color:#085041">04</div>
+    <div class="ses-meta"><h2>Samplers — All Types & Deep Dive</h2><p>HTTP · JDBC · TCP · FTP · SMTP · Java · BeanShell · JSR223 · Debug</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Samplers are the core of JMeter — they are the elements that actually send requests to the target system. JMeter has 14+ built-in sampler types. Each sampler generates one "sample result" entry in your results file. Choosing the right sampler determines what protocol and request type you can test.</p>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"A Sampler is the JMeter element that sends a request to a target — every sample generates one result with response time, status code, and bytes transferred."</div>
+  <div class="ol">"JSR223 Sampler with Groovy engine is the modern replacement for BeanShell Sampler — Groovy is compiled and runs 10–100× faster than BeanShell."</div>
+  <div class="ol">"The Debug Sampler is a zero-network sampler that shows all current JMeter variables and properties — invaluable for debugging variable extraction issues."</div>
+  <div class="ol">"HTTP Sampler's 'Retrieve All Embedded Resources' option downloads CSS, JS, and images like a real browser — use it for page-level performance testing."</div>
+  <div class="ol">"The SMTP Sampler can test email notification performance — verifying that a system sends order confirmations within SLA under load."</div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — HTTP Sampler: file upload (multipart)</p>
+  <div class="cb"><span class="cm">&lt;!-- HTTP Request — file upload using multipart/form-data --&gt;</span>
+<span class="kw">&lt;HTTPSamplerProxy&gt;</span>
+  HTTPSampler.method            = <span class="st">POST</span>
+  HTTPSampler.path              = <span class="st">/api/documents/upload</span>
+  HTTPSampler.DO_MULTIPART_POST = <span class="kw">true</span>  <span class="cm">&lt;!-- enables multipart --&gt;</span>
+
+  <span class="cm">&lt;!-- File upload parameters --&gt;</span>
+  Files:
+    Filename    = <span class="st">${__BeanShell(vars.get("uploadFile"))}</span>  <span class="cm">&lt;!-- from CSV --&gt;</span>
+    ParamName   = <span class="st">file</span>          <span class="cm">&lt;!-- form field name --&gt;</span>
+    MimeType    = <span class="st">application/pdf</span>
+
+  <span class="cm">&lt;!-- Form text parameters alongside the file --&gt;</span>
+  Param:
+    name  = <span class="st">documentType</span>
+    value = <span class="st">${docType}</span>         <span class="cm">&lt;!-- from CSV Data Set --&gt;</span>
+  Param:
+    name  = <span class="st">userId</span>
+    value = <span class="st">${userId}</span>
+<span class="kw">&lt;/HTTPSamplerProxy&gt;</span></div>
+
+  <p class="cp">Example 2 — TCP Sampler (raw socket testing)</p>
+  <div class="cb"><span class="cm">&lt;!-- TCP Sampler — tests raw TCP socket connections --&gt;</span>
+<span class="cm">&lt;!-- Use case: testing custom protocols, IoT devices, legacy systems --&gt;</span>
+<span class="kw">&lt;TCPSampler&gt;</span>
+  TCPSampler.server       = <span class="st">192.168.1.100</span>
+  TCPSampler.port         = <span class="nm">9090</span>
+
+  <span class="cm">&lt;!-- TCPClient classname:
+       TCPClientImpl        = raw bytes (default)
+       BinaryTCPClientImpl  = hex string converted to binary
+       LengthPrefixedBinaryTCPClientImpl = length-prefixed binary --&gt;</span>
+  classname               = <span class="st">TCPClientImpl</span>
+
+  TCPSampler.request      = <span class="st">PING\r\n</span>       <span class="cm">&lt;!-- message to send --&gt;</span>
+  TCPSampler.timeout      = <span class="nm">5000</span>           <span class="cm">&lt;!-- read timeout ms --&gt;</span>
+  TCPSampler.reUseConnection = <span class="kw">true</span>       <span class="cm">&lt;!-- reuse TCP connection per thread --&gt;</span>
+  TCPSampler.closeConnection = <span class="kw">false</span>      <span class="cm">&lt;!-- close after each sample? --&gt;</span>
+  TCPSampler.nodelay      = <span class="kw">true</span>          <span class="cm">&lt;!-- TCP_NODELAY = disable Nagle algorithm --&gt;</span>
+  eolByte                 = <span class="nm">10</span>            <span class="cm">&lt;!-- byte value of end-of-line (10 = \n) --&gt;</span>
+<span class="kw">&lt;/TCPSampler&gt;</span></div>
+
+  <p class="cp">Example 3 — JSR223 Sampler (Groovy — modern approach)</p>
+  <div class="cb"><span class="cm">// JSR223 Sampler — scriptLanguage: groovy (preferred for performance)
+// Use for: custom business logic, complex data generation, non-standard protocols
+// Groovy is compiled to bytecode by JMeter → much faster than BeanShell</span>
+
+<span class="cm">// Access JMeter context objects in Groovy:</span>
+<span class="cm">// vars      = JMeterVariables (current thread's variables)</span>
+<span class="cm">// props     = JMeterProperties (global, shared across threads)</span>
+<span class="cm">// ctx       = JMeterContext (sampler result, last response)</span>
+<span class="cm">// log       = Logger (write to jmeter.log)</span>
+<span class="cm">// prev      = SampleResult (result of the previous sampler)</span>
+<span class="cm">// sampler   = current Sampler object</span>
+
+<span class="kw">import</span> groovy.json.JsonSlurper
+
+<span class="cm">// Read current response body as string</span>
+<span class="kw">def</span> responseBody = prev.getResponseDataAsString()
+
+<span class="cm">// Parse JSON response</span>
+<span class="kw">def</span> json = <span class="kw">new</span> JsonSlurper().parseText(responseBody)
+
+<span class="cm">// Extract nested value and store as JMeter variable</span>
+<span class="kw">def</span> orderId = json.data?.id?.toString()
+vars.put(<span class="st">"orderId"</span>, orderId ?: <span class="st">"NOT_FOUND"</span>)
+
+<span class="cm">// Log to JMeter console</span>
+log.info(<span class="st">"Extracted orderId: ${orderId}"</span>)
+
+<span class="cm">// Fail the sample if value is missing</span>
+<span class="kw">if</span> (!orderId) {
+    prev.setSuccessful(<span class="kw">false</span>)
+    prev.setResponseMessage(<span class="st">"orderId not found in response"</span>)
+}</div>
+
+  <p class="cp">Example 4 — Debug Sampler (troubleshooting variables)</p>
+  <div class="cb"><span class="cm">&lt;!-- Debug Sampler — outputs all JMeter variables to results --&gt;</span>
+<span class="cm">&lt;!-- Zero network activity — response IS the variable dump --&gt;</span>
+<span class="cm">&lt;!-- USE ONLY during development/debugging — disable in load runs --&gt;</span>
+<span class="kw">&lt;DebugSampler&gt;</span>
+  <span class="cm">&lt;!-- displayJMeterVariables: true = show all ${varName} variables --&gt;</span>
+  displayJMeterVariables  = <span class="kw">true</span>
+
+  <span class="cm">&lt;!-- displayJMeterProperties: true = show all jmeter.properties values --&gt;</span>
+  displayJMeterProperties = <span class="kw">false</span>
+
+  <span class="cm">&lt;!-- displaySystemProperties: true = show all Java system properties --&gt;</span>
+  displaySystemProperties = <span class="kw">false</span>
+<span class="kw">&lt;/DebugSampler&gt;</span>
+
+<span class="cm"># Debug Sampler output (visible in View Results Tree):</span>
+<span class="cm"># JMeterVariables:</span>
+<span class="cm">#   authToken=eyJhbGc...xyz</span>
+<span class="cm">#   userId=12345</span>
+<span class="cm">#   productId=P-789</span>
+<span class="cm">#   __jm__threadGroup=Thread Group 1</span>
+<span class="cm">#   JMeterThread.last_sample_ok=true</span></div>
+
+  <p class="cp">Example 5 — SMTP Sampler (email load testing)</p>
+  <div class="cb"><span class="cm">&lt;!-- SMTP Sampler — tests email sending under load --&gt;</span>
+<span class="cm">&lt;!-- Use case: order confirmation emails, OTP delivery performance --&gt;</span>
+<span class="kw">&lt;SmtpSampler&gt;</span>
+  SMTPSampler.server          = <span class="st">smtp.mailtrap.io</span>  <span class="cm">&lt;!-- test SMTP server --&gt;</span>
+  SMTPSampler.port            = <span class="nm">2525</span>
+  SMTPSampler.useSSL          = <span class="kw">false</span>
+  SMTPSampler.useStartTLS     = <span class="kw">true</span>
+
+  SMTPSampler.username        = <span class="st">${smtp_user}</span>
+  SMTPSampler.password        = <span class="st">${smtp_pass}</span>
+
+  SMTPSampler.mailFrom        = <span class="st">noreply@myapp.com</span>
+  SMTPSampler.receiverTo      = <span class="st">${userEmail}</span>       <span class="cm">&lt;!-- from CSV --&gt;</span>
+  SMTPSampler.subject         = <span class="st">Order Confirmation #${orderId}</span>
+  SMTPSampler.message         = <span class="st">Your order ${orderId} has been confirmed.</span>
+
+  <span class="cm">&lt;!-- Attachment (optional) --&gt;</span>
+  SMTPSampler.attachments     = <span class="st">/data/invoice.pdf</span>
+  SMTPSampler.messageIsHTML   = <span class="kw">false</span>              <span class="cm">&lt;!-- true for HTML email body --&gt;</span>
+<span class="kw">&lt;/SmtpSampler&gt;</span></div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Always use JSR223 Sampler with Groovy engine over BeanShell Sampler — Groovy is compiled and is 10–100× faster, critical under load.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Enable caching in JSR223 Sampler (tick "Cache compiled script") — JMeter recompiles the script on every sample if unchecked, destroying performance.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Disable Debug Sampler and View Results Tree before running any load test — they are development tools that consume memory.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>For REST testing, always check "Use keep-alive" in HTTP Sampler — it reuses TCP connections, which is what real browsers and HTTP clients do.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Name every sampler clearly with the HTTP method and endpoint: "POST /auth/login" — this makes Aggregate Report rows instantly identifiable.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: What is the difference between BeanShell Sampler and JSR223 Sampler? <span class="arr">›</span></div><div class="qa-a">BeanShell Sampler uses the BeanShell interpreter — it parses and interprets the script on EVERY sample, making it very slow under load (adds 10–50ms per execution). JSR223 Sampler supports multiple engines; with Groovy (default recommendation), the script is compiled to JVM bytecode on first execution and cached — subsequent executions are near-native Java speed. JSR223 + Groovy is the Apache JMeter team's recommended replacement for all BeanShell usage. Same API objects (vars, props, ctx, log, prev) work in both.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: How does a JSR223 Sampler differ from a JSR223 Pre/Post Processor? <span class="arr">›</span></div><div class="qa-a">JSR223 Sampler IS the request — it generates a sample result entry in the results file. You use it when your custom code IS the unit being tested (custom protocol implementation, file processing, etc.). JSR223 Pre-Processor runs BEFORE a Sampler to modify the request (generate dynamic data, set headers). JSR223 Post-Processor runs AFTER a Sampler to process the response (extract values, transform data). Pre/Post Processors do NOT generate separate sample results — they enhance the parent Sampler's lifecycle.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: How do you test a GraphQL API with JMeter? <span class="arr">›</span></div><div class="qa-a">GraphQL uses HTTP POST with a JSON body containing a query field. Use HTTP Request Sampler: method=POST, Content-Type=application/json, raw body: {"query": "{ users(limit: ${limit}) { id name email } }", "variables": {"limit": ${limit}}}. For parameterized queries, use CSV Data Set Config for variable substitution. For mutations, use the same pattern with mutation keyword. For subscriptions (WebSocket), use the WebSocket Sampler plugin. GraphQL is just HTTP JSON — no special sampler needed.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: What does "Retrieve All Embedded Resources" do in the HTTP Sampler? <span class="arr">›</span></div><div class="qa-a">When enabled, JMeter parses the HTML response and automatically fetches all embedded resources — CSS files, JavaScript, images, fonts — exactly like a real browser would. This creates additional sub-samplers for each resource. Use this for web page performance testing where you want to measure the complete page load time including all assets. Disable it for pure API performance testing since APIs don't return HTML pages with embedded resources. It significantly increases the number of samples generated.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: How do you handle cookie management for session-based web testing? <span class="arr">›</span></div><div class="qa-a">Add an HTTP Cookie Manager Config Element at the Thread Group level. JMeter automatically manages cookies per-thread: it stores Set-Cookie headers from responses and sends Cookie headers in subsequent requests, simulating a real browser session. Key settings: CookiePolicy=standard (RFC 6265 compliant), clearEachIteration=true (each loop iteration starts with a clean session — critical for login/logout scenarios). For custom cookie manipulation, use a JSR223 Pre-Processor to call cookieManager.addCookie(new Cookie(name, value, domain, path, secure, expiry)).</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(3)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="btn-next" onclick="gt(4)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ===== SESSION 5 ===== -->
+<div class="ses" id="s4">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#E1F5EE;color:#085041">05</div>
+    <div class="ses-meta"><h2>Listeners — Results, Reports & Metrics</h2><p>Aggregate Report · JTL format · HTML Dashboard · InfluxDB · Real-time monitoring</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Listeners collect, display, and store test results. Understanding the .jtl file format, the Aggregate Report columns, and how to generate the HTML Dashboard Report is essential for interpreting performance test results professionally.</p>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"The JMeter .jtl file is the raw results log — a CSV or XML file recording every sample with timestamp, elapsed time, status, bytes, and thread info."</div>
+  <div class="ol">"The Aggregate Report's 90th/95th/99th percentile columns are more important than the average — they represent the worst-case experience of the majority of users."</div>
+  <div class="ol">"The HTML Dashboard Report (jmeter -e -o) generates an interactive web report from a .jtl file — it includes response time over time, throughput trends, and error analysis."</div>
+  <div class="ol">"The Backend Listener forwards metrics to InfluxDB in real-time, enabling Grafana dashboards that show live test progress and instant anomaly detection."</div>
+  <div class="ol">"Disabling all GUI Listeners during load test execution and using only Simple Data Writer reduces JMeter's own CPU overhead by up to 40%."</div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — .jtl CSV format column reference</p>
+  <div class="cb"><span class="cm"># JMeter .jtl CSV file — one row per sample
+# Default columns (configured in jmeter.properties):</span>
+
+<span class="cm"># timeStamp  — Unix epoch in milliseconds when the sample started</span>
+<span class="cm"># elapsed    — Response time in milliseconds (send + wait + receive)</span>
+<span class="cm"># label      — Sampler name (e.g., "POST /auth/login")</span>
+<span class="cm"># responseCode — HTTP status (200, 404, 500) or "Non HTTP response code"</span>
+<span class="cm"># responseMessage — HTTP message ("OK", "Not Found") or error text</span>
+<span class="cm"># threadName — Thread Group + thread number (e.g., "Thread Group 1-42")</span>
+<span class="cm"># dataType   — "text" or "bin"</span>
+<span class="cm"># success    — "true" or "false" (false if Assertion fails)</span>
+<span class="cm"># failureMessage — Assertion failure reason if success=false</span>
+<span class="cm"># bytes      — Response bytes (including headers)</span>
+<span class="cm"># sentBytes  — Request bytes sent</span>
+<span class="cm"># grpThreads — Active threads in this Thread Group</span>
+<span class="cm"># allThreads — Active threads across ALL Thread Groups</span>
+<span class="cm"># URL        — Full URL</span>
+<span class="cm"># Latency    — Time until first byte received (ms)</span>
+<span class="cm"># Connect    — TCP connection establishment time (ms)</span>
+
+<span class="cm"># Example row:</span>
+<span class="nm">1716900012345</span>,<span class="nm">342</span>,<span class="st">POST /api/orders</span>,<span class="nm">201</span>,<span class="st">Created</span>,<span class="st">Thread Group 1-1</span>,text,<span class="kw">true</span>,,<span class="nm">1240</span>,<span class="nm">820</span>,<span class="nm">50</span>,<span class="nm">100</span>,<span class="st">https://api.test.com/api/orders</span>,<span class="nm">89</span>,<span class="nm">12</span></div>
+
+  <p class="cp">Example 2 — Generate HTML Dashboard Report from .jtl</p>
+  <div class="cb"><span class="cm"># Method 1: Generate report AT END of test run (combined command)</span>
+<span class="cm"># -n = non-GUI | -t = test plan | -l = results log | -e = generate report | -o = output dir</span>
+jmeter -n -t test_plan.jmx \
+       -l results/run_001.jtl \
+       -e \
+       -o reports/html_001/
+
+<span class="cm"># Method 2: Generate report AFTER the run from existing .jtl file</span>
+<span class="cm"># Use when you want to regenerate or re-analyze a previous run</span>
+jmeter -g results/run_001.jtl -o reports/html_001/
+<span class="cm"># -g = input .jtl file path</span>
+<span class="cm"># -o = output HTML report directory (must be empty or not exist)</span>
+
+<span class="cm"># Method 3: Merge multiple .jtl files into one report (manual merge)</span>
+cat results/vu_1.jtl results/vu_2.jtl results/vu_3.jtl &gt; results/merged.jtl
+<span class="cm"># Remove duplicate header lines first:</span>
+grep -v "^timeStamp" results/merged.jtl &gt; results/clean_merged.jtl
+jmeter -g results/clean_merged.jtl -o reports/merged_report/</div>
+
+  <p class="cp">Example 3 — Aggregate Report column meanings</p>
+  <div class="cb"><span class="cm"># Aggregate Report Columns — what each means:</span>
+
+<span class="cm"># Label        — Sampler name (one row per unique sampler)</span>
+<span class="cm"># # Samples    — Total number of requests sent</span>
+<span class="cm"># Average      — Mean response time (ms) — MISLEADING alone, use percentiles</span>
+<span class="cm"># Median       — 50th percentile response time</span>
+<span class="cm"># 90% Line     — 90th percentile: 90% of requests were faster than this</span>
+<span class="cm"># 95% Line     — 95th percentile: PRIMARY SLA metric</span>
+<span class="cm"># 99% Line     — 99th percentile: worst-case tail latency</span>
+<span class="cm"># Min          — Fastest single request</span>
+<span class="cm"># Max          — Slowest single request (often a timeout or first request)</span>
+<span class="cm"># Error %      — (failed samples / total samples) × 100</span>
+<span class="cm"># Throughput   — Requests per second (actual achieved rate)</span>
+<span class="cm"># Received KB/s — Data received per second</span>
+<span class="cm"># Sent KB/s    — Data sent per second</span>
+
+<span class="cm"># SLA interpretation example:</span>
+<span class="cm"># 95% Line = 1842ms → 95% of users experienced &lt; 1842ms (PASS if SLA=2000ms)</span>
+<span class="cm"># Error % = 0.12%   → 0.12% failed (PASS if threshold=1%)</span>
+<span class="cm"># Throughput = 87.3  → achieved 87 requests/sec</span></div>
+
+  <p class="cp">Example 4 — Backend Listener → InfluxDB → Grafana</p>
+  <div class="cb"><span class="cm">&lt;!-- Backend Listener configuration for real-time InfluxDB streaming --&gt;</span>
+<span class="kw">&lt;BackendListener&gt;</span>
+  classname = <span class="st">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</span>
+
+  <span class="cm">&lt;!-- InfluxDB 1.x write endpoint --&gt;</span>
+  influxdbUrl    = <span class="st">http://influxdb:8086/write?db=jmeter&amp;rp=autogen</span>
+  <span class="cm">&lt;!-- InfluxDB 2.x token-based endpoint --&gt;</span>
+  <span class="cm">&lt;!-- influxdbUrl = http://influxdb:8086/api/v2/write?org=myorg&amp;bucket=jmeter --&gt;</span>
+  influxdbToken  = <span class="st">${influx_token}</span>    <span class="cm">&lt;!-- InfluxDB 2.x auth token --&gt;</span>
+
+  application    = <span class="st">OrderAPI</span>           <span class="cm">&lt;!-- tag: app name in dashboard --&gt;</span>
+  measurement    = <span class="st">jmeter</span>             <span class="cm">&lt;!-- InfluxDB measurement name --&gt;</span>
+  summaryOnly    = <span class="kw">false</span>              <span class="cm">&lt;!-- false = per-sampler metrics --&gt;</span>
+  samplersRegex  = <span class="st">.*</span>                 <span class="cm">&lt;!-- all samplers (use regex to filter) --&gt;</span>
+  percentiles    = <span class="st">90;95;99</span>           <span class="cm">&lt;!-- which percentiles to send --&gt;</span>
+  testTitle      = <span class="st">Load Test Run ${__time(yyyyMMdd_HHmm)}</span>
+  eventTags      = <span class="st">environment=staging,version=v2.3.1</span>  <span class="cm">&lt;!-- custom tags --&gt;</span>
+<span class="kw">&lt;/BackendListener&gt;</span>
+
+<span class="cm"># Grafana dashboard query (Flux/InfluxQL) for P95 response time:</span>
+<span class="cm"># SELECT percentile("pct95.0", 95) FROM "jmeter"</span>
+<span class="cm">#   WHERE application='OrderAPI' AND time &gt; now()-10m GROUP BY sampler_label</span></div>
+
+  <p class="cp">Example 5 — Parse .jtl with Python for custom analysis</p>
+  <div class="cb"><span class="cm">#!/usr/bin/env python3
+# post_analysis.py — parse JMeter .jtl and compute custom metrics
+# Run after: jmeter -n -t test.jmx -l results.jtl</span>
+
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Load .jtl CSV (JMeter saves with these default headers)</span>
+df = pd.read_csv(<span class="st">'results.jtl'</span>,
+                 names=[<span class="st">'ts'</span>,<span class="st">'elapsed'</span>,<span class="st">'label'</span>,<span class="st">'rc'</span>,<span class="st">'rm'</span>,
+                        <span class="st">'tn'</span>,<span class="st">'dt'</span>,<span class="st">'success'</span>,<span class="st">'fm'</span>,<span class="st">'bytes'</span>,
+                        <span class="st">'sb'</span>,<span class="st">'gt'</span>,<span class="st">'at'</span>,<span class="st">'url'</span>,<span class="st">'lat'</span>,<span class="st">'ct'</span>],
+                 skiprows=<span class="nm">1</span>)   <span class="cm"># skip CSV header row</span>
+
+<span class="cm"># Per-endpoint stats</span>
+<span class="kw">for</span> label, grp <span class="kw">in</span> df.groupby(<span class="st">'label'</span>):
+    total   = len(grp)
+    fails   = (grp[<span class="st">'success'</span>] == <span class="st">'false'</span>).sum()
+    err_pct = (fails / total * <span class="nm">100</span>).round(<span class="nm">2</span>)
+    p95     = np.percentile(grp[<span class="st">'elapsed'</span>], <span class="nm">95</span>)
+    p99     = np.percentile(grp[<span class="st">'elapsed'</span>], <span class="nm">99</span>)
+    
+    <span class="kw">print</span>(f<span class="st">"{label:40s} | n={total:5d} | P95={p95:6.0f}ms | P99={p99:6.0f}ms | err={err_pct}%"</span>)
+    
+    <span class="cm"># SLA gate — fail CI build if P95 > 2000ms</span>
+    <span class="kw">if</span> p95 > <span class="nm">2000</span>:
+        <span class="kw">raise</span> SystemExit(f<span class="st">"SLA BREACH: {label} P95={p95:.0f}ms > 2000ms"</span>)</div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use Simple Data Writer (filename only, no GUI) as your only Listener during load runs — add all other Listeners disabled or only enable them post-run via -g report generation.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Store .jtl files with timestamped filenames: results_${__time(yyyyMMdd_HHmm)}.jtl — never overwrite previous results.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Set up InfluxDB + Grafana before any important load test — real-time dashboards catch regressions during the run, not after.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Report P95 to stakeholders as the primary SLA metric — it's the standard industry measurement that balances statistical significance with user experience.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Archive HTML Dashboard Reports in CI artifact storage — 30-run trend history makes performance regression visible at a glance.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: What is a .jtl file and what information does it contain? <span class="arr">›</span></div><div class="qa-a">A .jtl (JMeter Test Log) file is the primary results output of a JMeter test run. By default it is a CSV file (configurable to XML) containing one row per sample. Key fields: timeStamp (epoch ms), elapsed (response time ms), label (sampler name), responseCode (HTTP status), success (boolean — false if assertion fails), bytes (response size), latency (ms to first byte), and connect (TCP connect time ms). The .jtl file is the source of truth — all reports (Aggregate Report, HTML Dashboard, Grafana) are derived from it.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: How do you generate an HTML Dashboard Report in JMeter? <span class="arr">›</span></div><div class="qa-a">Two approaches: (1) During the run: add -e -o /output/folder to the jmeter -n command — JMeter generates the report immediately after the run finishes. (2) Post-run from existing .jtl: jmeter -g results.jtl -o /output/folder. The HTML report is a self-contained folder with an index.html showing interactive charts: response time over time, throughput over time, response time percentiles distribution, active threads over time, and a detailed statistics table. The output folder must be empty or not exist before generation.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: Why should Listeners be disabled during load tests? <span class="arr">›</span></div><div class="qa-a">GUI Listeners (View Results Tree, Graph Results, Response Time Graph, etc.) store every sample's full response data in memory for display, consume CPU for rendering, and add synchronization overhead. Under high load (1000+ samples/sec), this can consume 1–2 GB of RAM and add 5–15% CPU overhead to the JMeter process itself — reducing the load JMeter can generate and artificially inflating response times. Rule: only Simple Data Writer (writes to file, no rendering) should be enabled during a real load test. Enable all other Listeners disabled, then re-run with -g to generate reports post-run.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: What is the Latency metric vs Elapsed time in JMeter? <span class="arr">›</span></div><div class="qa-a">Elapsed (response time) = total time from JMeter sending the request to receiving the complete response (including receiving all response bytes). Latency = time from sending the request to receiving the FIRST byte of the response. Difference = Elapsed - Latency = time to download response body. A high Latency with short body download indicates server processing is slow. A normal Latency with large Elapsed difference indicates slow network or large response body. Connect time = time for TCP connection establishment only.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: How do you set up a real-time Grafana dashboard for JMeter? <span class="arr">›</span></div><div class="qa-a">Stack: JMeter → Backend Listener → InfluxDB → Grafana. Steps: (1) Install InfluxDB and create a database named jmeter. (2) Install Grafana and add InfluxDB as a data source. (3) Import the JMeter Dashboard from Grafana.com (dashboard ID 5496 for InfluxDB 1.x or 13644 for InfluxDB 2.x). (4) Add Backend Listener to your Test Plan with influxdbUrl pointing to InfluxDB write endpoint. (5) Run the test — Grafana shows live throughput, response time, active threads, and error rate updating every 5 seconds. Tag runs with testTitle and eventTags for multi-run comparison.</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(4)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="btn-next" onclick="gt(5)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ===== SESSION 6 ===== -->
+<div class="ses" id="s5">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#E1F5EE;color:#085041">06</div>
+    <div class="ses-meta"><h2>Config Elements — Data Management & Parameterization</h2><p>CSV Data Set · User-Defined Variables · HTTP Cookie Manager · Keystore Config · Random Variable</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Config Elements run before Samplers and set up the environment — they inject data, configure connections, and manage state. The CSV Data Set Config is the most critical for realistic load tests: it drives unique data per virtual user, preventing cache hits and test data conflicts.</p>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"CSV Data Set Config reads a CSV file and assigns a new row of data to each thread per iteration — it is the primary data-driven testing mechanism in JMeter."</div>
+  <div class="ol">"Setting shareMode=All Threads in CSV Data Set means all VUs share a single file pointer — each VU gets a unique row, preventing data duplication under load."</div>
+  <div class="ol">"User-Defined Variables are evaluated once at test start — for runtime-dynamic values that change per request, use Functions or Pre-Processors instead."</div>
+  <div class="ol">"The Random Variable Config Element generates a random integer or string per sample — useful for IDs and payload randomization without Groovy scripting."</div>
+  <div class="ol">"HTTP Authorization Manager stores credentials for Basic, Digest, and Kerberos authentication — JMeter auto-sends the Authorization header without scripting."</div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — CSV Data Set Config (complete reference)</p>
+  <div class="cb"><span class="cm">&lt;!-- CSV Data Set Config — reads data from CSV file per iteration --&gt;</span>
+<span class="kw">&lt;CSVDataSet&gt;</span>
+  <span class="cm">&lt;!-- filename: absolute path or relative to JMeter working dir --&gt;</span>
+  filename           = <span class="st">${__P(data.dir,./data)}/users.csv</span>
+
+  <span class="cm">&lt;!-- variableNames: maps CSV columns to JMeter variable names (comma-separated) --&gt;</span>
+  <span class="cm">&lt;!-- Leave blank to use first CSV row as headers --&gt;</span>
+  variableNames      = <span class="st">userId,email,password,region</span>
+
+  <span class="cm">&lt;!-- fileEncoding: UTF-8 for Unicode data --&gt;</span>
+  fileEncoding       = <span class="st">UTF-8</span>
+
+  <span class="cm">&lt;!-- delimiter: default comma. Use \t for TSV files --&gt;</span>
+  delimiter          = <span class="st">,</span>
+
+  <span class="cm">&lt;!-- quotedData: true = CSV values can be quoted (handles commas in values) --&gt;</span>
+  quotedData         = <span class="kw">true</span>
+
+  <span class="cm">&lt;!-- ignoreFirstLine: true if first CSV row is a header line --&gt;</span>
+  ignoreFirstLine    = <span class="kw">true</span>
+
+  <span class="cm">&lt;!-- recycle: true = loop back to top when end of file reached --&gt;</span>
+  recycle            = <span class="kw">true</span>
+
+  <span class="cm">&lt;!-- stopThread: true = stop thread when file is exhausted (if recycle=false) --&gt;</span>
+  stopThread         = <span class="kw">false</span>
+
+  <span class="cm">&lt;!-- shareMode: All Threads = all VUs share one pointer (each row used once)
+                 Current Thread Group = each group gets own file pointer
+                 Current Thread = each thread gets own copy of file (all rows) --&gt;</span>
+  shareMode          = <span class="st">shareMode.all</span>
+<span class="kw">&lt;/CSVDataSet&gt;</span>
+
+<span class="cm"># Usage in Sampler body: {"userId": "${userId}", "email": "${email}"}</span></div>
+
+  <p class="cp">Example 2 — User-Defined Variables (UDV)</p>
+  <div class="cb"><span class="cm">&lt;!-- User-Defined Variables — define constants evaluated ONCE at test start --&gt;</span>
+<span class="cm">&lt;!-- Best for: environment config, timeout values, constant IDs --&gt;</span>
+<span class="cm">&lt;!-- NOT for: values that change per request (use functions/CSV instead) --&gt;</span>
+<span class="kw">&lt;Arguments&gt;</span>  <span class="cm">&lt;!-- guiclass: UserDefinedVariables --&gt;</span>
+
+  Variable: base_url     = <span class="st">${__P(base_url, api.staging.com)}</span>
+  <span class="cm">&lt;!-- __P() reads from JMeter properties — CLI -Jbase_url=api.prod.com overrides --&gt;</span>
+
+  Variable: base_port    = <span class="st">${__P(base_port, 443)}</span>
+  Variable: think_time   = <span class="st">${__P(think_time, 1000)}</span>
+
+  <span class="cm">&lt;!-- Computed value using JMeter functions --&gt;</span>
+  Variable: run_label    = <span class="st">LoadTest_${__time(yyyyMMdd_HHmm)}</span>
+  Variable: max_users    = <span class="nm">100</span>
+  Variable: api_timeout  = <span class="nm">5000</span>
+<span class="kw">&lt;/Arguments&gt;</span>
+
+<span class="cm"># IMPORTANT: UDV at Test Plan level is evaluated once globally.
+# If you define the same variable in Thread Group level UDV,
+# Thread Group UDV overrides Test Plan UDV within that Thread Group scope.</span></div>
+
+  <p class="cp">Example 3 — HTTP Cookie Manager settings</p>
+  <div class="cb"><span class="cm">&lt;!-- HTTP Cookie Manager — manages session cookies automatically --&gt;</span>
+<span class="cm">&lt;!-- Place at Thread Group level for session management across all requests --&gt;</span>
+<span class="kw">&lt;CookieManager&gt;</span>
+  <span class="cm">&lt;!-- cookiePolicy: standard (RFC 6265) / compatibility / netscape / ignoreCookies --&gt;</span>
+  CookieManager.implementation = <span class="st">org.apache.jmeter.protocol.http.control.HC4CookieHandler</span>
+  CookieManager.policy         = <span class="st">standard</span>
+
+  <span class="cm">&lt;!-- clearEachIteration: true = clear cookies at start of each loop
+       Critical for login/logout testing — each iteration is a fresh session --&gt;</span>
+  CookieManager.clearEachIteration = <span class="kw">true</span>
+
+  <span class="cm">&lt;!-- controlledByThreadGroup: true = respect Thread Group's clear-per-iteration --&gt;</span>
+  CookieManager.controlledByThreadGroup = <span class="kw">true</span>
+
+  <span class="cm">&lt;!-- Manually add a static cookie (optional) --&gt;</span>
+  Cookie:
+    name    = <span class="st">consent</span>
+    value   = <span class="st">accepted</span>
+    domain  = <span class="st">.myapp.com</span>
+    path    = <span class="st">/</span>
+    secure  = <span class="kw">false</span>
+<span class="kw">&lt;/CookieManager&gt;</span></div>
+
+  <p class="cp">Example 4 — Random Variable Config</p>
+  <div class="cb"><span class="cm">&lt;!-- Random Variable — generates a random value per sample and stores in a variable --&gt;</span>
+<span class="cm">&lt;!-- Simpler than writing Groovy for basic randomization --&gt;</span>
+<span class="kw">&lt;RandomVariableConfig&gt;</span>
+  variableName   = <span class="st">randomUserId</span>  <span class="cm">&lt;!-- stored as ${randomUserId} --&gt;</span>
+  minimumValue   = <span class="nm">1000</span>          <span class="cm">&lt;!-- inclusive lower bound --&gt;</span>
+  maximumValue   = <span class="nm">99999</span>         <span class="cm">&lt;!-- inclusive upper bound --&gt;</span>
+  <span class="cm">&lt;!-- outputFormat: printf-style format. Empty = plain integer --&gt;</span>
+  outputFormat   = <span class="st">USER_%05d</span>     <span class="cm">&lt;!-- output: USER_01234 --&gt;</span>
+  randomSeed     =                <span class="cm">&lt;!-- empty = different seed per run --&gt;</span>
+  perThread      = <span class="kw">true</span>          <span class="cm">&lt;!-- true = each thread gets its own random sequence --&gt;</span>
+<span class="kw">&lt;/RandomVariableConfig&gt;</span>
+
+<span class="cm">&lt;!-- Usage: POST body = {"userId": "${randomUserId}", "action": "view"} --&gt;</span></div>
+
+  <p class="cp">Example 5 — HTTP Cache Manager + DNS Cache Manager</p>
+  <div class="cb"><span class="cm">&lt;!-- HTTP Cache Manager — simulates browser cache behavior --&gt;</span>
+<span class="cm">&lt;!-- Use when testing a CDN or caching layer --&gt;</span>
+<span class="kw">&lt;CacheManager&gt;</span>
+  <span class="cm">&lt;!-- clearEachIteration: true = start with empty cache each loop (realistic new user) --&gt;</span>
+  clearEachIteration = <span class="kw">true</span>
+  <span class="cm">&lt;!-- useExpires: true = respect Expires/Cache-Control headers from server --&gt;</span>
+  useExpires         = <span class="kw">true</span>
+  maxSize            = <span class="nm">5000</span>   <span class="cm">&lt;!-- max cached entries per thread --&gt;</span>
+<span class="kw">&lt;/CacheManager&gt;</span>
+
+<span class="cm">&lt;!-- DNS Cache Manager — custom DNS resolution (avoid DNS lookup overhead) --&gt;</span>
+<span class="kw">&lt;DNSCacheManager&gt;</span>
+  <span class="cm">&lt;!-- isCustomResolver: true = use custom DNS servers --&gt;</span>
+  isCustomResolver   = <span class="kw">false</span>   <span class="cm">&lt;!-- false = system default DNS --&gt;</span>
+
+  <span class="cm">&lt;!-- Static hosts override (like /etc/hosts for JMeter) --&gt;</span>
+  Hosts:
+    name    = <span class="st">api.myapp.com</span>
+    address = <span class="st">10.0.1.45</span>      <span class="cm">&lt;!-- bypass DNS, go direct to IP --&gt;</span>
+
+  clearEachIteration = <span class="kw">false</span>   <span class="cm">&lt;!-- cache DNS resolutions across iterations --&gt;</span>
+<span class="kw">&lt;/DNSCacheManager&gt;</span></div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use shareMode=All Threads in CSV Data Set for load tests — ensures each VU gets unique data, preventing cache hits that inflate performance numbers.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Pre-generate large test data files (10,000+ rows) before the test — running out of data mid-test causes recycling which invalidates results.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Always add HTTP Cookie Manager when testing session-based web apps — without it, JMeter ignores all cookies and every request is unauthenticated.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use ${__P(varName, defaultValue)} in User-Defined Variables to enable CLI override — never hardcode environment-specific values.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Add DNS Cache Manager with static host mappings in isolated test environments to eliminate DNS resolution latency from response time measurements.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: What is the difference between shareMode options in CSV Data Set Config? <span class="arr">›</span></div><div class="qa-a">All Threads (shareMode.all): all VUs across all thread groups share a single file pointer — JMeter distributes rows sequentially, each row goes to exactly one thread. Best for load tests where each VU must use unique credentials. Current Thread Group (shareMode.group): each Thread Group gets its own pointer — useful if you have separate User and Admin thread groups needing separate data pools. Current Thread (shareMode.thread): each thread gets its own independent copy — every thread reads all rows. Use when each VU needs to iterate through ALL data independently.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: What is the difference between User-Defined Variables and JMeter Variables? <span class="arr">›</span></div><div class="qa-a">User-Defined Variables (UDV, via Arguments Config Element) are evaluated ONCE at the beginning of the test and are shared across the test. They are ideal for constants like base_url, timeouts, and environment flags. JMeter Variables (set via vars.put() in scripts, or extracted by Post-Processors) are per-thread runtime values that can change on every sample — like extracted tokens, response IDs, or counters. JMeter Properties (props, set via -J CLI flag or props.put()) are globally shared across all threads and thread groups.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: How do you generate 10,000 unique test users for a load test? <span class="arr">›</span></div><div class="qa-a">Three approaches: (1) Pre-generate CSV using Python/script: for i in range(10000): write user_i,user_i@test.com,pass_i to users.csv. (2) Use JMeter's __Random and __UUID functions inline in request body: "email": "${__UUID()}@test.com" — no file needed but less controlled. (3) Use JSR223 Pre-Processor with Groovy to generate data programmatically each iteration. Best practice: pre-generate the CSV and validate it before the test run. Store data files under a /data/ directory in the project, parameterize the path via -Jdata.dir CLI flag.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: How does HTTP Cache Manager affect load test results? <span class="arr">›</span></div><div class="qa-a">With HTTP Cache Manager + clearEachIteration=true: JMeter simulates a browser loading a page for the first time on each loop — all resources are requested fresh (no 304 Not Modified responses). This tests cold-cache performance. With clearEachIteration=false: JMeter caches resources within a session — subsequent iterations reuse cached assets, reducing requests. Disable HTTP Cache Manager entirely for pure API testing. Enable it for web performance testing where CDN/browser cache behavior should be included. Without it, JMeter makes full requests for every embedded resource every time, which is worse than real browsers.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: How do you pass CSV file path and other config values from CI pipeline to JMeter? <span class="arr">›</span></div><div class="qa-a">Use JMeter Properties with CLI override via -J flags. In the Test Plan, reference as ${__P(data.dir, ./data)} — default value provided for local dev. In CI pipeline: newman/jmeter -n -t test.jmx -Jbase_url=$STAGING_URL -Jdata.dir=$WORKSPACE/testdata -Jthreads=$LOAD_THREADS -Jduration=300. This pattern lets the same .jmx file run with different configurations for dev (low threads, local URL) and CI (high threads, staging URL) without editing the file. Store the .jmx as source code; inject runtime configuration through CI environment variables mapped to -J flags.</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(5)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="btn-next" onclick="gt(6)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ===== SESSION 7 ===== -->
+<div class="ses" id="s6">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#E1F5EE;color:#085041">07</div>
+    <div class="ses-meta"><h2>Logic Controllers — Flow Control & Correlation</h2><p>Extractors · If/While/Loop · Throughput · Transaction · ForEach · Correlation patterns</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Logic Controllers define the execution flow — what runs, when, how many times, and under what conditions. Combined with Post-Processors (Extractors), they enable realistic multi-step user journeys with dynamic data correlation.</p>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"JSON Extractor Post-Processor extracts values from JSON responses using JSONPath and stores them as JMeter variables — the standard correlation mechanism for REST APIs."</div>
+  <div class="ol">"Regular Expression Extractor supports match number -1 (all matches into array) and a specific match number N (1st, 2nd… match) — essential for extracting from HTML/XML."</div>
+  <div class="ol">"Throughput Controller (percentage mode) randomly executes its children with a given probability — use it to model realistic traffic mix (70% GET, 30% POST)."</div>
+  <div class="ol">"The Module Controller allows referencing samplers defined elsewhere as a reusable module — implementing the DRY principle in complex test plans."</div>
+  <div class="ol">"Correlation in JMeter is extracting a dynamic server-generated value (session ID, token, CSRF) from one response and using it in the next request."</div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — JSON Extractor (primary REST correlation)</p>
+  <div class="cb"><span class="cm">&lt;!-- JSON Extractor Post-Processor — extracts from JSON response body --&gt;</span>
+<span class="cm">&lt;!-- Place UNDER the sampler whose response you want to extract from --&gt;</span>
+<span class="kw">&lt;JSONPostProcessor&gt;</span>
+  <span class="cm">&lt;!-- Variable name to store extracted value --&gt;</span>
+  referenceName   = <span class="st">authToken</span>
+
+  <span class="cm">&lt;!-- JSONPath expression --&gt;</span>
+  jsonPathExprs   = <span class="st">$.data.accessToken</span>   <span class="cm">&lt;!-- dot notation --&gt;</span>
+  <span class="cm">&lt;!-- $.data.accessToken  → top-level key --&gt;</span>
+  <span class="cm">&lt;!-- $.items[0].id       → first array element --&gt;</span>
+  <span class="cm">&lt;!-- $..id               → all id values recursively --&gt;</span>
+  <span class="cm">&lt;!-- $.items[*].name     → all name values in array --&gt;</span>
+
+  <span class="cm">&lt;!-- matchNo: 0=random, -1=extract ALL (creates authToken_1, authToken_2...), 
+               1=first, 2=second match --&gt;</span>
+  matchNo         = <span class="nm">1</span>
+
+  <span class="cm">&lt;!-- defaultValue: value used if JSONPath finds nothing --&gt;</span>
+  defaultValue    = <span class="st">TOKEN_NOT_FOUND</span>
+
+  <span class="cm">&lt;!-- computeConcatenation: true = also create authToken_ALL with all values --&gt;</span>
+  computeConcatenation = <span class="kw">false</span>
+<span class="kw">&lt;/JSONPostProcessor&gt;</span>
+
+<span class="cm"># After extraction: ${authToken} = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+# Use in next sampler: Authorization: Bearer ${authToken}</span></div>
+
+  <p class="cp">Example 2 — Regular Expression Extractor</p>
+  <div class="cb"><span class="cm">&lt;!-- Regular Expression Extractor — extracts using regex from response --&gt;</span>
+<span class="cm">&lt;!-- Use for: HTML forms (CSRF tokens), XML, non-JSON responses --&gt;</span>
+<span class="kw">&lt;RegexExtractor&gt;</span>
+  referenceName   = <span class="st">csrfToken</span>
+
+  <span class="cm">&lt;!-- useHeaders:
+       false (default) = response body
+       true            = response headers
+       request_headers = request headers (use carefully)
+       URL             = URL of the response --&gt;</span>
+  useHeaders      = <span class="kw">false</span>
+
+  <span class="cm">&lt;!-- regex: capture group () is what gets extracted --&gt;</span>
+  regex           = <span class="st">name="_csrf"\s+value="([^"]+)"</span>
+  <span class="cm">&lt;!-- This regex finds: name="_csrf" value="abc123" → extracts abc123 --&gt;</span>
+
+  <span class="cm">&lt;!-- template: $1$ = first capture group, $2$ = second, $0$ = whole match --&gt;</span>
+  template        = <span class="st">$1$</span>
+
+  <span class="cm">&lt;!-- matchNo: 1=first, 2=second, -1=all (creates csrfToken_1, csrfToken_2...) --&gt;</span>
+  matchNo         = <span class="nm">1</span>
+
+  defaultValue    = <span class="st">CSRF_NOT_FOUND</span>
+<span class="kw">&lt;/RegexExtractor&gt;</span>
+
+<span class="cm"># If matchNo=-1: JMeter creates csrfToken_1, csrfToken_2... and csrfToken_matchNr</span>
+<span class="cm"># Use ${csrfToken_matchNr} to know how many values were found</span></div>
+
+  <p class="cp">Example 3 — Throughput Controller (traffic mix modeling)</p>
+  <div class="cb"><span class="cm">&lt;!-- Throughput Controller — execute children at a given rate/percentage --&gt;</span>
+<span class="cm">&lt;!-- Use to model realistic traffic distribution across scenarios --&gt;</span>
+
+<span class="cm">&lt;!-- Mode 1: Percent Executions (0-100%) --&gt;</span>
+<span class="kw">&lt;ThroughputController&gt;</span>
+  style = <span class="nm">1</span>        <span class="cm">&lt;!-- 1 = percent executions --&gt;</span>
+  throughput = <span class="nm">70.0</span>  <span class="cm">&lt;!-- 70% of iterations execute these children --&gt;</span>
+  perThread  = <span class="kw">false</span>  <span class="cm">&lt;!-- false = applies across all threads globally --&gt;</span>
+<span class="kw">&lt;/ThroughputController&gt;</span>
+<span class="cm">&lt;!-- Children: GET /products/search --&gt;</span>
+
+<span class="kw">&lt;ThroughputController&gt;</span>
+  style = <span class="nm">1</span>
+  throughput = <span class="nm">20.0</span>  <span class="cm">&lt;!-- 20% = add to cart --&gt;</span>
+<span class="kw">&lt;/ThroughputController&gt;</span>
+<span class="cm">&lt;!-- Children: POST /cart/add --&gt;</span>
+
+<span class="kw">&lt;ThroughputController&gt;</span>
+  style = <span class="nm">1</span>
+  throughput = <span class="nm">10.0</span>  <span class="cm">&lt;!-- 10% = checkout --&gt;</span>
+<span class="kw">&lt;/ThroughputController&gt;</span>
+<span class="cm">&lt;!-- Children: POST /orders/checkout --&gt;</span>
+
+<span class="cm">&lt;!-- Mode 2: Total Executions (absolute count) --&gt;</span>
+<span class="kw">&lt;ThroughputController&gt;</span>
+  style = <span class="nm">0</span>        <span class="cm">&lt;!-- 0 = total executions --&gt;</span>
+  throughput = <span class="nm">100</span>  <span class="cm">&lt;!-- execute children exactly 100 times total --&gt;</span>
+<span class="kw">&lt;/ThroughputController&gt;</span></div>
+
+  <p class="cp">Example 4 — XPath Extractor (XML / SOAP responses)</p>
+  <div class="cb"><span class="cm">&lt;!-- XPath Extractor Post-Processor — for XML and SOAP responses --&gt;</span>
+<span class="kw">&lt;XPathExtractor&gt;</span>
+  referenceName  = <span class="st">orderId</span>
+
+  <span class="cm">&lt;!-- XPath expression (XPath 1.0 or 2.0 supported) --&gt;</span>
+  <span class="cm">&lt;!-- Example SOAP response: &lt;Order&gt;&lt;Id&gt;12345&lt;/Id&gt;&lt;/Order&gt; --&gt;</span>
+  xpathQuery     = <span class="st">//Order/Id/text()</span>  <span class="cm">&lt;!-- text() extracts text content --&gt;</span>
+  <span class="cm">&lt;!-- More examples: --&gt;</span>
+  <span class="cm">&lt;!-- //ns:Order/@id        → attribute value with namespace --&gt;</span>
+  <span class="cm">&lt;!-- //Items/Item[1]/Price → first item's price --&gt;</span>
+
+  matchNo        = <span class="nm">1</span>
+  defaultValue   = <span class="st">ORDER_NOT_FOUND</span>
+
+  <span class="cm">&lt;!-- useNamespace: true = enable XPath namespace support --&gt;</span>
+  useNamespace   = <span class="kw">false</span>
+
+  <span class="cm">&lt;!-- tolerant: true = use Tidy to fix malformed HTML before applying XPath --&gt;</span>
+  tolerant       = <span class="kw">false</span>
+
+  <span class="cm">&lt;!-- namespaces: prefix=URI pairs for namespace-aware XPath --&gt;</span>
+  <span class="cm">&lt;!-- ns1=http://schemas.xmlsoap.org/soap/envelope/ --&gt;</span>
+<span class="kw">&lt;/XPathExtractor&gt;</span></div>
+
+  <p class="cp">Example 5 — Boundary Extractor + full correlation pattern</p>
+  <div class="cb"><span class="cm">&lt;!-- Boundary Extractor — extracts text BETWEEN two string boundaries --&gt;</span>
+<span class="cm">&lt;!-- Faster than regex for simple key-value extraction --&gt;</span>
+<span class="kw">&lt;BoundaryExtractor&gt;</span>
+  referenceName  = <span class="st">sessionId</span>
+  leftBoundary   = <span class="st">session_id"&gt;</span>    <span class="cm">&lt;!-- text immediately before the value --&gt;</span>
+  rightBoundary  = <span class="st">&lt;/session_id&gt;</span>   <span class="cm">&lt;!-- text immediately after the value --&gt;</span>
+  matchNo        = <span class="nm">1</span>
+  defaultValue   = <span class="st">SESSION_NOT_FOUND</span>
+  useHeaders     = <span class="kw">false</span>            <span class="cm">&lt;!-- false = body, true = headers --&gt;</span>
+<span class="kw">&lt;/BoundaryExtractor&gt;</span>
+
+<span class="cm"># ===== COMPLETE CORRELATION PATTERN =====
+# Request 1: POST /auth/login
+#   → Response: {"token": "abc123", "userId": 42}
+#   → JSON Extractor: token → ${authToken}, userId → ${userId}
+#
+# Request 2: POST /cart/add  (uses ${authToken} in header, ${userId} in body)
+#   Header: Authorization: Bearer ${authToken}
+#   Body: {"userId": ${userId}, "productId": "${productId}"}
+#   → Response: {"cartId": "cart-999"}
+#   → JSON Extractor: cartId → ${cartId}
+#
+# Request 3: POST /orders/checkout  (uses ${cartId})
+#   Body: {"cartId": "${cartId}", "paymentToken": "${payToken}"}
+#
+# This chain = realistic 3-step user journey with full correlation</span></div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Always set a meaningful defaultValue in extractors — seeing "TOKEN_NOT_FOUND" in logs immediately flags correlation failures during debugging.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>After extraction, add a Response Assertion checking that the variable does NOT equal the default value — this fails the sample immediately if correlation breaks.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use JSON Extractor for REST/JSON, XPath Extractor for SOAP/XML, Regex Extractor for HTML forms and non-standard formats, Boundary Extractor for simple string extraction.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Model realistic traffic mix with Throughput Controller — a 100% checkout test is unrealistic; real traffic is 70% browse, 20% add-to-cart, 10% purchase.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Test your JSONPath expressions at jsonpath.com before embedding in JMeter — invalid paths silently return the default value.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: What is correlation in JMeter and how do you implement it? <span class="arr">›</span></div><div class="qa-a">Correlation is extracting a dynamic server-generated value from one response and injecting it into a subsequent request. Implementation: (1) Add a JSON/Regex/XPath/Boundary Extractor as a Post-Processor under the sampler that returns the dynamic value. (2) Configure referenceName (variable name), expression, and defaultValue. (3) Use ${variableName} in the next sampler's URL, headers, or body. Common examples: JWT auth tokens, session IDs, CSRF tokens, dynamically created resource IDs (orderId, cartId, uploadId).</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: What does matchNo=-1 do in JSON Extractor? <span class="arr">›</span></div><div class="qa-a">matchNo=-1 extracts ALL matching values and stores them in indexed variables: varName_1, varName_2, varName_3... and varName_matchNr (total count). Example: JSONPath $.items[*].id with matchNo=-1 extracts all item IDs from an array response. Use ${productId_matchNr} to know how many items were extracted, then use a ForEach Controller iterating from 1 to ${productId_matchNr} to process each item. matchNo=0 picks a random match; matchNo=N picks the Nth match (1-indexed).</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: How do you implement a login-once, test-many pattern efficiently? <span class="arr">›</span></div><div class="qa-a">Use a setUp Thread Group (1 thread, 1 iteration) to perform the login and extract the token. Store the token in a JMeter Property (props.put("authToken", token)) — Properties are shared across all thread groups. In the main Thread Group, use ${__P(authToken)} to read the token. For token refresh on expiry during soak tests, use a separate tearDown/setUp Thread Group triggered by a timer, or use a JSR223 Pre-Processor in the main Thread Group that checks token age and calls pm.sendRequest() equivalent (via HTTPClient) if expired.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: What is the difference between If Controller and Switch Controller? <span class="arr">›</span></div><div class="qa-a">If Controller evaluates a boolean Groovy expression (condition must be "true" or "false") and executes its children only when true. Use it for single binary conditions. Switch Controller selects one of several named child controllers/samplers based on a variable value — like switch-case. Example: ${userType} = "admin" executes the Admin Request sampler, "viewer" executes the Viewer Request. Switch is more efficient than chained If Controllers for multi-branch logic and is less error-prone because branch selection is explicit by name, not evaluated conditionally.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: How do you validate that correlation is working correctly? <span class="arr">›</span></div><div class="qa-a">Three validation approaches: (1) Debug Sampler after each extractor — run with 1 thread in GUI mode, view Debug Sampler output in View Results Tree to confirm variable values. (2) View Results Tree request/response data — confirm the extracted variable appears correctly in the next request. (3) Add a Response Assertion checking that the correlated variable != defaultValue — this causes the sample to fail immediately if extraction breaks, making the problem visible in results. Always validate with 1 thread before scaling up to ensure correlation works end-to-end.</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(6)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="btn-next" onclick="gt(7)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ===== SESSION 8 ===== -->
+<div class="ses" id="s7">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#FAEEDA;color:#633806">08</div>
+    <div class="ses-meta"><h2>JMeter Functions & Built-in Variables</h2><p>Complete __functions reference · ${} syntax · Properties · Thread vars · Dynamic data generation</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>JMeter Functions are built-in helpers invoked with ${__functionName(params)} syntax. They execute inline within any field — URL, headers, body, variable values. Mastering the function library eliminates the need for Groovy scripts for most common data generation tasks.</p>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"JMeter functions use the ${__functionName(arg1,arg2,varName)} syntax — the optional last argument stores the result in a variable for reuse."</div>
+  <div class="ol">"${__time(yyyyMMdd_HHmmss)} generates a formatted timestamp — use it for unique request IDs, log labels, and dated result file names."</div>
+  <div class="ol">"${__P(propertyName, defaultValue)} reads a JMeter property — this is the bridge between CLI -J flags and test plan variables."</div>
+  <div class="ol">"${__Random(min,max,varName)} generates a random integer per sample — the preferred way to randomize IDs without scripting."</div>
+  <div class="ol">"${__threadNum} and ${__threadGroupName} are JMeter built-in variables — they identify which virtual user is executing, useful for logging and unique data generation."</div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — Complete JMeter functions reference</p>
+  <div class="cb"><span class="cm"># ===== STRING / DATA FUNCTIONS =====</span>
+
+<span class="fn">${__UUID()}</span>                     <span class="cm"># Generate random UUID v4: 550e8400-e29b-41d4-a716-446655440000</span>
+<span class="fn">${__time(yyyyMMdd_HHmmss)}</span>     <span class="cm"># Current time formatted: 20240115_143022</span>
+<span class="fn">${__time(,)}</span>                   <span class="cm"># Unix epoch milliseconds: 1716900012345</span>
+<span class="fn">${__Random(1,1000,myVar)}</span>      <span class="cm"># Random int 1-1000, stored in ${myVar}</span>
+<span class="fn">${__RandomString(10,abc123)}</span>   <span class="cm"># Random 10-char string using charset abc123</span>
+<span class="fn">${__RandomDate(yyyyMMdd,,2024-01-01,2024-12-31,)}</span>  <span class="cm"># Random date in range</span>
+<span class="fn">${__counter(false,myCounter)}</span>  <span class="cm"># Per-thread counter: 1,2,3... false=per-thread, true=global</span>
+<span class="fn">${__intSum(${a},${b},result)}</span>  <span class="cm"># Integer addition: result = a + b</span>
+<span class="fn">${__longSum(${a},${b},result)}</span> <span class="cm"># Long integer addition</span>
+<span class="fn">${__eval(${expression})}</span>       <span class="cm"># Evaluate a string that contains JMeter syntax</span>
+<span class="fn">${__groovy(vars.get('x')+'_suffix')}</span>  <span class="cm"># Inline Groovy expression</span>
+<span class="fn">${__substring(${str},0,5)}</span>     <span class="cm"># Extract substring [0,5)</span>
+<span class="fn">${__regexFunction(ABC(.+?)DEF,$1$,1,,str,)}</span>  <span class="cm"># Regex on a variable value</span>
+
+<span class="cm"># ===== FILE / PROPERTY FUNCTIONS =====</span>
+<span class="fn">${__P(propertyName,default)}</span>   <span class="cm"># Read JMeter property (set via -Jkey=val CLI)</span>
+<span class="fn">${__property(key,varName,def)}</span> <span class="cm"># Read property, also store in variable</span>
+<span class="fn">${__setProperty(key,value)}</span>    <span class="cm"># Set a JMeter property at runtime (cross-thread)</span>
+<span class="fn">${__StringFromFile(file.csv,myVar,,)}</span>  <span class="cm"># Read one line from file per call</span>
+<span class="fn">${__FileToString(file.txt,,)}</span>  <span class="cm"># Read entire file content as string</span>
+
+<span class="cm"># ===== ENCODING FUNCTIONS =====</span>
+<span class="fn">${__urlencode(hello world)}</span>    <span class="cm"># URL encode: hello+world</span>
+<span class="fn">${__urldecode(hello+world)}</span>    <span class="cm"># URL decode: hello world</span>
+<span class="fn">${__base64Encode(mystring)}</span>    <span class="cm"># Base64 encode (needs plugin)</span>
+
+<span class="cm"># ===== CRYPTO / SECURITY =====</span>
+<span class="fn">${__digest(SHA-256,${password},)}</span>  <span class="cm"># Hash a value: SHA-256/MD5/SHA-512</span></div>
+
+  <p class="cp">Example 2 — Thread-level built-in variables</p>
+  <div class="cb"><span class="cm"># JMeter Built-in Variables — always available, no setup needed
+# Access via ${__variableName} or vars.get("__variableName") in scripts</span>
+
+<span class="fn">${__threadNum}</span>              <span class="cm"># Current thread number within its Thread Group: 1, 2, 3...</span>
+<span class="fn">${__threadGroupName}</span>       <span class="cm"># Thread Group name: "API Users"</span>
+<span class="fn">${__jmeterVersion}</span>         <span class="cm"># JMeter version string: "5.6.3"</span>
+
+<span class="cm"># In script context (Groovy):</span>
+ctx.getThreadNum()           <span class="cm"># 0-indexed thread number</span>
+ctx.getThreadGroup().getName()  <span class="cm"># Thread Group name</span>
+JMeterContextService.getContext().getThread().getThreadName()  <span class="cm"># full thread name</span>
+
+<span class="cm"># Sample result built-ins:</span>
+<span class="fn">${JMeterThread.last_sample_ok}</span>  <span class="cm"># "true"/"false" — did the last sample pass?</span>
+
+<span class="cm"># Iteration counter (within current loop):</span>
+ctx.getVariables().getIteration()  <span class="cm"># Groovy: current loop iteration number</span>
+
+<span class="cm"># Use ${__threadNum} for unique per-thread data generation:</span>
+<span class="cm"># email: user_${__threadNum}_${__counter(false,)}@test.com</span>
+<span class="cm"># → user_1_1@test.com, user_2_1@test.com, ... (unique per VU)</span></div>
+
+  <p class="cp">Example 3 — __groovy function (inline scripting)</p>
+  <div class="cb"><span class="cm"># __groovy() allows inline Groovy expressions anywhere a function is valid
+# Extremely powerful — use when built-in functions aren't enough</span>
+
+<span class="cm"># Generate timestamp 7 days from now (epoch ms):</span>
+<span class="fn">${__groovy(new Date(new Date().getTime() + 7*24*60*60*1000).getTime())}</span>
+
+<span class="cm"># Format date as ISO 8601:</span>
+<span class="fn">${__groovy(new Date().format("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))}</span>
+
+<span class="cm"># Compute hash of a string:</span>
+<span class="fn">${__groovy(java.security.MessageDigest.getInstance("SHA-256").digest("${password}".getBytes()).collect{String.format('%02x', it)}.join())}</span>
+
+<span class="cm"># Read an env variable from OS:</span>
+<span class="fn">${__groovy(System.getenv("API_KEY"))}</span>
+
+<span class="cm"># Conditional value based on thread number:</span>
+<span class="fn">${__groovy(vars.get("__threadNum").toInteger() % 2 == 0 ? "admin" : "user")}</span>
+
+<span class="cm"># Note: __groovy() is evaluated per-sample at runtime.
+# For performance-critical paths, prefer pre-computation in Pre-Processor scripts.</span></div>
+
+  <p class="cp">Example 4 — __counter for unique sequential IDs</p>
+  <div class="cb"><span class="cm"># __counter(reset_per_thread, variable_name)
+# Generates an incrementing integer starting at 1</span>
+
+<span class="cm"># PER-THREAD counter (each VU has its own counter): reset_per_thread=FALSE</span>
+<span class="fn">${__counter(FALSE,requestSeq)}</span>
+<span class="cm"># Thread 1: requestSeq = 1, 2, 3, 4...
+# Thread 2: requestSeq = 1, 2, 3, 4... (independent counter per thread)</span>
+
+<span class="cm"># GLOBAL counter (all threads share one counter): reset_per_thread=TRUE</span>
+<span class="fn">${__counter(TRUE,globalSeq)}</span>
+<span class="cm"># Thread 1: globalSeq = 1, 3, 5...  (increments atomically)
+# Thread 2: globalSeq = 2, 4, 6...</span>
+
+<span class="cm"># Use for unique order/request IDs that must not repeat across VUs:
+# orderRef = ORD-${__counter(TRUE,)}-${__time(yyMMdd)}
+# → ORD-1-240115, ORD-2-240115, ORD-3-240115...</span>
+
+<span class="cm"># Combine with threadNum for per-thread unique IDs:
+# userId = USR-${__threadNum}-${__counter(FALSE,)}</span></div>
+
+  <p class="cp">Example 5 — Properties: CLI to test plan bridge</p>
+  <div class="cb"><span class="cm"># JMeter Properties = global key-value store shared across ALL threads
+# Three ways to set properties:
+# 1. CLI -J flag:     jmeter -n -t test.jmx -Jthreads=100 -Jenv=staging
+# 2. .properties file: jmeter -n -t test.jmx -q run_config.properties
+# 3. Groovy at runtime: props.put("dynamicKey", "dynamicValue")</span>
+
+<span class="cm"># run_config.properties file:</span>
+<span class="nm">threads</span>=<span class="nm">100</span>
+<span class="nm">rampup</span>=<span class="nm">60</span>
+<span class="nm">duration</span>=<span class="nm">300</span>
+<span class="nm">base.url</span>=<span class="st">api.staging.myapp.com</span>
+<span class="nm">base.port</span>=<span class="nm">443</span>
+
+<span class="cm"># In Test Plan — read property with default fallback:</span>
+Thread count:   <span class="fn">${__P(threads,10)}</span>      <span class="cm"># use 10 if -Jthreads not provided</span>
+Ramp time:      <span class="fn">${__P(rampup,30)}</span>
+Duration:       <span class="fn">${__P(duration,60)}</span>
+Server:         <span class="fn">${__P(base.url,localhost)}</span>
+
+<span class="cm"># Groovy script — read/write properties:</span>
+props.get(<span class="st">"base.url"</span>)               <span class="cm">// read property</span>
+props.put(<span class="st">"sharedToken"</span>, token)      <span class="cm">// write property (visible to ALL threads)</span>
+props.getProperty(<span class="st">"threads"</span>, <span class="st">"10"</span>)   <span class="cm">// read with default (Java Properties API)</span>
+
+<span class="cm"># IMPORTANT: props (properties) vs vars (variables)
+# vars  = per-thread, isolated, reset each iteration → ${myVar}
+# props = global, shared, persistent → ${__P(myProp)}</span></div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Prefer built-in functions (__Random, __UUID, __time, __counter) over Groovy scripts for simple data generation — they are faster and require no compilation.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use ${__P(key,default)} for ALL environment-specific values — it makes the test plan CI/CD-friendly without any file editing.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>When using __groovy() inline, keep expressions simple — complex logic belongs in JSR223 Pre-Processor scripts, not inline functions.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Test all functions using the Function Helper Dialog (Tools → Function Helper) in JMeter GUI before embedding in test plans.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use props (JMeter Properties) for cross-thread-group data sharing (e.g., token from setUp Thread Group); use vars for thread-local data.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: What is the syntax for JMeter functions and where can they be used? <span class="arr">›</span></div><div class="qa-a">${__functionName(arg1,arg2,...,storeResultVarName)} — the double-underscore prefix is mandatory. The last argument, if provided, stores the result in a JMeter variable for later use. Functions can be used in ANY JMeter field that evaluates expressions — URL paths, request bodies, headers, parameter values, assertion strings, timer delays, file names, and variable values in User-Defined Variables. They are evaluated at the time the containing element is executed, not at test startup.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: What is the difference between ${__P()} and ${__property()}? <span class="arr">›</span></div><div class="qa-a">Both read JMeter Properties. ${__P(name, default)} is the short form — it reads the property and optionally returns a default if not set, but does NOT store the result in a variable. ${__property(name, storeVar, default)} reads the property, stores it in ${storeVar}, and returns it — equivalent to a read+assign operation. Use __P for inline reading in fields; use __property when you need to store the value for reuse in multiple places without calling the property lookup multiple times.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: How do you generate a unique email address per virtual user per iteration? <span class="arr">›</span></div><div class="qa-a">Multiple approaches: (1) Thread + counter: user_${__threadNum}_${__counter(FALSE,)}@test.com → unique per VU per iteration. (2) UUID: ${__UUID()}@test.com → fully random, no collision. (3) Time-based: user_${__time(HHmmssSSS)}_${__threadNum}@test.com → timestamp + thread ensures uniqueness if millisecond precision is sufficient. (4) CSV Data Set: pre-generate 10,000 emails in CSV, read per iteration. Approach (4) is most production-realistic since it uses stable, known credentials rather than dynamically generated ones.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: How does ${__counter} differ from a Loop Controller's iteration count? <span class="arr">›</span></div><div class="qa-a">Loop Controller's loop iteration is the outer control mechanism — it determines how many times the thread runs the full sampler sequence. ${__counter()} is an explicit incrementing function that generates a sequential integer each time it is evaluated. They are independent: a counter inside a Loop Controller increments for each iteration of the loop. Counter FALSE (per-thread) resets when the thread group restarts; Counter TRUE (global) never resets across the entire test run. Use counter for generating sequential IDs; use loop iteration count for controlling flow.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: How do you share a value extracted in one Thread Group with another Thread Group? <span class="arr">›</span></div><div class="qa-a">JMeter Variables (vars) are per-thread and not shared between thread groups. To share across thread groups: (1) Use a setUp Thread Group (single VU) to extract the value, then call props.put("sharedKey", extractedValue) in a JSR223 Post-Processor. (2) In the main Thread Group, read it via ${__P(sharedKey)} or props.get("sharedKey") in a Pre-Processor. This is the standard pattern for login-once (setUp Group), test-many (Main Group) workflows — the auth token lives in JMeter Properties for the duration of the test.</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(7)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="btn-next" onclick="gt(8)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ===== SESSION 9 ===== -->
+<div class="ses" id="s8">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#FAEEDA;color:#633806">09</div>
+    <div class="ses-meta"><h2>Groovy Scripting & Pre/Post Processors</h2><p>JSR223 Pre/Post · Groovy syntax · Request building · Response parsing · Custom assertions</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Groovy scripting in JMeter's JSR223 Pre/Post Processors gives you the full power of the JVM for dynamic request building, complex response validation, and runtime test control. This session covers the complete Groovy API available in JMeter scripts.</p>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"In JMeter Groovy scripts, vars, props, ctx, log, prev, sampler, and OUT are the seven standard context objects providing access to all JMeter state."</div>
+  <div class="ol">"JSR223 Pre-Processor modifies the request before it's sent — building dynamic JWT tokens, HMAC signatures, or time-based request headers."</div>
+  <div class="ol">"JSR223 Post-Processor processes the response after it's received — extracting complex nested values, validating business logic, and writing custom metrics."</div>
+  <div class="ol">"prev.setSuccessful(false) in a Post-Processor marks the sample as failed — this is how you implement custom assertion logic beyond built-in Assertions."</div>
+  <div class="ol">"Always tick 'Cache compiled script if available' in JSR223 elements — without it, Groovy recompiles the script on every sample, destroying performance."</div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — Complete Groovy context object reference</p>
+  <div class="cb"><span class="cm">// JSR223 Pre/Post Processor — complete context object API reference</span>
+
+<span class="cm">// ===== vars: JMeterVariables (per-thread) =====</span>
+vars.get(<span class="st">"myVar"</span>)                  <span class="cm">// read variable → String (null if not set)</span>
+vars.put(<span class="st">"myVar"</span>, <span class="st">"value"</span>)         <span class="cm">// set variable (always String)</span>
+vars.putObject(<span class="st">"myObj"</span>, someObj)    <span class="cm">// store non-String object</span>
+vars.getObject(<span class="st">"myObj"</span>)             <span class="cm">// retrieve non-String object</span>
+vars.remove(<span class="st">"myVar"</span>)               <span class="cm">// delete variable</span>
+vars.getIteration()                  <span class="cm">// current loop iteration number (int)</span>
+vars.entrySet()                      <span class="cm">// all variables as Set<Map.Entry></span>
+
+<span class="cm">// ===== props: JMeterProperties (global, all threads) =====</span>
+props.get(<span class="st">"base.url"</span>)              <span class="cm">// read property → String</span>
+props.put(<span class="st">"sharedToken"</span>, token)     <span class="cm">// write property (visible cross-thread)</span>
+props.getProperty(<span class="st">"key"</span>, <span class="st">"default"</span>) <span class="cm">// read with default</span>
+
+<span class="cm">// ===== ctx: JMeterContext =====</span>
+ctx.getThreadNum()                   <span class="cm">// 0-indexed thread number</span>
+ctx.getVariables()                   <span class="cm">// same as vars</span>
+ctx.getSamplerContext()              <span class="cm">// additional context data</span>
+ctx.isSamplingStarted()             <span class="cm">// has sampling begun?</span>
+
+<span class="cm">// ===== prev: SampleResult (in Post-Processor or Test Action) =====</span>
+prev.getResponseDataAsString()       <span class="cm">// response body as String</span>
+prev.getResponseData()               <span class="cm">// response body as byte[]</span>
+prev.getResponseCode()               <span class="cm">// HTTP status code String: "200"</span>
+prev.getResponseHeaders()            <span class="cm">// all response headers as String</span>
+prev.getRequestHeaders()             <span class="cm">// request headers sent</span>
+prev.getResponseTime()               <span class="cm">// elapsed time ms (long)</span>
+prev.getLatency()                    <span class="cm">// first-byte time ms (long)</span>
+prev.isSuccessful()                  <span class="cm">// boolean — did assertions pass?</span>
+prev.setSuccessful(<span class="kw">false</span>)           <span class="cm">// MARK SAMPLE AS FAILED</span>
+prev.setResponseMessage(<span class="st">"reason"</span>)   <span class="cm">// set failure message</span>
+prev.setSampleLabel(<span class="st">"new name"</span>)     <span class="cm">// rename sample in results</span>
+prev.getBytes()                      <span class="cm">// total bytes received (long)</span>
+
+<span class="cm">// ===== log: Logger =====</span>
+log.info(<span class="st">"info message"</span>)           <span class="cm">// written to jmeter.log</span>
+log.warn(<span class="st">"warning"</span>)               <span class="cm">// yellow in console</span>
+log.error(<span class="st">"error"</span>)                <span class="cm">// red in console + log</span>
+log.debug(<span class="st">"debug"</span>)                <span class="cm">// verbose, enable in log4j2.xml</span></div>
+
+  <p class="cp">Example 2 — JSR223 Pre-Processor: build HMAC-SHA256 signature</p>
+  <div class="cb"><span class="cm">// JSR223 Pre-Processor: generate HMAC-SHA256 request signature
+// Use case: APIs requiring signed requests (AWS-style auth, payment gateways)</span>
+
+<span class="kw">import</span> javax.crypto.Mac
+<span class="kw">import</span> javax.crypto.spec.SecretKeySpec
+
+<span class="kw">def</span> secret    = vars.get(<span class="st">"apiSecret"</span>)      <span class="cm">// from CSV Data Set or properties</span>
+<span class="kw">def</span> timestamp = System.currentTimeMillis().toString()
+<span class="kw">def</span> body      = vars.get(<span class="st">"requestBody"</span>)    <span class="cm">// previously built request body</span>
+<span class="kw">def</span> payload   = timestamp + <span class="st">"."</span> + body      <span class="cm">// string to sign</span>
+
+<span class="kw">def</span> mac = Mac.getInstance(<span class="st">"HmacSHA256"</span>)
+mac.init(<span class="kw">new</span> SecretKeySpec(secret.getBytes(<span class="st">"UTF-8"</span>), <span class="st">"HmacSHA256"</span>))
+<span class="kw">def</span> hmac = mac.doFinal(payload.getBytes(<span class="st">"UTF-8"</span>))
+           .collect { String.format(<span class="st">'%02x'</span>, it) }.join()  <span class="cm">// hex string</span>
+
+vars.put(<span class="st">"X-Timestamp"</span>, timestamp)
+vars.put(<span class="st">"X-Signature"</span>, hmac)
+log.info(<span class="st">"Generated HMAC signature for timestamp: ${timestamp}"</span>)
+
+<span class="cm">// In HTTP Header Manager: X-Timestamp: ${X-Timestamp}
+//                          X-Signature: ${X-Signature}</span></div>
+
+  <p class="cp">Example 3 — JSR223 Post-Processor: complex JSON validation</p>
+  <div class="cb"><span class="cm">// JSR223 Post-Processor: validate business logic in response
+// Use when JSON Assertion isn't expressive enough</span>
+
+<span class="kw">import</span> groovy.json.JsonSlurper
+
+<span class="kw">def</span> body = prev.getResponseDataAsString()
+
+<span class="cm">// Guard against empty responses (server error / timeout)</span>
+<span class="kw">if</span> (!body || body.isEmpty()) {
+    prev.setSuccessful(<span class="kw">false</span>)
+    prev.setResponseMessage(<span class="st">"Empty response body"</span>)
+    <span class="kw">return</span>
+}
+
+<span class="kw">def</span> json
+<span class="kw">try</span> {
+    json = <span class="kw">new</span> JsonSlurper().parseText(body)
+} <span class="kw">catch</span> (e) {
+    prev.setSuccessful(<span class="kw">false</span>)
+    prev.setResponseMessage(<span class="st">"Invalid JSON: ${e.message}"</span>)
+    <span class="kw">return</span>
+}
+
+<span class="cm">// Validate business rules</span>
+<span class="kw">def</span> orderId   = json?.data?.orderId
+<span class="kw">def</span> status    = json?.data?.status
+<span class="kw">def</span> amount    = json?.data?.totalAmount?.toDouble()
+<span class="kw">def</span> expectedAmount = vars.get(<span class="st">"expectedTotal"</span>)?.toDouble()
+
+<span class="kw">if</span> (!orderId) {
+    prev.setSuccessful(<span class="kw">false</span>)
+    prev.setResponseMessage(<span class="st">"orderId missing in response"</span>)
+} <span class="kw">else if</span> (status != <span class="st">"CONFIRMED"</span>) {
+    prev.setSuccessful(<span class="kw">false</span>)
+    prev.setResponseMessage(<span class="st">"Expected CONFIRMED but got: ${status}"</span>)
+} <span class="kw">else if</span> (Math.abs(amount - expectedAmount) > <span class="nm">0.01</span>) {
+    prev.setSuccessful(<span class="kw">false</span>)
+    prev.setResponseMessage(<span class="st">"Amount mismatch: expected ${expectedAmount}, got ${amount}"</span>)
+} <span class="kw">else</span> {
+    vars.put(<span class="st">"orderId"</span>, orderId.toString())   <span class="cm">// store for next request</span>
+    log.info(<span class="st">"Order confirmed: ${orderId}"</span>)
+}</div>
+
+  <p class="cp">Example 4 — JSR223 Pre-Processor: dynamic request body builder</p>
+  <div class="cb"><span class="cm">// JSR223 Pre-Processor: build complex JSON request body dynamically
+// Use when request structure varies per iteration based on data conditions</span>
+
+<span class="kw">import</span> groovy.json.JsonOutput
+
+<span class="kw">def</span> threadNum  = ctx.getThreadNum() + <span class="nm">1</span>           <span class="cm">// 1-indexed</span>
+<span class="kw">def</span> userId     = vars.get(<span class="st">"userId"</span>)               <span class="cm">// from CSV</span>
+<span class="kw">def</span> region     = vars.get(<span class="st">"region"</span>)               <span class="cm">// from CSV</span>
+<span class="kw">def</span> products   = [<span class="nm">1,2,3</span>].collect { id ->           <span class="cm">// build array of items</span>
+    [productId: id, quantity: (Math.random() * <span class="nm">5 + 1</span>).toInteger()]
+}
+
+<span class="kw">def</span> requestBody = [
+    requestId:  <span class="st">"REQ-${threadNum}-${System.currentTimeMillis()}"</span>,
+    userId:     userId.toInteger(),
+    region:     region,
+    timestamp:  <span class="kw">new</span> Date().format(<span class="st">"yyyy-MM-dd'T'HH:mm:ss'Z'"</span>),
+    items:      products,
+    metadata:   [
+        source:  <span class="st">"jmeter-load-test"</span>,
+        version: props.get(<span class="st">"app.version"</span>, <span class="st">"unknown"</span>)
+    ]
+]
+
+<span class="cm">// Store as variable — use ${requestBody} in HTTP Request body field</span>
+vars.put(<span class="st">"requestBody"</span>, JsonOutput.toJson(requestBody))
+log.debug(<span class="st">"Built request for userId: ${userId}"</span>)</div>
+
+  <p class="cp">Example 5 — JSR223 Sampler: custom HTTP via HTTPClient4</p>
+  <div class="cb"><span class="cm">// JSR223 Sampler: send HTTP request programmatically
+// Use when HTTP Sampler GUI isn't flexible enough (e.g., custom retry logic)</span>
+
+<span class="kw">import</span> org.apache.http.client.methods.HttpPost
+<span class="kw">import</span> org.apache.http.entity.StringEntity
+<span class="kw">import</span> org.apache.http.impl.client.HttpClients
+<span class="kw">import</span> org.apache.http.util.EntityUtils
+
+<span class="kw">def</span> baseUrl    = props.get(<span class="st">"base.url"</span>)
+<span class="kw">def</span> authToken  = props.get(<span class="st">"authToken"</span>)
+<span class="kw">def</span> requestBody = vars.get(<span class="st">"requestBody"</span>)
+
+<span class="kw">def</span> client = HttpClients.createDefault()
+<span class="kw">def</span> post   = <span class="kw">new</span> HttpPost(<span class="st">"https://${baseUrl}/api/orders"</span>)
+
+post.addHeader(<span class="st">"Content-Type"</span>, <span class="st">"application/json"</span>)
+post.addHeader(<span class="st">"Authorization"</span>, <span class="st">"Bearer ${authToken}"</span>)
+post.setEntity(<span class="kw">new</span> StringEntity(requestBody, <span class="st">"UTF-8"</span>))
+
+<span class="kw">def</span> startMs  = System.currentTimeMillis()
+<span class="kw">def</span> response = client.execute(post)
+<span class="kw">def</span> elapsed  = System.currentTimeMillis() - startMs
+
+<span class="kw">def</span> statusCode   = response.getStatusLine().getStatusCode()
+<span class="kw">def</span> responseBody = EntityUtils.toString(response.getEntity(), <span class="st">"UTF-8"</span>)
+
+<span class="cm">// Update the sampler result so JMeter records this properly</span>
+SampleResult.setResponseCode(statusCode.toString())
+SampleResult.setResponseData(responseBody, <span class="st">"UTF-8"</span>)
+SampleResult.setSuccessful(statusCode >= <span class="nm">200</span> && statusCode < <span class="nm">300</span>)
+SampleResult.setResponseTime(elapsed)
+
+client.close()</div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Always tick "Cache compiled script if available" — the most critical JSR223 setting. Without it, Groovy recompiles per-sample and your test becomes 10× slower.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Wrap all Groovy in try-catch — uncaught exceptions in scripts cause the sample to fail with a cryptic "Error in script" message, not the actual error.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Avoid I/O operations (file reads, network calls) in per-sample Groovy — pre-load data in setUp Thread Group and share via props/vars.putObject().</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use log.debug() for verbose output in development, log.info() for key events in production runs — jmeter.log is always written regardless of GUI mode.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Keep Groovy scripts in external .groovy files and reference them via FileToString — this enables IDE development, syntax highlighting, and version control.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: What are all the context objects available in JSR223 scripts? <span class="arr">›</span></div><div class="qa-a">Seven standard objects: (1) vars — JMeterVariables, per-thread key-value store for ${variable} access. (2) props — JMeterProperties, global key-value store shared across all threads. (3) ctx — JMeterContext, access to thread state, thread group, current sample. (4) log — SLF4J Logger, writes to jmeter.log. (5) prev — SampleResult (in Post-Processor/Test Action), the result of the immediately previous sampler. (6) sampler — the current Sampler object, useful in Pre-Processors to modify request. (7) OUT — PrintStream, System.out equivalent for console output. Also available: Label, FileName, Parameters (in JSR223 Sampler).</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: How do you implement a custom assertion using Groovy? <span class="arr">›</span></div><div class="qa-a">Use a JSR223 Post-Processor (not an Assertion element) with: parse the response via prev.getResponseDataAsString(), validate your business logic in Groovy, and call prev.setSuccessful(false) + prev.setResponseMessage("reason") when validation fails. This marks the sample as failed in results exactly like a built-in Assertion. Advantage over built-in Assertions: you can implement multi-condition logic, compute derived values, compare against dynamic expected values from previous responses, and write custom failure messages with contextual data.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: How do you load external Groovy libraries/JARs in JMeter? <span class="arr">›</span></div><div class="qa-a">Two approaches: (1) Place JAR files in /apache-jmeter/lib/ext/ directory — they are automatically added to JMeter's classpath at startup. Use import statements in Groovy scripts as normal. (2) For Groovy scripts using external .groovy files: use evaluate(new File('/path/to/utility.groovy')) to load and execute the file. The lib/ext/ approach is preferred for production use. After adding JARs, restart JMeter. Common libraries to add: gson for JSON, okhttp for custom HTTP, AWS SDK for signed requests, database drivers for JDBC.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: What is the difference between JSR223 Pre-Processor and JSR223 Post-Processor? <span class="arr">›</span></div><div class="qa-a">JSR223 Pre-Processor executes BEFORE the sampler sends the request. The sampler object is available, allowing you to modify request parameters, headers, body, or URL. Use for: generating dynamic request data, computing auth signatures, injecting think-time adjustments, logging request details. JSR223 Post-Processor executes AFTER the sampler receives the response. The prev SampleResult is populated. Use for: extracting complex values not possible with Extractor elements, custom business logic validation, computing derived metrics, and writing results to external systems.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: How do you debug a Groovy script that is throwing errors during a load test? <span class="arr">›</span></div><div class="qa-a">Five debugging techniques: (1) Run with 1 thread in GUI mode — enables View Results Tree with full request/response detail. (2) Add log.info() statements to print variable values to jmeter.log — tail the log file in real-time during the run. (3) Add a Debug Sampler immediately after the Pre-Processor to dump all vars. (4) Wrap the entire script in try-catch and set prev.setResponseMessage(e.getMessage()) in the catch block — error text appears in the results file. (5) Test the Groovy logic in standalone Groovy console (groovyConsole command) with mock data before embedding in JMeter.</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(8)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="btn-next" onclick="gt(9)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ===== SESSION 10 ===== -->
+<div class="ses" id="s9">
+  <div class="ses-hdr">
+    <div class="ses-num" style="background:#FAEEDA;color:#633806">10</div>
+    <div class="ses-meta"><h2>CLI, CI/CD, Distributed Testing & Reporting</h2><p>Full -n mode reference · Maven/Gradle · GitHub Actions · Jenkins · Distributed JMeter · HTML reports</p></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>The final session covers production-grade JMeter deployment: the complete CLI flag reference, CI/CD pipeline integration with GitHub Actions and Jenkins, distributed testing across multiple load generators, and automating the full test-report-gate cycle.</p>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="ol">"jmeter -n -t test.jmx -l results.jtl -e -o report/ -Jenv=staging -Jthreads=100 is the production-standard single-command performance test execution."</div>
+  <div class="ol">"JMeter distributed testing uses a master-slave architecture: the master orchestrates the test plan, slave nodes generate the actual load, results are aggregated on the master."</div>
+  <div class="ol">"The JMeter Maven Plugin allows running performance tests as part of a Maven build: mvn verify -Pperformance-test — making load tests first-class build artifacts."</div>
+  <div class="ol">"Performance regression gates in CI compare current P95 against a stored baseline and fail the build if degradation exceeds a threshold — preventing regressions at commit time."</div>
+  <div class="ol">"JMeter's -R flag specifies remote slave nodes: jmeter -n -t test.jmx -R 10.0.1.1,10.0.1.2 — the master pushes the test plan and collects results from all slaves simultaneously."</div>
+
+  <div class="sec-ttl"><i class="ti ti-code" aria-hidden="true"></i> Code / Config Examples</div>
+
+  <p class="cp">Example 1 — Complete JMeter CLI flags reference</p>
+  <div class="cb"><span class="cm"># Complete JMeter CLI flags (jmeter -help for full list)</span>
+
+<span class="cm"># Core execution flags:</span>
+jmeter <span class="kw">-n</span>                        <span class="cm"># non-GUI (headless) mode — MANDATORY for load tests</span>
+       <span class="kw">-t</span> my_test.jmx             <span class="cm"># test plan file path</span>
+       <span class="kw">-l</span> results/run.jtl         <span class="cm"># results log file (.jtl)</span>
+       <span class="kw">-e</span>                         <span class="cm"># generate HTML dashboard report at end</span>
+       <span class="kw">-o</span> reports/html/           <span class="cm"># HTML report output directory (must be empty)</span>
+
+<span class="cm"># Reporting:</span>
+       <span class="kw">-g</span> results/run.jtl         <span class="cm"># generate report from EXISTING .jtl (no test run)</span>
+
+<span class="cm"># Properties/Variables:</span>
+       <span class="kw">-J</span>threads=100              <span class="cm"># set JMeter property (overrides user.properties)</span>
+       <span class="kw">-J</span>base_url=api.staging.com <span class="cm"># set any property by name</span>
+       <span class="kw">-D</span>java.rmi.server.hostname=<span class="nm">192.168.1.10</span>  <span class="cm"># Java system property</span>
+       <span class="kw">-q</span> staging.properties      <span class="cm"># load additional .properties file</span>
+       <span class="kw">-G</span>key=value                <span class="cm"># set property AND propagate to remote slaves</span>
+
+<span class="cm"># Distributed testing:</span>
+       <span class="kw">-r</span>                         <span class="cm"># run on ALL remote slaves (from remote_hosts in jmeter.properties)</span>
+       <span class="kw">-R</span> 10.0.1.1,10.0.1.2      <span class="cm"># run on SPECIFIED slave IPs</span>
+       <span class="kw">-X</span>                         <span class="cm"># exit remote slaves when test completes</span>
+       <span class="kw">-Z</span>                         <span class="cm"># exit remote slaves even if errors occur</span>
+
+<span class="cm"># Logging:</span>
+       <span class="kw">-j</span> logs/jmeter_run.log     <span class="cm"># JMeter log file path</span>
+       <span class="kw">-L</span> jmeter=DEBUG            <span class="cm"># set log level: DEBUG/INFO/WARN/ERROR</span>
+
+<span class="cm"># Example: full production command:</span>
+jmeter -n -t test.jmx \
+       -l results/$(date +%Y%m%d_%H%M%S).jtl \
+       -e -o reports/html_$(date +%Y%m%d_%H%M%S)/ \
+       -Jbase_url=$TARGET_ENV \
+       -Jthreads=$LOAD_THREADS \
+       -Jduration=$TEST_DURATION \
+       -j logs/jmeter_$(date +%Y%m%d_%H%M%S).log</div>
+
+  <p class="cp">Example 2 — GitHub Actions CI/CD pipeline</p>
+  <div class="cb"><span class="cm"># .github/workflows/performance-gate.yml
+# Runs on every PR to main — blocks merge on SLA breach</span>
+
+name: Performance Gate
+on:
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: <span class="st">'0 2 * * *'</span>           <span class="cm"># also run nightly at 2 AM</span>
+
+jobs:
+  jmeter-perf-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install JMeter
+        run: |
+          wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
+          tar -xzf apache-jmeter-5.6.3.tgz
+          export JMETER_HOME=$PWD/apache-jmeter-5.6.3
+          echo "$JMETER_HOME/bin" >> $GITHUB_PATH
+
+      - name: Install JMeter plugins
+        run: |
+          <span class="cm"># Download JMeter Plugins Manager</span>
+          wget -q -O $JMETER_HOME/lib/ext/jmeter-plugins-manager-1.10.jar \
+            https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.10/jmeter-plugins-manager-1.10.jar
+          <span class="cm"># Install required plugins (Stepping Thread Group, etc.)</span>
+          java -cp $JMETER_HOME/lib/ext/jmeter-plugins-manager-1.10.jar \
+            org.jmeterplugins.repository.PluginManagerCMDInstaller
+
+      - name: Run JMeter load test
+        env:
+          TARGET_URL: ${{ vars.STAGING_API_URL }}
+          API_KEY: ${{ secrets.STAGING_API_KEY }}
+        run: |
+          jmeter -n \
+            -t tests/api_load_test.jmx \
+            -l results/results.jtl \
+            -e -o reports/html/ \
+            -Jbase_url=$TARGET_URL \
+            -JapiKey=$API_KEY \
+            -Jthreads=20 \
+            -Jduration=120 \
+            -Jrampup=30
+
+      - name: Check SLA thresholds
+        run: python3 scripts/check_sla.py results/results.jtl
+
+      - name: Upload HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-report-${{ github.run_number }}
+          path: reports/html/</div>
+
+  <p class="cp">Example 3 — SLA check script (CI quality gate)</p>
+  <div class="cb"><span class="cm">#!/usr/bin/env python3
+# scripts/check_sla.py — parse JMeter .jtl and enforce SLA
+# Exit code 0 = pass, 1 = fail (blocks CI merge)</span>
+
+<span class="kw">import</span> sys, pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np
+
+<span class="cm"># SLA definitions — define per endpoint name</span>
+SLA = {
+    <span class="st">"POST /auth/login"</span>:      {<span class="st">"p95"</span>: <span class="nm">500</span>,  <span class="st">"err_pct"</span>: <span class="nm">0.5</span>},
+    <span class="st">"GET /products/search"</span>:  {<span class="st">"p95"</span>: <span class="nm">1000</span>, <span class="st">"err_pct"</span>: <span class="nm">0.5</span>},
+    <span class="st">"POST /orders/checkout"</span>: {<span class="st">"p95"</span>: <span class="nm">3000</span>, <span class="st">"err_pct"</span>: <span class="nm">1.0</span>},
+    <span class="st">"GLOBAL"</span>:                {<span class="st">"err_pct"</span>: <span class="nm">1.0</span>}      <span class="cm"># overall error rate</span>
+}
+
+df = pd.read_csv(sys.argv[<span class="nm">1</span>])                     <span class="cm"># path from CLI arg</span>
+df.columns = df.columns.str.strip()
+failures = []
+
+<span class="kw">for</span> label, sla <span class="kw">in</span> SLA.items():
+    grp = df[df[<span class="st">'label'</span>] == label] <span class="kw">if</span> label != <span class="st">"GLOBAL"</span> <span class="kw">else</span> df
+    <span class="kw">if</span> len(grp) == <span class="nm">0</span>: <span class="kw">continue</span>
+    
+    err_pct = (grp[<span class="st">'success'</span>] == <span class="st">'false'</span>).mean() * <span class="nm">100</span>
+    
+    <span class="kw">if</span> <span class="st">'p95'</span> <span class="kw">in</span> sla:
+        p95 = np.percentile(grp[<span class="st">'elapsed'</span>], <span class="nm">95</span>)
+        <span class="kw">if</span> p95 > sla[<span class="st">'p95'</span>]:
+            failures.append(f<span class="st">"{label}: P95={p95:.0f}ms > {sla['p95']}ms SLA"</span>)
+    
+    <span class="kw">if</span> err_pct > sla[<span class="st">'err_pct'</span>]:
+        failures.append(f<span class="st">"{label}: error_rate={err_pct:.2f}% > {sla['err_pct']}% SLA"</span>)
+
+<span class="kw">if</span> failures:
+    <span class="kw">print</span>(<span class="st">"SLA BREACHES DETECTED:"</span>)
+    <span class="kw">for</span> f <span class="kw">in</span> failures: <span class="kw">print</span>(f<span class="st">"  FAIL: {f}"</span>)
+    sys.exit(<span class="nm">1</span>)                          <span class="cm"># non-zero exit = CI failure</span>
+<span class="kw">else</span>:
+    <span class="kw">print</span>(<span class="st">"All SLAs passed."</span>)
+    sys.exit(<span class="nm">0</span>)</div>
+
+  <p class="cp">Example 4 — Distributed JMeter (Master + Slaves)</p>
+  <div class="cb"><span class="cm"># ===== MASTER MACHINE SETUP =====
+# File: /bin/jmeter.properties on MASTER</span>
+
+<span class="cm"># Comma-separated list of slave IPs (or hostnames)</span>
+remote_hosts=10.0.1.1,10.0.1.2,10.0.1.3
+
+<span class="cm"># RMI port for master-slave communication</span>
+server.rmi.port=<span class="nm">1099</span>
+client.rmi.localport=<span class="nm">60000</span>           <span class="cm"># port master uses for receiving results</span>
+
+<span class="cm"># ===== SLAVE MACHINES SETUP =====
+# Run on each slave machine before starting the master test:</span>
+./jmeter-server -Djava.rmi.server.hostname=10.0.1.1
+<span class="cm"># jmeter-server starts the JMeter RMI slave listener
+# -D flag sets the slave's advertised IP (must be reachable from master)</span>
+
+<span class="cm"># ===== MASTER RUN COMMAND =====</span>
+jmeter -n \
+  -t test.jmx \
+  -R 10.0.1.1,10.0.1.2,10.0.1.3 \   <span class="cm"># use these slaves</span>
+  -l results/distributed_run.jtl \
+  -e -o reports/dist_html/ \
+  -X \                                  <span class="cm"># exit slaves when done</span>
+  -Jthreads=100 \                       <span class="cm"># 100 VUs PER SLAVE = 300 total VUs</span>
+  -Jduration=300
+
+<span class="cm"># IMPORTANT: Thread count in the .jmx is PER SLAVE
+# 3 slaves × 100 threads each = 300 total concurrent VUs
+# Master collects ALL results and writes merged .jtl</span>
+
+<span class="cm"># ===== SSL/TLS for RMI (required for production) =====</span>
+<span class="cm"># Generate keystore: keytool -genkey -alias rmi -keystore rmi_keystore.jks</span>
+<span class="cm"># Add to jmeter.properties on all machines:</span>
+server.rmi.ssl.keystore.file=rmi_keystore.jks
+server.rmi.ssl.truststore.file=rmi_keystore.jks</div>
+
+  <p class="cp">Example 5 — JMeter Maven Plugin integration</p>
+  <div class="cb"><span class="cm">&lt;!-- pom.xml — JMeter Maven Plugin for build-integrated performance tests --&gt;</span>
+<span class="kw">&lt;plugin&gt;</span>
+  <span class="kw">&lt;groupId&gt;</span>com.lazerycode.jmeter<span class="kw">&lt;/groupId&gt;</span>
+  <span class="kw">&lt;artifactId&gt;</span>jmeter-maven-plugin<span class="kw">&lt;/artifactId&gt;</span>
+  <span class="kw">&lt;version&gt;</span>3.8.0<span class="kw">&lt;/version&gt;</span>
+  <span class="kw">&lt;executions&gt;</span>
+    <span class="kw">&lt;execution&gt;</span>
+      <span class="kw">&lt;id&gt;</span>jmeter-tests<span class="kw">&lt;/id&gt;</span>
+      <span class="kw">&lt;phase&gt;</span>verify<span class="kw">&lt;/phase&gt;</span>       <span class="cm">&lt;!-- runs during mvn verify --&gt;</span>
+      <span class="kw">&lt;goals&gt;&lt;goal&gt;</span>jmeter<span class="kw">&lt;/goal&gt;&lt;/goals&gt;</span>
+    <span class="kw">&lt;/execution&gt;</span>
+    <span class="kw">&lt;execution&gt;</span>
+      <span class="kw">&lt;id&gt;</span>jmeter-check-results<span class="kw">&lt;/id&gt;</span>
+      <span class="kw">&lt;phase&gt;</span>verify<span class="kw">&lt;/phase&gt;</span>
+      <span class="kw">&lt;goals&gt;&lt;goal&gt;</span>results<span class="kw">&lt;/goal&gt;&lt;/goals&gt;</span>
+    <span class="kw">&lt;/execution&gt;</span>
+  <span class="kw">&lt;/executions&gt;</span>
+  <span class="kw">&lt;configuration&gt;</span>
+    <span class="cm">&lt;!-- .jmx files in src/test/jmeter/ --&gt;</span>
+    <span class="kw">&lt;testFilesDirectory&gt;</span>${project.basedir}/src/test/jmeter<span class="kw">&lt;/testFilesDirectory&gt;</span>
+    
+    <span class="cm">&lt;!-- Results in target/jmeter/results/ --&gt;</span>
+    <span class="kw">&lt;generateReports&gt;</span>true<span class="kw">&lt;/generateReports&gt;</span>
+
+    <span class="cm">&lt;!-- Pass Maven properties to JMeter --&gt;</span>
+    <span class="kw">&lt;propertiesJMeter&gt;</span>
+      <span class="kw">&lt;base.url&gt;</span>${env.TARGET_URL}<span class="kw">&lt;/base.url&gt;</span>
+      <span class="kw">&lt;threads&gt;</span>${perf.threads}<span class="kw">&lt;/threads&gt;</span>
+      <span class="kw">&lt;duration&gt;</span>${perf.duration}<span class="kw">&lt;/duration&gt;</span>
+    <span class="kw">&lt;/propertiesJMeter&gt;</span>
+
+    <span class="cm">&lt;!-- Fail build if error rate exceeds threshold --&gt;</span>
+    <span class="kw">&lt;errorRateThresholdInPercent&gt;</span>1<span class="kw">&lt;/errorRateThresholdInPercent&gt;</span>
+
+    <span class="cm">&lt;!-- JVM args for JMeter process --&gt;</span>
+    <span class="kw">&lt;jmeterProcessJVMSettings&gt;</span>
+      <span class="kw">&lt;xms&gt;</span>1024<span class="kw">&lt;/xms&gt;</span>     <span class="cm">&lt;!-- initial heap 1GB --&gt;</span>
+      <span class="kw">&lt;xmx&gt;</span>4096<span class="kw">&lt;/xmx&gt;</span>     <span class="cm">&lt;!-- max heap 4GB --&gt;</span>
+    <span class="kw">&lt;/jmeterProcessJVMSettings&gt;</span>
+  <span class="kw">&lt;/configuration&gt;</span>
+<span class="kw">&lt;/plugin&gt;</span>
+
+<span class="cm">&lt;!-- Run: mvn verify -Pperformance -Dperf.threads=100 -Dperf.duration=300 --&gt;</span></div>
+
+  <div class="sec-ttl"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Run lightweight smoke tests on every PR (20 VUs, 60s) and full load tests only on merge to main — keep CI fast for developers.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Use -Jthreads, -Jduration, -Jbase_url as CLI parameters — never hardcode load profile values in the .jmx file.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>For distributed tests: ensure all slaves have the same JMeter version, plugins, and JARs as the master — version mismatch causes subtle errors.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Archive .jtl files and HTML reports for 30+ runs — trend charts showing P95 over time across releases are the most valuable performance artifact.</span></div>
+    <div class="chk"><span class="chk-ic"><i class="ti ti-circle-check"></i></span><span>Add a performance regression gate: if current run's P95 is more than 20% above last green run's P95, fail the build and alert the team via Slack.</span></div>
+  </div>
+
+  <div class="sec-ttl"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q1: Explain JMeter distributed testing architecture. <span class="arr">›</span></div><div class="qa-a">JMeter distributed testing uses a Master-Slave (Controller-Agent) model. The Master: runs the JMeter GUI or CLI, sends the test plan (.jmx) to all slave nodes via Java RMI, and collects+aggregates results. Slaves (jmeter-server processes): receive the test plan, execute it independently, generate load, and stream results back to master. Key points: the thread count in the .jmx is per slave — 100 threads across 10 slaves = 1,000 VUs total. All slaves must have the same JMeter version and required plugins. Use -R to specify slave IPs or configure remote_hosts in jmeter.properties. The master generates the final merged .jtl and HTML report.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q2: How do you integrate JMeter tests into a Jenkins pipeline? <span class="arr">›</span></div><div class="qa-a">Four components: (1) Jenkinsfile shell step running jmeter -n -t test.jmx -l results.jtl -e -o report/ with environment variables injected via -J flags. (2) JUnit publisher using the jtl2junit.xsl stylesheet to convert .jtl to JUnit XML — enables Jenkins test result visualization. (3) JMeter Performance Plugin (Jenkins) for trend graphs across builds. (4) Build failure condition: use the check_sla.py script (exits 1 on SLA breach) in a subsequent shell step. Set currentBuild.result = 'FAILURE' if the script exits non-zero. Archive the HTML report as a build artifact.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q3: How many virtual users can a single JMeter instance generate? <span class="arr">›</span></div><div class="qa-a">Practical limits depend on test characteristics. For simple HTTP GET tests: a well-tuned single JMeter instance on a 4-core/8GB server can sustain 500–1,000 VUs (Java threads). For complex tests with Groovy scripts and JSON parsing: 200–400 VUs before CPU becomes the bottleneck. Key factors: heap size (increase -Xmx to 4–8GB), disabling GUI Listeners, using Keep-Alive connections, and think times (longer think times = less CPU per VU). For true high concurrency (10,000+ VUs), use distributed testing with 10–20 slave nodes, or switch to async load generators like k6 or Gatling which use virtual threads.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q4: How do you handle SSL/TLS in JMeter for HTTPS testing? <span class="arr">›</span></div><div class="qa-a">JMeter handles HTTPS automatically using Java's SSL implementation. For standard HTTPS: no special configuration — JMeter's HttpClient4 validates the certificate chain against the JVM's default trust store. For self-signed certificates (common in staging): add -Dhttps.trustAllCerts=true (not production safe) or import the certificate into a custom truststore: keytool -import -alias staging_cert -file staging.crt -keystore custom.jks, then add to jmeter.properties: javax.net.ssl.trustStore=custom.jks. For client certificate mutual TLS: use Keystore Configuration element with the client certificate PKCS12 file and password.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="tqa(this)">Q5: What is a performance regression gate and how do you implement it? <span class="arr">›</span></div><div class="qa-a">A performance regression gate is an automated check that fails a CI build when the current test run's metrics are worse than a stored baseline by more than an acceptable threshold. Implementation: (1) After every successful run, save the P95 per endpoint to a baseline JSON file stored in S3/artifact storage. (2) In the next run's CI pipeline, after JMeter completes, run a comparison script that loads the baseline and compares current P95. (3) If current P95 > baseline P95 × 1.20 (20% regression), exit with code 1 — blocking the PR merge. Update the baseline only on intentional performance-improving PRs via a manual trigger or PR label. This prevents performance regressions from accumulating silently over sprints.</div></div>
+
+  <div class="btm">
+    <button class="btn-done" onclick="md(9)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button style="padding:7px 16px;border:0.5px solid #5DCAA5;border-radius:var(--border-radius-md);background:#E1F5EE;color:#085041;cursor:pointer;font-size:12px" onclick="alert('Congratulations! You have completed all 10 JMeter sessions. You are now ready for SDET-level JMeter interviews and production-grade load testing. Next: explore distributed JMeter, Grafana dashboards, and JMeter plugins in depth!')">Course Complete!</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+var cur=0, done=new Array(10).fill(false);
+function gt(i){
+  document.querySelectorAll('.ses').forEach((s,j)=>s.classList.toggle('act',j===i));
+  document.querySelectorAll('.tb').forEach((b,j)=>b.classList.toggle('act',j===i));
+  cur=i; up(); window.scrollTo(0,0);
+}
+function md(i){
+  done[i]=true;
+  document.querySelectorAll('.tb')[i].classList.add('done');
+  up();
+}
+function up(){
+  var p=Math.round((cur+1)/10*100);
+  document.getElementById('pf').style.width=p+'%';
+  document.getElementById('pt').textContent='Session '+(cur+1)+' / 10';
+}
+function tqa(el){el.closest('.qa-item').classList.toggle('open');}
+up();
+</script>
+</body>
+</html>

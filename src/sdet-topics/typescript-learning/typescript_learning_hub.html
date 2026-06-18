@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript Learning Hub — SDET Edition</title>
+</head>
+<body>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--tab-h:48px
+    --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    --color-text-primary: #1a1a2e;
+    --color-text-secondary: #555770;
+    --color-text-tertiary: #8e90a6;
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f4f4f8;
+    --color-border-secondary: #d1d1db;
+    --color-border-tertiary: #e4e4eb;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;}
+body{font-family:var(--font-sans,sans-serif);font-size:14px;color:var(--color-text-primary);background:transparent}
+.hub{width:100%;min-height:600px}
+
+.phase-bar{display:flex;gap:4px;padding:12px 0 8px;border-bottom:0.5px solid var(--color-border-tertiary);overflow-x:auto}
+.phase-chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;border:0.5px solid transparent}
+.ph-fund{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.ph-int{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.ph-adv{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.ph-fw{background:#FAECE7;color:#712B13;border-color:#F0997B}
+
+.tab-bar{display:flex;gap:0;border-bottom:0.5px solid var(--color-border-tertiary);overflow-x:auto;margin-top:8px;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{padding:10px 14px;font-size:12px;font-weight:500;border:none;background:transparent;color:var(--color-text-secondary);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s;flex-shrink:0}
+.tab-btn:hover{color:var(--color-text-primary)}
+.tab-btn.active{color:#534AB7;border-bottom-color:#534AB7}
+.tab-btn .phase-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle}
+
+.progress-bar{height:4px;background:var(--color-background-secondary);border-radius:2px;margin:10px 0}
+.progress-fill{height:4px;border-radius:2px;background:linear-gradient(90deg,#534AB7,#1D9E75);transition:width .4s}
+
+.content{padding:0 2px}
+.session{display:none}
+.session.active{display:block}
+
+.section{margin:16px 0}
+.section-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--color-border-tertiary)}
+
+.overview-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px}
+.overview-card h3{font-size:15px;font-weight:500;margin-bottom:6px}
+.overview-card p{font-size:13px;line-height:1.65;color:var(--color-text-secondary)}
+.wwwwh{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+.wwwwh-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px}
+.wwwwh-item .label{font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.wwwwh-item .val{font-size:12px;color:var(--color-text-primary);line-height:1.5}
+
+.oneliner-list{display:flex;flex-direction:column;gap:6px}
+.oneliner{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-left:3px solid #534AB7;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:8px 12px;font-size:12px;line-height:1.55;color:var(--color-text-primary)}
+.oneliner span{font-size:10px;color:#534AB7;font-weight:500;display:block;margin-bottom:2px}
+
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin:10px 0;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.code-label{font-size:11px;font-weight:500;color:var(--color-text-secondary)}
+.code-tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.tag-ts{background:#EEEDFE;color:#3C3489}
+.tag-js{background:#FAEEDA;color:#633806}
+.tag-both{background:#E1F5EE;color:#085041}
+pre{padding:12px;overflow-x:auto;font-family:var(--font-mono,monospace);font-size:12px;line-height:1.7;color:var(--color-text-primary)}
+.cmt{color:var(--color-text-tertiary)}
+.kw{color:#534AB7;font-weight:500}
+.str{color:#0F6E56}
+.tp{color:#D85A30}
+.fn{color:#185FA5}
+
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.compare-col h4{font-size:12px;font-weight:500;margin-bottom:6px;padding:6px 10px;border-radius:var(--border-radius-md)}
+.col-ts{background:#EEEDFE;color:#3C3489}
+.col-js{background:#FAEEDA;color:#633806}
+
+.checklist{display:flex;flex-direction:column;gap:5px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;padding:6px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);line-height:1.5}
+.check-item .icon{color:#1D9E75;font-size:14px;flex-shrink:0;margin-top:1px}
+.check-item .warn{color:#BA7517}
+
+.qa-list{display:flex;flex-direction:column;gap:8px}
+.qa-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.qa-q{padding:10px 12px;background:var(--color-background-secondary);font-size:12px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.qa-q:hover{background:var(--color-background-primary)}
+.qa-a{display:none;padding:10px 12px;font-size:12px;line-height:1.6;color:var(--color-text-secondary);border-top:0.5px solid var(--color-border-tertiary)}
+.qa-item.open .qa-a{display:block}
+.qa-item.open .qa-arrow{transform:rotate(180deg)}
+.qa-arrow{transition:transform .2s;flex-shrink:0;font-size:10px}
+
+.diagram-svg{width:100%;margin:10px 0;border-radius:var(--border-radius-md);overflow:hidden}
+.concept-grid{display:flex;flex-direction:column;gap:10px}
+.concept-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px}
+.concept-item h4{font-size:13px;font-weight:500;margin-bottom:6px;color:var(--color-text-primary)}
+.concept-item p{font-size:12px;line-height:1.6;color:var(--color-text-secondary)}
+
+.nav-btns{display:flex;justify-content:space-between;margin-top:20px;padding-top:14px;border-top:0.5px solid var(--color-border-tertiary)}
+.nav-btn{padding:8px 16px;font-size:13px;font-weight:500;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);cursor:pointer;transition:all .15s}
+.nav-btn:hover{background:var(--color-background-secondary)}
+.nav-btn.primary{background:#534AB7;color:#EEEDFE;border-color:#534AB7}
+.nav-btn.primary:hover{background:#3C3489}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.badge{font-size:10px;font-weight:500;padding:3px 8px;border-radius:10px;border:0.5px solid transparent}
+
+/* SVG diagram classes */
+.c-purple rect{fill:#EEEDFE;stroke:#AFA9EC;stroke-width:1.5}
+.c-amber rect{fill:#FAEEDA;stroke:#EF9F27;stroke-width:1.5}
+.c-teal rect{fill:#E1F5EE;stroke:#5DCAA5;stroke-width:1.5}
+.c-coral rect{fill:#FAECE7;stroke:#F0997B;stroke-width:1.5}
+.c-gray rect{fill:#f4f4f8;stroke:#d1d1db;stroke-width:1.5}
+svg .th{font-weight:600;fill:var(--color-text-primary);font-family:var(--font-sans)}
+svg .ts{font-size:11px;fill:var(--color-text-secondary);font-family:var(--font-sans)}
+</style>
+
+<div class="hub">
+<div class="phase-bar">
+  <span class="phase-chip ph-fund">📘 Phase 1 · Fundamentals (S1–S2)</span>
+  <span class="phase-chip ph-int">📗 Phase 2 · Intermediate (S3–S4)</span>
+  <span class="phase-chip ph-adv">📙 Phase 3 · Advanced (S5–S6)</span>
+  <span class="phase-chip ph-fw">📕 Phase 4 · Frameworks (S7–S8)</span>
+</div>
+
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn active" onclick="switchTab(0)" id="tb0"><span class="phase-dot" style="background:#534AB7"></span>S1 · Intro & Types</button>
+  <button class="tab-btn" onclick="switchTab(1)" id="tb1"><span class="phase-dot" style="background:#534AB7"></span>S2 · Functions</button>
+  <button class="tab-btn" onclick="switchTab(2)" id="tb2"><span class="phase-dot" style="background:#1D9E75"></span>S3 · OOP &amp; Classes</button>
+  <button class="tab-btn" onclick="switchTab(3)" id="tb3"><span class="phase-dot" style="background:#1D9E75"></span>S4 · Generics</button>
+  <button class="tab-btn" onclick="switchTab(4)" id="tb4"><span class="phase-dot" style="background:#BA7517"></span>S5 · Advanced Types</button>
+  <button class="tab-btn" onclick="switchTab(5)" id="tb5"><span class="phase-dot" style="background:#BA7517"></span>S6 · Modules &amp; Config</button>
+  <button class="tab-btn" onclick="switchTab(6)" id="tb6"><span class="phase-dot" style="background:#D85A30"></span>S7 · TS + Testing</button>
+  <button class="tab-btn" onclick="switchTab(7)" id="tb7"><span class="phase-dot" style="background:#D85A30"></span>S8 · TS + Node/APIs</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:12.5%"></div></div>
+
+<div class="content">
+
+<!-- SESSION 1 -->
+<div class="session active" id="s0">
+<div class="section">
+  <div class="section-title">Overview</div>
+  <div class="overview-card">
+    <h3>TypeScript — JavaScript with superpowers</h3>
+    <p>TypeScript is a <strong>statically typed superset of JavaScript</strong> developed by Microsoft. Every valid JavaScript is valid TypeScript, but TypeScript adds a <em>type system</em> on top, catching bugs at compile time — before the code runs.</p>
+    <div class="wwwwh">
+      <div class="wwwwh-item"><div class="label">What</div><div class="val">JS + static type annotations</div></div>
+      <div class="wwwwh-item"><div class="label">Why</div><div class="val">Catch errors early, better IDE support, readable code</div></div>
+      <div class="wwwwh-item"><div class="label">When</div><div class="val">Any JS project, especially large or team-based</div></div>
+      <div class="wwwwh-item"><div class="label">Where</div><div class="val">Frontend (React), Backend (Node), Testing (Playwright, Jest)</div></div>
+      <div class="wwwwh-item"><div class="label">How</div><div class="val">Write .ts files → tsc compiles to .js → run in browser/Node</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview one-liners (say exactly these)</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Line 1</span>"TypeScript is a statically typed superset of JavaScript that compiles down to plain JavaScript."</div>
+    <div class="oneliner"><span>Line 2</span>"The main advantage of TypeScript is catching type errors at compile time rather than at runtime."</div>
+    <div class="oneliner"><span>Line 3</span>"TypeScript's type system is structural, not nominal — if the shape matches, the type matches."</div>
+    <div class="oneliner"><span>Line 4</span>"In automation testing, TypeScript gives us type-safe selectors, typed API responses, and self-documenting test code."</div>
+    <div class="oneliner"><span>Line 5</span>"TypeScript is a development-time tool; after compilation, only JavaScript runs in the browser or Node.js."</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Core concepts — TypeScript vs JavaScript architecture</div>
+  <svg class="diagram-svg" viewBox="0 0 660 200" role="img" xmlns="http://www.w3.org/2000/svg">
+    <title>TypeScript compilation flow</title>
+    <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    <g class="c-purple"><rect x="20" y="70" width="130" height="60" rx="8" stroke-width="0.5"/><text class="th" x="85" y="96" text-anchor="middle" dominant-baseline="central" font-size="13">TypeScript</text><text class="ts" x="85" y="114" text-anchor="middle" dominant-baseline="central">.ts / .tsx file</text></g>
+    <line x1="152" y1="100" x2="195" y2="100" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)"/>
+    <g class="c-amber"><rect x="197" y="70" width="130" height="60" rx="8" stroke-width="0.5"/><text class="th" x="262" y="96" text-anchor="middle" dominant-baseline="central" font-size="13">tsc compiler</text><text class="ts" x="262" y="114" text-anchor="middle" dominant-baseline="central">type-checks code</text></g>
+    <line x1="329" y1="100" x2="372" y2="100" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)"/>
+    <g class="c-teal"><rect x="374" y="70" width="130" height="60" rx="8" stroke-width="0.5"/><text class="th" x="439" y="96" text-anchor="middle" dominant-baseline="central" font-size="13">JavaScript</text><text class="ts" x="439" y="114" text-anchor="middle" dominant-baseline="central">.js output</text></g>
+    <line x1="506" y1="100" x2="548" y2="100" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)"/>
+    <g class="c-gray"><rect x="550" y="70" width="95" height="60" rx="8" stroke-width="0.5"/><text class="th" x="597" y="96" text-anchor="middle" dominant-baseline="central" font-size="12">Browser</text><text class="ts" x="597" y="114" text-anchor="middle" dominant-baseline="central">/ Node.js</text></g>
+    <text class="ts" x="330" y="168" text-anchor="middle" font-size="11">Types are erased at compile time — zero runtime overhead</text>
+  </svg>
+
+  <div class="concept-grid">
+    <div class="concept-item">
+      <h4>Primitive types</h4>
+      <p><code>string</code>, <code>number</code>, <code>boolean</code>, <code>null</code>, <code>undefined</code>, <code>symbol</code>, <code>bigint</code> — same as JS primitives, but now declared explicitly.</p>
+    </div>
+    <div class="concept-item">
+      <h4>Special TS types</h4>
+      <p><code>any</code> (opt out of typing), <code>unknown</code> (safe alternative to any), <code>never</code> (impossible value), <code>void</code> (no return value), <code>tuple</code> (fixed-length array).</p>
+    </div>
+    <div class="concept-item">
+      <h4>Type inference</h4>
+      <p>TypeScript is smart — if you write <code>let age = 25</code>, it infers <code>age: number</code>. You don't always need to write types explicitly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Code examples (JS vs TS side by side)</div>
+
+  <div class="compare-grid">
+    <div><h4 class="col-js" style="padding:6px 10px;border-radius:6px;margin-bottom:6px">JavaScript</h4></div>
+    <div><h4 class="col-ts" style="padding:6px 10px;border-radius:6px;margin-bottom:6px">TypeScript</h4></div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 1 · Variable declarations</span><span class="code-tag tag-both">JS vs TS</span></div>
+    <pre><span class="cmt">// ── JavaScript (no types, error at runtime) ──</span>
+<span class="kw">let</span> username = <span class="str">"Alice"</span>;       <span class="cmt">// JS infers nothing</span>
+username = <span class="str">42</span>;               <span class="cmt">// ❌ No error in JS — bug hidden!</span>
+console.log(username.toUpperCase()); <span class="cmt">// 💥 Runtime crash</span>
+
+<span class="cmt">// ── TypeScript (types declared, error at compile) ──</span>
+<span class="kw">let</span> username: <span class="tp">string</span> = <span class="str">"Alice"</span>; <span class="cmt">// ✅ type annotation</span>
+username = <span class="str">42</span>;               <span class="cmt">// ❌ Compile error: Type 'number' not assignable to 'string'</span>
+console.log(username.toUpperCase()); <span class="cmt">// ✅ Safe — TS guarantees string</span>
+
+<span class="cmt">// Type inference (no annotation needed when obvious)</span>
+<span class="kw">let</span> age = <span class="str">25</span>;                 <span class="cmt">// TS infers: age is number</span>
+<span class="kw">let</span> isActive = <span class="str">true</span>;         <span class="cmt">// TS infers: isActive is boolean</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 2 · All primitive types</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// string — text data</span>
+<span class="kw">let</span> firstName: <span class="tp">string</span> = <span class="str">"Ravi"</span>;
+<span class="kw">let</span> greeting: <span class="tp">string</span> = <span class="str">`Hello, ${firstName}`</span>; <span class="cmt">// template literals work</span>
+
+<span class="cmt">// number — integers AND floats (no int/float split like Java)</span>
+<span class="kw">let</span> score: <span class="tp">number</span> = 98.5;
+<span class="kw">let</span> count: <span class="tp">number</span> = 0;
+
+<span class="cmt">// boolean — true or false only</span>
+<span class="kw">let</span> isPassed: <span class="tp">boolean</span> = <span class="kw">true</span>;
+
+<span class="cmt">// null and undefined — explicit absence of value</span>
+<span class="kw">let</span> nothing: <span class="tp">null</span> = <span class="kw">null</span>;
+<span class="kw">let</span> notSet: <span class="tp">undefined</span> = <span class="kw">undefined</span>;
+
+<span class="cmt">// any — escape hatch (avoid in production!)</span>
+<span class="kw">let</span> anything: <span class="tp">any</span> = <span class="str">"could be anything"</span>;
+anything = 42;   <span class="cmt">// no error — any disables type checking</span>
+
+<span class="cmt">// unknown — safer than any; must check type before using</span>
+<span class="kw">let</span> input: <span class="tp">unknown</span> = fetchData();
+<span class="kw">if</span> (<span class="kw">typeof</span> input === <span class="str">"string"</span>) {
+  console.log(input.toUpperCase()); <span class="cmt">// ✅ safe after type guard</span>
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 3 · Arrays and Tuples</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Array — all elements same type</span>
+<span class="kw">let</span> testNames: <span class="tp">string[]</span> = [<span class="str">"login test"</span>, <span class="str">"checkout test"</span>];
+<span class="kw">let</span> scores: <span class="tp">number[]</span> = [85, 92, 78];
+<span class="cmt">// Alternate syntax: Array&lt;string&gt; (generic form)</span>
+<span class="kw">let</span> steps: <span class="tp">Array</span>&lt;<span class="tp">string</span>&gt; = [<span class="str">"open"</span>, <span class="str">"login"</span>, <span class="str">"assert"</span>];
+
+<span class="cmt">// Tuple — fixed length, each index has its OWN type</span>
+<span class="kw">let</span> testResult: [<span class="tp">string</span>, <span class="tp">boolean</span>, <span class="tp">number</span>];
+testResult = [<span class="str">"login"</span>, <span class="kw">true</span>, 200]; <span class="cmt">// ✅ name, passed, statusCode</span>
+testResult = [<span class="kw">true</span>, <span class="str">"login"</span>, 200]; <span class="cmt">// ❌ wrong order = compile error</span>
+
+<span class="cmt">// Practical SDET example: API response tuple</span>
+<span class="kw">function</span> <span class="fn">getApiResult</span>(): [<span class="tp">number</span>, <span class="tp">string</span>] {
+  <span class="kw">return</span> [200, <span class="str">"OK"</span>];
+}
+<span class="kw">const</span> [status, message] = <span class="fn">getApiResult</span>(); <span class="cmt">// destructuring</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 4 · Type aliases and Union types</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Type alias — give a name to a type</span>
+<span class="kw">type</span> <span class="tp">TestStatus</span> = <span class="str">"pass"</span> | <span class="str">"fail"</span> | <span class="str">"skip"</span>; <span class="cmt">// union of string literals</span>
+
+<span class="kw">let</span> result: <span class="tp">TestStatus</span> = <span class="str">"pass"</span>;  <span class="cmt">// ✅</span>
+result = <span class="str">"error"</span>;               <span class="cmt">// ❌ "error" not in union</span>
+
+<span class="cmt">// Union type — value can be ONE of multiple types</span>
+<span class="kw">let</span> id: <span class="tp">string</span> | <span class="tp">number</span>;
+id = <span class="str">"TC-001"</span>;  <span class="cmt">// ✅</span>
+id = 1001;      <span class="cmt">// ✅</span>
+id = <span class="kw">true</span>;     <span class="cmt">// ❌ boolean not in union</span>
+
+<span class="cmt">// Intersection type — value must satisfy ALL types</span>
+<span class="kw">type</span> <span class="tp">Named</span>  = { name: <span class="tp">string</span> };
+<span class="kw">type</span> <span class="tp">Timed</span>  = { duration: <span class="tp">number</span> };
+<span class="kw">type</span> <span class="tp">TestCase</span> = <span class="tp">Named</span> &amp; <span class="tp">Timed</span>; <span class="cmt">// must have both name AND duration</span>
+<span class="kw">const</span> tc: <span class="tp">TestCase</span> = { name: <span class="str">"login"</span>, duration: 1200 };</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 5 · Enums — SDET flavour</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Numeric enum (default — values auto-assigned 0,1,2...)</span>
+<span class="kw">enum</span> <span class="tp">Priority</span> {
+  Low,     <span class="cmt">// 0</span>
+  Medium,  <span class="cmt">// 1</span>
+  High,    <span class="cmt">// 2</span>
+  Critical <span class="cmt">// 3</span>
+}
+
+<span class="cmt">// String enum (preferred in SDET — readable in logs)</span>
+<span class="kw">enum</span> <span class="tp">Environment</span> {
+  Dev  = <span class="str">"DEV"</span>,
+  QA   = <span class="str">"QA"</span>,
+  Prod = <span class="str">"PRODUCTION"</span>
+}
+
+<span class="kw">let</span> env: <span class="tp">Environment</span> = <span class="tp">Environment</span>.QA;
+console.log(env); <span class="cmt">// "QA"</span>
+
+<span class="cmt">// Usage in test config</span>
+<span class="kw">function</span> <span class="fn">runTests</span>(env: <span class="tp">Environment</span>): <span class="tp">void</span> {
+  console.log(<span class="str">`Running against ${env}`</span>);
+}
+<span class="fn">runTests</span>(<span class="tp">Environment</span>.QA); <span class="cmt">// ✅ type-safe env selection</span></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Best practices checklist</div>
+  <div class="checklist">
+    <div class="check-item"><span class="icon">✓</span><span>Always prefer <code>unknown</code> over <code>any</code> — it forces type narrowing before use</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Use <code>const</code> by default; only use <code>let</code> when value will change</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Prefer string enums over numeric enums for better debuggability</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Enable <code>strict: true</code> in tsconfig — catches the most bugs</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Never use <code>any</code> in test assertions — you lose all type safety guarantees</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Avoid using <code>!</code> (non-null assertion) unless you are 100% certain value exists</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview prep — SDET Q&amp;A</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1. What is TypeScript and how does it differ from JavaScript?</span><span class="qa-arrow">▼</span></div><div class="qa-a">TypeScript is a statically typed superset of JavaScript developed by Microsoft. The key difference is that TypeScript performs type checking at compile time, catching errors before the code runs, while JavaScript only reveals type errors at runtime. TypeScript compiles to plain JavaScript, so it runs everywhere JS runs. In SDET work, this means our test scripts are safer and easier to maintain.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2. What is the difference between <code>any</code> and <code>unknown</code>?</span><span class="qa-arrow">▼</span></div><div class="qa-a"><code>any</code> completely disables type checking — you can do anything with it. <code>unknown</code> also accepts any value, but forces you to narrow the type before you use it (e.g., using typeof). As an SDET, I prefer <code>unknown</code> for handling API responses where the shape isn't confirmed, then use type guards to safely access fields.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3. What is a Union type and where would you use it in test automation?</span><span class="qa-arrow">▼</span></div><div class="qa-a">A Union type (<code>A | B</code>) means a value can be one of several types. In test automation I use it for test status: <code>type Status = "pass" | "fail" | "skip"</code> — this prevents invalid status values being assigned, making test result tracking type-safe and self-documenting.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4. What is a Tuple and how is it different from an Array?</span><span class="qa-arrow">▼</span></div><div class="qa-a">An Array holds many elements of the same type. A Tuple is a fixed-length array where each position has its own specific type. For example: <code>[string, number, boolean]</code> maps to [testName, responseTime, passed]. TypeScript enforces both the count and the type at each position — arrays do not.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5. Why would you use string enums instead of numeric enums in automation?</span><span class="qa-arrow">▼</span></div><div class="qa-a">String enums produce human-readable values in logs and reports. If a test fails and logs show <code>Environment.QA = "QA"</code>, that's immediately understandable. Numeric enums show <code>1</code> which requires a lookup. In CI pipelines and test reports, string enum values are self-explanatory without needing the source code.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- SESSION 2 -->
+<div class="session" id="s1">
+<div class="section">
+  <div class="section-title">Overview</div>
+  <div class="overview-card">
+    <h3>Functions in TypeScript</h3>
+    <p>TypeScript adds <strong>typed parameters, typed return values</strong>, and powerful patterns like optional params, default params, rest params, and function overloads. Functions are the backbone of every test automation script.</p>
+    <div class="wwwwh">
+      <div class="wwwwh-item"><div class="label">What</div><div class="val">Functions with full type signatures</div></div>
+      <div class="wwwwh-item"><div class="label">Why</div><div class="val">Prevents wrong args, documents intent, enables autocomplete</div></div>
+      <div class="wwwwh-item"><div class="label">When</div><div class="val">Every helper, page object method, utility in your framework</div></div>
+      <div class="wwwwh-item"><div class="label">Where</div><div class="val">Page Objects, API clients, data factories, utilities</div></div>
+      <div class="wwwwh-item"><div class="label">How</div><div class="val">param: Type → body → : ReturnType after parens</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview one-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Line 1</span>"In TypeScript, every parameter and return value of a function can be explicitly typed, making the contract of the function clear."</div>
+    <div class="oneliner"><span>Line 2</span>"Optional parameters are marked with a <code>?</code> and must come after required parameters."</div>
+    <div class="oneliner"><span>Line 3</span>"A void return type means the function performs a side-effect but returns nothing — common in test step helpers."</div>
+    <div class="oneliner"><span>Line 4</span>"Arrow functions in TypeScript have the same type syntax as regular functions but with a more concise body."</div>
+    <div class="oneliner"><span>Line 5</span>"Function overloads let us define multiple signatures for one function, handling different input types safely."</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Concepts — function anatomy</div>
+  <svg class="diagram-svg" viewBox="0 0 660 160" role="img" xmlns="http://www.w3.org/2000/svg">
+    <title>Function anatomy diagram</title>
+    <defs><marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    <rect x="20" y="50" width="620" height="60" rx="8" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+    <text font-family="monospace" font-size="14" fill="var(--color-text-primary)" x="40" y="85">function</text>
+    <text font-family="monospace" font-size="14" fill="#185FA5" x="115" y="85" font-weight="500">login</text>
+    <text font-family="monospace" font-size="14" fill="var(--color-text-primary)" x="152" y="85">(</text>
+    <text font-family="monospace" font-size="14" fill="#D85A30" x="161" y="85">url</text>
+    <text font-family="monospace" font-size="14" fill="var(--color-text-tertiary)" x="183" y="85">:</text>
+    <text font-family="monospace" font-size="14" fill="#534AB7" x="191" y="85">string</text>
+    <text font-family="monospace" font-size="14" fill="var(--color-text-primary)" x="235" y="85">,</text>
+    <text font-family="monospace" font-size="14" fill="#D85A30" x="244" y="85">retries</text>
+    <text font-family="monospace" font-size="14" fill="var(--color-text-tertiary)" x="296" y="85">?:</text>
+    <text font-family="monospace" font-size="14" fill="#534AB7" x="310" y="85">number</text>
+    <text font-family="monospace" font-size="14" fill="var(--color-text-primary)" x="360" y="85">):</text>
+    <text font-family="monospace" font-size="14" fill="#0F6E56" x="375" y="85">Promise</text>
+    <text font-family="monospace" font-size="14" fill="var(--color-text-primary)" x="432" y="85">&lt;</text>
+    <text font-family="monospace" font-size="14" fill="#534AB7" x="440" y="85">void</text>
+    <text font-family="monospace" font-size="14" fill="var(--color-text-primary)" x="463" y="85">&gt; {…}</text>
+    <line x1="127" y1="113" x2="127" y2="138" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+    <text class="ts" x="80" y="150" text-anchor="middle" fill="var(--color-text-secondary)">fn name</text>
+    <line x1="172" y1="113" x2="172" y2="138" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+    <text class="ts" x="190" y="150" text-anchor="middle" fill="#D85A30">required param</text>
+    <line x1="320" y1="113" x2="320" y2="138" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+    <text class="ts" x="320" y="150" text-anchor="middle" fill="#D85A30">optional param (?)</text>
+    <line x1="440" y1="113" x2="440" y2="138" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+    <text class="ts" x="490" y="150" text-anchor="middle" fill="#0F6E56">return type</text>
+  </svg>
+</div>
+
+<div class="section">
+  <div class="section-title">Code examples</div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 1 · Basic typed function</span><span class="code-tag tag-both">JS vs TS</span></div>
+    <pre><span class="cmt">// ── JavaScript ──</span>
+<span class="kw">function</span> <span class="fn">add</span>(a, b) {          <span class="cmt">// no types — what if string + number?</span>
+  <span class="kw">return</span> a + b;
+}
+<span class="fn">add</span>(<span class="str">"5"</span>, 3);               <span class="cmt">// returns "53" — silent bug!</span>
+
+<span class="cmt">// ── TypeScript ──</span>
+<span class="kw">function</span> <span class="fn">add</span>(a: <span class="tp">number</span>, b: <span class="tp">number</span>): <span class="tp">number</span> {
+  <span class="kw">return</span> a + b;             <span class="cmt">// both params AND return typed</span>
+}
+<span class="fn">add</span>(<span class="str">"5"</span>, 3);               <span class="cmt">// ❌ Compile error: string not assignable to number</span>
+<span class="fn">add</span>(5, 3);                <span class="cmt">// ✅ returns 8</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 2 · Optional and default parameters</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Optional param: add ? after param name</span>
+<span class="kw">function</span> <span class="fn">navigateTo</span>(url: <span class="tp">string</span>, waitTime?: <span class="tp">number</span>): <span class="tp">void</span> {
+  <span class="kw">const</span> delay = waitTime ?? 1000; <span class="cmt">// nullish coalescing: use 1000 if undefined</span>
+  console.log(<span class="str">`Going to ${url}, waiting ${delay}ms`</span>);
+}
+<span class="fn">navigateTo</span>(<span class="str">"https://app.com"</span>);       <span class="cmt">// ✅ waitTime is undefined → uses 1000</span>
+<span class="fn">navigateTo</span>(<span class="str">"https://app.com"</span>, 3000); <span class="cmt">// ✅ explicit waitTime</span>
+
+<span class="cmt">// Default param: assign value directly</span>
+<span class="kw">function</span> <span class="fn">retry</span>(testFn: <span class="tp">Function</span>, attempts: <span class="tp">number</span> = 3): <span class="tp">void</span> {
+  <span class="kw">for</span> (<span class="kw">let</span> i = 0; i &lt; attempts; i++) testFn();
+}
+<span class="fn">retry</span>(myTest);    <span class="cmt">// ✅ attempts defaults to 3</span>
+<span class="fn">retry</span>(myTest, 5); <span class="cmt">// ✅ attempts = 5</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 3 · Arrow functions and void</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Arrow function — same types, shorter syntax</span>
+<span class="kw">const</span> <span class="fn">multiply</span> = (a: <span class="tp">number</span>, b: <span class="tp">number</span>): <span class="tp">number</span> => a * b;
+
+<span class="cmt">// void — function does something but returns nothing</span>
+<span class="kw">const</span> <span class="fn">logResult</span> = (testName: <span class="tp">string</span>, passed: <span class="tp">boolean</span>): <span class="tp">void</span> => {
+  console.log(<span class="str">`[${passed ? "PASS" : "FAIL"}] ${testName}`</span>);
+  <span class="cmt">// no return needed (void)</span>
+};
+
+<span class="cmt">// never — function that NEVER returns (throws or infinite loop)</span>
+<span class="kw">const</span> <span class="fn">throwError</span> = (msg: <span class="tp">string</span>): <span class="tp">never</span> => {
+  <span class="kw">throw</span> <span class="kw">new</span> Error(msg); <span class="cmt">// never returns, so type is never</span>
+};
+
+<span class="cmt">// Function type as a type alias</span>
+<span class="kw">type</span> <span class="tp">TestStep</span> = (stepName: <span class="tp">string</span>) => <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt;;</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 4 · Rest parameters</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Rest params collect extra args into a typed array</span>
+<span class="kw">function</span> <span class="fn">logSteps</span>(testSuite: <span class="tp">string</span>, ...steps: <span class="tp">string[]</span>): <span class="tp">void</span> {
+  console.log(<span class="str">`Suite: ${testSuite}`</span>);
+  steps.<span class="fn">forEach</span>((step, i) => console.log(<span class="str">`  Step ${i + 1}: ${step}`</span>));
+}
+
+<span class="fn">logSteps</span>(<span class="str">"Login Suite"</span>, <span class="str">"Open URL"</span>, <span class="str">"Enter creds"</span>, <span class="str">"Click submit"</span>);
+<span class="cmt">// Suite: Login Suite</span>
+<span class="cmt">//   Step 1: Open URL</span>
+<span class="cmt">//   Step 2: Enter creds</span>
+<span class="cmt">//   Step 3: Click submit</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 5 · Function overloads (SDET use case)</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Overload signatures (declarations only, no body)</span>
+<span class="kw">function</span> <span class="fn">findElement</span>(selector: <span class="tp">string</span>): <span class="tp">string</span>;
+<span class="kw">function</span> <span class="fn">findElement</span>(index: <span class="tp">number</span>): <span class="tp">string</span>;
+
+<span class="cmt">// Implementation signature (handles both cases)</span>
+<span class="kw">function</span> <span class="fn">findElement</span>(input: <span class="tp">string</span> | <span class="tp">number</span>): <span class="tp">string</span> {
+  <span class="kw">if</span> (<span class="kw">typeof</span> input === <span class="str">"string"</span>) {
+    <span class="kw">return</span> <span class="str">`Found by CSS: ${input}`</span>;
+  }
+  <span class="kw">return</span> <span class="str">`Found by index: ${input}`</span>;
+}
+
+<span class="fn">findElement</span>(<span class="str">"#submit-btn"</span>); <span class="cmt">// ✅ uses string overload</span>
+<span class="fn">findElement</span>(0);            <span class="cmt">// ✅ uses number overload</span>
+<span class="fn">findElement</span>(<span class="kw">true</span>);         <span class="cmt">// ❌ Compile error — no boolean overload</span></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Best practices</div>
+  <div class="checklist">
+    <div class="check-item"><span class="icon">✓</span><span>Always annotate return types explicitly — don't rely on inference for public APIs</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Optional params (<code>?</code>) should always come AFTER required params</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Prefer <code>??</code> (nullish coalescing) over <code>||</code> for defaults — <code>||</code> treats <code>0</code> and <code>""</code> as falsy</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Use <code>void</code> for test step helpers that perform actions but return nothing</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Avoid using <code>Function</code> type — use explicit function types like <code>(x: string) => void</code></span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview prep</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1. How do you declare an optional parameter in TypeScript?</span><span class="qa-arrow">▼</span></div><div class="qa-a">By appending <code>?</code> after the parameter name: <code>function go(url: string, wait?: number)</code>. Optional params must always appear after all required params. Inside the function, the optional param's type becomes <code>number | undefined</code>, so you must handle the undefined case before using it.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2. What is the difference between <code>void</code> and <code>never</code>?</span><span class="qa-arrow">▼</span></div><div class="qa-a"><code>void</code> means the function returns, but the return value is undefined — used for functions that perform side effects. <code>never</code> means the function NEVER returns at all — either it always throws an error or runs an infinite loop. In test automation, helper steps often return void; an error-throwing utility returns never.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3. How do function overloads work in TypeScript?</span><span class="qa-arrow">▼</span></div><div class="qa-a">You declare multiple overload signatures (no body), then write one implementation signature that handles all cases. TypeScript uses the overload signatures for type checking callers. The implementation is invisible to callers. This is useful when a function behaves differently based on input type.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4. What is a rest parameter and when would you use it?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Rest parameters (<code>...args: string[]</code>) collect any number of trailing arguments into a typed array. In test automation I use this for helpers like <code>logSteps(suite, ...steps)</code> where the number of steps isn't fixed. It's cleaner than passing an array explicitly.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5. What does it mean when a function returns <code>Promise&lt;void&gt;</code>?</span><span class="qa-arrow">▼</span></div><div class="qa-a">It means the function is asynchronous (returns a Promise) but when the Promise resolves it produces no meaningful value. In Playwright and Jest tests, most test step functions are <code>async</code> and return <code>Promise&lt;void&gt;</code> — you <code>await</code> them but don't capture a return value.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- SESSION 3 -->
+<div class="session" id="s2">
+<div class="section">
+  <div class="section-title">Overview</div>
+  <div class="overview-card">
+    <h3>OOP — Interfaces, Classes & Objects</h3>
+    <p>TypeScript brings full object-oriented programming to JavaScript — <strong>interfaces</strong> define contracts (shapes), <strong>classes</strong> implement them with access modifiers. This is how Page Object Models (POM) are built in enterprise automation.</p>
+    <div class="wwwwh">
+      <div class="wwwwh-item"><div class="label">What</div><div class="val">interface = shape contract; class = blueprint with behavior</div></div>
+      <div class="wwwwh-item"><div class="label">Why</div><div class="val">Reusable, maintainable POM; enforces consistency across the team</div></div>
+      <div class="wwwwh-item"><div class="label">When</div><div class="val">Every Page Object, data model, API client in your framework</div></div>
+      <div class="wwwwh-item"><div class="label">Where</div><div class="val">Playwright POM, Jest test fixtures, API service classes</div></div>
+      <div class="wwwwh-item"><div class="label">How</div><div class="val">interface → class implements → extends for inheritance</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview one-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Line 1</span>"An interface in TypeScript is a structural contract — any object that has the right shape satisfies the interface."</div>
+    <div class="oneliner"><span>Line 2</span>"TypeScript access modifiers — <code>public</code>, <code>private</code>, <code>protected</code>, <code>readonly</code> — are compile-time only; they don't exist in compiled JS."</div>
+    <div class="oneliner"><span>Line 3</span>"The Page Object Model in TypeScript uses classes to encapsulate locators and actions for each page, keeping tests clean and DRY."</div>
+    <div class="oneliner"><span>Line 4</span>"<code>interface</code> and <code>type</code> are similar, but interfaces can be extended and merged — types cannot be reopened."</div>
+    <div class="oneliner"><span>Line 5</span>"Constructor shorthand in TypeScript lets you declare and initialize class members in a single line inside the constructor."</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Concepts — POM class hierarchy</div>
+  <svg class="diagram-svg" viewBox="0 0 660 240" role="img" xmlns="http://www.w3.org/2000/svg">
+    <title>Page Object Model class hierarchy</title>
+    <defs><marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    <g class="c-purple"><rect x="230" y="20" width="200" height="56" rx="8" stroke-width="0.5"/><text class="th" x="330" y="44" text-anchor="middle" dominant-baseline="central" font-size="12">«interface» IPage</text><text class="ts" x="330" y="62" text-anchor="middle" dominant-baseline="central">navigate(), getTitle()</text></g>
+    <line x1="330" y1="78" x2="330" y2="108" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr3)"/>
+    <g class="c-teal"><rect x="180" y="110" width="300" height="56" rx="8" stroke-width="0.5"/><text class="th" x="330" y="134" text-anchor="middle" dominant-baseline="central" font-size="12">BasePage (abstract class)</text><text class="ts" x="330" y="152" text-anchor="middle" dominant-baseline="central">shared: waitForLoad, screenshot</text></g>
+    <line x1="220" y1="168" x2="150" y2="198" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr3)"/>
+    <line x1="330" y1="168" x2="330" y2="198" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr3)"/>
+    <line x1="440" y1="168" x2="510" y2="198" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr3)"/>
+    <g class="c-coral"><rect x="60" y="200" width="170" height="34" rx="6" stroke-width="0.5"/><text class="th" x="145" y="217" text-anchor="middle" dominant-baseline="central" font-size="12">LoginPage</text></g>
+    <g class="c-coral"><rect x="245" y="200" width="170" height="34" rx="6" stroke-width="0.5"/><text class="th" x="330" y="217" text-anchor="middle" dominant-baseline="central" font-size="12">DashboardPage</text></g>
+    <g class="c-coral"><rect x="430" y="200" width="170" height="34" rx="6" stroke-width="0.5"/><text class="th" x="515" y="217" text-anchor="middle" dominant-baseline="central" font-size="12">CheckoutPage</text></g>
+  </svg>
+</div>
+
+<div class="section">
+  <div class="section-title">Code examples</div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 1 · Interface definition</span><span class="code-tag tag-both">JS vs TS</span></div>
+    <pre><span class="cmt">// JavaScript — no way to enforce shape at compile time</span>
+<span class="kw">function</span> <span class="fn">runTest</span>(testCase) {  <span class="cmt">// what shape is testCase? unknown!</span>
+  console.log(testCase.name);
+}
+
+<span class="cmt">// TypeScript — interface defines the contract</span>
+<span class="kw">interface</span> <span class="tp">TestCase</span> {
+  id: <span class="tp">number</span>;
+  name: <span class="tp">string</span>;
+  priority: <span class="str">"high"</span> | <span class="str">"medium"</span> | <span class="str">"low"</span>;
+  tags?: <span class="tp">string[]</span>;        <span class="cmt">// optional field</span>
+  readonly createdAt: <span class="tp">Date</span>; <span class="cmt">// can't be modified after creation</span>
+}
+
+<span class="kw">const</span> tc: <span class="tp">TestCase</span> = {
+  id: 1,
+  name: <span class="str">"Login with valid creds"</span>,
+  priority: <span class="str">"high"</span>,
+  createdAt: <span class="kw">new</span> Date()
+};
+tc.createdAt = <span class="kw">new</span> Date(); <span class="cmt">// ❌ Cannot assign to 'readonly'</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 2 · Classes with access modifiers</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="kw">class</span> <span class="tp">LoginPage</span> {
+  <span class="cmt">// Access modifiers control visibility</span>
+  <span class="kw">private</span> url: <span class="tp">string</span>;          <span class="cmt">// only accessible inside LoginPage</span>
+  <span class="kw">protected</span> browser: <span class="tp">string</span>;   <span class="cmt">// accessible in subclasses too</span>
+  <span class="kw">public</span> pageName: <span class="tp">string</span>;     <span class="cmt">// accessible everywhere (default)</span>
+  <span class="kw">readonly</span> maxRetries: <span class="tp">number</span>; <span class="cmt">// set once, never changed</span>
+
+  <span class="kw">constructor</span>(url: <span class="tp">string</span>) {
+    <span class="kw">this</span>.url = url;
+    <span class="kw">this</span>.browser = <span class="str">"chromium"</span>;
+    <span class="kw">this</span>.pageName = <span class="str">"Login"</span>;
+    <span class="kw">this</span>.maxRetries = 3;
+  }
+
+  <span class="kw">public</span> <span class="fn">navigate</span>(): <span class="tp">void</span> {
+    console.log(<span class="str">`Navigating to ${this.url}`</span>); <span class="cmt">// private ok inside class</span>
+  }
+}
+
+<span class="kw">const</span> page = <span class="kw">new</span> <span class="tp">LoginPage</span>(<span class="str">"https://app.com/login"</span>);
+page.<span class="fn">navigate</span>();         <span class="cmt">// ✅ public</span>
+console.log(page.url);  <span class="cmt">// ❌ private — compile error</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 3 · Constructor shorthand (TS superpower)</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Long way (verbose)</span>
+<span class="kw">class</span> <span class="tp">ApiClient</span> {
+  <span class="kw">private</span> baseUrl: <span class="tp">string</span>;
+  <span class="kw">private</span> token: <span class="tp">string</span>;
+  <span class="kw">constructor</span>(baseUrl: <span class="tp">string</span>, token: <span class="tp">string</span>) {
+    <span class="kw">this</span>.baseUrl = baseUrl;
+    <span class="kw">this</span>.token = token;
+  }
+}
+
+<span class="cmt">// ✅ TypeScript shorthand — same result, way cleaner</span>
+<span class="kw">class</span> <span class="tp">ApiClient</span> {
+  <span class="kw">constructor</span>(
+    <span class="kw">private</span> baseUrl: <span class="tp">string</span>,  <span class="cmt">// declares AND assigns in one shot</span>
+    <span class="kw">private</span> token: <span class="tp">string</span>
+  ) {}  <span class="cmt">// empty body — TS handles it</span>
+}
+
+<span class="kw">const</span> client = <span class="kw">new</span> <span class="tp">ApiClient</span>(<span class="str">"https://api.com"</span>, <span class="str">"Bearer xyz"</span>);</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 4 · Inheritance — BasePage POM</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="kw">abstract class</span> <span class="tp">BasePage</span> {
+  <span class="kw">constructor</span>(<span class="kw">protected</span> pageUrl: <span class="tp">string</span>) {}
+
+  <span class="kw">abstract</span> <span class="fn">isLoaded</span>(): <span class="tp">boolean</span>; <span class="cmt">// subclasses MUST implement this</span>
+
+  <span class="kw">protected</span> <span class="fn">waitForLoad</span>(): <span class="tp">void</span> {
+    console.log(<span class="str">`Waiting for ${this.pageUrl}`</span>);
+  }
+}
+
+<span class="kw">class</span> <span class="tp">LoginPage</span> <span class="kw">extends</span> <span class="tp">BasePage</span> {
+  <span class="kw">constructor</span>() {
+    <span class="kw">super</span>(<span class="str">"/login"</span>); <span class="cmt">// must call parent constructor</span>
+  }
+
+  <span class="fn">isLoaded</span>(): <span class="tp">boolean</span> {  <span class="cmt">// fulfils abstract contract</span>
+    <span class="kw">return</span> document.title === <span class="str">"Login"</span>;
+  }
+
+  <span class="fn">enterCredentials</span>(user: <span class="tp">string</span>, pass: <span class="tp">string</span>): <span class="tp">void</span> {
+    <span class="kw">this</span>.<span class="fn">waitForLoad</span>(); <span class="cmt">// inherited method</span>
+    console.log(<span class="str">`Logging in as ${user}`</span>);
+  }
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 5 · Interface vs Type (key differences)</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// interface — can be extended, can be merged (declaration merging)</span>
+<span class="kw">interface</span> <span class="tp">User</span> { name: <span class="tp">string</span> }
+<span class="kw">interface</span> <span class="tp">User</span> { email: <span class="tp">string</span> } <span class="cmt">// ✅ merges! User now has name + email</span>
+<span class="kw">interface</span> <span class="tp">Admin</span> <span class="kw">extends</span> <span class="tp">User</span> { role: <span class="tp">string</span> } <span class="cmt">// ✅ extends</span>
+
+<span class="cmt">// type — can represent unions, intersections, primitives</span>
+<span class="kw">type</span> <span class="tp">StringOrNumber</span> = <span class="tp">string</span> | <span class="tp">number</span>; <span class="cmt">// ✅ union (interface can't do this)</span>
+<span class="kw">type</span> <span class="tp">User</span> = { name: <span class="tp">string</span> };
+<span class="kw">type</span> <span class="tp">User</span> = { email: <span class="tp">string</span> }; <span class="cmt">// ❌ Error: duplicate identifier</span>
+
+<span class="cmt">// Rule of thumb:</span>
+<span class="cmt">// → Use interface for object shapes (page data, API responses)</span>
+<span class="cmt">// → Use type for unions, intersections, mapped types</span></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Best practices</div>
+  <div class="checklist">
+    <div class="check-item"><span class="icon">✓</span><span>Use <code>private</code> for locators in POM — tests should call methods, not access selectors directly</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Use <code>abstract class</code> for BasePage — forces each page to implement <code>isLoaded()</code></span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Prefer constructor shorthand to reduce boilerplate in page objects</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Use <code>readonly</code> for config values injected via constructor that should never change</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Don't use <code>public</code> class fields for selectors — keep implementation details <code>private</code></span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview prep</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1. What is the difference between interface and type in TypeScript?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Both describe object shapes. Interfaces support declaration merging and can be extended using <code>extends</code>. Types can represent unions, intersections, and mapped types — things interfaces can't do. For object shapes in POM, I use interfaces. For union types like <code>Status = "pass" | "fail"</code>, I use type aliases.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2. What are access modifiers and do they exist in compiled JavaScript?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Access modifiers (<code>public</code>, <code>private</code>, <code>protected</code>, <code>readonly</code>) are compile-time constructs in TypeScript. They enforce encapsulation during development but are completely erased from the compiled JavaScript — the output JS has no concept of private. For true runtime privacy, JavaScript uses <code>#</code> (private class fields).</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3. How does TypeScript support the Page Object Model pattern?</span><span class="qa-arrow">▼</span></div><div class="qa-a">TypeScript makes POM much stronger. We define an interface or abstract class for BasePage with common contracts. Each page class extends BasePage and implements its abstract methods. Locators are <code>private</code>, actions are <code>public</code>. Constructor shorthand reduces boilerplate. Type-safe methods prevent calling actions with wrong arguments.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4. What is an abstract class? When would you use it over an interface?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Abstract classes can have both implemented methods (shared logic) and abstract methods (that subclasses must implement). Interfaces are pure contracts with no implementation. I use abstract class for BasePage because I want to share real code like <code>waitForLoad()</code> while still requiring each page to implement <code>isLoaded()</code>.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5. What is constructor shorthand in TypeScript?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Instead of declaring a property and then assigning it in the constructor body, TypeScript lets you add the access modifier directly to the constructor parameter: <code>constructor(private url: string)</code>. TypeScript automatically declares the property AND assigns it. It significantly reduces boilerplate in page object constructors.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- SESSION 4 -->
+<div class="session" id="s3">
+<div class="section">
+  <div class="section-title">Overview</div>
+  <div class="overview-card">
+    <h3>Generics — Write Once, Use for Any Type</h3>
+    <p>Generics are TypeScript's way of writing <strong>reusable, type-safe code</strong> that works with different types. Instead of duplicating functions for each type or losing safety with <code>any</code>, generics use a <em>type parameter</em> (like <code>&lt;T&gt;</code>) that gets filled in when called.</p>
+    <div class="wwwwh">
+      <div class="wwwwh-item"><div class="label">What</div><div class="val">Placeholder type &lt;T&gt; resolved at call site</div></div>
+      <div class="wwwwh-item"><div class="label">Why</div><div class="val">DRY + type-safe — no duplicating code, no losing types</div></div>
+      <div class="wwwwh-item"><div class="label">When</div><div class="val">API wrappers, test data factories, utility helpers</div></div>
+      <div class="wwwwh-item"><div class="label">Where</div><div class="val">Generic API clients, test fixtures, collection helpers</div></div>
+      <div class="wwwwh-item"><div class="label">How</div><div class="val">function name&lt;T&gt;(param: T): T { … }</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview one-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Line 1</span>"Generics let you write a single function or class that works with multiple types without losing type safety."</div>
+    <div class="oneliner"><span>Line 2</span>"<code>&lt;T&gt;</code> is a type variable — a placeholder that gets replaced with the actual type when the function is called."</div>
+    <div class="oneliner"><span>Line 3</span>"Generic constraints (<code>&lt;T extends SomeType&gt;</code>) ensure that the type variable has specific properties available."</div>
+    <div class="oneliner"><span>Line 4</span>"In SDET work, I use generics for a typed API client wrapper so every endpoint returns its specific response type."</div>
+    <div class="oneliner"><span>Line 5</span>"TypeScript's built-in utility types like <code>Partial&lt;T&gt;</code> and <code>Pick&lt;T, K&gt;</code> are themselves generic types."</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Code examples</div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 1 · The problem generics solve</span><span class="code-tag tag-both">JS vs TS</span></div>
+    <pre><span class="cmt">// Without generics — duplicate code OR unsafe any</span>
+<span class="kw">function</span> <span class="fn">firstString</span>(arr: <span class="tp">string[]</span>): <span class="tp">string</span>  { <span class="kw">return</span> arr[0]; }
+<span class="kw">function</span> <span class="fn">firstNumber</span>(arr: <span class="tp">number[]</span>): <span class="tp">number</span>  { <span class="kw">return</span> arr[0]; }
+<span class="cmt">// same logic, different types = code duplication</span>
+
+<span class="cmt">// With generics — ONE function, any type, fully safe</span>
+<span class="kw">function</span> <span class="fn">first</span>&lt;<span class="tp">T</span>&gt;(arr: <span class="tp">T[]</span>): <span class="tp">T</span> {
+  <span class="kw">return</span> arr[0]; <span class="cmt">// T is resolved at call time</span>
+}
+
+<span class="kw">const</span> s = <span class="fn">first</span>([<span class="str">"login"</span>, <span class="str">"checkout"</span>]); <span class="cmt">// T = string → returns string</span>
+<span class="kw">const</span> n = <span class="fn">first</span>([10, 20, 30]);           <span class="cmt">// T = number → returns number</span>
+<span class="cmt">// s and n are FULLY typed — autocomplete works, no casting</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 2 · Generic constraints</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// T extends object — T must have a specific shape</span>
+<span class="kw">function</span> <span class="fn">getField</span>&lt;<span class="tp">T</span>, <span class="tp">K</span> <span class="kw">extends</span> <span class="kw">keyof</span> <span class="tp">T</span>&gt;(obj: <span class="tp">T</span>, key: <span class="tp">K</span>): <span class="tp">T</span>[<span class="tp">K</span>] {
+  <span class="kw">return</span> obj[key];
+}
+
+<span class="kw">const</span> user = { name: <span class="str">"Alice"</span>, age: 30, role: <span class="str">"admin"</span> };
+<span class="kw">const</span> name = <span class="fn">getField</span>(user, <span class="str">"name"</span>);  <span class="cmt">// ✅ returns string</span>
+<span class="kw">const</span> age  = <span class="fn">getField</span>(user, <span class="str">"age"</span>);   <span class="cmt">// ✅ returns number</span>
+<span class="kw">const</span> bad  = <span class="fn">getField</span>(user, <span class="str">"email"</span>); <span class="cmt">// ❌ 'email' not in User</span>
+
+<span class="cmt">// Constraint: T must have a .length property</span>
+<span class="kw">function</span> <span class="fn">logLength</span>&lt;<span class="tp">T</span> <span class="kw">extends</span> { length: <span class="tp">number</span> }&gt;(val: <span class="tp">T</span>): <span class="tp">void</span> {
+  console.log(val.length); <span class="cmt">// TS knows T has .length</span>
+}
+<span class="fn">logLength</span>(<span class="str">"hello"</span>);    <span class="cmt">// ✅ string has .length</span>
+<span class="fn">logLength</span>([1,2,3]);    <span class="cmt">// ✅ array has .length</span>
+<span class="fn">logLength</span>(42);         <span class="cmt">// ❌ number has no .length</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 3 · Generic API client (SDET gold)</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Generic typed HTTP response</span>
+<span class="kw">interface</span> <span class="tp">ApiResponse</span>&lt;<span class="tp">T</span>&gt; {
+  data: <span class="tp">T</span>;
+  status: <span class="tp">number</span>;
+  message: <span class="tp">string</span>;
+}
+
+<span class="cmt">// Specific response types</span>
+<span class="kw">interface</span> <span class="tp">User</span>    { id: <span class="tp">number</span>; name: <span class="tp">string</span>; email: <span class="tp">string</span> }
+<span class="kw">interface</span> <span class="tp">Product</span> { sku: <span class="tp">string</span>; price: <span class="tp">number</span> }
+
+<span class="cmt">// Generic fetch wrapper</span>
+<span class="kw">async function</span> <span class="fn">apiGet</span>&lt;<span class="tp">T</span>&gt;(url: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">ApiResponse</span>&lt;<span class="tp">T</span>&gt;&gt; {
+  <span class="kw">const</span> res = <span class="kw">await</span> fetch(url);
+  <span class="kw">return</span> res.<span class="fn">json</span>();
+}
+
+<span class="cmt">// Usage — fully typed, no casting needed</span>
+<span class="kw">const</span> userResp    = <span class="kw">await</span> <span class="fn">apiGet</span>&lt;<span class="tp">User</span>&gt;(<span class="str">"/api/users/1"</span>);
+console.log(userResp.data.email); <span class="cmt">// ✅ TS knows .email is string</span>
+
+<span class="kw">const</span> productResp = <span class="kw">await</span> <span class="fn">apiGet</span>&lt;<span class="tp">Product</span>&gt;(<span class="str">"/api/products/1"</span>);
+console.log(productResp.data.price); <span class="cmt">// ✅ TS knows .price is number</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 4 · Built-in utility types</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="kw">interface</span> <span class="tp">TestConfig</span> {
+  url: <span class="tp">string</span>;
+  browser: <span class="tp">string</span>;
+  headless: <span class="tp">boolean</span>;
+  timeout: <span class="tp">number</span>;
+}
+
+<span class="cmt">// Partial&lt;T&gt; — all fields become optional</span>
+<span class="kw">function</span> <span class="fn">updateConfig</span>(patch: <span class="tp">Partial</span>&lt;<span class="tp">TestConfig</span>&gt;): <span class="tp">void</span> { <span class="cmt">/* … */</span> }
+<span class="fn">updateConfig</span>({ headless: <span class="kw">true</span> }); <span class="cmt">// ✅ only override what changed</span>
+
+<span class="cmt">// Pick&lt;T, K&gt; — select only some fields</span>
+<span class="kw">type</span> <span class="tp">BrowserConfig</span> = <span class="tp">Pick</span>&lt;<span class="tp">TestConfig</span>, <span class="str">"browser"</span> | <span class="str">"headless"</span>&gt;;
+
+<span class="cmt">// Omit&lt;T, K&gt; — exclude some fields</span>
+<span class="kw">type</span> <span class="tp">CoreConfig</span> = <span class="tp">Omit</span>&lt;<span class="tp">TestConfig</span>, <span class="str">"timeout"</span>&gt;;
+
+<span class="cmt">// Required&lt;T&gt; — all fields become required</span>
+<span class="kw">type</span> <span class="tp">StrictConfig</span> = <span class="tp">Required</span>&lt;<span class="tp">TestConfig</span>&gt;;
+
+<span class="cmt">// Readonly&lt;T&gt; — all fields become readonly</span>
+<span class="kw">type</span> <span class="tp">FrozenConfig</span> = <span class="tp">Readonly</span>&lt;<span class="tp">TestConfig</span>&gt;;</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 5 · Generic class (typed data factory)</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// A generic Stack — works with any type</span>
+<span class="kw">class</span> <span class="tp">Stack</span>&lt;<span class="tp">T</span>&gt; {
+  <span class="kw">private</span> items: <span class="tp">T[]</span> = [];
+
+  <span class="fn">push</span>(item: <span class="tp">T</span>): <span class="tp">void</span>   { <span class="kw">this</span>.items.push(item); }
+  <span class="fn">pop</span>(): <span class="tp">T</span> | <span class="tp">undefined</span>  { <span class="kw">return</span> <span class="kw">this</span>.items.pop(); }
+  <span class="fn">peek</span>(): <span class="tp">T</span> | <span class="tp">undefined</span> { <span class="kw">return</span> <span class="kw">this</span>.items[<span class="kw">this</span>.items.length - 1]; }
+  <span class="fn">size</span>(): <span class="tp">number</span>         { <span class="kw">return</span> <span class="kw">this</span>.items.length; }
+}
+
+<span class="cmt">// A string stack for test step tracking</span>
+<span class="kw">const</span> steps = <span class="kw">new</span> <span class="tp">Stack</span>&lt;<span class="tp">string</span>&gt;();
+steps.<span class="fn">push</span>(<span class="str">"Open browser"</span>);
+steps.<span class="fn">push</span>(<span class="str">"Navigate to login"</span>);
+console.log(steps.<span class="fn">peek</span>());  <span class="cmt">// "Navigate to login"</span>
+steps.<span class="fn">push</span>(42);            <span class="cmt">// ❌ Compile error — Stack&lt;string&gt; only</span></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Best practices</div>
+  <div class="checklist">
+    <div class="check-item"><span class="icon">✓</span><span>Name type params meaningfully: <code>T</code> for general, <code>K</code> for key, <code>V</code> for value, <code>TResponse</code> for API responses</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Use <code>extends</code> constraints to ensure the type variable has the properties you need</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Build a generic <code>ApiClient&lt;T&gt;</code> class for your test framework — one wrapper for all endpoints</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Don't use <code>any</code> where a generic would work — generics preserve type information, <code>any</code> destroys it</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Avoid deeply nested generics (&gt;2 levels) — split into smaller typed interfaces for readability</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview prep</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1. What are Generics and why do we need them?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Generics let you write reusable code that works with multiple types while preserving type safety. Without generics, you'd either duplicate logic for each type or use <code>any</code> and lose all type information. For example, a generic <code>first&lt;T&gt;(arr: T[]): T</code> works for arrays of any type and the return type is always the element type, not <code>any</code>.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2. What is a generic constraint and when would you use it?</span><span class="qa-arrow">▼</span></div><div class="qa-a">A generic constraint (<code>T extends SomeType</code>) limits which types can be passed as the type variable. You use it when your function needs to access a specific property or method on the type variable. For example, <code>T extends { length: number }</code> ensures that whatever type T is, it has a <code>length</code> property you can access safely.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3. How do you use generics for an API client in test automation?</span><span class="qa-arrow">▼</span></div><div class="qa-a">I define a generic response interface <code>ApiResponse&lt;T&gt;</code> and a generic fetch function <code>apiGet&lt;T&gt;(url: string): Promise&lt;ApiResponse&lt;T&gt;&gt;</code>. Each endpoint call specifies the expected type: <code>apiGet&lt;User&gt;("/users/1")</code>. This gives full autocomplete and type checking on the response data without writing separate functions per endpoint.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4. What is <code>Partial&lt;T&gt;</code> and when would you use it?</span><span class="qa-arrow">▼</span></div><div class="qa-a"><code>Partial&lt;T&gt;</code> makes all fields of T optional. I use it for update/patch functions where you only need to provide the fields that changed. For test config overrides: <code>function overrideConfig(patch: Partial&lt;TestConfig&gt;)</code> means callers only pass what they want to change, not the entire config object.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5. What is the difference between <code>Pick</code> and <code>Omit</code>?</span><span class="qa-arrow">▼</span></div><div class="qa-a"><code>Pick&lt;T, K&gt;</code> selects only the specified keys from T, creating a new type with just those fields. <code>Omit&lt;T, K&gt;</code> does the opposite — it includes all fields except the specified keys. Use Pick when you want a small subset; use Omit when you want most fields but need to exclude a few.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- SESSION 5 -->
+<div class="session" id="s4">
+<div class="section">
+  <div class="section-title">Overview</div>
+  <div class="overview-card">
+    <h3>Advanced Types — Narrowing, Guards & Mapped Types</h3>
+    <p>Advanced types let you build <strong>highly expressive, safe type logic</strong>: narrow union types at runtime, create new types from existing ones, and leverage conditional types to make your framework self-describing.</p>
+    <div class="wwwwh">
+      <div class="wwwwh-item"><div class="label">What</div><div class="val">Type guards, narrowing, mapped, conditional types</div></div>
+      <div class="wwwwh-item"><div class="label">Why</div><div class="val">Handle real-world ambiguity safely without any</div></div>
+      <div class="wwwwh-item"><div class="label">When</div><div class="val">API response parsing, error handling, dynamic configs</div></div>
+      <div class="wwwwh-item"><div class="label">Where</div><div class="val">API clients, assertion libraries, typed test fixtures</div></div>
+      <div class="wwwwh-item"><div class="label">How</div><div class="val">typeof / instanceof / custom predicates → narrow type</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview one-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Line 1</span>"Type narrowing is the process of refining a broad type to a more specific one inside a conditional block."</div>
+    <div class="oneliner"><span>Line 2</span>"A user-defined type guard is a function that returns <code>value is Type</code> — it tells TypeScript what type a value is."</div>
+    <div class="oneliner"><span>Line 3</span>"Discriminated unions use a shared literal field (like <code>kind</code>) to let TypeScript narrow union members safely."</div>
+    <div class="oneliner"><span>Line 4</span>"Mapped types transform each property of an existing type — for example, making all fields optional or readonly."</div>
+    <div class="oneliner"><span>Line 5</span>"Conditional types (<code>T extends U ? A : B</code>) are TypeScript's ternary operator at the type level."</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Code examples</div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 1 · Type narrowing with typeof and instanceof</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="kw">function</span> <span class="fn">formatId</span>(id: <span class="tp">string</span> | <span class="tp">number</span>): <span class="tp">string</span> {
+  <span class="kw">if</span> (<span class="kw">typeof</span> id === <span class="str">"string"</span>) {
+    <span class="cmt">// TS narrows: id is string here</span>
+    <span class="kw">return</span> id.toUpperCase();   <span class="cmt">// ✅ string methods available</span>
+  }
+  <span class="cmt">// TS narrows: id is number here</span>
+  <span class="kw">return</span> id.toFixed(0);       <span class="cmt">// ✅ number methods available</span>
+}
+
+<span class="cmt">// instanceof narrows to class type</span>
+<span class="kw">function</span> <span class="fn">handleError</span>(err: <span class="tp">unknown</span>): <span class="tp">string</span> {
+  <span class="kw">if</span> (err <span class="kw">instanceof</span> Error) {
+    <span class="kw">return</span> err.message;        <span class="cmt">// TS knows .message exists</span>
+  }
+  <span class="kw">if</span> (<span class="kw">typeof</span> err === <span class="str">"string"</span>) {
+    <span class="kw">return</span> err;
+  }
+  <span class="kw">return</span> <span class="str">"Unknown error"</span>;
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 2 · User-defined type guards</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="kw">interface</span> <span class="tp">ApiSuccess</span> { status: <span class="str">"success"</span>; data: <span class="tp">object</span> }
+<span class="kw">interface</span> <span class="tp">ApiError</span>   { status: <span class="str">"error"</span>;   message: <span class="tp">string</span> }
+<span class="kw">type</span> <span class="tp">ApiResult</span> = <span class="tp">ApiSuccess</span> | <span class="tp">ApiError</span>;
+
+<span class="cmt">// Type guard — return type "value is Type" is the magic</span>
+<span class="kw">function</span> <span class="fn">isSuccess</span>(r: <span class="tp">ApiResult</span>): r <span class="kw">is</span> <span class="tp">ApiSuccess</span> {
+  <span class="kw">return</span> r.status === <span class="str">"success"</span>;
+}
+
+<span class="kw">async function</span> <span class="fn">callApi</span>(): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt; {
+  <span class="kw">const</span> result: <span class="tp">ApiResult</span> = <span class="kw">await</span> <span class="fn">fetchSomething</span>();
+
+  <span class="kw">if</span> (<span class="fn">isSuccess</span>(result)) {
+    <span class="cmt">// TS narrows: result is ApiSuccess</span>
+    console.log(result.data);    <span class="cmt">// ✅ .data available</span>
+  } <span class="kw">else</span> {
+    <span class="cmt">// TS narrows: result is ApiError</span>
+    console.log(result.message); <span class="cmt">// ✅ .message available</span>
+  }
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 3 · Discriminated unions</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// "kind" is the discriminant — unique to each member</span>
+<span class="kw">type</span> <span class="tp">TestEvent</span> =
+  | { kind: <span class="str">"start"</span>;  testName: <span class="tp">string</span> }
+  | { kind: <span class="str">"pass"</span>;   duration: <span class="tp">number</span> }
+  | { kind: <span class="str">"fail"</span>;   error: <span class="tp">string</span>; screenshot: <span class="tp">string</span> }
+  | { kind: <span class="str">"skip"</span>;   reason: <span class="tp">string</span> };
+
+<span class="kw">function</span> <span class="fn">handleEvent</span>(event: <span class="tp">TestEvent</span>): <span class="tp">void</span> {
+  <span class="kw">switch</span> (event.kind) {
+    <span class="kw">case</span> <span class="str">"start"</span>:
+      console.log(<span class="str">`▶ ${event.testName}`</span>);   <span class="cmt">// only .testName here</span>
+      <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="str">"pass"</span>:
+      console.log(<span class="str">`✅ ${event.duration}ms`</span>); <span class="cmt">// only .duration here</span>
+      <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="str">"fail"</span>:
+      console.log(event.error, event.screenshot); <span class="cmt">// both available</span>
+      <span class="kw">break</span>;
+  }
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 4 · Mapped types</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Custom mapped type — make all fields nullable</span>
+<span class="kw">type</span> <span class="tp">Nullable</span>&lt;<span class="tp">T</span>&gt; = {
+  [<span class="tp">K</span> <span class="kw">in</span> <span class="kw">keyof</span> <span class="tp">T</span>]: <span class="tp">T</span>[<span class="tp">K</span>] | <span class="kw">null</span>;
+};
+
+<span class="kw">interface</span> <span class="tp">User</span> { name: <span class="tp">string</span>; age: <span class="tp">number</span> }
+<span class="kw">type</span> <span class="tp">NullableUser</span> = <span class="tp">Nullable</span>&lt;<span class="tp">User</span>&gt;;
+<span class="cmt">// NullableUser = { name: string | null; age: number | null }</span>
+
+<span class="cmt">// Custom mapped type — add 'validated_' prefix to all keys</span>
+<span class="kw">type</span> <span class="tp">Validated</span>&lt;<span class="tp">T</span>&gt; = {
+  [<span class="tp">K</span> <span class="kw">in</span> <span class="kw">keyof</span> <span class="tp">T</span> <span class="kw">as</span> <span class="str">`validated_${string &amp; K}`</span>]: <span class="tp">boolean</span>;
+};
+<span class="kw">type</span> <span class="tp">ValidationState</span> = <span class="tp">Validated</span>&lt;<span class="tp">User</span>&gt;;
+<span class="cmt">// { validated_name: boolean; validated_age: boolean }</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 5 · Conditional types and infer</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Conditional type — T extends U ? TrueType : FalseType</span>
+<span class="kw">type</span> <span class="tp">IsArray</span>&lt;<span class="tp">T</span>&gt; = <span class="tp">T</span> <span class="kw">extends</span> <span class="tp">any[]</span> ? <span class="str">"yes"</span> : <span class="str">"no"</span>;
+
+<span class="kw">type</span> <span class="tp">A</span> = <span class="tp">IsArray</span>&lt;<span class="tp">string[]</span>&gt;;  <span class="cmt">// "yes"</span>
+<span class="kw">type</span> <span class="tp">B</span> = <span class="tp">IsArray</span>&lt;<span class="tp">string</span>&gt;;    <span class="cmt">// "no"</span>
+
+<span class="cmt">// infer — extract a type from within another type</span>
+<span class="kw">type</span> <span class="tp">UnwrapPromise</span>&lt;<span class="tp">T</span>&gt; = <span class="tp">T</span> <span class="kw">extends</span> <span class="tp">Promise</span>&lt;<span class="kw">infer</span> <span class="tp">U</span>&gt; ? <span class="tp">U</span> : <span class="tp">T</span>;
+
+<span class="kw">type</span> <span class="tp">Resolved</span> = <span class="tp">UnwrapPromise</span>&lt;<span class="tp">Promise</span>&lt;<span class="tp">string</span>&gt;&gt;; <span class="cmt">// string</span>
+<span class="kw">type</span> <span class="tp">Plain</span>    = <span class="tp">UnwrapPromise</span>&lt;<span class="tp">number</span>&gt;;           <span class="cmt">// number</span>
+
+<span class="cmt">// ReturnType — TS built-in using infer</span>
+<span class="kw">function</span> <span class="fn">getUser</span>() { <span class="kw">return</span> { name: <span class="str">"Alice"</span>, age: 30 }; }
+<span class="kw">type</span> <span class="tp">UserType</span> = <span class="tp">ReturnType</span>&lt;<span class="kw">typeof</span> <span class="fn">getUser</span>&gt;;
+<span class="cmt">// UserType = { name: string; age: number }</span></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Best practices</div>
+  <div class="checklist">
+    <div class="check-item"><span class="icon">✓</span><span>Use discriminated unions for test events and states — exhaustive switch gives compile-time safety</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Write type guard functions for all external data (API responses, config files)</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Prefer <code>unknown</code> over <code>any</code> for caught errors — then narrow with <code>instanceof Error</code></span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Add a <code>default</code> exhaustiveness check in switch statements to catch unhandled union members</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Don't over-engineer with conditional types early — master basics first, add complexity as needed</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview prep</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1. What is type narrowing in TypeScript?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Type narrowing is when TypeScript refines a broad type (like <code>string | number</code>) to a more specific type inside a conditional block. Using <code>typeof</code>, <code>instanceof</code>, or custom type guard functions tells the compiler what the actual type is in each branch, giving you access to the correct methods and properties.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2. What is a discriminated union and why is it useful in test automation?</span><span class="qa-arrow">▼</span></div><div class="qa-a">A discriminated union is a union where each member has a common literal field (the discriminant, like <code>kind</code> or <code>type</code>) that uniquely identifies it. In test automation I use it for test events: <code>"start" | "pass" | "fail"</code>. TypeScript's switch narrows to the exact member in each case, so you only access properties that actually exist on that variant.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3. How would you safely handle an unknown error type in a catch block?</span><span class="qa-arrow">▼</span></div><div class="qa-a">In TypeScript's strict mode, caught errors are typed as <code>unknown</code>. I use <code>instanceof Error</code> to narrow: <code>if (err instanceof Error) { return err.message; }</code>. If you need to handle custom error classes, create a type guard function that checks the shape. Never cast directly to Error without checking — the thrown value might not be an Error instance.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4. What is a mapped type and give a practical example?</span><span class="qa-arrow">▼</span></div><div class="qa-a">A mapped type creates a new type by iterating over the keys of an existing type: <code>{ [K in keyof T]: ... }</code>. A practical example is making all config fields optional: <code>type Optional&lt;T&gt; = { [K in keyof T]?: T[K] }</code>. Built-in utility types like <code>Partial</code>, <code>Readonly</code>, and <code>Required</code> are all implemented as mapped types.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5. What is <code>ReturnType&lt;T&gt;</code> and how does it help in automation?</span><span class="qa-arrow">▼</span></div><div class="qa-a"><code>ReturnType&lt;typeof fn&gt;</code> extracts the return type of a function at the type level. In automation, if I have a data factory function that builds test objects, I can use <code>ReturnType&lt;typeof buildUser&gt;</code> to get the User type automatically without defining a separate interface. This keeps the type always in sync with the factory.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- SESSION 6 -->
+<div class="session" id="s5">
+<div class="section">
+  <div class="section-title">Overview</div>
+  <div class="overview-card">
+    <h3>Modules, tsconfig & Decorators</h3>
+    <p>TypeScript's module system, compiler configuration, and decorators are the <strong>foundation of any scalable automation framework</strong>. Understanding <code>tsconfig.json</code> lets you control how TypeScript behaves across your entire project.</p>
+    <div class="wwwwh">
+      <div class="wwwwh-item"><div class="label">What</div><div class="val">ES modules, tsconfig settings, decorators</div></div>
+      <div class="wwwwh-item"><div class="label">Why</div><div class="val">Organize large codebases, enforce standards, enable frameworks</div></div>
+      <div class="wwwwh-item"><div class="label">When</div><div class="val">Setting up or scaling a test automation framework</div></div>
+      <div class="wwwwh-item"><div class="label">Where</div><div class="val">Framework root, CI pipeline, shared utilities package</div></div>
+      <div class="wwwwh-item"><div class="label">How</div><div class="val">import/export + tsconfig.json + @decorator syntax</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview one-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Line 1</span>"TypeScript uses ES module syntax — named exports, default exports, and re-exports — compiled to CommonJS or ESM based on tsconfig."</div>
+    <div class="oneliner"><span>Line 2</span>"The <code>strict</code> flag in tsconfig enables all strict type-checking options — it's the single most impactful compiler setting."</div>
+    <div class="oneliner"><span>Line 3</span>"Path aliases (<code>paths</code> in tsconfig) let you replace relative imports like <code>../../../utils</code> with clean aliases like <code>@utils</code>."</div>
+    <div class="oneliner"><span>Line 4</span>"Declaration files (<code>.d.ts</code>) describe the types of existing JavaScript libraries — they're how TS understands untyped packages."</div>
+    <div class="oneliner"><span>Line 5</span>"Decorators are a stage-3 ECMAScript proposal that TypeScript supports — they annotate classes, methods, and properties with metadata."</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Code examples</div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 1 · Module imports and exports</span><span class="code-tag tag-both">JS vs TS</span></div>
+    <pre><span class="cmt">// ── pageObjects/LoginPage.ts ──</span>
+<span class="kw">export interface</span> <span class="tp">Credentials</span> { username: <span class="tp">string</span>; password: <span class="tp">string</span> }
+
+<span class="kw">export class</span> <span class="tp">LoginPage</span> {
+  <span class="fn">login</span>(creds: <span class="tp">Credentials</span>): <span class="tp">void</span> { <span class="cmt">/* … */</span> }
+}
+
+<span class="kw">export default</span> LoginPage; <span class="cmt">// default export (one per file)</span>
+
+<span class="cmt">// ── tests/login.test.ts ── (consuming the module)</span>
+<span class="kw">import</span> LoginPage, { <span class="tp">Credentials</span> } <span class="kw">from</span> <span class="str">"../pageObjects/LoginPage"</span>;
+<span class="kw">import</span> * <span class="kw">as</span> Utils <span class="kw">from</span> <span class="str">"../utils"</span>; <span class="cmt">// namespace import</span>
+
+<span class="cmt">// Re-export (barrel file pattern — index.ts)</span>
+<span class="kw">export</span> { <span class="tp">LoginPage</span>, <span class="tp">Credentials</span> } <span class="kw">from</span> <span class="str">"./LoginPage"</span>;
+<span class="kw">export</span> { <span class="tp">DashboardPage</span> }          <span class="kw">from</span> <span class="str">"./DashboardPage"</span>;
+<span class="cmt">// Now consumers: import { LoginPage, DashboardPage } from "@pages"</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 2 · Essential tsconfig.json settings</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre>{
+  <span class="str">"compilerOptions"</span>: {
+    <span class="str">"target"</span>:     <span class="str">"ES2022"</span>,      <span class="cmt">// JS version to emit</span>
+    <span class="str">"module"</span>:     <span class="str">"commonjs"</span>,   <span class="cmt">// module system (Node = commonjs)</span>
+    <span class="str">"outDir"</span>:     <span class="str">"./dist"</span>,     <span class="cmt">// where compiled JS goes</span>
+    <span class="str">"rootDir"</span>:    <span class="str">"./src"</span>,      <span class="cmt">// where source .ts files are</span>
+    <span class="str">"strict"</span>:     <span class="kw">true</span>,        <span class="cmt">// enable ALL strict checks</span>
+    <span class="str">"esModuleInterop"</span>: <span class="kw">true</span>,   <span class="cmt">// allows default import from CJS</span>
+    <span class="str">"sourceMap"</span>:  <span class="kw">true</span>,        <span class="cmt">// .map files for debugging</span>
+    <span class="str">"baseUrl"</span>:    <span class="str">"."</span>,         <span class="cmt">// base for path aliases</span>
+    <span class="str">"paths"</span>: {                 <span class="cmt">// path aliases</span>
+      <span class="str">"@pages/*"</span>:  [<span class="str">"src/pages/*"</span>],
+      <span class="str">"@utils/*"</span>:  [<span class="str">"src/utils/*"</span>],
+      <span class="str">"@fixtures/*"</span>:[<span class="str">"src/fixtures/*"</span>]
+    }
+  },
+  <span class="str">"include"</span>: [<span class="str">"src/**/*"</span>, <span class="str">"tests/**/*"</span>],
+  <span class="str">"exclude"</span>: [<span class="str">"node_modules"</span>, <span class="str">"dist"</span>]
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 3 · Type-only imports (performance)</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// import type — erased completely at compile time</span>
+<span class="cmt">// Never included in JS bundle — better performance</span>
+<span class="kw">import type</span> { <span class="tp">Page</span>, <span class="tp">Browser</span> } <span class="kw">from</span> <span class="str">"@playwright/test"</span>;
+
+<span class="cmt">// vs regular import — included in bundle</span>
+<span class="kw">import</span> { expect, test } <span class="kw">from</span> <span class="str">"@playwright/test"</span>;
+
+<span class="cmt">// Rule: if you only use it as a type annotation, use import type</span>
+<span class="kw">async function</span> <span class="fn">doLogin</span>(page: <span class="tp">Page</span>): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt; {
+  <span class="cmt">// Page is only used as a type — so "import type" is correct</span>
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 4 · Declaration files — typing untyped JS</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// When a library has no types, create a .d.ts file</span>
+<span class="cmt">// File: types/my-js-lib.d.ts</span>
+
+<span class="kw">declare module</span> <span class="str">"my-js-lib"</span> {
+  <span class="kw">export function</span> <span class="fn">connect</span>(url: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt;;
+  <span class="kw">export function</span> <span class="fn">query</span>(sql: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">unknown[]</span>&gt;;
+  <span class="kw">export const</span> version: <span class="tp">string</span>;
+}
+
+<span class="cmt">// Declare global variables (e.g. from config injected at runtime)</span>
+<span class="kw">declare global</span> {
+  <span class="kw">const</span> __ENV__: <span class="str">"dev"</span> | <span class="str">"qa"</span> | <span class="str">"prod"</span>;
+  <span class="kw">const</span> __BASE_URL__: <span class="tp">string</span>;
+}
+
+<span class="cmt">// Augment existing module types (add custom props)</span>
+<span class="kw">declare module</span> <span class="str">"express"</span> {
+  <span class="kw">interface</span> <span class="tp">Request</span> {
+    user?: { id: <span class="tp">number</span>; role: <span class="tp">string</span> }; <span class="cmt">// custom field</span>
+  }
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 5 · Decorators (intro)</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Enable in tsconfig: "experimentalDecorators": true</span>
+
+<span class="cmt">// Class decorator — adds metadata to a class</span>
+<span class="kw">function</span> <span class="fn">TestSuite</span>(name: <span class="tp">string</span>) {
+  <span class="kw">return function</span>(constructor: <span class="tp">Function</span>) {
+    console.log(<span class="str">`Registering suite: ${name}`</span>);
+  };
+}
+
+<span class="cmt">// Method decorator — wraps a method</span>
+<span class="kw">function</span> <span class="fn">Log</span>(target: <span class="tp">any</span>, key: <span class="tp">string</span>, descriptor: <span class="tp">PropertyDescriptor</span>) {
+  <span class="kw">const</span> original = descriptor.value;
+  descriptor.value = <span class="kw">function</span>(...args: <span class="tp">any[]</span>) {
+    console.log(<span class="str">`Calling ${key} with`, args);
+    <span class="kw">return</span> original.<span class="fn">apply</span>(<span class="kw">this</span>, args);
+  };
+}
+
+@<span class="fn">TestSuite</span>(<span class="str">"Login Tests"</span>)
+<span class="kw">class</span> <span class="tp">LoginTests</span> {
+  @<span class="fn">Log</span>
+  <span class="fn">testValidLogin</span>() { <span class="cmt">/* … */</span> }
+}</pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Best practices</div>
+  <div class="checklist">
+    <div class="check-item"><span class="icon">✓</span><span>Use barrel files (<code>index.ts</code>) for clean imports — reduces relative path hell</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Always use <code>"strict": true</code> — commit to it at project start, retrofitting is painful</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Use <code>import type</code> for types — eliminates circular dependency risks and reduces bundle size</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Set up path aliases so all team members use the same import style</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Decorators are still experimental — check framework compatibility before using</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview prep</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1. What is the most important tsconfig setting and why?</span><span class="qa-arrow">▼</span></div><div class="qa-a"><code>"strict": true</code> is the single most impactful setting. It enables <code>strictNullChecks</code>, <code>noImplicitAny</code>, <code>strictFunctionTypes</code>, and several others. Without it, TypeScript is significantly more permissive and misses many real bugs. I always set it to true at project start.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2. What is a barrel file and why is it useful?</span><span class="qa-arrow">▼</span></div><div class="qa-a">A barrel file is an <code>index.ts</code> that re-exports from multiple modules in a folder. Instead of <code>import { LoginPage } from "../../pages/LoginPage"</code>, you get <code>import { LoginPage } from "@pages"</code>. It creates a clean public API for each folder and reduces brittle relative paths throughout the codebase.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3. What is the difference between <code>import</code> and <code>import type</code>?</span><span class="qa-arrow">▼</span></div><div class="qa-a"><code>import type</code> imports only the type information and is completely erased at compile time — no JavaScript is emitted for it. Regular <code>import</code> can include runtime values. Using <code>import type</code> for type-only imports improves build performance, prevents accidental runtime usage, and avoids circular dependency issues.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4. What is a <code>.d.ts</code> file?</span><span class="qa-arrow">▼</span></div><div class="qa-a">A declaration file (<code>.d.ts</code>) contains only type information — no implementation. TypeScript uses these to understand the types of JavaScript libraries that weren't written in TypeScript. Most popular npm packages have <code>@types/package-name</code> packages containing declaration files. You can also write your own to type custom JS utilities.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5. How do path aliases improve an automation framework?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Path aliases replace long relative imports (<code>../../../src/pages/Login</code>) with short, readable aliases (<code>@pages/Login</code>). They're configured in tsconfig under <code>paths</code>. The benefits are: cleaner imports, refactoring safety (move a folder without updating 50 import paths), consistent imports across the team, and better readability in code reviews.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- SESSION 7 -->
+<div class="session" id="s6">
+<div class="section">
+  <div class="section-title">Overview</div>
+  <div class="overview-card">
+    <h3>TypeScript + Testing Frameworks (Jest / Playwright)</h3>
+    <p>This is where TypeScript's value in SDET roles becomes crystal clear. Type-safe test suites, typed fixtures, typed page objects, and typed API assertions — everything locks together to produce a <strong>robust, maintainable automation framework</strong>.</p>
+    <div class="wwwwh">
+      <div class="wwwwh-item"><div class="label">What</div><div class="val">TS-typed Jest/Playwright tests with full type coverage</div></div>
+      <div class="wwwwh-item"><div class="label">Why</div><div class="val">Catch test bugs at write time, not run time</div></div>
+      <div class="wwwwh-item"><div class="label">When</div><div class="val">Every test file, fixture, and page object in your framework</div></div>
+      <div class="wwwwh-item"><div class="label">Where</div><div class="val">E2E (Playwright), unit (Jest/Vitest), API (supertest)</div></div>
+      <div class="wwwwh-item"><div class="label">How</div><div class="val">Type test data, fixtures, assertions, page object methods</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview one-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Line 1</span>"Playwright has first-class TypeScript support — all page methods, locators, and assertions are fully typed out of the box."</div>
+    <div class="oneliner"><span>Line 2</span>"I type test data using interfaces and use factory functions to create test objects — this makes tests self-documenting."</div>
+    <div class="oneliner"><span>Line 3</span>"Custom Playwright fixtures extend the base <code>test</code> object with typed page objects, giving every test type-safe access to pages."</div>
+    <div class="oneliner"><span>Line 4</span>"Jest's generic <code>expect&lt;T&gt;()</code> works with TypeScript to enforce that actual and expected values are the same type."</div>
+    <div class="oneliner"><span>Line 5</span>"In my framework, all API response types are defined as TypeScript interfaces — assertions verify against the typed shape."</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Code examples</div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 1 · Typed test data (Jest)</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// types/TestData.ts</span>
+<span class="kw">export interface</span> <span class="tp">UserCredentials</span> {
+  username: <span class="tp">string</span>;
+  password: <span class="tp">string</span>;
+  role: <span class="str">"admin"</span> | <span class="str">"viewer"</span> | <span class="str">"editor"</span>;
+}
+
+<span class="cmt">// Factory function — creates test data with defaults</span>
+<span class="kw">export function</span> <span class="fn">createUser</span>(overrides: <span class="tp">Partial</span>&lt;<span class="tp">UserCredentials</span>&gt; = {}): <span class="tp">UserCredentials</span> {
+  <span class="kw">return</span> {
+    username: <span class="str">"test.user@example.com"</span>,
+    password: <span class="str">"SecurePass123!"</span>,
+    role:     <span class="str">"viewer"</span>,
+    ...overrides   <span class="cmt">// override specific fields</span>
+  };
+}
+
+<span class="cmt">// Usage in tests</span>
+<span class="fn">test</span>(<span class="str">"admin can access settings"</span>, () => {
+  <span class="kw">const</span> admin = <span class="fn">createUser</span>({ role: <span class="str">"admin"</span> }); <span class="cmt">// only override role</span>
+  <span class="cmt">// admin.role = "admin", all other fields are defaults</span>
+});</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 2 · Typed Playwright Page Object</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="kw">import</span> { <span class="tp">Page</span>, <span class="tp">Locator</span> } <span class="kw">from</span> <span class="str">"@playwright/test"</span>;
+
+<span class="kw">export class</span> <span class="tp">LoginPage</span> {
+  <span class="cmt">// Fully typed Playwright locators</span>
+  <span class="kw">private readonly</span> usernameInput: <span class="tp">Locator</span>;
+  <span class="kw">private readonly</span> passwordInput: <span class="tp">Locator</span>;
+  <span class="kw">private readonly</span> submitBtn:     <span class="tp">Locator</span>;
+  <span class="kw">private readonly</span> errorMsg:      <span class="tp">Locator</span>;
+
+  <span class="kw">constructor</span>(<span class="kw">private</span> page: <span class="tp">Page</span>) {
+    <span class="kw">this</span>.usernameInput = page.<span class="fn">locator</span>(<span class="str">'[data-testid="username"]'</span>);
+    <span class="kw">this</span>.passwordInput = page.<span class="fn">locator</span>(<span class="str">'[data-testid="password"]'</span>);
+    <span class="kw">this</span>.submitBtn     = page.<span class="fn">locator</span>(<span class="str">'[data-testid="submit"]'</span>);
+    <span class="kw">this</span>.errorMsg      = page.<span class="fn">locator</span>(<span class="str">'[data-testid="error"]'</span>);
+  }
+
+  <span class="kw">async</span> <span class="fn">login</span>(username: <span class="tp">string</span>, password: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt; {
+    <span class="kw">await</span> <span class="kw">this</span>.usernameInput.<span class="fn">fill</span>(username);
+    <span class="kw">await</span> <span class="kw">this</span>.passwordInput.<span class="fn">fill</span>(password);
+    <span class="kw">await</span> <span class="kw">this</span>.submitBtn.<span class="fn">click</span>();
+  }
+
+  <span class="kw">async</span> <span class="fn">getErrorMessage</span>(): <span class="tp">Promise</span>&lt;<span class="tp">string</span>&gt; {
+    <span class="kw">return</span> (<span class="kw">await</span> <span class="kw">this</span>.errorMsg.<span class="fn">textContent</span>()) ?? <span class="str">""</span>;
+  }
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 3 · Custom typed Playwright fixtures</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="kw">import</span> { test <span class="kw">as</span> base } <span class="kw">from</span> <span class="str">"@playwright/test"</span>;
+<span class="kw">import</span> { <span class="tp">LoginPage</span> }     <span class="kw">from</span> <span class="str">"@pages/LoginPage"</span>;
+<span class="kw">import</span> { <span class="tp">DashboardPage</span> } <span class="kw">from</span> <span class="str">"@pages/DashboardPage"</span>;
+
+<span class="cmt">// Define fixture types</span>
+<span class="kw">type</span> <span class="tp">MyFixtures</span> = {
+  loginPage:     <span class="tp">LoginPage</span>;
+  dashboardPage: <span class="tp">DashboardPage</span>;
+  loggedInUser:  { name: <span class="tp">string</span>; token: <span class="tp">string</span> };
+};
+
+<span class="cmt">// Extend base test with typed fixtures</span>
+<span class="kw">export const</span> test = base.<span class="fn">extend</span>&lt;<span class="tp">MyFixtures</span>&gt;({
+  loginPage: <span class="kw">async</span> ({ page }, use) => {
+    <span class="kw">await</span> <span class="fn">use</span>(<span class="kw">new</span> <span class="tp">LoginPage</span>(page));
+  },
+  dashboardPage: <span class="kw">async</span> ({ page }, use) => {
+    <span class="kw">await</span> <span class="fn">use</span>(<span class="kw">new</span> <span class="tp">DashboardPage</span>(page));
+  },
+  loggedInUser: <span class="kw">async</span> ({ loginPage }, use) => {
+    <span class="kw">await</span> loginPage.<span class="fn">login</span>(<span class="str">"admin"</span>, <span class="str">"pass"</span>);
+    <span class="kw">await</span> <span class="fn">use</span>({ name: <span class="str">"Admin"</span>, token: <span class="str">"abc"</span> });
+  }
+});
+
+<span class="cmt">// In test files — fully typed, autocomplete works</span>
+test(<span class="str">"dashboard loads"</span>, <span class="kw">async</span> ({ loggedInUser, dashboardPage }) => {
+  <span class="cmt">// loggedInUser.name is string — TS knows!</span>
+});</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 4 · Typed API testing with supertest</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="kw">import</span> request <span class="kw">from</span> <span class="str">"supertest"</span>;
+
+<span class="kw">interface</span> <span class="tp">UserResponse</span> {
+  id:    <span class="tp">number</span>;
+  name:  <span class="tp">string</span>;
+  email: <span class="tp">string</span>;
+  role:  <span class="str">"admin"</span> | <span class="str">"user"</span>;
+}
+
+<span class="fn">describe</span>(<span class="str">"GET /users/:id"</span>, () => {
+  <span class="fn">it</span>(<span class="str">"returns user with correct shape"</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">request</span>(app)
+      .<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+      .<span class="fn">set</span>(<span class="str">"Authorization"</span>, <span class="str">"Bearer token"</span>)
+      .<span class="fn">expect</span>(200);
+
+    <span class="cmt">// Cast and validate the typed response body</span>
+    <span class="kw">const</span> user = res.body <span class="kw">as</span> <span class="tp">UserResponse</span>;
+
+    <span class="cmt">// Type-safe assertions — IDE shows correct properties</span>
+    <span class="fn">expect</span>(user.id).toBe(1);
+    <span class="fn">expect</span>(user.role).<span class="fn">toMatch</span>(/^(admin|user)$/);
+    <span class="fn">expect</span>(<span class="kw">typeof</span> user.email).toBe(<span class="str">"string"</span>);
+  });
+});</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 5 · Custom type-safe assertion helper</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Custom assertion — readable error messages + typed</span>
+<span class="kw">function</span> <span class="fn">assertStatus</span>(actual: <span class="tp">number</span>, expected: <span class="tp">number</span>): <span class="tp">void</span> {
+  <span class="fn">expect</span>(actual).toBe(expected);
+}
+
+<span class="kw">function</span> <span class="fn">assertBodyHasKeys</span>&lt;<span class="tp">T</span> <span class="kw">extends</span> <span class="tp">object</span>&gt;(
+  body: <span class="tp">T</span>,
+  keys: (<span class="kw">keyof</span> <span class="tp">T</span>)[]
+): <span class="tp">void</span> {
+  keys.<span class="fn">forEach</span>(key => {
+    <span class="fn">expect</span>(body).toHaveProperty(key <span class="kw">as</span> <span class="tp">string</span>);
+  });
+}
+
+<span class="cmt">// Usage</span>
+<span class="kw">const</span> user: <span class="tp">UserResponse</span> = res.body;
+<span class="fn">assertBodyHasKeys</span>(user, [<span class="str">"id"</span>, <span class="str">"name"</span>, <span class="str">"email"</span>]);
+<span class="cmt">// TS enforces: can only pass actual keys of UserResponse ✅</span></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Best practices</div>
+  <div class="checklist">
+    <div class="check-item"><span class="icon">✓</span><span>Define all test data shapes as TypeScript interfaces — not inline objects</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Use factory functions with <code>Partial&lt;T&gt;</code> to build test data with sensible defaults</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Always type your Playwright fixtures — prevents passing wrong page objects to tests</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Keep locators <code>private readonly</code> in page objects — expose only action methods</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Don't use <code>as any</code> to silence type errors in assertions — fix the root cause</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview prep</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1. How does TypeScript improve the Page Object Model pattern?</span><span class="qa-arrow">▼</span></div><div class="qa-a">TypeScript makes POM significantly stronger. Locators are typed as <code>Locator</code> from Playwright. Methods have typed parameters and return types. Private access modifiers prevent tests from directly accessing selectors. Constructor shorthand reduces boilerplate. Inheritance from a typed BasePage enforces consistent implementation across all page objects.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2. What are Playwright fixtures and how do TypeScript types help?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Fixtures extend the base <code>test</code> object with shared setup/teardown resources (like page objects). TypeScript typing means each fixture declares its return type. When a test destructures <code>{ loginPage, dashboardPage }</code>, the IDE knows the exact type of each — autocomplete works, typos are caught immediately, and you can't pass the wrong page object to a test.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3. How do you handle API response typing in automation?</span><span class="qa-arrow">▼</span></div><div class="qa-a">I define interfaces matching the expected API response schema. After calling the API, I cast the body: <code>const user = res.body as UserResponse</code>. For extra safety, I write type guard functions that validate the shape at runtime before the cast. This gives compile-time autocomplete AND runtime safety. I keep all response interfaces in a shared <code>types/</code> folder.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4. How would you create a reusable typed test data factory?</span><span class="qa-arrow">▼</span></div><div class="qa-a">I define an interface for the data shape, then write a factory function that accepts <code>Partial&lt;T&gt;</code> overrides and returns the full type. The function merges defaults with overrides using the spread operator. Tests call the factory and only specify what they care about: <code>createUser({ role: "admin" })</code>. This is self-documenting and prevents incomplete test data objects.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5. How do you handle async/await with TypeScript in Playwright?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Playwright methods return <code>Promise&lt;T&gt;</code> — Playwright's TypeScript types specify exactly what each Promise resolves to. I declare page object methods as <code>async</code> and return <code>Promise&lt;void&gt;</code> for action methods or <code>Promise&lt;string&gt;</code> for methods that return values. TypeScript ensures I don't forget to await Promises — it flags <code>Promise&lt;string&gt;</code> used where <code>string</code> is expected.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- SESSION 8 -->
+<div class="session" id="s7">
+<div class="section">
+  <div class="section-title">Overview</div>
+  <div class="overview-card">
+    <h3>TypeScript + Node.js, APIs & Framework Architecture</h3>
+    <p>The final session brings everything together — building a <strong>typed framework architecture</strong>: typed Node.js scripts, typed HTTP clients, error handling, async patterns, and putting the full SDET TypeScript toolkit into production-grade frameworks.</p>
+    <div class="wwwwh">
+      <div class="wwwwh-item"><div class="label">What</div><div class="val">TS in Node.js: async/await, typed HTTP, error handling</div></div>
+      <div class="wwwwh-item"><div class="label">Why</div><div class="val">Scalable, maintainable, type-safe automation framework</div></div>
+      <div class="wwwwh-item"><div class="label">When</div><div class="val">API automation, CI scripts, data setup/teardown utilities</div></div>
+      <div class="wwwwh-item"><div class="label">Where</div><div class="val">Playwright configs, API clients, test orchestration scripts</div></div>
+      <div class="wwwwh-item"><div class="label">How</div><div class="val">async/await + typed fetch/axios + error boundaries</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview one-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner"><span>Line 1</span>"In TypeScript, <code>async/await</code> is syntactic sugar over Promises — every <code>async</code> function returns a <code>Promise</code> whether you declare it or not."</div>
+    <div class="oneliner"><span>Line 2</span>"I use a typed API client class that wraps fetch — each method returns a typed Promise, so callers always know what to expect."</div>
+    <div class="oneliner"><span>Line 3</span>"<code>Promise.all</code> runs multiple async operations in parallel — typed as <code>Promise&lt;[T1, T2, T3]&gt;</code> to preserve each result's type."</div>
+    <div class="oneliner"><span>Line 4</span>"Error handling in typed async code: I catch as <code>unknown</code>, narrow with <code>instanceof Error</code>, and throw custom typed errors."</div>
+    <div class="oneliner"><span>Line 5</span>"TypeScript's type system, combined with a well-designed framework architecture, makes the automation codebase a joy to onboard new team members to."</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Code examples</div>
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 1 · async/await typed patterns</span><span class="code-tag tag-both">JS vs TS</span></div>
+    <pre><span class="cmt">// JavaScript async — no type info on result</span>
+<span class="kw">async function</span> <span class="fn">getUser</span>(id) {
+  <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/users/${id}`</span>);
+  <span class="kw">return</span> res.<span class="fn">json</span>(); <span class="cmt">// returns Promise&lt;any&gt;</span>
+}
+
+<span class="cmt">// TypeScript async — fully typed from input to output</span>
+<span class="kw">interface</span> <span class="tp">User</span> { id: <span class="tp">number</span>; name: <span class="tp">string</span>; email: <span class="tp">string</span> }
+
+<span class="kw">async function</span> <span class="fn">getUser</span>(id: <span class="tp">number</span>): <span class="tp">Promise</span>&lt;<span class="tp">User</span>&gt; {
+  <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/users/${id}`</span>);
+  <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> Error(<span class="str">`HTTP ${res.status}`</span>);
+  <span class="kw">return</span> res.<span class="fn">json</span>() <span class="kw">as</span> <span class="tp">Promise</span>&lt;<span class="tp">User</span>&gt;; <span class="cmt">// typed cast</span>
+}
+
+<span class="cmt">// Caller gets full type info</span>
+<span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">getUser</span>(1);
+console.log(user.name); <span class="cmt">// ✅ TS knows .name is string</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 2 · Typed HTTP client class</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="kw">class</span> <span class="tp">HttpClient</span> {
+  <span class="kw">constructor</span>(
+    <span class="kw">private readonly</span> baseUrl: <span class="tp">string</span>,
+    <span class="kw">private readonly</span> token: <span class="tp">string</span>
+  ) {}
+
+  <span class="kw">private</span> <span class="fn">headers</span>(): <span class="tp">Record</span>&lt;<span class="tp">string</span>, <span class="tp">string</span>&gt; {
+    <span class="kw">return</span> { <span class="str">"Authorization"</span>: <span class="str">`Bearer ${this.token}`</span>,
+              <span class="str">"Content-Type"</span>:  <span class="str">"application/json"</span> };
+  }
+
+  <span class="kw">async</span> <span class="fn">get</span>&lt;<span class="tp">T</span>&gt;(path: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">T</span>&gt; {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${this.baseUrl}${path}`</span>, {
+      headers: <span class="kw">this</span>.<span class="fn">headers</span>()
+    });
+    <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> Error(<span class="str">`GET ${path} → ${res.status}`</span>);
+    <span class="kw">return</span> res.<span class="fn">json</span>() <span class="kw">as</span> <span class="tp">T</span>;
+  }
+
+  <span class="kw">async</span> <span class="fn">post</span>&lt;<span class="tp">TBody</span>, <span class="tp">TResponse</span>&gt;(path: <span class="tp">string</span>, body: <span class="tp">TBody</span>): <span class="tp">Promise</span>&lt;<span class="tp">TResponse</span>&gt; {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${this.baseUrl}${path}`</span>, {
+      method:  <span class="str">"POST"</span>,
+      headers: <span class="kw">this</span>.<span class="fn">headers</span>(),
+      body:    JSON.<span class="fn">stringify</span>(body)
+    });
+    <span class="kw">return</span> res.<span class="fn">json</span>() <span class="kw">as</span> <span class="tp">TResponse</span>;
+  }
+}
+
+<span class="cmt">// Usage — fully typed</span>
+<span class="kw">const</span> client = <span class="kw">new</span> <span class="tp">HttpClient</span>(<span class="str">"https://api.app.com"</span>, token);
+<span class="kw">const</span> user = <span class="kw">await</span> client.<span class="fn">get</span>&lt;<span class="tp">User</span>&gt;(<span class="str">"/users/1"</span>);    <span class="cmt">// returns User</span>
+<span class="kw">const</span> order = <span class="kw">await</span> client.<span class="fn">get</span>&lt;<span class="tp">Order</span>&gt;(<span class="str">"/orders/5"</span>); <span class="cmt">// returns Order</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 3 · Promise.all and parallel typed calls</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Sequential — slow (each waits for previous)</span>
+<span class="kw">const</span> user    = <span class="kw">await</span> client.<span class="fn">get</span>&lt;<span class="tp">User</span>&gt;(<span class="str">"/users/1"</span>);
+<span class="kw">const</span> orders  = <span class="kw">await</span> client.<span class="fn">get</span>&lt;<span class="tp">Order[]</span>&gt;(<span class="str">"/orders?userId=1"</span>);
+<span class="kw">const</span> profile = <span class="kw">await</span> client.<span class="fn">get</span>&lt;<span class="tp">Profile</span>&gt;(<span class="str">"/profile/1"</span>);
+
+<span class="cmt">// Parallel with Promise.all — all fire at once, faster!</span>
+<span class="cmt">// TypeScript infers the tuple type from the array</span>
+<span class="kw">const</span> [user2, orders2, profile2] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  client.<span class="fn">get</span>&lt;<span class="tp">User</span>&gt;(<span class="str">"/users/1"</span>),
+  client.<span class="fn">get</span>&lt;<span class="tp">Order[]</span>&gt;(<span class="str">"/orders?userId=1"</span>),
+  client.<span class="fn">get</span>&lt;<span class="tp">Profile</span>&gt;(<span class="str">"/profile/1"</span>)
+]);
+<span class="cmt">// user2: User, orders2: Order[], profile2: Profile — all typed!</span>
+
+<span class="cmt">// Promise.allSettled — continues even if some fail</span>
+<span class="kw">const</span> results = <span class="kw">await</span> Promise.<span class="fn">allSettled</span>([...]);
+results.<span class="fn">forEach</span>(r => {
+  <span class="kw">if</span> (r.status === <span class="str">"fulfilled"</span>) console.log(r.value);
+  <span class="kw">else</span> console.error(r.reason);
+});</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 4 · Custom typed error classes</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// Custom error class with typed context</span>
+<span class="kw">class</span> <span class="tp">ApiError</span> <span class="kw">extends</span> Error {
+  <span class="kw">constructor</span>(
+    message: <span class="tp">string</span>,
+    <span class="kw">public</span> <span class="kw">readonly</span> statusCode: <span class="tp">number</span>,
+    <span class="kw">public</span> <span class="kw">readonly</span> endpoint: <span class="tp">string</span>
+  ) {
+    <span class="kw">super</span>(message);
+    <span class="kw">this</span>.name = <span class="str">"ApiError"</span>;
+  }
+}
+
+<span class="kw">async function</span> <span class="fn">safeGet</span>&lt;<span class="tp">T</span>&gt;(url: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">T</span>&gt; {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url);
+    <span class="kw">if</span> (!res.ok) {
+      <span class="kw">throw new</span> <span class="tp">ApiError</span>(<span class="str">`Failed: ${res.statusText}`</span>, res.status, url);
+    }
+    <span class="kw">return</span> res.<span class="fn">json</span>() <span class="kw">as</span> <span class="tp">T</span>;
+  } <span class="kw">catch</span> (err: <span class="tp">unknown</span>) {
+    <span class="kw">if</span> (err <span class="kw">instanceof</span> <span class="tp">ApiError</span>) {
+      console.error(<span class="str">`API Error ${err.statusCode} @ ${err.endpoint}`</span>);
+      <span class="kw">throw</span> err; <span class="cmt">// re-throw typed error</span>
+    }
+    <span class="kw">throw new</span> Error(<span class="str">"Network failure"</span>);
+  }
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-label">Example 5 · Full framework architecture (summary)</span><span class="code-tag tag-ts">TypeScript</span></div>
+    <pre><span class="cmt">// framework/</span>
+<span class="cmt">// ├── src/</span>
+<span class="cmt">// │   ├── pages/        ← Typed Page Objects</span>
+<span class="cmt">// │   │   ├── LoginPage.ts</span>
+<span class="cmt">// │   │   ├── DashboardPage.ts</span>
+<span class="cmt">// │   │   └── index.ts  ← barrel</span>
+<span class="cmt">// │   ├── api/          ← Typed API clients</span>
+<span class="cmt">// │   │   ├── HttpClient.ts</span>
+<span class="cmt">// │   │   └── endpoints/</span>
+<span class="cmt">// │   ├── fixtures/     ← Typed Playwright fixtures</span>
+<span class="cmt">// │   ├── types/        ← Shared interfaces</span>
+<span class="cmt">// │   │   ├── User.ts</span>
+<span class="cmt">// │   │   ├── ApiResponse.ts</span>
+<span class="cmt">// │   │   └── index.ts</span>
+<span class="cmt">// │   └── utils/        ← Typed helpers</span>
+<span class="cmt">// ├── tests/</span>
+<span class="cmt">// │   ├── e2e/</span>
+<span class="cmt">// │   └── api/</span>
+<span class="cmt">// ├── tsconfig.json     ← strict: true, paths aliases</span>
+<span class="cmt">// └── playwright.config.ts</span>
+
+<span class="cmt">// Everything typed. Everything testable. Everything maintainable.</span>
+<span class="cmt">// This is the architecture that scales from 50 to 5000 tests.</span></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Best practices</div>
+  <div class="checklist">
+    <div class="check-item"><span class="icon">✓</span><span>Always use <code>async/await</code> over raw <code>.then()</code> chains — more readable and easier to debug</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Use <code>Promise.all</code> for parallel data setup in tests — drastically faster than sequential awaits</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Create custom error classes extending Error — typed context makes debugging faster</span></div>
+    <div class="check-item"><span class="icon">✓</span><span>Centralize all types in a <code>types/</code> folder with a barrel — single source of truth</span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Never leave unhandled Promise rejections — always wrap in try/catch or use <code>.catch()</code></span></div>
+    <div class="check-item warn"><span class="icon" style="color:#BA7517">⚠</span><span>Don't mix callback style with async/await — choose one pattern per codebase</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Interview prep</div>
+  <div class="qa-list">
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1. How does TypeScript handle async/await return types?</span><span class="qa-arrow">▼</span></div><div class="qa-a">Any function marked <code>async</code> automatically returns a <code>Promise</code>. TypeScript infers the type: <code>async function getUser(): Promise&lt;User&gt;</code> — the function returns <code>Promise&lt;User&gt;</code> not <code>User</code>. At the call site, <code>await getUser()</code> unwraps to <code>User</code>. TypeScript tracks this correctly through the async/await chain without needing explicit annotations at every step.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2. When would you use Promise.all vs Promise.allSettled?</span><span class="qa-arrow">▼</span></div><div class="qa-a"><code>Promise.all</code> fails fast — if any promise rejects, the whole call rejects. Use it when all calls must succeed (e.g. setting up all test data). <code>Promise.allSettled</code> waits for all promises regardless — each result has a <code>status: "fulfilled" | "rejected"</code> discriminator. Use it when you need all results even if some fail — e.g., cleaning up multiple test resources.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3. How would you architect a typed API client for an automation framework?</span><span class="qa-arrow">▼</span></div><div class="qa-a">I build a generic <code>HttpClient</code> class with typed <code>get&lt;T&gt;</code> and <code>post&lt;TBody, TResponse&gt;</code> methods. The class handles auth headers centrally. Each endpoint becomes a method on a service class that calls the client: <code>userService.getUser(id): Promise&lt;User&gt;</code>. All interfaces live in <code>src/types/</code>. This gives every test strongly typed API interactions with zero duplication.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4. How do you handle errors in async TypeScript code?</span><span class="qa-arrow">▼</span></div><div class="qa-a">I use try/catch with <code>catch (err: unknown)</code> — in strict mode errors are unknown. I narrow with <code>instanceof</code>: check for my custom error classes first, then for the base <code>Error</code> class. I create custom error classes (ApiError, NetworkError) that carry typed context. I re-throw after logging so the test runner reports the failure correctly.</div></div>
+    <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5. How does TypeScript help onboard new SDET team members?</span><span class="qa-arrow">▼</span></div><div class="qa-a">TypeScript is a force multiplier for team productivity. New members get IDE autocomplete showing available methods, typed parameters they can't misuse, compiler errors that explain exactly what's wrong, and self-documenting interfaces that describe data shapes without needing external docs. The type system is a living, enforced specification of how the framework works.</div></div>
+  </div>
+</div>
+</div>
+
+</div><!-- content -->
+
+<div class="nav-btns">
+  <button class="nav-btn" id="prevBtn" onclick="changeTab(-1)" disabled>← Previous</button>
+  <span id="sessionLabel" style="font-size:12px;color:var(--color-text-tertiary);align-self:center">Session 1 of 8</span>
+  <button class="nav-btn primary" id="nextBtn" onclick="changeTab(1)">Next Session →</button>
+</div>
+
+</div>
+
+<script>
+let current = 0;
+const total = 8;
+
+function switchTab(idx) {
+  document.getElementById('s' + current).classList.remove('active');
+  document.getElementById('tb' + current).classList.remove('active');
+  current = idx;
+  document.getElementById('s' + current).classList.add('active');
+  document.getElementById('tb' + current).classList.add('active');
+  document.getElementById('progressFill').style.width = ((current + 1) / total * 100) + '%';
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').disabled = current === total - 1;
+  document.getElementById('nextBtn').textContent = current === total - 1 ? '🎓 Complete!' : 'Next Session →';
+  document.getElementById('sessionLabel').textContent = 'Session ' + (current + 1) + ' of ' + total;
+  document.getElementById('tb' + current).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+function changeTab(dir) {
+  const next = current + dir;
+  if (next >= 0 && next < total) switchTab(next);
+}
+
+function toggleQA(el) {
+  el.parentElement.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>

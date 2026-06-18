@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python QA Advanced S11-S20 — Learning Hub</title>
+</head>
+<body>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --mono: 'JetBrains Mono', monospace;
+  --sans: var(--font-sans, sans-serif);
+  --acc-blue: #378ADD; --acc-teal: #1D9E75; --acc-amber: #BA7517;
+  --acc-coral: #D85A30; --acc-purple: #7F77DD; --acc-green: #639922;
+  --acc-pink: #D4537E; --acc-red: #E24B4A;
+  --font-sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --color-text-primary:#1a1a2e;
+  --color-text-secondary:#555770;
+  --color-text-tertiary:#8e90a6;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f4f8;
+  --color-background-tertiary:#eaeaef;
+  --color-border-secondary:#d1d1db;
+  --color-border-tertiary:#e4e4eb;
+}
+body { font-family: var(--sans); font-size:14px; color:var(--color-text-primary); background:transparent; line-height:1.6; }
+
+.hub-header { padding:18px 20px 0; display:flex; align-items:center; gap:12px; border-bottom:0.5px solid var(--color-border-tertiary); padding-bottom:0; }
+.hub-logo { width:36px; height:36px; background:var(--acc-coral); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:15px; color:#fff; font-weight:600; flex-shrink:0; font-family:var(--mono); }
+.hub-title { font-size:16px; font-weight:500; }
+.hub-sub { font-size:12px; color:var(--color-text-secondary); margin-top:1px; }
+.prog-wrap { margin-left:auto; text-align:right; }
+.prog-lbl { font-size:11px; color:var(--color-text-tertiary); margin-bottom:4px; }
+.prog-track { width:120px; height:4px; background:var(--color-background-tertiary); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--acc-coral); border-radius:2px; transition:width .4s; }
+
+.tab-nav { display:flex; overflow-x:auto; gap:0; border-bottom:0.5px solid var(--color-border-tertiary); padding:0 20px; scrollbar-width:none; }
+.tab-nav::-webkit-scrollbar { display:none; }
+.tab-btn { flex-shrink:0; padding:10px 13px; font-size:11px; font-weight:500; font-family:var(--sans); color:var(--color-text-tertiary); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:all .2s; white-space:nowrap; }
+.tab-btn:hover { color:var(--color-text-secondary); }
+.tab-btn.active { color:var(--acc-coral); border-bottom-color:var(--acc-coral); font-weight:600; }
+.tdot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+
+.panel { display:none; padding:20px; }
+.panel.active { display:block; }
+
+.stitle { font-size:18px; font-weight:500; margin-bottom:3px; }
+.sdesc  { font-size:13px; color:var(--color-text-secondary); margin-bottom:18px; }
+
+.tag { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:4px; margin-bottom:8px; }
+.tw  { background:#E6F1FB; color:#185FA5; }
+.ty  { background:#E1F5EE; color:#0F6E56; }
+.th2 { background:#FAEEDA; color:#854F0B; }
+.to  { background:#EEEDFE; color:#534AB7; }
+.tr  { background:#FAECE7; color:#993C1D; }
+.ti  { background:#EAF3DE; color:#3B6D11; }
+.tm  { background:#FCEBEB; color:#A32D2D; }
+.tb  { background:#E1F5EE; color:#0F6E56; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.one-col { margin-bottom:14px; }
+
+.card { background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:10px; padding:14px 16px; }
+.card-body { font-size:13px; color:var(--color-text-primary); line-height:1.65; }
+
+.cw { background:var(--color-background-tertiary); border:0.5px solid var(--color-border-tertiary); border-radius:8px; margin:10px 0; overflow:hidden; }
+.ch { display:flex; justify-content:space-between; align-items:center; padding:6px 12px; border-bottom:0.5px solid var(--color-border-tertiary); font-size:11px; color:var(--color-text-tertiary); }
+.cl { font-weight:500; color:var(--color-text-secondary); }
+.cb { font-size:10px; padding:2px 8px; border:0.5px solid var(--color-border-secondary); border-radius:4px; background:none; cursor:pointer; color:var(--color-text-tertiary); font-family:var(--sans); transition:all .15s; }
+.cb:hover { background:var(--color-background-secondary); color:var(--color-text-secondary); }
+pre { font-family:var(--mono); font-size:12px; line-height:1.7; padding:12px 14px; overflow-x:auto; color:var(--color-text-primary); }
+
+.kw { color:var(--acc-purple); font-weight:500; }
+.fn { color:var(--acc-blue); }
+.st { color:var(--acc-teal); }
+.cm { color:var(--color-text-tertiary); font-style:italic; }
+.nb { color:var(--acc-amber); }
+.op { color:var(--acc-coral); }
+.dc { color:var(--acc-green); }
+
+.il { list-style:none; display:flex; flex-direction:column; gap:7px; }
+.il li { font-size:12.5px; padding:8px 12px; border-radius:7px; border-left:3px solid var(--acc-coral); background:var(--color-background-primary); line-height:1.55; }
+.iq { font-weight:600; color:var(--acc-coral); font-size:11px; display:block; margin-bottom:2px; }
+
+.bl { list-style:none; display:flex; flex-direction:column; gap:6px; }
+.bl li { font-size:12.5px; padding:7px 10px 7px 32px; border-radius:7px; background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); position:relative; line-height:1.5; }
+.bl li::before { content:'✓'; position:absolute; left:10px; color:var(--acc-teal); font-weight:600; }
+
+.mi { border-radius:8px; overflow:hidden; margin-bottom:8px; border:0.5px solid #F7C1C1; }
+.mb { background:#FFF5F5; padding:8px 12px; font-size:12px; }
+.mg { background:#F0FAF5; padding:8px 12px; font-size:12px; border-top:0.5px solid #C0DD97; }
+.mbl { font-size:10px; font-weight:700; letter-spacing:.06em; display:block; margin-bottom:3px; }
+.bll { color:#A32D2D; } .gll { color:#3B6D11; }
+
+.da { border:0.5px solid var(--color-border-tertiary); border-radius:10px; overflow:hidden; margin-bottom:14px; background:var(--color-background-secondary); }
+.fd { font-size:12px; color:var(--color-text-secondary); padding:8px 14px; border-top:0.5px solid var(--color-border-tertiary); }
+
+.sf { display:flex; align-items:center; justify-content:space-between; padding:12px 0 0; border-top:0.5px solid var(--color-border-tertiary); margin-top:8px; }
+.nb2 { padding:7px 16px; border-radius:7px; border:0.5px solid var(--color-border-secondary); background:var(--color-background-secondary); cursor:pointer; font-size:12px; font-family:var(--sans); color:var(--color-text-secondary); transition:all .15s; }
+.nb2:hover { background:var(--color-background-tertiary); color:var(--color-text-primary); }
+.nb2.pr { background:var(--acc-coral); color:#fff; border-color:var(--acc-coral); }
+.nb2.pr:hover { opacity:.9; }
+.nb2:disabled { opacity:.35; cursor:default; }
+.sc { font-size:11px; color:var(--color-text-tertiary); }
+
+.roadmap-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-bottom:14px; }
+.rm-card { background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:10px; padding:12px 14px; }
+.rm-num { font-size:11px; font-weight:600; color:var(--color-text-tertiary); margin-bottom:4px; }
+.rm-title { font-size:13px; font-weight:500; margin-bottom:3px; }
+.rm-sub { font-size:11px; color:var(--color-text-secondary); }
+
+@media(max-width:520px){ .two-col{grid-template-columns:1fr;} }
+
+.c-amber rect{fill:#FAEEDA;stroke:#EF9F27;stroke-width:1.5}
+.c-blue rect{fill:#E6F1FB;stroke:#85B7EB;stroke-width:1.5}
+.c-coral rect{fill:#FAECE7;stroke:#F0997B;stroke-width:1.5}
+.c-gray rect{fill:#f4f4f8;stroke:#d1d1db;stroke-width:1.5}
+.c-green rect{fill:#EAF3DE;stroke:#97C459;stroke-width:1.5}
+.c-purple rect{fill:#EEEDFE;stroke:#AFA9EC;stroke-width:1.5}
+.c-teal rect{fill:#E1F5EE;stroke:#5DCAA5;stroke-width:1.5}
+svg .th{font-weight:600;fill:var(--color-text-primary);font-family:var(--font-sans);font-size:13px}
+svg .ts{font-size:11px;fill:var(--color-text-secondary);font-family:var(--font-sans)}
+</style>
+
+<div class="hub-header">
+  <div class="hub-logo">S+</div>
+  <div>
+    <div class="hub-title">Python for QA/SDET — Advanced Track</div>
+    <div class="hub-sub">Sessions 11–20 · Selenium → CI/CD → Interview Ready</div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-lbl" id="plbl">Session 11 of 20</div>
+    <div class="prog-track"><div class="prog-fill" id="pfill" style="width:10%"></div></div>
+  </div>
+</div>
+
+<div class="tab-nav" id="tnav">
+  <button class="tab-btn active" onclick="sw(0)"><span class="tdot" style="background:#378ADD"></span>S11: Selenium</button>
+  <button class="tab-btn" onclick="sw(1)"><span class="tdot" style="background:#1D9E75"></span>S12: API Testing</button>
+  <button class="tab-btn" onclick="sw(2)"><span class="tdot" style="background:#BA7517"></span>S13: pytest-bdd</button>
+  <button class="tab-btn" onclick="sw(3)"><span class="tdot" style="background:#7F77DD"></span>S14: Data-Driven</button>
+  <button class="tab-btn" onclick="sw(4)"><span class="tdot" style="background:#D85A30"></span>S15: Decorators</button>
+  <button class="tab-btn" onclick="sw(5)"><span class="tdot" style="background:#639922"></span>S16: Concurrency</button>
+  <button class="tab-btn" onclick="sw(6)"><span class="tdot" style="background:#D4537E"></span>S17: DB Testing</button>
+  <button class="tab-btn" onclick="sw(7)"><span class="tdot" style="background:#378ADD"></span>S18: CI/CD</button>
+  <button class="tab-btn" onclick="sw(8)"><span class="tdot" style="background:#1D9E75"></span>S19: Reporting</button>
+  <button class="tab-btn" onclick="sw(9)"><span class="tdot" style="background:#BA7517"></span>S20: Interview</button>
+</div>
+
+<!-- ═══════════ S11: Selenium + POM ═══════════ -->
+<div class="panel active" id="p0">
+  <div class="stitle">Session 11 — Selenium WebDriver + Page Object Model</div>
+  <div class="sdesc">WebDriver setup · Locators · Actions · Waits · POM architecture · Real browser automation</div>
+
+  <div class="da">
+    <svg width="100%" viewBox="0 0 680 150" role="img">
+      <title>Selenium POM architecture</title><desc>Layer diagram showing test script, page objects, and WebDriver</desc>
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-coral"><rect x="20" y="20" width="150" height="50" rx="8" stroke-width="0.5"/><text class="th" x="95" y="42" text-anchor="middle" dominant-baseline="central">Test Script</text><text class="ts" x="95" y="58" text-anchor="middle">test_login.py</text></g>
+      <line x1="170" y1="45" x2="200" y2="45" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)"/>
+      <g class="c-blue"><rect x="200" y="20" width="170" height="50" rx="8" stroke-width="0.5"/><text class="th" x="285" y="42" text-anchor="middle" dominant-baseline="central">Page Objects</text><text class="ts" x="285" y="58" text-anchor="middle">LoginPage, DashPage</text></g>
+      <line x1="370" y1="45" x2="400" y2="45" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)"/>
+      <g class="c-purple"><rect x="400" y="20" width="140" height="50" rx="8" stroke-width="0.5"/><text class="th" x="470" y="42" text-anchor="middle" dominant-baseline="central">WebDriver</text><text class="ts" x="470" y="58" text-anchor="middle">Chrome / Firefox</text></g>
+      <line x1="540" y1="45" x2="570" y2="45" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr)"/>
+      <g class="c-teal"><rect x="570" y="20" width="90" height="50" rx="8" stroke-width="0.5"/><text class="th" x="615" y="42" text-anchor="middle" dominant-baseline="central">Browser</text><text class="ts" x="615" y="58" text-anchor="middle">Real UI</text></g>
+      <text class="ts" x="340" y="100" text-anchor="middle">Test scripts NEVER touch locators — only Page Objects do</text>
+      <text class="ts" x="340" y="120" text-anchor="middle">Locator change? Update 1 file, not 100 tests. That is POM's superpower.</text>
+    </svg>
+    <div class="fd">POM = separation of concerns. Test logic lives in test files; UI interaction logic lives in Page Objects.</div>
+  </div>
+
+  <div class="tag tw">What</div>
+  <div class="card one-col"><div class="card-body">Selenium WebDriver controls browsers programmatically. Combined with POM, it's the foundation of enterprise-grade UI test automation. Install: <code>pip install selenium webdriver-manager</code></div></div>
+
+  <div class="tag to">Hands-on examples</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 1 — WebDriver setup (modern)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">from</span> selenium <span class="kw">import</span> webdriver
+<span class="kw">from</span> selenium.webdriver.chrome.service <span class="kw">import</span> Service
+<span class="kw">from</span> webdriver_manager.chrome <span class="kw">import</span> ChromeDriverManager
+
+<span class="cm"># Auto-downloads correct ChromeDriver — no manual setup!</span>
+driver = webdriver.<span class="fn">Chrome</span>(service=<span class="fn">Service</span>(<span class="fn">ChromeDriverManager</span>().<span class="fn">install</span>()))
+driver.<span class="fn">maximize_window</span>()
+driver.<span class="fn">get</span>(<span class="st">"https://example.com/login"</span>)
+<span class="fn">print</span>(driver.title)
+driver.<span class="fn">quit</span>()   <span class="cm"># always quit in finally block!</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 2 — Locators (the 5 you need)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">from</span> selenium.webdriver.common.by <span class="kw">import</span> By
+
+<span class="cm"># Prefer: ID > CSS > XPath (in that priority)</span>
+el1 = driver.<span class="fn">find_element</span>(By.ID, <span class="st">"username"</span>)
+el2 = driver.<span class="fn">find_element</span>(By.CSS_SELECTOR, <span class="st">".login-btn"</span>)
+el3 = driver.<span class="fn">find_element</span>(By.XPATH, <span class="st">"//button[@type='submit']"</span>)
+el4 = driver.<span class="fn">find_element</span>(By.NAME, <span class="st">"password"</span>)
+el5 = driver.<span class="fn">find_element</span>(By.LINK_TEXT, <span class="st">"Forgot Password?"</span>)
+
+<span class="cm"># find_elements returns a LIST (empty if none found)</span>
+rows = driver.<span class="fn">find_elements</span>(By.CSS_SELECTOR, <span class="st">"table tr"</span>)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 3 — Explicit wait (WebDriverWait)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">from</span> selenium.webdriver.support.ui <span class="kw">import</span> WebDriverWait
+<span class="kw">from</span> selenium.webdriver.support <span class="kw">import</span> expected_conditions <span class="kw">as</span> EC
+
+wait = <span class="fn">WebDriverWait</span>(driver, timeout=<span class="nb">10</span>)
+
+<span class="cm"># Wait until element is clickable (NOT just present)</span>
+btn = wait.<span class="fn">until</span>(EC.<span class="fn">element_to_be_clickable</span>((By.ID, <span class="st">"login-btn"</span>)))
+btn.<span class="fn">click</span>()
+
+<span class="cm"># Wait for text to appear in element</span>
+wait.<span class="fn">until</span>(EC.<span class="fn">text_to_be_present_in_element</span>(
+    (By.CSS_SELECTOR, <span class="st">".welcome-msg"</span>), <span class="st">"Welcome"</span>
+))</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 4 — Full Page Object Model</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># pages/login_page.py</span>
+<span class="kw">from</span> selenium.webdriver.common.by <span class="kw">import</span> By
+<span class="kw">from</span> selenium.webdriver.support.ui <span class="kw">import</span> WebDriverWait
+<span class="kw">from</span> selenium.webdriver.support <span class="kw">import</span> expected_conditions <span class="kw">as</span> EC
+
+<span class="kw">class</span> <span class="fn">LoginPage</span>:
+    USERNAME  = (By.ID, <span class="st">"username"</span>)
+    PASSWORD  = (By.ID, <span class="st">"password"</span>)
+    LOGIN_BTN = (By.CSS_SELECTOR, <span class="st">"button[type='submit']"</span>)
+    ERROR_MSG = (By.CSS_SELECTOR, <span class="st">".alert-error"</span>)
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, driver):
+        self.driver = driver
+        self.wait = <span class="fn">WebDriverWait</span>(driver, <span class="nb">10</span>)
+
+    <span class="kw">def</span> <span class="fn">login</span>(self, username, password):
+        self.wait.<span class="fn">until</span>(EC.<span class="fn">visibility_of_element_located</span>(self.USERNAME))
+        self.driver.<span class="fn">find_element</span>(*self.USERNAME).<span class="fn">send_keys</span>(username)
+        self.driver.<span class="fn">find_element</span>(*self.PASSWORD).<span class="fn">send_keys</span>(password)
+        self.driver.<span class="fn">find_element</span>(*self.LOGIN_BTN).<span class="fn">click</span>()
+
+    <span class="kw">def</span> <span class="fn">get_error</span>(self):
+        <span class="kw">return</span> self.driver.<span class="fn">find_element</span>(*self.ERROR_MSG).text</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 5 — Test using Page Object</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># tests/test_login.py</span>
+<span class="kw">import</span> pytest
+<span class="kw">from</span> pages.login_page <span class="kw">import</span> LoginPage
+
+<span class="op">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">login_page</span>(driver):       <span class="cm"># driver from conftest fixture</span>
+    driver.<span class="fn">get</span>(<span class="st">"https://qa.example.com/login"</span>)
+    <span class="kw">return</span> <span class="fn">LoginPage</span>(driver)
+
+<span class="kw">def</span> <span class="fn">test_valid_login</span>(login_page):
+    login_page.<span class="fn">login</span>(<span class="st">"admin"</span>, <span class="st">"admin123"</span>)
+    <span class="kw">assert</span> <span class="st">"dashboard"</span> <span class="kw">in</span> login_page.driver.current_url
+
+<span class="kw">def</span> <span class="fn">test_invalid_login</span>(login_page):
+    login_page.<span class="fn">login</span>(<span class="st">"admin"</span>, <span class="st">"wrong"</span>)
+    <span class="kw">assert</span> <span class="st">"Invalid"</span> <span class="kw">in</span> login_page.<span class="fn">get_error</span>()</pre></div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div><div class="tag ti">Interview one-liners</div>
+      <ul class="il">
+        <li><span class="iq">Q: Implicit vs explicit wait?</span>Implicit sets a global default; explicit waits for a specific condition. Always prefer explicit — it's more reliable and readable.</li>
+        <li><span class="iq">Q: Why POM over direct locators in tests?</span>Locator changes break 1 page file, not 50 test scripts. POM = maintainability at scale.</li>
+        <li><span class="iq">Q: find_element vs find_elements?</span>Singular throws <code>NoSuchElementException</code> if missing; plural returns an empty list. Use plural when checking element count.</li>
+      </ul>
+    </div>
+    <div><div class="tag tm">Common mistakes + fixes</div>
+      <div class="mi"><div class="mb"><span class="mbl bll">❌ Wrong</span><code>time.sleep(3)  # hard sleep — flaky!</code></div><div class="mg"><span class="mbl gll">✅ Fix</span><code>WebDriverWait(driver,10).until(EC.visibility_of_element_located(...))</code></div></div>
+      <div class="mi"><div class="mb"><span class="mbl bll">❌ Wrong</span><code>driver.find_element(By.XPATH, "//div[1]/span[2]/input")  # brittle</code></div><div class="mg"><span class="mbl gll">✅ Fix</span><code>driver.find_element(By.ID, "username")  # stable ID locator</code></div></div>
+    </div>
+  </div>
+  <div class="sf"><button class="nb2" onclick="prev()">← Previous</button><span class="sc">Session 11 / 20</span><button class="nb2 pr" onclick="nxt()">Next →</button></div>
+</div>
+
+<!-- ═══════════ S12: API Testing ═══════════ -->
+<div class="panel" id="p1">
+  <div class="stitle">Session 12 — API Testing with requests</div>
+  <div class="sdesc">GET · POST · PUT · DELETE · Headers · Auth · JSON assertions · Status codes · REST principles</div>
+
+  <div class="da">
+    <svg width="100%" viewBox="0 0 680 130" role="img">
+      <title>REST API testing flow</title><desc>Test script calls API endpoint and validates response</desc>
+      <defs><marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-blue"><rect x="20" y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="85" y="52" text-anchor="middle" dominant-baseline="central">Test Script</text><text class="ts" x="85" y="68" text-anchor="middle">requests.get(url)</text></g>
+      <line x1="150" y1="55" x2="185" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr2)"/>
+      <text class="ts" x="198" y="45" text-anchor="middle">HTTP</text>
+      <g class="c-teal"><rect x="220" y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="285" y="52" text-anchor="middle" dominant-baseline="central">REST API</text><text class="ts" x="285" y="68" text-anchor="middle">server endpoint</text></g>
+      <line x1="350" y1="55" x2="385" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr2)"/>
+      <text class="ts" x="398" y="45" text-anchor="middle">JSON</text>
+      <g class="c-amber"><rect x="420" y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="485" y="52" text-anchor="middle" dominant-baseline="central">Response</text><text class="ts" x="485" y="68" text-anchor="middle">status + body</text></g>
+      <line x1="550" y1="55" x2="585" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr2)"/>
+      <g class="c-green"><rect x="585" y="30" width="80" height="50" rx="8" stroke-width="0.5"/><text class="th" x="625" y="52" text-anchor="middle" dominant-baseline="central">Assert</text><text class="ts" x="625" y="68" text-anchor="middle">PASS/FAIL</text></g>
+      <text class="ts" x="340" y="110" text-anchor="middle">Install: pip install requests pytest   |   No browser needed — fastest type of testing</text>
+    </svg>
+    <div class="fd">API tests are 10× faster than UI tests. Always test the API layer independently before writing UI tests.</div>
+  </div>
+
+  <div class="tag to">Hands-on examples</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 1 — GET request + assertions</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> requests
+
+BASE = <span class="st">"https://jsonplaceholder.typicode.com"</span>
+
+resp = requests.<span class="fn">get</span>(<span class="st">f"{BASE}/users/1"</span>)
+
+<span class="cm"># Always assert status code FIRST</span>
+<span class="kw">assert</span> resp.status_code == <span class="nb">200</span>, <span class="st">f"Got {resp.status_code}"</span>
+<span class="kw">assert</span> resp.headers[<span class="st">"Content-Type"</span>].<span class="fn">startswith</span>(<span class="st">"application/json"</span>)
+
+data = resp.<span class="fn">json</span>()
+<span class="kw">assert</span> data[<span class="st">"id"</span>] == <span class="nb">1</span>
+<span class="kw">assert</span> <span class="st">"name"</span> <span class="kw">in</span> data
+<span class="fn">print</span>(<span class="st">f"User: {data['name']} | Email: {data['email']}"</span>)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 2 — POST (create resource)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre>payload = {
+    <span class="st">"title"</span>: <span class="st">"Test automation blog"</span>,
+    <span class="st">"body"</span>:  <span class="st">"Python + pytest is the way"</span>,
+    <span class="st">"userId"</span>: <span class="nb">1</span>
+}
+headers = {<span class="st">"Content-Type"</span>: <span class="st">"application/json"</span>}
+
+resp = requests.<span class="fn">post</span>(<span class="st">f"{BASE}/posts"</span>, json=payload, headers=headers)
+<span class="kw">assert</span> resp.status_code == <span class="nb">201</span>   <span class="cm"># 201 Created</span>
+data = resp.<span class="fn">json</span>()
+<span class="kw">assert</span> data[<span class="st">"title"</span>] == payload[<span class="st">"title"</span>]
+<span class="fn">print</span>(<span class="st">f"Created post ID: {data['id']}"</span>)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 3 — Auth headers + session</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># Token-based auth (Bearer) — most modern APIs</span>
+token = <span class="st">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>
+headers = {<span class="st">"Authorization"</span>: <span class="st">f"Bearer {token}"</span>}
+resp = requests.<span class="fn">get</span>(<span class="st">"https://api.example.com/profile"</span>, headers=headers)
+
+<span class="cm"># Session: reuses cookies/headers across requests</span>
+s = requests.<span class="fn">Session</span>()
+s.headers.<span class="fn">update</span>({<span class="st">"Authorization"</span>: <span class="st">f"Bearer {token}"</span>})
+r1 = s.<span class="fn">get</span>(<span class="st">f"{BASE}/users"</span>)       <span class="cm"># header auto-included</span>
+r2 = s.<span class="fn">get</span>(<span class="st">f"{BASE}/posts"</span>)       <span class="cm"># header auto-included</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 4 — PUT, DELETE + status code map</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># PUT: full update</span>
+resp = requests.<span class="fn">put</span>(<span class="st">f"{BASE}/posts/1"</span>, json={<span class="st">"title"</span>: <span class="st">"Updated"</span>})
+<span class="kw">assert</span> resp.status_code == <span class="nb">200</span>
+
+<span class="cm"># DELETE</span>
+resp = requests.<span class="fn">delete</span>(<span class="st">f"{BASE}/posts/1"</span>)
+<span class="kw">assert</span> resp.status_code == <span class="nb">200</span>
+
+<span class="cm"># Status code cheat sheet:</span>
+<span class="cm"># 200 OK | 201 Created | 204 No Content</span>
+<span class="cm"># 400 Bad Request | 401 Unauth | 403 Forbidden</span>
+<span class="cm"># 404 Not Found | 409 Conflict | 500 Server Error</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 5 — API helper class (reusable)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">class</span> <span class="fn">APIClient</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, base_url, token=<span class="kw">None</span>):
+        self.session = requests.<span class="fn">Session</span>()
+        self.session.headers[<span class="st">"Content-Type"</span>] = <span class="st">"application/json"</span>
+        <span class="kw">if</span> token:
+            self.session.headers[<span class="st">"Authorization"</span>] = <span class="st">f"Bearer {token}"</span>
+        self.base = base_url
+
+    <span class="kw">def</span> <span class="fn">get</span>(self, path, **kw):
+        r = self.session.<span class="fn">get</span>(<span class="st">f"{self.base}{path}"</span>, **kw)
+        r.<span class="fn">raise_for_status</span>()   <span class="cm"># raises on 4xx/5xx</span>
+        <span class="kw">return</span> r.<span class="fn">json</span>()
+
+    <span class="kw">def</span> <span class="fn">post</span>(self, path, payload):
+        r = self.session.<span class="fn">post</span>(<span class="st">f"{self.base}{path}"</span>, json=payload)
+        r.<span class="fn">raise_for_status</span>()
+        <span class="kw">return</span> r.<span class="fn">json</span>()</pre></div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div><div class="tag ti">Interview one-liners</div>
+      <ul class="il">
+        <li><span class="iq">Q: requests.get() vs requests.Session()?</span>Session reuses TCP connections and persists cookies/headers. Use Session for multi-step API test flows.</li>
+        <li><span class="iq">Q: How to validate JSON schema?</span>Use <code>jsonschema</code> library or manually assert required keys. Always validate both structure and values.</li>
+        <li><span class="iq">Q: What is raise_for_status()?</span>Auto-raises <code>HTTPError</code> for 4xx/5xx responses — cleaner than <code>if resp.status_code != 200</code> in every test.</li>
+      </ul>
+    </div>
+    <div><div class="tag tb">Best practices ✓</div>
+      <ul class="bl">
+        <li>Assert status code before reading body</li>
+        <li>Use <code>Session</code> for authenticated test suites</li>
+        <li>Store <code>base_url</code> in config, not hardcoded</li>
+        <li>Use <code>resp.json()</code> not <code>json.loads(resp.text)</code></li>
+        <li>Test negative cases: 401, 403, 404, 400</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sf"><button class="nb2" onclick="prev()">← Previous</button><span class="sc">Session 12 / 20</span><button class="nb2 pr" onclick="nxt()">Next →</button></div>
+</div>
+
+<!-- ═══════════ S13: pytest-bdd ═══════════ -->
+<div class="panel" id="p2">
+  <div class="stitle">Session 13 — BDD with pytest-bdd & Gherkin</div>
+  <div class="sdesc">Behaviour-Driven Development · Feature files · Gherkin syntax · Step definitions · Scenarios · Tags</div>
+
+  <div class="da">
+    <svg width="100%" viewBox="0 0 680 130" role="img">
+      <title>BDD workflow</title><desc>Feature file to step definitions to test execution</desc>
+      <defs><marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-teal"><rect x="20" y="20" width="140" height="70" rx="8" stroke-width="0.5"/><text class="th" x="90" y="46" text-anchor="middle" dominant-baseline="central">.feature file</text><text class="ts" x="90" y="64" text-anchor="middle">Given/When/Then</text><text class="ts" x="90" y="80" text-anchor="middle">written by BA/QA</text></g>
+      <line x1="160" y1="55" x2="195" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr3)"/>
+      <g class="c-purple"><rect x="195" y="20" width="160" height="70" rx="8" stroke-width="0.5"/><text class="th" x="275" y="46" text-anchor="middle" dominant-baseline="central">Step definitions</text><text class="ts" x="275" y="64" text-anchor="middle">Python functions</text><text class="ts" x="275" y="80" text-anchor="middle">@given @when @then</text></g>
+      <line x1="355" y1="55" x2="390" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr3)"/>
+      <g class="c-amber"><rect x="390" y="20" width="140" height="70" rx="8" stroke-width="0.5"/><text class="th" x="460" y="46" text-anchor="middle" dominant-baseline="central">pytest runner</text><text class="ts" x="460" y="64" text-anchor="middle">executes tests</text><text class="ts" x="460" y="80" text-anchor="middle">pytest --co</text></g>
+      <line x1="530" y1="55" x2="565" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr3)"/>
+      <g class="c-green"><rect x="565" y="20" width="100" height="70" rx="8" stroke-width="0.5"/><text class="th" x="615" y="46" text-anchor="middle" dominant-baseline="central">Report</text><text class="ts" x="615" y="64" text-anchor="middle">HTML / Allure</text><text class="ts" x="615" y="80" text-anchor="middle">business-readable</text></g>
+      <text class="ts" x="340" y="115" text-anchor="middle">Install: pip install pytest-bdd</text>
+    </svg>
+    <div class="fd">BDD bridges the gap between business requirements and automated tests. Non-technical stakeholders can read and write feature files.</div>
+  </div>
+
+  <div class="tag to">Hands-on examples</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 1 — Feature file (Gherkin)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># features/login.feature</span>
+<span class="dc">Feature:</span> User login
+  <span class="dc">As a</span> registered user
+  <span class="dc">I want to</span> log into the application
+  <span class="dc">So that</span> I can access my dashboard
+
+  <span class="dc">@smoke</span>
+  <span class="dc">Scenario:</span> Successful login with valid credentials
+    <span class="dc">Given</span> I am on the login page
+    <span class="dc">When</span> I enter username <span class="st">"admin"</span> and password <span class="st">"admin123"</span>
+    <span class="dc">And</span> I click the login button
+    <span class="dc">Then</span> I should see the dashboard
+
+  <span class="dc">Scenario:</span> Login fails with wrong password
+    <span class="dc">Given</span> I am on the login page
+    <span class="dc">When</span> I enter username <span class="st">"admin"</span> and password <span class="st">"wrong"</span>
+    <span class="dc">And</span> I click the login button
+    <span class="dc">Then</span> I should see error <span class="st">"Invalid credentials"</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 2 — Step definitions</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># step_defs/test_login_steps.py</span>
+<span class="kw">import</span> pytest
+<span class="kw">from</span> pytest_bdd <span class="kw">import</span> given, when, then, parsers, scenario
+
+<span class="op">@scenario</span>(<span class="st">"../features/login.feature"</span>,
+           <span class="st">"Successful login with valid credentials"</span>)
+<span class="kw">def</span> <span class="fn">test_valid_login</span>(): <span class="kw">pass</span>
+
+<span class="op">@given</span>(<span class="st">"I am on the login page"</span>)
+<span class="kw">def</span> <span class="fn">on_login_page</span>(driver):
+    driver.<span class="fn">get</span>(<span class="st">"https://qa.example.com/login"</span>)
+
+<span class="op">@when</span>(parsers.<span class="fn">parse</span>(<span class="st">'I enter username "{user}" and password "{pwd}"'</span>))
+<span class="kw">def</span> <span class="fn">enter_credentials</span>(driver, user, pwd):
+    driver.<span class="fn">find_element</span>(By.ID, <span class="st">"username"</span>).<span class="fn">send_keys</span>(user)
+    driver.<span class="fn">find_element</span>(By.ID, <span class="st">"password"</span>).<span class="fn">send_keys</span>(pwd)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 3 — Scenario Outline (DDT in BDD)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="dc">Scenario Outline:</span> Login with multiple user roles
+  <span class="dc">Given</span> I log in as <span class="st">"&lt;username&gt;"</span> with <span class="st">"&lt;password&gt;"</span>
+  <span class="dc">Then</span> I should land on <span class="st">"&lt;page&gt;"</span>
+
+  <span class="dc">Examples:</span>
+    | username  | password  | page        |
+    | admin     | admin123  | dashboard   |
+    | viewer    | view456   | reports     |
+    | manager   | mgr789    | team-portal |
+
+<span class="cm"># Runs once per row — 3 tests from 1 scenario!</span>
+<span class="cm"># Maps to @pytest.mark.parametrize equivalent in BDD</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 4 — Background (shared Given steps)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="dc">Feature:</span> Shopping cart
+
+  <span class="dc">Background:</span>
+    <span class="dc">Given</span> I am logged in as a customer
+    <span class="dc">And</span> I have an empty cart
+
+  <span class="dc">Scenario:</span> Add item to cart
+    <span class="dc">When</span> I add <span class="st">"Laptop"</span> to cart
+    <span class="dc">Then</span> cart count should be <span class="st">"1"</span>
+
+  <span class="dc">Scenario:</span> Remove item from cart
+    <span class="dc">Given</span> cart has <span class="st">"Laptop"</span>
+    <span class="dc">When</span> I remove it
+    <span class="dc">Then</span> cart should be empty
+<span class="cm"># Background runs before EVERY scenario in the feature</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 5 — Tags + selective run</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="dc">@smoke @critical</span>
+<span class="dc">Scenario:</span> User can reset password
+
+<span class="dc">@regression @slow</span>
+<span class="dc">Scenario:</span> Full checkout flow
+
+<span class="cm"># Run only smoke tests:</span>
+<span class="cm"># pytest --tags=smoke</span>
+
+<span class="cm"># Run smoke AND critical:</span>
+<span class="cm"># pytest --tags="smoke and critical"</span>
+
+<span class="cm"># Skip slow tests in CI:</span>
+<span class="cm"># pytest --tags="not slow"</span></pre></div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div><div class="tag ti">Interview one-liners</div>
+      <ul class="il">
+        <li><span class="iq">Q: What is BDD?</span>Behaviour-Driven Development — tests written in business language (Gherkin) so devs, QA, and business all share a common understanding.</li>
+        <li><span class="iq">Q: Given/When/Then?</span>Given = precondition (setup), When = action (trigger), Then = expected outcome (assertion). And/But = continuation of previous step.</li>
+        <li><span class="iq">Q: Scenario vs Scenario Outline?</span>Scenario is a single test case. Scenario Outline + Examples table = data-driven BDD — runs once per row.</li>
+      </ul>
+    </div>
+    <div><div class="tag tb">Best practices ✓</div>
+      <ul class="bl">
+        <li>Keep scenarios short: 3–5 steps max</li>
+        <li>Use Background for repeated Given steps</li>
+        <li>Write feature files before code (BDD intent)</li>
+        <li>Tag scenarios: @smoke @regression @slow</li>
+        <li>Step text must match exactly — no variation</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sf"><button class="nb2" onclick="prev()">← Previous</button><span class="sc">Session 13 / 20</span><button class="nb2 pr" onclick="nxt()">Next →</button></div>
+</div>
+
+<!-- ═══════════ S14: Data-Driven Testing ═══════════ -->
+<div class="panel" id="p3">
+  <div class="stitle">Session 14 — Data-Driven Testing (DDT)</div>
+  <div class="sdesc">Parametrize · Excel · CSV · JSON test data · Faker · conftest data fixtures · DDT patterns</div>
+
+  <div class="tag to">Hands-on examples</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 1 — pytest parametrize (primary DDT)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> pytest
+
+LOGIN_DATA = [
+    (<span class="st">"admin"</span>,   <span class="st">"admin123"</span>, <span class="nb">200</span>, <span class="st">"dashboard"</span>),
+    (<span class="st">"viewer"</span>,  <span class="st">"view456"</span>,  <span class="nb">200</span>, <span class="st">"reports"</span>),
+    (<span class="st">"admin"</span>,   <span class="st">"wrongpwd"</span>, <span class="nb">401</span>, <span class="st">"error"</span>),
+    (<span class="st">""</span>,         <span class="st">"admin123"</span>, <span class="nb">400</span>, <span class="st">"required"</span>),
+]
+
+<span class="op">@pytest.mark.parametrize</span>(<span class="st">"user,pwd,status,redirect"</span>, LOGIN_DATA)
+<span class="kw">def</span> <span class="fn">test_login_scenarios</span>(user, pwd, status, redirect):
+    <span class="cm"># replace with real API/UI call</span>
+    <span class="fn">print</span>(<span class="st">f"Testing: {user} → expects {status}/{redirect}"</span>)
+    <span class="kw">assert</span> <span class="kw">True</span>   <span class="cm"># placeholder</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 2 — Load test data from JSON</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> json, pytest
+
+<span class="kw">def</span> <span class="fn">load_test_data</span>(filename):
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="st">f"test_data/{filename}"</span>) <span class="kw">as</span> f:
+        <span class="kw">return</span> json.<span class="fn">load</span>(f)
+
+<span class="cm"># test_data/users.json:</span>
+<span class="cm"># [{"user":"admin","pwd":"admin123","role":"superuser"},...]</span>
+
+users = <span class="fn">load_test_data</span>(<span class="st">"users.json"</span>)
+
+<span class="op">@pytest.mark.parametrize</span>(<span class="st">"user_data"</span>, users)
+<span class="kw">def</span> <span class="fn">test_user_roles</span>(user_data):
+    <span class="kw">assert</span> user_data[<span class="st">"role"</span>] <span class="kw">in</span> [<span class="st">"admin"</span>, <span class="st">"viewer"</span>, <span class="st">"superuser"</span>]
+    <span class="fn">print</span>(<span class="st">f"Testing role: {user_data['role']}"</span>)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 3 — Faker for dynamic test data</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">from</span> faker <span class="kw">import</span> Faker   <span class="cm"># pip install faker</span>
+<span class="kw">import</span> pytest
+
+fake = <span class="fn">Faker</span>()
+
+<span class="op">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">new_user</span>():
+    <span class="st">"""Generate unique user data per test run."""</span>
+    <span class="kw">return</span> {
+        <span class="st">"name"</span>:     fake.<span class="fn">name</span>(),
+        <span class="st">"email"</span>:    fake.<span class="fn">email</span>(),
+        <span class="st">"phone"</span>:    fake.<span class="fn">phone_number</span>(),
+        <span class="st">"address"</span>:  fake.<span class="fn">address</span>(),
+        <span class="st">"password"</span>: fake.<span class="fn">password</span>(length=<span class="nb">12</span>)
+    }
+
+<span class="kw">def</span> <span class="fn">test_register_new_user</span>(new_user):
+    <span class="fn">print</span>(<span class="st">f"Registering: {new_user['name']} ({new_user['email']})"</span>)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 4 — CSV data-driven test</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> csv, pytest
+
+<span class="kw">def</span> <span class="fn">csv_data</span>(filepath):
+    <span class="kw">with</span> <span class="fn">open</span>(filepath) <span class="kw">as</span> f:
+        <span class="kw">return</span> [row <span class="kw">for</span> row <span class="kw">in</span> csv.<span class="fn">DictReader</span>(f)]
+
+<span class="cm"># search_terms.csv: query,expected_count</span>
+<span class="cm"># laptop,24</span>
+<span class="cm"># phone,156</span>
+
+<span class="op">@pytest.mark.parametrize</span>(<span class="st">"row"</span>, <span class="fn">csv_data</span>(<span class="st">"test_data/search_terms.csv"</span>))
+<span class="kw">def</span> <span class="fn">test_search_results</span>(row):
+    query    = row[<span class="st">"query"</span>]
+    expected = <span class="fn">int</span>(row[<span class="st">"expected_count"</span>])
+    <span class="fn">print</span>(<span class="st">f"Search '{query}' → expect {expected} results"</span>)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 5 — IDs for parametrize (better logs)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> pytest
+
+test_cases = [
+    pytest.<span class="fn">param</span>(<span class="st">"admin"</span>, <span class="st">"admin123"</span>, <span class="kw">True</span>,  id=<span class="st">"TC001-valid-admin"</span>),
+    pytest.<span class="fn">param</span>(<span class="st">"admin"</span>, <span class="st">"wrong"</span>,    <span class="kw">False</span>, id=<span class="st">"TC002-wrong-password"</span>),
+    pytest.<span class="fn">param</span>(<span class="st">""</span>,      <span class="st">"admin123"</span>, <span class="kw">False</span>, id=<span class="st">"TC003-empty-username"</span>),
+]
+
+<span class="op">@pytest.mark.parametrize</span>(<span class="st">"user,pwd,expected"</span>, test_cases)
+<span class="kw">def</span> <span class="fn">test_login</span>(user, pwd, expected):
+    result = (user == <span class="st">"admin"</span> <span class="kw">and</span> pwd == <span class="st">"admin123"</span>)
+    <span class="kw">assert</span> result == expected
+<span class="cm"># pytest output: PASSED TC001-valid-admin   ← readable!</span></pre></div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div><div class="tag ti">Interview one-liners</div>
+      <ul class="il">
+        <li><span class="iq">Q: What is data-driven testing?</span>Running the same test logic with multiple input datasets. Separates test data from test code for maintainability.</li>
+        <li><span class="iq">Q: When to use Faker?</span>When you need unique, realistic data each run — registration tests, user creation — to avoid duplicate conflicts.</li>
+        <li><span class="iq">Q: pytest.param vs tuple in parametrize?</span><code>pytest.param</code> adds a readable <code>id</code> to each test case — test logs show "TC001-valid" instead of "test[admin-admin123-True]".</li>
+      </ul>
+    </div>
+    <div><div class="tag tb">Best practices ✓</div>
+      <ul class="bl">
+        <li>Store test data in <code>/test_data/</code> folder</li>
+        <li>Always add <code>id=</code> to <code>pytest.param</code></li>
+        <li>Use Faker for uniqueness-sensitive tests</li>
+        <li>Validate both positive and negative data sets</li>
+        <li>Don't mix test logic and data in same file</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sf"><button class="nb2" onclick="prev()">← Previous</button><span class="sc">Session 14 / 20</span><button class="nb2 pr" onclick="nxt()">Next →</button></div>
+</div>
+
+<!-- ═══════════ S15: Decorators ═══════════ -->
+<div class="panel" id="p4">
+  <div class="stitle">Session 15 — Decorators & Advanced Functions</div>
+  <div class="sdesc">@decorator syntax · functools.wraps · Retry decorator · Timing decorator · Context managers · Generators</div>
+
+  <div class="tag to">Hands-on examples</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 1 — Decorator basics</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> functools
+
+<span class="kw">def</span> <span class="fn">log_test</span>(func):
+    <span class="st">"""Decorator: log when each test starts/ends."""</span>
+    <span class="op">@functools.wraps</span>(func)   <span class="cm"># preserves function name</span>
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        <span class="fn">print</span>(<span class="st">f"▶ Starting: {func.__name__}"</span>)
+        result = <span class="fn">func</span>(*args, **kwargs)
+        <span class="fn">print</span>(<span class="st">f"✅ Done: {func.__name__}"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="op">@log_test</span>
+<span class="kw">def</span> <span class="fn">test_login</span>():
+    <span class="kw">assert</span> <span class="kw">True</span>
+
+<span class="fn">test_login</span>()  <span class="cm"># ▶ Starting: test_login  ✅ Done: test_login</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 2 — Retry decorator (flaky test handler)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> time, functools
+
+<span class="kw">def</span> <span class="fn">retry</span>(times=<span class="nb">3</span>, delay=<span class="nb">1</span>):
+    <span class="st">"""Retry decorator for flaky network tests."""</span>
+    <span class="kw">def</span> <span class="fn">decorator</span>(func):
+        <span class="op">@functools.wraps</span>(func)
+        <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+            <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, times+<span class="nb">1</span>):
+                <span class="kw">try</span>:
+                    <span class="kw">return</span> <span class="fn">func</span>(*args, **kwargs)
+                <span class="kw">except</span> <span class="fn">Exception</span> <span class="kw">as</span> e:
+                    <span class="fn">print</span>(<span class="st">f"Attempt {attempt} failed: {e}"</span>)
+                    <span class="kw">if</span> attempt < times: time.<span class="fn">sleep</span>(delay)
+            <span class="kw">raise</span> <span class="fn">Exception</span>(<span class="st">f"Failed after {times} retries"</span>)
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorator
+
+<span class="op">@retry</span>(times=<span class="nb">3</span>, delay=<span class="nb">2</span>)
+<span class="kw">def</span> <span class="fn">test_flaky_api</span>(): <span class="kw">pass</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 3 — Timer decorator</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> time, functools
+
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    <span class="op">@functools.wraps</span>(func)
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        start = time.<span class="fn">perf_counter</span>()
+        result = <span class="fn">func</span>(*args, **kwargs)
+        end = time.<span class="fn">perf_counter</span>()
+        duration = end - start
+        <span class="fn">print</span>(<span class="st">f"[PERF] {func.__name__}: {duration:.3f}s"</span>)
+        <span class="kw">if</span> duration > <span class="nb">2.0</span>:
+            <span class="fn">print</span>(<span class="st">f"⚠️  SLOW: exceeded 2s threshold"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="op">@timer</span>
+<span class="kw">def</span> <span class="fn">test_page_load</span>():
+    time.<span class="fn">sleep</span>(<span class="nb">1.5</span>)   <span class="cm"># simulate test</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 4 — Context manager (with statement custom)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">from</span> contextlib <span class="kw">import</span> contextmanager
+
+<span class="op">@contextmanager</span>
+<span class="kw">def</span> <span class="fn">managed_driver</span>(url):
+    <span class="st">"""Auto-quit driver even if test fails."""</span>
+    driver = <span class="kw">None</span>
+    <span class="kw">try</span>:
+        driver = webdriver.<span class="fn">Chrome</span>(...)
+        driver.<span class="fn">get</span>(url)
+        <span class="kw">yield</span> driver          <span class="cm"># test code runs here</span>
+    <span class="kw">finally</span>:
+        <span class="kw">if</span> driver:
+            driver.<span class="fn">quit</span>()
+
+<span class="cm"># Usage — browser guaranteed to close:</span>
+<span class="kw">with</span> <span class="fn">managed_driver</span>(<span class="st">"https://example.com"</span>) <span class="kw">as</span> d:
+    <span class="kw">assert</span> <span class="st">"Example"</span> <span class="kw">in</span> d.title</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 5 — Generator for large test data</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">def</span> <span class="fn">generate_test_ids</span>(prefix, count):
+    <span class="st">"""Memory-efficient test ID generator."""</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, count + <span class="nb">1</span>):
+        <span class="kw">yield</span> <span class="st">f"{prefix}_{i:04d}"</span>   <span class="cm"># TC_0001, TC_0002</span>
+
+<span class="cm"># Use in test generation — doesn't load all in memory</span>
+<span class="kw">for</span> tc_id <span class="kw">in</span> <span class="fn">generate_test_ids</span>(<span class="st">"TC"</span>, <span class="nb">1000</span>):
+    <span class="fn">print</span>(tc_id)   <span class="cm"># TC_0001 ... TC_1000</span>
+
+<span class="cm"># List version (loads all at once — avoid for large sets)</span>
+ids = <span class="fn">list</span>(<span class="fn">generate_test_ids</span>(<span class="st">"SMOKE"</span>, <span class="nb">50</span>))</pre></div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div><div class="tag ti">Interview one-liners</div>
+      <ul class="il">
+        <li><span class="iq">Q: What does @functools.wraps do?</span>Preserves the wrapped function's <code>__name__</code> and <code>__doc__</code>. Without it, all decorated functions show as "wrapper" in logs.</li>
+        <li><span class="iq">Q: Generator vs list?</span>Generators are lazy — yield one item at a time. Use for large test data sets to avoid loading everything into memory.</li>
+        <li><span class="iq">Q: What is a context manager?</span>Ensures setup and teardown happen via <code>with</code> block. <code>__enter__</code> sets up, <code>__exit__</code> always cleans up — even on exception.</li>
+      </ul>
+    </div>
+    <div><div class="tag tb">Best practices ✓</div>
+      <ul class="bl">
+        <li>Always use <code>@functools.wraps</code> in decorators</li>
+        <li>Use <code>@retry</code> for network-dependent tests</li>
+        <li>Use <code>@timer</code> to track performance regression</li>
+        <li>Context managers for resource cleanup (DB, files)</li>
+        <li>Prefer generators over lists for >1000 items</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sf"><button class="nb2" onclick="prev()">← Previous</button><span class="sc">Session 15 / 20</span><button class="nb2 pr" onclick="nxt()">Next →</button></div>
+</div>
+
+<!-- ═══════════ S16: Concurrency ═══════════ -->
+<div class="panel" id="p5">
+  <div class="stitle">Session 16 — Concurrency & Parallel Testing</div>
+  <div class="sdesc">threading · multiprocessing · pytest-xdist · async/await · Parallel browser testing · Race conditions</div>
+
+  <div class="tag to">Hands-on examples</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 1 — pytest-xdist (parallel tests)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># pip install pytest-xdist</span>
+<span class="cm"># Run 4 tests in parallel (4 CPU cores):</span>
+<span class="cm"># pytest -n 4</span>
+
+<span class="cm"># Auto-detect core count:</span>
+<span class="cm"># pytest -n auto</span>
+
+<span class="cm"># Run per file (safer — avoids shared state conflicts):</span>
+<span class="cm"># pytest -n 4 --dist=loadfile</span>
+
+<span class="cm"># ⚠️ Tests MUST be independent — no shared state!</span>
+<span class="cm"># Use unique test users per parallel test to avoid conflicts</span>
+<span class="cm"># Example: user_1@test.com, user_2@test.com...</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 2 — Threading (parallel API checks)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> threading, requests
+
+results = {}
+
+<span class="kw">def</span> <span class="fn">check_endpoint</span>(name, url):
+    r = requests.<span class="fn">get</span>(url, timeout=<span class="nb">5</span>)
+    results[name] = r.status_code
+
+endpoints = {
+    <span class="st">"login"</span>:  <span class="st">"https://qa.example.com/api/login"</span>,
+    <span class="st">"users"</span>:  <span class="st">"https://qa.example.com/api/users"</span>,
+    <span class="st">"orders"</span>: <span class="st">"https://qa.example.com/api/orders"</span>,
+}
+
+threads = [threading.<span class="fn">Thread</span>(target=<span class="fn">check_endpoint</span>, args=(n,u))
+           <span class="kw">for</span> n,u <span class="kw">in</span> endpoints.<span class="fn">items</span>()]
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.<span class="fn">start</span>()
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.<span class="fn">join</span>()
+
+<span class="kw">assert</span> <span class="fn">all</span>(v == <span class="nb">200</span> <span class="kw">for</span> v <span class="kw">in</span> results.<span class="fn">values</span>())</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 3 — ThreadPoolExecutor (modern threading)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+<span class="kw">import</span> requests
+
+urls = [<span class="st">f"https://jsonplaceholder.typicode.com/posts/{i}"</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, <span class="nb">11</span>)]
+
+<span class="kw">def</span> <span class="fn">fetch</span>(url):
+    r = requests.<span class="fn">get</span>(url)
+    <span class="kw">return</span> {<span class="st">"url"</span>: url, <span class="st">"status"</span>: r.status_code}
+
+<span class="cm"># Fetch 10 URLs in 4 parallel threads</span>
+<span class="kw">with</span> <span class="fn">ThreadPoolExecutor</span>(max_workers=<span class="nb">4</span>) <span class="kw">as</span> pool:
+    results = <span class="fn">list</span>(pool.<span class="fn">map</span>(<span class="fn">fetch</span>, urls))
+
+<span class="kw">for</span> r <span class="kw">in</span> results:
+    <span class="fn">print</span>(<span class="st">f"{r['url']} → {r['status']}"</span>)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 4 — async/await (modern Python)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> asyncio
+<span class="kw">import</span> aiohttp   <span class="cm"># pip install aiohttp</span>
+
+<span class="kw">async def</span> <span class="fn">fetch_async</span>(session, url):
+    <span class="kw">async with</span> session.<span class="fn">get</span>(url) <span class="kw">as</span> resp:
+        <span class="kw">return</span> {<span class="st">"status"</span>: resp.status, <span class="st">"url"</span>: url}
+
+<span class="kw">async def</span> <span class="fn">run_all</span>(urls):
+    <span class="kw">async with</span> aiohttp.<span class="fn">ClientSession</span>() <span class="kw">as</span> session:
+        tasks = [<span class="fn">fetch_async</span>(session, u) <span class="kw">for</span> u <span class="kw">in</span> urls]
+        <span class="kw">return</span> <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*tasks)
+
+urls = [<span class="st">"https://jsonplaceholder.typicode.com/posts/1"</span>]
+results = asyncio.<span class="fn">run</span>(<span class="fn">run_all</span>(urls))</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 5 — conftest for parallel-safe fixtures</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># conftest.py — thread-safe unique users</span>
+<span class="kw">import</span> pytest
+<span class="kw">from</span> faker <span class="kw">import</span> Faker
+fake = <span class="fn">Faker</span>()
+
+<span class="op">@pytest.fixture</span>(scope=<span class="st">"function"</span>)   <span class="cm"># new per test</span>
+<span class="kw">def</span> <span class="fn">unique_user</span>():
+    <span class="st">"""Each parallel test gets its own unique user."""</span>
+    <span class="kw">return</span> {
+        <span class="st">"email"</span>:    fake.<span class="fn">unique</span>.<span class="fn">email</span>(),
+        <span class="st">"password"</span>: fake.<span class="fn">password</span>(),
+        <span class="st">"name"</span>:     fake.<span class="fn">name</span>()
+    }
+<span class="cm"># Run: pytest -n auto — each test gets a fresh user</span></pre></div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div><div class="tag ti">Interview one-liners</div>
+      <ul class="il">
+        <li><span class="iq">Q: Thread vs process?</span>Threads share memory (GIL-limited in Python for CPU work). Processes have separate memory — use multiprocessing for CPU-heavy tasks, threading for I/O.</li>
+        <li><span class="iq">Q: How do you parallelize pytest?</span><code>pytest-xdist</code> with <code>-n auto</code>. Tests must be stateless — no shared browser session or user accounts.</li>
+        <li><span class="iq">Q: When to use async/await?</span>For I/O-bound tasks (many API calls, DB queries) where you'd otherwise wait. Not needed for most pytest tests — use threading or xdist instead.</li>
+      </ul>
+    </div>
+    <div><div class="tag tb">Best practices ✓</div>
+      <ul class="bl">
+        <li>Use <code>pytest -n auto</code> in CI for speed</li>
+        <li>Ensure tests are fully independent</li>
+        <li>Use unique test data per parallel worker</li>
+        <li>Avoid shared state: global vars, shared files</li>
+        <li>Use <code>--dist=loadfile</code> to reduce conflicts</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sf"><button class="nb2" onclick="prev()">← Previous</button><span class="sc">Session 16 / 20</span><button class="nb2 pr" onclick="nxt()">Next →</button></div>
+</div>
+
+<!-- ═══════════ S17: DB Testing ═══════════ -->
+<div class="panel" id="p6">
+  <div class="stitle">Session 17 — Database Testing with Python</div>
+  <div class="sdesc">sqlite3 · SQLAlchemy · DB assertions · Test data setup/teardown · SQL basics for QA · Fixtures</div>
+
+  <div class="tag to">Hands-on examples</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 1 — sqlite3 basics for QA</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> sqlite3
+
+<span class="cm"># Connect to test DB (SQLite = no server needed)</span>
+conn = sqlite3.<span class="fn">connect</span>(<span class="st">":memory:"</span>)   <span class="cm"># in-memory, reset each run</span>
+cursor = conn.<span class="fn">cursor</span>()
+
+cursor.<span class="fn">execute</span>(<span class="st">"""
+    CREATE TABLE users (
+        id INTEGER PRIMARY KEY,
+        username TEXT NOT NULL,
+        role TEXT,
+        active INTEGER DEFAULT 1
+    )"""</span>)
+
+cursor.<span class="fn">execute</span>(<span class="st">"INSERT INTO users VALUES (1,'admin','superuser',1)"</span>)
+conn.<span class="fn">commit</span>()
+
+cursor.<span class="fn">execute</span>(<span class="st">"SELECT * FROM users WHERE role='superuser'"</span>)
+rows = cursor.<span class="fn">fetchall</span>()
+<span class="fn">print</span>(rows)  <span class="cm"># [(1, 'admin', 'superuser', 1)]</span>
+conn.<span class="fn">close</span>()</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 2 — DB fixture in conftest</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># conftest.py</span>
+<span class="kw">import</span> pytest, sqlite3
+
+<span class="op">@pytest.fixture</span>(scope=<span class="st">"function"</span>)
+<span class="kw">def</span> <span class="fn">db</span>():
+    <span class="st">"""Fresh in-memory DB per test — fully isolated."""</span>
+    conn = sqlite3.<span class="fn">connect</span>(<span class="st">":memory:"</span>)
+    conn.row_factory = sqlite3.Row   <span class="cm"># dict-like rows</span>
+    cur = conn.<span class="fn">cursor</span>()
+    cur.<span class="fn">execute</span>(<span class="st">"CREATE TABLE users(id INT, name TEXT, role TEXT)"</span>)
+    cur.<span class="fn">execute</span>(<span class="st">"INSERT INTO users VALUES(1,'Alice','admin')"</span>)
+    conn.<span class="fn">commit</span>()
+    <span class="kw">yield</span> conn       <span class="cm"># test uses this</span>
+    conn.<span class="fn">close</span>()     <span class="cm"># auto-teardown</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 3 — DB assertion patterns</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">def</span> <span class="fn">test_user_created_in_db</span>(db):
+    cur = db.<span class="fn">cursor</span>()
+
+    <span class="cm"># Simulate API POST → verify DB record created</span>
+    cur.<span class="fn">execute</span>(<span class="st">"INSERT INTO users VALUES(2,'Bob','viewer')"</span>)
+    db.<span class="fn">commit</span>()
+
+    cur.<span class="fn">execute</span>(<span class="st">"SELECT * FROM users WHERE name='Bob'"</span>)
+    row = cur.<span class="fn">fetchone</span>()
+
+    <span class="kw">assert</span> row <span class="kw">is not</span> <span class="kw">None</span>, <span class="st">"User not found in DB!"</span>
+    <span class="kw">assert</span> row[<span class="st">"role"</span>] == <span class="st">"viewer"</span>
+    <span class="kw">assert</span> row[<span class="st">"name"</span>] == <span class="st">"Bob"</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 4 — Count & aggregate assertions</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">def</span> <span class="fn">test_only_one_admin</span>(db):
+    <span class="st">"""Business rule: only 1 superuser allowed."""</span>
+    cur = db.<span class="fn">cursor</span>()
+    cur.<span class="fn">execute</span>(<span class="st">"SELECT COUNT(*) FROM users WHERE role='admin'"</span>)
+    count = cur.<span class="fn">fetchone</span>()[<span class="nb">0</span>]
+    <span class="kw">assert</span> count == <span class="nb">1</span>, <span class="st">f"Expected 1 admin, found {count}"</span>
+
+<span class="kw">def</span> <span class="fn">test_no_orphan_records</span>(db):
+    <span class="st">"""No orders without a valid user."""</span>
+    cur = db.<span class="fn">cursor</span>()
+    cur.<span class="fn">execute</span>(<span class="st">"""
+        SELECT COUNT(*) FROM orders o
+        LEFT JOIN users u ON o.user_id = u.id
+        WHERE u.id IS NULL"""</span>)
+    orphans = cur.<span class="fn">fetchone</span>()[<span class="nb">0</span>]
+    <span class="kw">assert</span> orphans == <span class="nb">0</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 5 — SQLAlchemy ORM (industry standard)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, text
+<span class="cm"># pip install sqlalchemy</span>
+
+engine = create_engine(<span class="st">"sqlite:///:memory:"</span>)
+
+<span class="kw">with</span> engine.<span class="fn">connect</span>() <span class="kw">as</span> conn:
+    conn.<span class="fn">execute</span>(text(<span class="st">"CREATE TABLE users(id INT, name TEXT)"</span>))
+    conn.<span class="fn">execute</span>(text(<span class="st">"INSERT INTO users VALUES(1,'Alice')"</span>))
+    conn.<span class="fn">commit</span>()
+
+    result = conn.<span class="fn">execute</span>(text(<span class="st">"SELECT * FROM users"</span>))
+    rows = result.<span class="fn">fetchall</span>()
+    <span class="kw">assert</span> <span class="fn">len</span>(rows) == <span class="nb">1</span>
+    <span class="kw">assert</span> rows[<span class="nb">0</span>].name == <span class="st">"Alice"</span></pre></div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div><div class="tag ti">Interview one-liners</div>
+      <ul class="il">
+        <li><span class="iq">Q: Why test the DB layer separately?</span>API tests validate the surface; DB tests verify data persisted correctly. UI can pass while DB has corrupt/missing data.</li>
+        <li><span class="iq">Q: How do you isolate DB tests?</span>Use an in-memory SQLite DB per test (fixture scope=function). Each test starts clean — no data pollution.</li>
+        <li><span class="iq">Q: fetchone() vs fetchall()?</span><code>fetchone()</code> returns one row (or None); <code>fetchall()</code> returns a list. Use fetchone for single-record lookups, fetchall for lists.</li>
+      </ul>
+    </div>
+    <div><div class="tag tb">Best practices ✓</div>
+      <ul class="bl">
+        <li>Use <code>:memory:</code> SQLite for isolated tests</li>
+        <li>Always rollback or use fresh DB per test</li>
+        <li>Test DB constraints: NOT NULL, UNIQUE, FK</li>
+        <li>Verify data after every API POST/PUT/DELETE</li>
+        <li>Use <code>conn.row_factory = sqlite3.Row</code> for dict access</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sf"><button class="nb2" onclick="prev()">← Previous</button><span class="sc">Session 17 / 20</span><button class="nb2 pr" onclick="nxt()">Next →</button></div>
+</div>
+
+<!-- ═══════════ S18: CI/CD ═══════════ -->
+<div class="panel" id="p7">
+  <div class="stitle">Session 18 — CI/CD Integration</div>
+  <div class="sdesc">GitHub Actions · Jenkins · Docker · Environment variables · pytest exit codes · Pipeline YAML</div>
+
+  <div class="da">
+    <svg width="100%" viewBox="0 0 680 130" role="img">
+      <title>CI/CD pipeline</title><desc>Code commit triggers test pipeline stages</desc>
+      <defs><marker id="arr8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-gray"><rect x="10" y="30" width="90" height="50" rx="8" stroke-width="0.5"/><text class="th" x="55" y="52" text-anchor="middle" dominant-baseline="central">Git push</text><text class="ts" x="55" y="68" text-anchor="middle">trigger</text></g>
+      <line x1="100" y1="55" x2="125" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr8)"/>
+      <g class="c-blue"><rect x="125" y="30" width="100" height="50" rx="8" stroke-width="0.5"/><text class="th" x="175" y="52" text-anchor="middle" dominant-baseline="central">Install</text><text class="ts" x="175" y="68" text-anchor="middle">pip install -r</text></g>
+      <line x1="225" y1="55" x2="250" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr8)"/>
+      <g class="c-amber"><rect x="250" y="30" width="100" height="50" rx="8" stroke-width="0.5"/><text class="th" x="300" y="52" text-anchor="middle" dominant-baseline="central">Lint</text><text class="ts" x="300" y="68" text-anchor="middle">flake8 / black</text></g>
+      <line x1="350" y1="55" x2="375" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr8)"/>
+      <g class="c-purple"><rect x="375" y="30" width="110" height="50" rx="8" stroke-width="0.5"/><text class="th" x="430" y="52" text-anchor="middle" dominant-baseline="central">pytest</text><text class="ts" x="430" y="68" text-anchor="middle">-n auto --tb=short</text></g>
+      <line x1="485" y1="55" x2="510" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr8)"/>
+      <g class="c-teal"><rect x="510" y="30" width="80" height="50" rx="8" stroke-width="0.5"/><text class="th" x="550" y="52" text-anchor="middle" dominant-baseline="central">Report</text><text class="ts" x="550" y="68" text-anchor="middle">Allure / HTML</text></g>
+      <line x1="590" y1="55" x2="615" y2="55" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#arr8)"/>
+      <g class="c-green"><rect x="615" y="30" width="55" height="50" rx="8" stroke-width="0.5"/><text class="th" x="642" y="52" text-anchor="middle" dominant-baseline="central">Deploy</text><text class="ts" x="642" y="68" text-anchor="middle">if pass</text></g>
+      <text class="ts" x="340" y="112" text-anchor="middle">Exit code 0 = all pass (deploy proceeds) | Exit code 1 = tests failed (pipeline stops)</text>
+    </svg>
+    <div class="fd">Every professional QA role requires CI/CD knowledge. Your tests must run automatically on every code push.</div>
+  </div>
+
+  <div class="tag to">Hands-on examples</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 1 — GitHub Actions workflow</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># .github/workflows/tests.yml</span>
+<span class="dc">name:</span> QA Test Suite
+<span class="dc">on:</span> [push, pull_request]
+
+<span class="dc">jobs:</span>
+  <span class="dc">test:</span>
+    <span class="dc">runs-on:</span> ubuntu-latest
+    <span class="dc">steps:</span>
+      - <span class="dc">uses:</span> actions/checkout@v3
+      - <span class="dc">uses:</span> actions/setup-python@v4
+        <span class="dc">with:</span>
+          <span class="dc">python-version:</span> <span class="st">'3.11'</span>
+      - <span class="dc">name:</span> Install dependencies
+        <span class="dc">run:</span> pip install -r requirements.txt
+      - <span class="dc">name:</span> Run tests
+        <span class="dc">run:</span> pytest tests/ -n auto --tb=short --html=report.html
+        <span class="dc">env:</span>
+          <span class="dc">TEST_ENV:</span> staging
+          <span class="dc">API_KEY:</span> ${{ secrets.API_KEY }}</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 2 — requirements.txt</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># requirements.txt — pin versions for reproducibility</span>
+pytest==7.4.3
+pytest-xdist==3.3.1
+pytest-html==4.1.1
+selenium==4.15.2
+requests==2.31.0
+faker==20.1.0
+python-dotenv==1.0.0
+allure-pytest==2.13.2
+
+<span class="cm"># Install: pip install -r requirements.txt</span>
+<span class="cm"># Freeze current: pip freeze > requirements.txt</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 3 — Environment variables</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># .env (never commit to git!)</span>
+<span class="cm"># TEST_URL=https://staging.example.com</span>
+<span class="cm"># API_KEY=abc123secret</span>
+<span class="cm"># DB_HOST=qa-db.example.com</span>
+
+<span class="kw">import</span> os
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv   <span class="cm"># pip install python-dotenv</span>
+<span class="fn">load_dotenv</span>()
+
+BASE_URL = os.<span class="fn">getenv</span>(<span class="st">"TEST_URL"</span>, <span class="st">"https://dev.example.com"</span>)
+API_KEY  = os.<span class="fn">getenv</span>(<span class="st">"API_KEY"</span>)
+
+<span class="fn">print</span>(<span class="st">f"Running against: {BASE_URL}"</span>)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 4 — pytest.ini (project config)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># pytest.ini</span>
+[pytest]
+testpaths = tests
+python_files = test_*.py
+python_classes = Test*
+python_functions = test_*
+addopts =
+    -v
+    --tb=short
+    -n auto
+    --html=reports/report.html
+    --self-contained-html
+markers =
+    smoke: quick sanity tests
+    regression: full regression suite
+    api: API-only tests
+    ui: browser tests</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 5 — conftest.py CI/CD aware</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> pytest, os
+<span class="kw">from</span> selenium <span class="kw">import</span> webdriver
+
+<span class="op">@pytest.fixture</span>(scope=<span class="st">"session"</span>)
+<span class="kw">def</span> <span class="fn">driver</span>():
+    <span class="st">"""Headless in CI, headed locally."""</span>
+    options = webdriver.<span class="fn">ChromeOptions</span>()
+    <span class="kw">if</span> os.<span class="fn">getenv</span>(<span class="st">"CI"</span>):    <span class="cm"># GitHub Actions sets CI=true</span>
+        options.<span class="fn">add_argument</span>(<span class="st">"--headless"</span>)
+        options.<span class="fn">add_argument</span>(<span class="st">"--no-sandbox"</span>)
+        options.<span class="fn">add_argument</span>(<span class="st">"--disable-dev-shm-usage"</span>)
+    d = webdriver.<span class="fn">Chrome</span>(options=options)
+    <span class="kw">yield</span> d
+    d.<span class="fn">quit</span>()</pre></div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div><div class="tag ti">Interview one-liners</div>
+      <ul class="il">
+        <li><span class="iq">Q: How do you run Selenium in CI?</span>Headless mode: <code>--headless --no-sandbox --disable-dev-shm-usage</code>. Detect CI with <code>os.getenv("CI")</code>.</li>
+        <li><span class="iq">Q: How to pass secrets to CI?</span>GitHub Secrets / Jenkins credentials — never hardcode. Access via <code>os.getenv("SECRET_NAME")</code>.</li>
+        <li><span class="iq">Q: What exit code does pytest use?</span>0 = all passed, 1 = tests failed, 2 = interrupted, 3 = internal error. CI systems use this to pass/fail the build.</li>
+      </ul>
+    </div>
+    <div><div class="tag tb">Best practices ✓</div>
+      <ul class="bl">
+        <li>Always pin package versions in <code>requirements.txt</code></li>
+        <li>Never commit <code>.env</code> — add to <code>.gitignore</code></li>
+        <li>Use <code>pytest.ini</code> for project-wide config</li>
+        <li>Run headless in CI, headed locally</li>
+        <li>Fail fast: <code>pytest --exitfirst</code> on critical suites</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sf"><button class="nb2" onclick="prev()">← Previous</button><span class="sc">Session 18 / 20</span><button class="nb2 pr" onclick="nxt()">Next →</button></div>
+</div>
+
+<!-- ═══════════ S19: Reporting ═══════════ -->
+<div class="panel" id="p8">
+  <div class="stitle">Session 19 — Test Reporting & Allure</div>
+  <div class="sdesc">pytest-html · Allure reports · Screenshots on fail · Logging · Custom markers · Test metadata</div>
+
+  <div class="tag to">Hands-on examples</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 1 — pytest-html report</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># pip install pytest-html</span>
+<span class="cm"># Generate:  pytest --html=reports/report.html --self-contained-html</span>
+
+<span class="cm"># Add custom metadata to report</span>
+<span class="kw">def</span> <span class="fn">pytest_configure</span>(config):
+    config._metadata = {
+        <span class="st">"Project"</span>:     <span class="st">"E-Commerce QA Suite"</span>,
+        <span class="st">"Environment"</span>: <span class="st">"Staging"</span>,
+        <span class="st">"Tester"</span>:      <span class="st">"QA Automation Team"</span>,
+        <span class="st">"Browser"</span>:     <span class="st">"Chrome 120"</span>
+    }
+<span class="cm"># Add to conftest.py — shows on HTML report header</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 2 — Screenshot on test failure</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># conftest.py — capture screenshot on every failure</span>
+<span class="kw">import</span> pytest, os
+
+<span class="op">@pytest.hookimpl</span>(tryfirst=<span class="kw">True</span>, hookwrapper=<span class="kw">True</span>)
+<span class="kw">def</span> <span class="fn">pytest_runtest_makereport</span>(item, call):
+    outcome = <span class="kw">yield</span>
+    report  = outcome.<span class="fn">get_result</span>()
+
+    <span class="kw">if</span> report.when == <span class="st">"call"</span> <span class="kw">and</span> report.failed:
+        driver = item.funcargs.<span class="fn">get</span>(<span class="st">"driver"</span>)
+        <span class="kw">if</span> driver:
+            os.<span class="fn">makedirs</span>(<span class="st">"screenshots"</span>, exist_ok=<span class="kw">True</span>)
+            name = <span class="st">f"screenshots/{item.name}.png"</span>
+            driver.<span class="fn">save_screenshot</span>(name)
+            <span class="fn">print</span>(<span class="st">f"Screenshot saved: {name}"</span>)</pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 3 — Allure decorators</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> allure   <span class="cm"># pip install allure-pytest</span>
+
+<span class="op">@allure.epic</span>(<span class="st">"Authentication"</span>)
+<span class="op">@allure.feature</span>(<span class="st">"Login"</span>)
+<span class="op">@allure.story</span>(<span class="st">"Valid user login"</span>)
+<span class="op">@allure.severity</span>(allure.severity_level.CRITICAL)
+<span class="kw">def</span> <span class="fn">test_admin_login</span>(driver):
+    <span class="kw">with</span> allure.<span class="fn">step</span>(<span class="st">"Open login page"</span>):
+        driver.<span class="fn">get</span>(<span class="st">"https://qa.example.com/login"</span>)
+    <span class="kw">with</span> allure.<span class="fn">step</span>(<span class="st">"Enter credentials"</span>):
+        <span class="kw">pass</span>   <span class="cm"># fill in locator actions</span>
+    <span class="kw">with</span> allure.<span class="fn">step</span>(<span class="st">"Verify dashboard"</span>):
+        <span class="kw">assert</span> <span class="st">"dashboard"</span> <span class="kw">in</span> driver.current_url
+<span class="cm"># Run: pytest --alluredir=allure-results</span>
+<span class="cm"># View: allure serve allure-results</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 4 — Allure attach (screenshot in report)</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> allure
+
+<span class="kw">def</span> <span class="fn">attach_screenshot</span>(driver, name=<span class="st">"screenshot"</span>):
+    <span class="st">"""Attach screenshot to Allure report."""</span>
+    png = driver.<span class="fn">get_screenshot_as_png</span>()
+    allure.<span class="fn">attach</span>(
+        png,
+        name=name,
+        attachment_type=allure.attachment_type.PNG
+    )
+
+<span class="kw">def</span> <span class="fn">test_checkout</span>(driver):
+    <span class="kw">try</span>:
+        <span class="kw">pass</span>   <span class="cm"># test steps here</span>
+    <span class="kw">except</span> <span class="fn">AssertionError</span>:
+        <span class="fn">attach_screenshot</span>(driver, <span class="st">"checkout-fail"</span>)
+        <span class="kw">raise</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Example 5 — Custom test summary logger</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># conftest.py — print summary after test run</span>
+<span class="kw">import</span> pytest
+
+results = {<span class="st">"passed"</span>: <span class="nb">0</span>, <span class="st">"failed"</span>: <span class="nb">0</span>, <span class="st">"skipped"</span>: <span class="nb">0</span>}
+
+<span class="op">@pytest.hookimpl</span>(hookwrapper=<span class="kw">True</span>)
+<span class="kw">def</span> <span class="fn">pytest_runtest_makereport</span>(item, call):
+    outcome = <span class="kw">yield</span>
+    rep = outcome.<span class="fn">get_result</span>()
+    <span class="kw">if</span> rep.when == <span class="st">"call"</span>:
+        results[rep.outcome] = results.<span class="fn">get</span>(rep.outcome, <span class="nb">0</span>) + <span class="nb">1</span>
+
+<span class="kw">def</span> <span class="fn">pytest_terminal_summary</span>(terminalreporter):
+    <span class="fn">print</span>(<span class="st">f"\n📊 SUMMARY: ✅ {results['passed']} | ❌ {results['failed']}"</span>)</pre></div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div><div class="tag ti">Interview one-liners</div>
+      <ul class="il">
+        <li><span class="iq">Q: What is Allure?</span>A rich HTML test reporting framework. Shows test steps, screenshots, severity, history trends — far better than default pytest output.</li>
+        <li><span class="iq">Q: How do you capture screenshots on failure?</span>Use <code>pytest_runtest_makereport</code> hook — fires after each test, checks <code>report.failed</code>, then calls <code>driver.save_screenshot()</code>.</li>
+        <li><span class="iq">Q: What are pytest hooks?</span>Special functions (e.g. <code>pytest_configure</code>, <code>pytest_sessionfinish</code>) that plug into pytest's lifecycle — for reporting, setup, and teardown at framework level.</li>
+      </ul>
+    </div>
+    <div><div class="tag tb">Best practices ✓</div>
+      <ul class="bl">
+        <li>Always capture screenshot on test failure</li>
+        <li>Add Allure <code>@severity(CRITICAL)</code> to smoke tests</li>
+        <li>Use <code>with allure.step()</code> for readable steps</li>
+        <li>Publish Allure report to GitHub Pages in CI</li>
+        <li>Use <code>--self-contained-html</code> for portable HTML</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sf"><button class="nb2" onclick="prev()">← Previous</button><span class="sc">Session 19 / 20</span><button class="nb2 pr" onclick="nxt()">Next →</button></div>
+</div>
+
+<!-- ═══════════ S20: Interview Ready ═══════════ -->
+<div class="panel" id="p9">
+  <div class="stitle">Session 20 — Interview Ready: SDET Master Review</div>
+  <div class="sdesc">Top QA interview questions · Code challenges · Framework design · Career roadmap · What to build</div>
+
+  <div class="tag tw">SDET interview question bank</div>
+  <ul class="il one-col">
+    <li><span class="iq">Q: Explain your test automation framework architecture.</span>"We use a Python + pytest framework with Page Object Model for UI, requests-based API client for backend, CSV/JSON data files for DDT, conftest fixtures for shared setup, and GitHub Actions for CI. Reports via Allure with screenshot on failure."</li>
+    <li><span class="iq">Q: What is the testing pyramid?</span>Unit tests (many, fast, cheap) → Integration/API tests → UI/E2E tests (few, slow, expensive). Focus most automation at API layer — faster, more stable than UI.</li>
+    <li><span class="iq">Q: How do you handle flaky tests?</span>Root-cause first: is it timing (add explicit waits), data (use unique test data), or environment? Add <code>@retry</code> decorator as last resort, not first fix.</li>
+    <li><span class="iq">Q: pytest fixture scopes?</span>function (default, per test), class, module (per file), session (once per run). Use session for expensive setup (browser, DB connection).</li>
+    <li><span class="iq">Q: Difference between mock, stub, spy?</span>Stub returns fake data. Mock verifies calls were made. Spy wraps real object to observe. Use <code>unittest.mock</code> or <code>pytest-mock</code> in Python.</li>
+    <li><span class="iq">Q: How to test an API that doesn't exist yet?</span>Mock it with <code>responses</code> library or <code>unittest.mock.patch</code>. Or use WireMock/Mockoon as a mock server — test your client code independently.</li>
+  </ul>
+
+  <div class="tag to">Code challenges</div>
+
+  <div class="cw"><div class="ch"><span class="cl">Challenge 1 — Write a robust API test</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="kw">import</span> pytest, requests
+
+BASE = <span class="st">"https://jsonplaceholder.typicode.com"</span>
+
+<span class="op">@pytest.mark.parametrize</span>(<span class="st">"user_id"</span>, [<span class="nb">1</span>, <span class="nb">2</span>, <span class="nb">3</span>])
+<span class="kw">def</span> <span class="fn">test_get_user_returns_valid_schema</span>(user_id):
+    resp = requests.<span class="fn">get</span>(<span class="st">f"{BASE}/users/{user_id}"</span>)
+    <span class="kw">assert</span> resp.status_code == <span class="nb">200</span>
+    data = resp.<span class="fn">json</span>()
+    required_keys = [<span class="st">"id"</span>, <span class="st">"name"</span>, <span class="st">"email"</span>, <span class="st">"username"</span>]
+    <span class="kw">for</span> key <span class="kw">in</span> required_keys:
+        <span class="kw">assert</span> key <span class="kw">in</span> data, <span class="st">f"Missing key: {key}"</span>
+    <span class="kw">assert</span> data[<span class="st">"id"</span>] == user_id
+    <span class="kw">assert</span> <span class="st">"@"</span> <span class="kw">in</span> data[<span class="st">"email"</span>], <span class="st">"Invalid email format"</span></pre></div>
+
+  <div class="cw"><div class="ch"><span class="cl">Challenge 2 — Design conftest for a full project</span><button class="cb" onclick="cp(this)">copy</button></div>
+<pre><span class="cm"># conftest.py — production-grade template</span>
+<span class="kw">import</span> pytest, os
+<span class="kw">from</span> selenium <span class="kw">import</span> webdriver
+
+<span class="op">@pytest.fixture</span>(scope=<span class="st">"session"</span>)
+<span class="kw">def</span> <span class="fn">config</span>():
+    <span class="kw">return</span> {
+        <span class="st">"base_url"</span>: os.<span class="fn">getenv</span>(<span class="st">"TEST_URL"</span>, <span class="st">"https://qa.example.com"</span>),
+        <span class="st">"api_key"</span>:  os.<span class="fn">getenv</span>(<span class="st">"API_KEY"</span>, <span class="st">""</span>),
+        <span class="st">"timeout"</span>: <span class="nb">30</span>,
+    }
+
+<span class="op">@pytest.fixture</span>(scope=<span class="st">"function"</span>)
+<span class="kw">def</span> <span class="fn">driver</span>(config):
+    opts = webdriver.<span class="fn">ChromeOptions</span>()
+    <span class="kw">if</span> os.<span class="fn">getenv</span>(<span class="st">"CI"</span>): opts.<span class="fn">add_argument</span>(<span class="st">"--headless"</span>)
+    d = webdriver.<span class="fn">Chrome</span>(options=opts)
+    d.<span class="fn">get</span>(config[<span class="st">"base_url"</span>])
+    <span class="kw">yield</span> d
+    d.<span class="fn">quit</span>()</pre></div>
+
+  <div class="tag tw">Your SDET portfolio — what to build</div>
+  <div class="roadmap-grid">
+    <div class="rm-card"><div class="rm-num">Project 1</div><div class="rm-title">API Test Suite</div><div class="rm-sub">pytest + requests against a public API (JSONPlaceholder, Reqres)</div></div>
+    <div class="rm-card"><div class="rm-num">Project 2</div><div class="rm-title">Selenium POM</div><div class="rm-sub">Full login + checkout flow on a demo site (Saucedemo.com)</div></div>
+    <div class="rm-card"><div class="rm-num">Project 3</div><div class="rm-title">BDD Framework</div><div class="rm-sub">pytest-bdd feature files + step defs + Allure report</div></div>
+    <div class="rm-card"><div class="rm-num">Project 4</div><div class="rm-title">CI Pipeline</div><div class="rm-sub">GitHub Actions running all tests on push with HTML report upload</div></div>
+    <div class="rm-card"><div class="rm-num">Project 5</div><div class="rm-title">Performance</div><div class="rm-sub">Locust load testing + response time assertions</div></div>
+  </div>
+
+  <div class="tag tb">Your complete SDET skill checklist</div>
+  <ul class="bl one-col">
+    <li>Python basics → OOP → File I/O → Modules (Sessions 1–9)</li>
+    <li>pytest: fixtures, conftest, parametrize, markers, hooks</li>
+    <li>Selenium + WebDriver + Page Object Model</li>
+    <li>API testing with requests: GET/POST/PUT/DELETE + auth</li>
+    <li>BDD: Gherkin + pytest-bdd + Scenario Outline</li>
+    <li>Data-driven testing: CSV, JSON, Faker, parametrize IDs</li>
+    <li>Decorators: retry, timer, logging — real reusable tools</li>
+    <li>Parallel testing: pytest-xdist + thread-safe fixtures</li>
+    <li>Database testing: sqlite3, fixtures, constraint checks</li>
+    <li>CI/CD: GitHub Actions YAML, headless Chrome, secrets</li>
+    <li>Reporting: Allure, pytest-html, screenshot on failure</li>
+  </ul>
+
+  <div class="sf">
+    <button class="nb2" onclick="prev()">← Previous</button>
+    <span class="sc">Session 20 / 20 — You're SDET-ready!</span>
+    <button class="nb2 pr" onclick="sendPrompt('Give me a mock SDET interview with 10 coding questions based on all 20 sessions I completed.')">Mock Interview ↗</button>
+  </div>
+</div>
+
+<script>
+let cur = 0;
+const total = 10;
+function sw(i) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('p'+i).classList.add('active');
+  document.querySelectorAll('.tab-btn')[i].classList.add('active');
+  cur = i;
+  const pct = Math.round(((i+1)/total)*100);
+  document.getElementById('pfill').style.width = pct+'%';
+  document.getElementById('plbl').textContent = 'Session '+(i+11)+' of 20';
+  document.querySelectorAll('.tab-btn')[i].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function nxt() { if(cur<total-1) sw(cur+1); }
+function prev() { if(cur>0) sw(cur-1); }
+function cp(btn) {
+  const pre = btn.closest('.cw').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(()=>{
+    btn.textContent='copied!';
+    setTimeout(()=>btn.textContent='copy',1500);
+  });
+}
+</script>
+
+</body>
+</html>

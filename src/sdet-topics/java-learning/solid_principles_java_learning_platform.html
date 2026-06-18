@@ -1,0 +1,1546 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--phase-fund:#4A7C59;--phase-inter:#1D5FA5;--phase-adv:#7B3FA0;--phase-fw:#B05A1A}
+  body{font-family:"Anthropic Sans",sans-serif;background:var(--color-background-tertiary);color:var(--color-text-primary);font-size:15px;line-height:1.65}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+  /* TOP BAR */
+  .topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .brand{font-size:16px;font-weight:500;display:flex;align-items:center;gap:8px}
+  .brand-icon{width:28px;height:28px;background:linear-gradient(135deg,#E85D24,#F2A623);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:500;font-size:13px}
+  .progress-wrap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--color-text-secondary)}
+  .progress-bar-outer{width:140px;height:6px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden}
+  .progress-bar-inner{height:100%;background:linear-gradient(90deg,#4A7C59,#1D5FA5,#7B3FA0);border-radius:3px;transition:width .4s}
+
+  /* PHASE TABS */
+  .phase-strip{display:flex;gap:0;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);overflow-x:auto}
+  .phase-btn{flex:1;min-width:90px;padding:9px 8px;font-size:11px;font-weight:500;border:none;background:none;cursor:pointer;color:var(--color-text-tertiary);border-bottom:2px solid transparent;transition:all .2s;text-align:center;white-space:nowrap}
+  .phase-btn.active{color:var(--phase-color,var(--color-text-primary));border-bottom-color:var(--phase-color)}
+  .phase-badge{display:inline-block;font-size:9px;padding:1px 5px;border-radius:10px;margin-left:4px;background:currentColor;opacity:.15;vertical-align:middle}
+
+  /* SESSION TABS */
+  .session-strip{display:flex;gap:4px;padding:10px 16px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);overflow-x:auto}
+  .sess-btn{padding:5px 12px;font-size:12px;border:0.5px solid var(--color-border-tertiary);border-radius:20px;background:var(--color-background-primary);cursor:pointer;color:var(--color-text-secondary);white-space:nowrap;transition:all .2s}
+  .sess-btn.active{background:var(--phase-color);border-color:var(--phase-color);color:#fff;font-weight:500}
+  .sess-btn.done{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+  .sess-btn.done::after{content:" ✓";font-size:10px}
+
+  /* CONTENT AREA */
+  .content{max-width:860px;margin:0 auto;padding:24px 20px 60px}
+
+  /* SESSION HEADER */
+  .sess-header{margin-bottom:24px}
+  .sess-phase-tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 10px;border-radius:12px;margin-bottom:10px;color:#fff}
+  .sess-title{font-size:24px;font-weight:500;margin-bottom:6px}
+  .sess-subtitle{font-size:14px;color:var(--color-text-secondary)}
+
+  /* SECTION CARDS */
+  .sec-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:20px;overflow:hidden}
+  .sec-head{padding:14px 20px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+  .sec-head-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .sec-head-text{font-size:14px;font-weight:500;flex:1}
+  .sec-chevron{font-size:12px;color:var(--color-text-tertiary);transition:transform .25s}
+  .sec-chevron.open{transform:rotate(180deg)}
+  .sec-body{padding:20px;display:none}
+  .sec-body.open{display:block}
+
+  /* SVG DIAGRAM WRAPPER */
+  .diag-wrap{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:16px;margin:12px 0;overflow:hidden}
+  .diag-wrap svg{max-width:100%;height:auto;display:block;margin:0 auto}
+
+  /* ONE-LINERS */
+  .oneliner{background:var(--color-background-secondary);border-left:3px solid var(--phase-color,#4A7C59);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 14px;margin:8px 0;font-size:13px;font-style:italic;color:var(--color-text-secondary)}
+  .oneliner strong{color:var(--color-text-primary);font-style:normal}
+
+  /* BEST PRACTICES */
+  .checklist{list-style:none;margin:0;padding:0}
+  .checklist li{display:flex;gap:10px;padding:8px 0;font-size:13px;border-bottom:0.5px solid var(--color-border-tertiary)}
+  .checklist li:last-child{border-bottom:none}
+  .check-icon{width:18px;height:18px;border-radius:50%;background:var(--color-background-success);color:var(--color-text-success);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px}
+
+  /* Q&A */
+  .qa-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin:8px 0;overflow:hidden}
+  .qa-q{padding:12px 16px;cursor:pointer;font-size:13px;font-weight:500;display:flex;justify-content:space-between;align-items:center;background:var(--color-background-secondary)}
+  .qa-q:hover{background:var(--color-background-primary)}
+  .qa-a{display:none;padding:12px 16px;font-size:13px;color:var(--color-text-secondary);line-height:1.7;border-top:0.5px solid var(--color-border-tertiary)}
+  .qa-a.open{display:block}
+  .qa-tag{font-size:10px;padding:2px 7px;border-radius:10px;background:var(--color-background-info);color:var(--color-text-info);font-weight:400;margin-left:8px;flex-shrink:0}
+
+  /* CODE BLOCKS */
+  pre{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px 16px;font-family:var(--font-mono);font-size:12px;overflow-x:auto;line-height:1.6;margin:10px 0}
+  code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);padding:1px 5px;border-radius:3px}
+
+  /* CONCEPT GRID */
+  .concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:12px 0}
+  .concept-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
+  .concept-card .icon{font-size:24px;margin-bottom:6px}
+  .concept-card .label{font-size:12px;font-weight:500}
+  .concept-card .desc{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+
+  /* NAV BUTTONS */
+  .nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:32px}
+  .nav-btn{padding:10px 20px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;font-size:13px;font-weight:500;color:var(--color-text-primary);transition:all .2s}
+  .nav-btn:hover{background:var(--color-background-secondary)}
+  .nav-btn.primary{background:var(--phase-color);border-color:var(--phase-color);color:#fff}
+  .nav-btn.primary:hover{opacity:.9}
+  .nav-btn:disabled{opacity:.35;cursor:not-allowed}
+
+  /* PHASE PILL */
+  .fund{--phase-color:#4A7C59}
+  .inter{--phase-color:#1D5FA5}
+  .adv{--phase-color:#7B3FA0}
+  .fw{--phase-color:#B05A1A}
+
+  /* HIGHLIGHT */
+  .highlight{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);border-radius:var(--border-radius-md);padding:10px 14px;margin:10px 0;font-size:13px}
+  .tip{background:var(--color-background-info);border:0.5px solid var(--color-border-info);border-radius:var(--border-radius-md);padding:10px 14px;margin:10px 0;font-size:13px;color:var(--color-text-info)}
+
+  /* SCROLL */
+  html{scroll-behavior:smooth}
+  .session-strip{scrollbar-width:none}
+  .session-strip::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+<h2 class="sr-only">SOLID Principles in Java — 10-Session Learning Platform. Sessions organized by phase: Fundamentals, Intermediate, Advanced, and Frameworks.</h2>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand"><div class="brand-icon">☕</div> SOLID in Java — Full Course</div>
+  <div class="progress-wrap">
+    <span id="prog-text">Session 1 of 10</span>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="prog-bar" style="width:10%"></div></div>
+    <span id="prog-pct">10%</span>
+  </div>
+</div>
+
+<!-- PHASE STRIP -->
+<div class="phase-strip" id="phase-strip">
+  <button class="phase-btn fund active" style="--phase-color:#4A7C59" onclick="goPhase(0)">🌱 Fundamentals<span style="font-size:9px;margin-left:4px;opacity:.7">S1–S3</span></button>
+  <button class="phase-btn inter" style="--phase-color:#1D5FA5" onclick="goPhase(1)">⚙️ Intermediate<span style="font-size:9px;margin-left:4px;opacity:.7">S4–S6</span></button>
+  <button class="phase-btn adv" style="--phase-color:#7B3FA0" onclick="goPhase(2)">🚀 Advanced<span style="font-size:9px;margin-left:4px;opacity:.7">S7–S8</span></button>
+  <button class="phase-btn fw" style="--phase-color:#B05A1A" onclick="goPhase(3)">🏗️ Frameworks<span style="font-size:9px;margin-left:4px;opacity:.7">S9–S10</span></button>
+</div>
+
+<!-- SESSION TABS -->
+<div class="session-strip" id="sess-strip"></div>
+
+<!-- MAIN CONTENT -->
+<div class="content" id="main-content"></div>
+
+<script>
+const PHASES=[
+  {name:"Fundamentals",color:"#4A7C59",cls:"fund",range:[0,3]},
+  {name:"Intermediate",color:"#1D5FA5",cls:"inter",range:[3,6]},
+  {name:"Advanced",color:"#7B3FA0",cls:"adv",range:[6,8]},
+  {name:"Frameworks",color:"#B05A1A",cls:"fw",range:[8,10]}
+];
+
+const SESSIONS=[
+
+/* ─────────────────────────────────────────────────────────────
+   S1: INTRO TO SOLID
+──────────────────────────────────────────────────────────────*/
+{
+  phase:0,
+  title:"Introduction to SOLID Principles",
+  subtitle:"Why good design matters before you write a single line of code",
+  sections:[
+    {
+      icon:"📖",color:"#E8F5E9",
+      title:"Overview — What / Why / When / Where / How",
+      content:`
+<p style="margin-bottom:12px">SOLID is an acronym coined by Robert C. Martin (Uncle Bob) representing <strong>5 design principles</strong> that make software more maintainable, flexible, and scalable.</p>
+
+<div class="concept-grid">
+  <div class="concept-card"><div class="icon">S</div><div class="label">Single Responsibility</div><div class="desc">One class, one reason to change</div></div>
+  <div class="concept-card"><div class="icon">O</div><div class="label">Open/Closed</div><div class="desc">Open to extend, closed to modify</div></div>
+  <div class="concept-card"><div class="icon">L</div><div class="label">Liskov Substitution</div><div class="desc">Subtypes must replace base types</div></div>
+  <div class="concept-card"><div class="icon">I</div><div class="label">Interface Segregation</div><div class="desc">Many specific interfaces over one fat one</div></div>
+  <div class="concept-card"><div class="icon">D</div><div class="label">Dependency Inversion</div><div class="desc">Depend on abstractions, not concretions</div></div>
+</div>
+
+<div class="diag-wrap">
+<svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>SOLID Principles Overview Diagram</title>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Center: SOLID -->
+<rect x="270" y="105" width="140" height="56" rx="12" fill="#4A7C59" stroke="#2d5c3a" stroke-width="0.5"/>
+<text x="340" y="130" text-anchor="middle" fill="#fff" font-size="18" font-weight="500" font-family="Anthropic Sans,sans-serif">SOLID</text>
+<text x="340" y="150" text-anchor="middle" fill="#c8e6c9" font-size="11" font-family="Anthropic Sans,sans-serif">Design Principles</text>
+<!-- S -->
+<rect x="20" y="20" width="140" height="52" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="90" y="42" text-anchor="middle" fill="#2d5c3a" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">S — Single Resp.</text>
+<text x="90" y="60" text-anchor="middle" fill="#4A7C59" font-size="11" font-family="Anthropic Sans,sans-serif">One class = one job</text>
+<!-- O -->
+<rect x="200" y="20" width="140" height="52" rx="8" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="270" y="42" text-anchor="middle" fill="#0c3d7a" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">O — Open/Closed</text>
+<text x="270" y="60" text-anchor="middle" fill="#1D5FA5" font-size="11" font-family="Anthropic Sans,sans-serif">Extend, don't modify</text>
+<!-- L -->
+<rect x="380" y="20" width="140" height="52" rx="8" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="0.5"/>
+<text x="450" y="42" text-anchor="middle" fill="#4a1775" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">L — Liskov Sub.</text>
+<text x="450" y="60" text-anchor="middle" fill="#7B3FA0" font-size="11" font-family="Anthropic Sans,sans-serif">Replace safely</text>
+<!-- I -->
+<rect x="100" y="205" width="140" height="52" rx="8" fill="#FFF8E1" stroke="#B05A1A" stroke-width="0.5"/>
+<text x="170" y="227" text-anchor="middle" fill="#7a3d0c" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">I — Interface Seg.</text>
+<text x="170" y="245" text-anchor="middle" fill="#B05A1A" font-size="11" font-family="Anthropic Sans,sans-serif">Focused interfaces</text>
+<!-- D -->
+<rect x="440" y="205" width="140" height="52" rx="8" fill="#FCEAE8" stroke="#C0392B" stroke-width="0.5"/>
+<text x="510" y="227" text-anchor="middle" fill="#922b21" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">D — Dep. Inversion</text>
+<text x="510" y="245" text-anchor="middle" fill="#C0392B" font-size="11" font-family="Anthropic Sans,sans-serif">Abstractions first</text>
+<!-- Connectors -->
+<line x1="160" y1="46" x2="270" y2="120" stroke="#4A7C59" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+<line x1="270" y1="46" x2="310" y2="105" stroke="#1D5FA5" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+<line x1="410" y1="46" x2="370" y2="105" stroke="#7B3FA0" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+<line x1="240" y1="205" x2="320" y2="161" stroke="#B05A1A" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+<line x1="440" y1="205" x2="370" y2="161" stroke="#C0392B" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+</svg>
+</div>
+
+<div class="highlight">💡 <strong>When to apply:</strong> Always — even in small projects. Technical debt compounds fast. SOLID prevents spaghetti code.</div>
+
+<div class="tip">🎯 <strong>How SOLID helps:</strong> Write code that is easier to test, extend, and hand off to teammates without fear of breaking things.</div>
+`
+    },
+    {
+      icon:"🎤",color:"#FFF3E0",
+      title:"Interview One-Liners (5+)",
+      content:`
+<p style="margin-bottom:12px;font-size:13px;color:var(--color-text-secondary)">Memorize these — say them confidently in interviews:</p>
+<div class="oneliner"><strong>"SOLID is a set of 5 object-oriented design principles by Robert C. Martin that make code more maintainable, scalable, and testable."</strong></div>
+<div class="oneliner"><strong>"Without SOLID, code becomes a tangled mess — changing one feature breaks another; SOLID prevents that domino effect."</strong></div>
+<div class="oneliner"><strong>"SOLID guides us to write classes with clear responsibilities, loose coupling, and high cohesion."</strong></div>
+<div class="oneliner"><strong>"In industry, SOLID principles are the foundation behind clean architecture, microservices, and domain-driven design."</strong></div>
+<div class="oneliner"><strong>"SOLID-compliant code is test-friendly because each unit has a single concern and depends on abstractions, not concretions."</strong></div>
+<div class="oneliner"><strong>"The cost of ignoring SOLID is paid in bug-fixing time, not feature-building time — and that's always the more expensive bill."</strong></div>
+`
+    },
+    {
+      icon:"🏗️",color:"#E3F2FD",
+      title:"Architecture Diagram — SOLID in a Real System",
+      content:`
+<p style="margin-bottom:12px;font-size:13px">Here's how SOLID maps to a real e-commerce backend architecture:</p>
+<div class="diag-wrap">
+<svg viewBox="0 0 680 360" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>SOLID in E-Commerce Architecture</title>
+<defs><marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Layers -->
+<rect x="20" y="20" width="640" height="60" rx="10" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="340" y="46" text-anchor="middle" fill="#2d5c3a" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">Controller Layer (S: Each controller handles one resource)</text>
+<text x="340" y="66" text-anchor="middle" fill="#4A7C59" font-size="11" font-family="Anthropic Sans,sans-serif">OrderController  /  ProductController  /  UserController</text>
+
+<rect x="20" y="105" width="640" height="60" rx="10" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="340" y="131" text-anchor="middle" fill="#0c3d7a" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">Service Layer (O: Add new services without modifying existing)</text>
+<text x="340" y="151" text-anchor="middle" fill="#1D5FA5" font-size="11" font-family="Anthropic Sans,sans-serif">OrderService  /  PaymentService  /  NotificationService</text>
+
+<rect x="20" y="190" width="640" height="60" rx="10" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="0.5"/>
+<text x="340" y="216" text-anchor="middle" fill="#4a1775" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">Repository Interface (D: Depend on IOrderRepo, not concrete DB)</text>
+<text x="340" y="236" text-anchor="middle" fill="#7B3FA0" font-size="11" font-family="Anthropic Sans,sans-serif">IOrderRepository  /  IProductRepository  /  IUserRepository</text>
+
+<rect x="20" y="275" width="300" height="60" rx="10" fill="#FFF8E1" stroke="#B05A1A" stroke-width="0.5"/>
+<text x="170" y="301" text-anchor="middle" fill="#7a3d0c" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">MySQL Impl (L: Swappable)</text>
+<text x="170" y="319" text-anchor="middle" fill="#B05A1A" font-size="11" font-family="Anthropic Sans,sans-serif">MySQLOrderRepository</text>
+
+<rect x="360" y="275" width="300" height="60" rx="10" fill="#FCEAE8" stroke="#C0392B" stroke-width="0.5"/>
+<text x="510" y="301" text-anchor="middle" fill="#922b21" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">MongoDB Impl (L: Also swappable)</text>
+<text x="510" y="319" text-anchor="middle" fill="#C0392B" font-size="11" font-family="Anthropic Sans,sans-serif">MongoOrderRepository</text>
+
+<!-- Arrows -->
+<line x1="340" y1="80" x2="340" y2="105" stroke="#666" stroke-width="0.5" marker-end="url(#arr2)"/>
+<line x1="340" y1="165" x2="340" y2="190" stroke="#666" stroke-width="0.5" marker-end="url(#arr2)"/>
+<line x1="240" y1="250" x2="200" y2="275" stroke="#666" stroke-width="0.5" marker-end="url(#arr2)"/>
+<line x1="440" y1="250" x2="480" y2="275" stroke="#666" stroke-width="0.5" marker-end="url(#arr2)"/>
+</svg>
+</div>
+`
+    },
+    {
+      icon:"✅",color:"#E8F5E9",
+      title:"Best Practices Checklist",
+      content:`
+<ul class="checklist">
+  <li><div class="check-icon">✓</div><div>Always ask "how many reasons can this class change?" — if more than one, split it</div></li>
+  <li><div class="check-icon">✓</div><div>Program to interfaces, not implementations — use <code>List&lt;T&gt;</code> not <code>ArrayList&lt;T&gt;</code></div></li>
+  <li><div class="check-icon">✓</div><div>Favor composition over inheritance — combine behaviors instead of deep hierarchies</div></li>
+  <li><div class="check-icon">✓</div><div>Write unit tests first (TDD) — SOLID code naturally emerges from testability requirements</div></li>
+  <li><div class="check-icon">✓</div><div>Review class size: if a class exceeds ~200 lines, it likely violates SRP</div></li>
+  <li><div class="check-icon">✓</div><div>Review method count: if a class has more than ~10 public methods, consider splitting</div></li>
+</ul>
+`
+    },
+    {
+      icon:"🎯",color:"#F3E5F5",
+      title:"Interview Q&A — 6 SDET-Style Questions",
+      content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: What does SOLID stand for and who created it?</span><span class="qa-tag">Fresher</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">SOLID stands for Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion. These principles were introduced by Robert C. Martin in the early 2000s and were formally compiled in his book "Agile Software Development." They serve as foundational guidelines for writing clean, maintainable object-oriented code in Java and other OOP languages.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: Why should a SDET care about SOLID principles?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">A SDET writes test frameworks, automation utilities, and test helpers — all of which are code. SOLID-compliant test code is easier to maintain, extend with new test cases, and parallelize. For example, using Dependency Inversion lets you swap real HTTP clients with mock ones; SRP ensures each test helper does one job; OCP lets you add new test strategies without rewriting existing ones.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: How do SOLID principles relate to design patterns?</span><span class="qa-tag">Intermediate</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">SOLID principles are the "why" — the philosophy. Design patterns are the "how" — the reusable solutions. For instance, Strategy Pattern is OCP in action (swap algorithms without modifying context). Factory Pattern implements DIP (create via abstraction). Observer Pattern follows SRP (notifying observers is separate from business logic). SOLID principles guide WHEN to use a pattern; patterns show HOW to implement it.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: Can you violate SOLID principles intentionally? When?</span><span class="qa-tag">Advanced</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Yes — intentionally and consciously. In simple scripts, throwaway prototypes, or performance-critical tight loops, strict SOLID compliance may over-engineer the solution. The key word is "conscious": know which principle you're bending, why, and document it. Never violate SOLID out of laziness. Treat it as a deliberate trade-off, not ignorance.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: How does SOLID improve testability in Java?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">SRP makes units small and focused — easy to test in isolation. DIP allows injecting mocks/stubs instead of real dependencies. ISP ensures test doubles only need to implement the methods they actually use. OCP means adding new behavior doesn't require changing tested code. Together they make JUnit + Mockito tests clean, fast, and reliable.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: What happens to a codebase that ignores SOLID over time?</span><span class="qa-tag">Architecture</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Without SOLID you get "Big Ball of Mud" — a codebase where everything is coupled to everything. Symptoms: changes to one feature break unrelated features (no SRP), adding features requires risky edits to stable code (no OCP), substituting implementations crashes the app (no LSP), classes depend on methods they never use (no ISP), high-level logic is glued to database/file/network details (no DIP). The result: slow velocity, high bug rate, developer fear of refactoring.</div></div>
+`
+    }
+  ]
+},
+
+/* ─────────────────────────────────────────────────────────────
+   S2: SINGLE RESPONSIBILITY PRINCIPLE
+──────────────────────────────────────────────────────────────*/
+{
+  phase:0,
+  title:"S — Single Responsibility Principle",
+  subtitle:"A class should have only ONE reason to change",
+  sections:[
+    {
+      icon:"📖",color:"#E8F5E9",
+      title:"Overview — SRP Deep Dive",
+      content:`
+<p style="margin-bottom:12px">SRP states: <em>"A class should have only one reason to change."</em> If a class handles multiple concerns, a change in one concern forces a recompile and retest of the whole class.</p>
+
+<div class="diag-wrap">
+<svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>SRP Bad vs Good Example</title>
+<defs><marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- BAD -->
+<text x="150" y="22" text-anchor="middle" fill="#C0392B" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">❌ Violates SRP</text>
+<rect x="20" y="35" width="260" height="200" rx="10" fill="#FCEAE8" stroke="#C0392B" stroke-width="0.5"/>
+<text x="150" y="60" text-anchor="middle" fill="#922b21" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">UserManager</text>
+<rect x="36" y="70" width="228" height="30" rx="5" fill="#F8D7DA" stroke="#C0392B" stroke-width="0.5"/>
+<text x="150" y="89" text-anchor="middle" fill="#7a1a1a" font-size="11" font-family="Anthropic Sans,sans-serif">saveUser() — DB concern</text>
+<rect x="36" y="108" width="228" height="30" rx="5" fill="#F8D7DA" stroke="#C0392B" stroke-width="0.5"/>
+<text x="150" y="127" text-anchor="middle" fill="#7a1a1a" font-size="11" font-family="Anthropic Sans,sans-serif">sendEmail() — Notification concern</text>
+<rect x="36" y="146" width="228" height="30" rx="5" fill="#F8D7DA" stroke="#C0392B" stroke-width="0.5"/>
+<text x="150" y="165" text-anchor="middle" fill="#7a1a1a" font-size="11" font-family="Anthropic Sans,sans-serif">generateReport() — Report concern</text>
+<rect x="36" y="184" width="228" height="30" rx="5" fill="#F8D7DA" stroke="#C0392B" stroke-width="0.5"/>
+<text x="150" y="203" text-anchor="middle" fill="#7a1a1a" font-size="11" font-family="Anthropic Sans,sans-serif">validateInput() — Validation concern</text>
+<text x="150" y="250" text-anchor="middle" fill="#C0392B" font-size="11" font-family="Anthropic Sans,sans-serif">4 reasons to change = fragile class</text>
+
+<!-- GOOD -->
+<text x="530" y="22" text-anchor="middle" fill="#2d7a2d" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">✅ Follows SRP</text>
+<rect x="400" y="35" width="130" height="46" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="465" y="62" text-anchor="middle" fill="#2d5c3a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">UserRepository</text>
+<text x="465" y="75" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">saveUser()</text>
+
+<rect x="548" y="35" width="116" height="46" rx="8" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="606" y="62" text-anchor="middle" fill="#0c3d7a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">EmailService</text>
+<text x="606" y="75" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">sendEmail()</text>
+
+<rect x="400" y="105" width="130" height="46" rx="8" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="0.5"/>
+<text x="465" y="132" text-anchor="middle" fill="#4a1775" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">ReportGenerator</text>
+<text x="465" y="145" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">generateReport()</text>
+
+<rect x="548" y="105" width="116" height="46" rx="8" fill="#FFF8E1" stroke="#B05A1A" stroke-width="0.5"/>
+<text x="606" y="132" text-anchor="middle" fill="#7a3d0c" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">UserValidator</text>
+<text x="606" y="145" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">validateInput()</text>
+
+<rect x="450" y="180" width="130" height="46" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="515" y="204" text-anchor="middle" fill="#2d5c3a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">UserManager</text>
+<text x="515" y="217" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">coordinates only</text>
+<line x1="465" y1="81" x2="490" y2="180" stroke="#666" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr3)"/>
+<line x1="606" y1="81" x2="560" y2="180" stroke="#666" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr3)"/>
+<line x1="465" y1="151" x2="497" y2="180" stroke="#666" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr3)"/>
+<line x1="606" y1="151" x2="543" y2="180" stroke="#666" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr3)"/>
+<text x="515" y="268" text-anchor="middle" fill="#2d7a2d" font-size="11" font-family="Anthropic Sans,sans-serif">Each class: 1 reason to change</text>
+</svg>
+</div>
+
+<pre>
+// ❌ BEFORE — SRP Violation
+class UserManager {
+    public void saveUser(User u) { /* DB code */ }
+    public void sendWelcomeEmail(User u) { /* Email code */ }
+    public String generateReport(User u) { /* Report code */ }
+    public boolean validateUser(User u) { /* Validation code */ }
+}
+
+// ✅ AFTER — SRP Applied
+class UserRepository   { void save(User u) { /* only DB */ } }
+class EmailService     { void sendWelcome(User u) { /* only email */ } }
+class UserReportGen    { String generate(User u) { /* only report */ } }
+class UserValidator    { boolean validate(User u) { /* only validate */ } }
+</pre>
+`
+    },
+    {
+      icon:"🎤",color:"#FFF3E0",
+      title:"Interview One-Liners — SRP",
+      content:`
+<div class="oneliner"><strong>"SRP means a class has one, and only one, reason to change — each class owns exactly one business concern."</strong></div>
+<div class="oneliner"><strong>"If I can describe my class with 'and' — like 'saves users AND sends emails' — it's violating SRP."</strong></div>
+<div class="oneliner"><strong>"SRP reduces the blast radius of a change — if email logic breaks, only EmailService is affected, nothing else."</strong></div>
+<div class="oneliner"><strong>"SRP is the foundation of microservices — each service does one thing; SRP is that same principle applied at the class level."</strong></div>
+<div class="oneliner"><strong>"In a test automation framework, SRP means separate classes for data loading, API calls, assertions, and reporting."</strong></div>
+<div class="oneliner"><strong>"Uncle Bob defines 'reason to change' as an actor — a stakeholder group whose requirements drive change. One actor per class."</strong></div>
+`
+    },
+    {
+      icon:"📐",color:"#E3F2FD",
+      title:"Concept Diagrams — SRP Flow",
+      content:`
+<div class="diag-wrap">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>SRP Cohesion and Coupling Diagram</title>
+<defs><marker id="arr4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text x="340" y="22" text-anchor="middle" fill="var(--color-text-primary)" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">SRP: High Cohesion, Low Coupling</text>
+<rect x="30" y="40" width="150" height="130" rx="10" fill="#E8F5E9" stroke="#4A7C59" stroke-width="1"/>
+<text x="105" y="62" text-anchor="middle" fill="#2d5c3a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">OrderService</text>
+<text x="105" y="82" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">placeOrder()</text>
+<text x="105" y="98" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">cancelOrder()</text>
+<text x="105" y="114" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">updateOrder()</text>
+<text x="105" y="156" text-anchor="middle" fill="#2d7a2d" font-size="10" font-family="Anthropic Sans,sans-serif">HIGH cohesion ✓</text>
+
+<rect x="265" y="40" width="150" height="130" rx="10" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="1"/>
+<text x="340" y="62" text-anchor="middle" fill="#0c3d7a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">PaymentService</text>
+<text x="340" y="82" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">charge()</text>
+<text x="340" y="98" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">refund()</text>
+<text x="340" y="114" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">getStatus()</text>
+<text x="340" y="156" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">HIGH cohesion ✓</text>
+
+<rect x="500" y="40" width="150" height="130" rx="10" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="1"/>
+<text x="575" y="62" text-anchor="middle" fill="#4a1775" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">NotifyService</text>
+<text x="575" y="82" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">sendEmail()</text>
+<text x="575" y="98" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">sendSMS()</text>
+<text x="575" y="114" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">pushAlert()</text>
+<text x="575" y="156" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">HIGH cohesion ✓</text>
+
+<line x1="180" y1="105" x2="265" y2="105" stroke="#4A7C59" stroke-width="0.5" stroke-dasharray="4 3" marker-end="url(#arr4)"/>
+<line x1="415" y1="105" x2="500" y2="105" stroke="#1D5FA5" stroke-width="0.5" stroke-dasharray="4 3" marker-end="url(#arr4)"/>
+<text x="222" y="98" text-anchor="middle" fill="var(--color-text-tertiary)" font-size="10" font-family="Anthropic Sans,sans-serif">LOW coupling</text>
+<text x="458" y="98" text-anchor="middle" fill="var(--color-text-tertiary)" font-size="10" font-family="Anthropic Sans,sans-serif">LOW coupling</text>
+</svg>
+</div>
+`
+    },
+    {
+      icon:"✅",color:"#E8F5E9",
+      title:"Best Practices — SRP",
+      content:`
+<ul class="checklist">
+  <li><div class="check-icon">✓</div><div>Name each class with a single, clear noun — <code>UserValidator</code>, <code>OrderRepository</code>, <code>PaymentProcessor</code></div></li>
+  <li><div class="check-icon">✓</div><div>If class name contains "And" or "Manager" with multiple unrelated methods — refactor immediately</div></li>
+  <li><div class="check-icon">✓</div><div>Each package should also follow SRP — group classes by business domain, not by technical layer alone</div></li>
+  <li><div class="check-icon">✓</div><div>In Spring: <code>@Service</code> for business logic, <code>@Repository</code> for DB, <code>@Controller</code> for HTTP — natural SRP separation</div></li>
+  <li><div class="check-icon">✓</div><div>A test class should test one class only — if your test class grows huge, your production class violates SRP</div></li>
+</ul>
+`
+    },
+    {
+      icon:"🎯",color:"#F3E5F5",
+      title:"Interview Q&A — SRP",
+      content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: Can you give a real-world SRP violation example in Java?</span><span class="qa-tag">Common</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">A classic example: a UserService class that contains methods for saving to DB, sending emails, logging activity, and generating PDF reports. Any one of these might change independently — the DB schema changes, email template changes, log format changes, PDF library upgrades. Each change forces a recompile and retest of UserService even though only one concern changed. Solution: split into UserRepository, EmailNotifier, ActivityLogger, and UserReportGenerator.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: How do you identify SRP violations in code review?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Look for: (1) Class names with "Manager", "Helper", "Util", or "And"; (2) Classes with imports from many unrelated packages (DB + email + HTTP all in one); (3) Classes longer than 200 lines; (4) Methods that are completely unrelated conceptually; (5) Unit tests that need to mock 5+ different dependencies. Any of these is a smell worth investigating in review.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: Does SRP mean a class can only have one method?</span><span class="qa-tag">Misconception</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">No — SRP is about one responsibility (one reason to change), not one method. OrderService can have placeOrder(), cancelOrder(), updateOrder(), findById() — all serving the same responsibility of "managing orders." Having multiple methods is fine as long as they all serve the same concern. SRP governs the cohesion of a class, not its size per se.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: How does SRP apply in test automation frameworks?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">In Selenium or RestAssured frameworks: separate your Page Objects (UI interaction), Test Data builders (data setup), Assertion Helpers (verify results), API Clients (HTTP calls), and Report Listeners (result capture) into distinct classes. This way, when the UI changes you only update Page Objects; when API contracts change you only update API Clients. Your tests themselves stay stable.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: SRP vs Cohesion — what's the difference?</span><span class="qa-tag">Advanced</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Cohesion is the broader software engineering concept — how closely related and focused the responsibilities of a module are. SRP is Robert C. Martin's object-oriented formulation of cohesion applied specifically to classes: one reason to change. High cohesion is the goal; SRP is the principle that guides you to achieve it in OOP. A class that follows SRP is highly cohesive by definition.</div></div>
+
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: Write a SRP-compliant Java class for order processing</span><span class="qa-tag">Coding</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a"><pre style="margin-top:8px">
+// Each class: ONE responsibility
+class OrderValidator {
+    boolean isValid(Order o) { return o.getItems() != null && !o.getItems().isEmpty(); }
+}
+class OrderRepository {
+    void save(Order o) { /* persist to DB */ }
+    Order findById(String id) { /* load from DB */ return null; }
+}
+class OrderNotifier {
+    void notifyCustomer(Order o) { /* send email/SMS */ }
+}
+class OrderService {
+    private final OrderValidator validator;
+    private final OrderRepository repo;
+    private final OrderNotifier notifier;
+    OrderService(OrderValidator v, OrderRepository r, OrderNotifier n) {
+        this.validator = v; this.repo = r; this.notifier = n;
+    }
+    void placeOrder(Order o) {
+        if (validator.isValid(o)) { repo.save(o); notifier.notifyCustomer(o); }
+    }
+}
+</pre></div></div>
+`
+    }
+  ]
+},
+
+/* ─────────────────────────────────────────────────────────────
+   S3: OPEN/CLOSED PRINCIPLE
+──────────────────────────────────────────────────────────────*/
+{
+  phase:0,
+  title:"O — Open/Closed Principle",
+  subtitle:"Open for extension, closed for modification",
+  sections:[
+    {icon:"📖",color:"#E3F2FD",title:"Overview — OCP Deep Dive",content:`
+<p style="margin-bottom:12px">OCP states: <em>"Software entities should be open for extension but closed for modification."</em> Once code is tested and deployed, adding features should mean writing new code, not changing existing code.</p>
+
+<div class="highlight">💡 <strong>Key Insight:</strong> Use <strong>abstraction</strong> (interfaces/abstract classes) to define behavior, and <strong>concrete subclasses</strong> to extend it. The existing code stays untouched.</div>
+
+<div class="diag-wrap">
+<svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>OCP Extension Without Modification</title>
+<defs><marker id="arr5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Interface -->
+<rect x="240" y="20" width="200" height="56" rx="10" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="1"/>
+<text x="340" y="44" text-anchor="middle" fill="#0c3d7a" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">«interface» Discount</text>
+<text x="340" y="64" text-anchor="middle" fill="#1D5FA5" font-size="11" font-family="Anthropic Sans,sans-serif">double apply(double price)</text>
+
+<!-- Existing implementations -->
+<rect x="40" y="140" width="160" height="56" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="120" y="164" text-anchor="middle" fill="#2d5c3a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">NoDiscount</text>
+<text x="120" y="182" text-anchor="middle" fill="#4A7C59" font-size="11" font-family="Anthropic Sans,sans-serif">returns price as-is</text>
+
+<rect x="240" y="140" width="160" height="56" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="320" y="164" text-anchor="middle" fill="#2d5c3a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">SeasonalDiscount</text>
+<text x="320" y="182" text-anchor="middle" fill="#4A7C59" font-size="11" font-family="Anthropic Sans,sans-serif">price * 0.9</text>
+
+<!-- NEW extension — added without modifying existing code -->
+<rect x="440" y="140" width="200" height="56" rx="8" fill="#FFF8E1" stroke="#B05A1A" stroke-width="1.5" stroke-dasharray="5 2"/>
+<text x="540" y="157" text-anchor="middle" fill="#7a3d0c" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">🆕 BlackFridayDiscount</text>
+<text x="540" y="173" text-anchor="middle" fill="#B05A1A" font-size="11" font-family="Anthropic Sans,sans-serif">price * 0.5</text>
+<text x="540" y="188" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">NEW class, zero edits to existing</text>
+
+<!-- Arrows from interface -->
+<line x1="290" y1="76" x2="150" y2="140" stroke="#1D5FA5" stroke-width="0.5" marker-end="url(#arr5)"/>
+<line x1="340" y1="76" x2="320" y2="140" stroke="#1D5FA5" stroke-width="0.5" marker-end="url(#arr5)"/>
+<line x1="390" y1="76" x2="500" y2="140" stroke="#B05A1A" stroke-width="0.5" stroke-dasharray="4 2" marker-end="url(#arr5)"/>
+
+<!-- OrderProcessor depends on interface -->
+<rect x="215" y="250" width="250" height="50" rx="8" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="0.5"/>
+<text x="340" y="271" text-anchor="middle" fill="#4a1775" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">OrderProcessor</text>
+<text x="340" y="289" text-anchor="middle" fill="#7B3FA0" font-size="11" font-family="Anthropic Sans,sans-serif">uses Discount — never modified</text>
+<line x1="340" y1="196" x2="340" y2="250" stroke="#7B3FA0" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr5)"/>
+</svg>
+</div>
+
+<pre>
+// ✅ OCP Applied — Strategy Pattern
+interface Discount {
+    double apply(double price);
+}
+class NoDiscount       implements Discount { public double apply(double p) { return p; } }
+class SeasonalDiscount implements Discount { public double apply(double p) { return p * 0.9; } }
+// 🆕 New feature — zero modification to existing code:
+class BlackFridayDiscount implements Discount { public double apply(double p) { return p * 0.5; } }
+
+class OrderProcessor {
+    private final Discount discount;
+    OrderProcessor(Discount d) { this.discount = d; }
+    double process(double price) { return discount.apply(price); }
+}
+</pre>
+`},
+    {icon:"🎤",color:"#FFF3E0",title:"Interview One-Liners — OCP",content:`
+<div class="oneliner"><strong>"OCP means I can add new discount types, payment methods, or export formats without touching code that already works and is already tested."</strong></div>
+<div class="oneliner"><strong>"OCP is achieved through interfaces and polymorphism — you extend behavior by writing new implementations, not by editing existing ones."</strong></div>
+<div class="oneliner"><strong>"The Strategy Pattern is OCP in code — swap algorithms at runtime without modifying the context class."</strong></div>
+<div class="oneliner"><strong>"In automation, OCP means adding a new browser or mobile driver never touches the test logic — just add a new driver factory."</strong></div>
+<div class="oneliner"><strong>"If every new feature requires editing the same giant if-else block, that's an OCP violation — refactor using polymorphism."</strong></div>
+<div class="oneliner"><strong>"OCP protects stable, regression-tested code from being destabilized by new requirements."</strong></div>
+`},
+    {icon:"✅",color:"#E8F5E9",title:"Best Practices — OCP",content:`
+<ul class="checklist">
+  <li><div class="check-icon">✓</div><div>Replace long <code>if-else</code> or <code>switch</code> chains with polymorphism and interface implementations</div></li>
+  <li><div class="check-icon">✓</div><div>Use the Strategy, Template Method, Decorator, or Factory patterns to achieve OCP</div></li>
+  <li><div class="check-icon">✓</div><div>In Spring: use <code>@Bean</code> configuration to swap implementations without modifying service code</div></li>
+  <li><div class="check-icon">✓</div><div>When adding a feature, ask: "Am I editing an existing, tested class?" If yes, consider if an abstraction can help</div></li>
+  <li><div class="check-icon">✓</div><div>Don't over-apply OCP to everything — apply it to stable, frequently-extended parts of the codebase (payment, notifications, export formats)</div></li>
+</ul>
+`},
+    {icon:"🎯",color:"#F3E5F5",title:"Interview Q&A — OCP",content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: What design pattern best demonstrates OCP?</span><span class="qa-tag">Pattern</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">The Strategy Pattern is the most direct OCP implementation. You define a strategy interface (e.g., PaymentStrategy), implement it for each method (CreditCardPayment, UpiPayment, NetBanking), and inject the strategy into a context class (PaymentProcessor). Adding a new payment method means creating a new class only — the PaymentProcessor never changes. This is the textbook "closed for modification, open for extension" scenario.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: How do you handle OCP with enums in Java?</span><span class="qa-tag">Intermediate</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Enums in Java can have abstract methods, making each constant responsible for its own behavior. Instead of switch(type) { case CREDIT: ...; case UPI: ... }, you define enum PaymentType { CREDIT { double fee(double a){return a*0.02;} }, UPI { double fee(double a){return 0;} }; abstract double fee(double a); }. Adding a new type = adding a new enum constant, not modifying the switch. This is a clean OCP pattern within enums.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: Where does OCP commonly fail in real projects?</span><span class="qa-tag">Real World</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">In reports, exports, and notification handlers. Teams start with one type (PDF export) in one class. Months later they add Excel, then CSV — each time they edit the same ExportService with more if-else branches. Eventually the class becomes untestable. The fix: extract an Exportable interface, move each format to its own class, and use a factory to pick the right one. This preserves all existing export tests while adding new ones cleanly.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: What is the "fragile base class" problem and how does OCP address it?</span><span class="qa-tag">Advanced</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">The fragile base class problem is when modifying a base class breaks subclasses in unexpected ways. OCP addresses it by favoring extension over modification — use composition or interfaces instead of deep inheritance hierarchies. If you never modify the base class after it's tested, subclasses are never at risk. This is why "favor composition over inheritance" and OCP are closely related best practices.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: How does OCP apply to test automation?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">In a Selenium framework: define a WebDriverFactory interface. Add ChromeDriver, FirefoxDriver, SafariDriver implementations without modifying existing tests. Tests depend on the interface, so adding new browsers never breaks existing tests. Similarly for reporters: add an AllureReporter or ExtentReporter without touching the test runner. Each new capability = a new class, not a modification to existing code.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: Is it ever correct to modify an existing class?</span><span class="qa-tag">Nuance</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Yes — OCP is a guideline, not a law. Fix bugs: you must modify. Change fundamental behavior: you modify. Refactor internals without changing public API: that's acceptable too. OCP specifically applies to adding new behavior or features — avoid touching stable, tested, deployed code for that. As Uncle Bob says, the goal is to reduce the frequency of modifications, not eliminate them entirely.</div></div>
+`}
+  ]
+},
+
+/* ─────────────────────────────────────────────────────────────
+   S4: LISKOV SUBSTITUTION PRINCIPLE
+──────────────────────────────────────────────────────────────*/
+{
+  phase:1,
+  title:"L — Liskov Substitution Principle",
+  subtitle:"If S is a subtype of T, objects of T may be replaced by objects of S without altering correctness",
+  sections:[
+    {icon:"📖",color:"#F3E5F5",title:"Overview — LSP Deep Dive",content:`
+<p style="margin-bottom:12px">LSP (by Barbara Liskov, 1987) is the most subtle SOLID principle. It says: <em>a subclass should be substitutable for its parent class without the program breaking or changing behavior unexpectedly.</em></p>
+
+<div class="highlight">⚠️ <strong>Famous Violation:</strong> Square extends Rectangle. A Square IS-A Rectangle mathematically, but NOT behaviorally in code — setting height on a Square silently changes width too, violating the Rectangle contract.</div>
+
+<div class="diag-wrap">
+<svg viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>LSP Violation and Correct Design</title>
+<defs><marker id="arr6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- BAD -->
+<text x="150" y="20" text-anchor="middle" fill="#C0392B" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">❌ LSP Violation</text>
+<rect x="60" y="32" width="180" height="70" rx="8" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="150" y="55" text-anchor="middle" fill="#0c3d7a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">Rectangle</text>
+<text x="150" y="73" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">setWidth(w), setHeight(h)</text>
+<text x="150" y="90" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">area() = w × h</text>
+
+<rect x="60" y="155" width="180" height="80" rx="8" fill="#FCEAE8" stroke="#C0392B" stroke-width="1"/>
+<text x="150" y="178" text-anchor="middle" fill="#922b21" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">Square extends Rectangle</text>
+<text x="150" y="196" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">setWidth also sets height!</text>
+<text x="150" y="213" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">setHeight also sets width!</text>
+<text x="150" y="228" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">BREAKS Rectangle contract</text>
+<line x1="150" y1="102" x2="150" y2="155" stroke="#C0392B" stroke-width="0.5" marker-end="url(#arr6)"/>
+
+<text x="150" y="266" text-anchor="middle" fill="#C0392B" font-size="11" font-family="Anthropic Sans,sans-serif">r = new Square()</text>
+<text x="150" y="282" text-anchor="middle" fill="#C0392B" font-size="11" font-family="Anthropic Sans,sans-serif">r.setWidth(5); r.setHeight(4)</text>
+<text x="150" y="298" text-anchor="middle" fill="#C0392B" font-size="11" font-family="Anthropic Sans,sans-serif">area() = 16, expected 20 ❌</text>
+
+<!-- GOOD -->
+<text x="510" y="20" text-anchor="middle" fill="#2d7a2d" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">✅ LSP Correct</text>
+<rect x="410" y="32" width="200" height="56" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="1"/>
+<text x="510" y="55" text-anchor="middle" fill="#2d5c3a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">«interface» Shape</text>
+<text x="510" y="73" text-anchor="middle" fill="#4A7C59" font-size="11" font-family="Anthropic Sans,sans-serif">double area()</text>
+
+<rect x="370" y="155" width="140" height="56" rx="8" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="440" y="178" text-anchor="middle" fill="#0c3d7a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">Rectangle</text>
+<text x="440" y="196" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">area()=w×h ✓</text>
+
+<rect x="535" y="155" width="100" height="56" rx="8" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="0.5"/>
+<text x="585" y="178" text-anchor="middle" fill="#4a1775" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">Square</text>
+<text x="585" y="196" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">area()=s² ✓</text>
+
+<line x1="480" y1="88" x2="455" y2="155" stroke="#4A7C59" stroke-width="0.5" marker-end="url(#arr6)"/>
+<line x1="540" y1="88" x2="570" y2="155" stroke="#7B3FA0" stroke-width="0.5" marker-end="url(#arr6)"/>
+
+<text x="510" y="255" text-anchor="middle" fill="#2d7a2d" font-size="11" font-family="Anthropic Sans,sans-serif">Both independently satisfy</text>
+<text x="510" y="271" text-anchor="middle" fill="#2d7a2d" font-size="11" font-family="Anthropic Sans,sans-serif">Shape contract ✓</text>
+</svg>
+</div>
+
+<pre>
+// ❌ LSP Violation
+class Rectangle {
+    protected int width, height;
+    void setWidth(int w) { this.width = w; }
+    void setHeight(int h) { this.height = h; }
+    int area() { return width * height; }
+}
+class Square extends Rectangle {
+    void setWidth(int w) { this.width = this.height = w; }  // breaks Rectangle contract!
+    void setHeight(int h) { this.width = this.height = h; } // breaks Rectangle contract!
+}
+
+// ✅ LSP Fix — use a common abstraction
+interface Shape { double area(); }
+class Rectangle implements Shape {
+    private final double w, h;
+    Rectangle(double w, double h) { this.w=w; this.h=h; }
+    public double area() { return w * h; }
+}
+class Square implements Shape {
+    private final double side;
+    Square(double s) { this.side = s; }
+    public double area() { return side * side; }
+}
+</pre>
+`},
+    {icon:"🎤",color:"#FFF3E0",title:"Interview One-Liners — LSP",content:`
+<div class="oneliner"><strong>"LSP means if I replace a parent object with a child object, the program must behave the same — no surprises."</strong></div>
+<div class="oneliner"><strong>"The classic LSP violation: Square extends Rectangle — mathematically correct, but behaviorally it breaks the Rectangle contract."</strong></div>
+<div class="oneliner"><strong>"LSP violations cause instanceof checks in code — a sign that polymorphism is broken and callers can't trust the parent contract."</strong></div>
+<div class="oneliner"><strong>"LSP tells us IS-A in math doesn't mean IS-A in code — use interfaces over deep inheritance when behavior diverges."</strong></div>
+<div class="oneliner"><strong>"In test automation, LSP means a MockHttpClient must behave like a real HttpClient — same inputs, same contract, different implementation."</strong></div>
+<div class="oneliner"><strong>"A method that throws UnsupportedOperationException for an inherited behavior is the loudest LSP violation you'll encounter."</strong></div>
+`},
+    {icon:"✅",color:"#E8F5E9",title:"Best Practices — LSP",content:`
+<ul class="checklist">
+  <li><div class="check-icon">✓</div><div>Never strengthen preconditions in a subclass — if parent accepts null, child must too</div></li>
+  <li><div class="check-icon">✓</div><div>Never weaken postconditions — if parent guarantees a non-null return, child must also guarantee it</div></li>
+  <li><div class="check-icon">✓</div><div>Avoid <code>UnsupportedOperationException</code> in overrides — it's a sign the subtype breaks the parent contract</div></li>
+  <li><div class="check-icon">✓</div><div>Use <code>instanceof</code> checks as a code smell detector — they often signal an LSP violation in the hierarchy</div></li>
+  <li><div class="check-icon">✓</div><div>Prefer interface implementation over class extension when behaviors differ significantly</div></li>
+</ul>
+`},
+    {icon:"🎯",color:"#F3E5F5",title:"Interview Q&A — LSP",content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: What is the Rectangle-Square problem in LSP?</span><span class="qa-tag">Classic</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">A Square is mathematically a special Rectangle but behaviorally incompatible. In Rectangle, setWidth and setHeight are independent. In Square, they're coupled (both dimensions must be equal). If client code uses Rectangle and receives a Square, setting width=5 then height=4 yields area 16, not 20. This surprises the caller. The fix: both implement a Shape interface independently rather than Square extending Rectangle.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: How do you detect LSP violations in code reviews?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Red flags: (1) Overridden methods that throw UnsupportedOperationException; (2) instanceof checks before calling a method; (3) Subclasses that ignore or nullify parent behavior; (4) Weaker invariants in child classes; (5) Unit tests that pass for parent but fail for child using the same test logic. If you have a test suite for the parent type and subclass instances fail those tests, LSP is violated.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: How does Java's Collections API respect LSP?</span><span class="qa-tag">Java API</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">List, Set, and Map interfaces define contracts. Any implementation (ArrayList, LinkedList, TreeSet, HashMap) can be used wherever the interface is expected. A method accepting List&lt;T&gt; works with ArrayList or LinkedList without knowing which it is. The notable violation is Collections.unmodifiableList — calling add() throws UnsupportedOperationException, which breaks the List contract. Java acknowledges this trade-off as a design compromise for immutability.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: What is Liskov's formal definition and what does it mean practically?</span><span class="qa-tag">Academic</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Liskov's formal definition: "If φ(x) is a provable property of objects x of type T, then φ(y) should be true for objects y of type S where S is a subtype of T." Practically: any test or assertion that holds for the parent type must also hold for the subtype. It's a behavioral contract, not just a structural one. Type hierarchies must preserve all invariants, preconditions, postconditions, and exception types of the parent.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: How do mocks/stubs relate to LSP in test automation?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Mocks and stubs ARE LSP in action. A MockPaymentGateway must honor the same contract as RealPaymentGateway — same method signatures, same return types, same exception contract. If the mock returns null where the real one always returns non-null, your tests pass but production breaks. Mockito's when().thenReturn() chaining helps, but the test author must consciously match the real contract when setting up mock behavior.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: What's the "Liskov test" you can write in JUnit?</span><span class="qa-tag">Coding</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a"><pre style="margin-top:8px">
+// Liskov Test: same test suite runs for parent and all subtypes
+abstract class ShapeTest {
+    abstract Shape createShape();
+    @Test void areaMustBePositive() {
+        assertTrue(createShape().area() > 0);
+    }
+}
+class RectangleTest extends ShapeTest {
+    Shape createShape() { return new Rectangle(3, 4); }
+}
+class SquareTest extends ShapeTest {
+    Shape createShape() { return new Square(5); }
+}
+// If any subtype test fails, LSP is violated
+</pre></div></div>
+`}
+  ]
+},
+
+/* ─────────────────────────────────────────────────────────────
+   S5: INTERFACE SEGREGATION PRINCIPLE
+──────────────────────────────────────────────────────────────*/
+{
+  phase:1,
+  title:"I — Interface Segregation Principle",
+  subtitle:"No client should be forced to implement methods it doesn't use",
+  sections:[
+    {icon:"📖",color:"#FFF8E1",title:"Overview — ISP Deep Dive",content:`
+<p style="margin-bottom:12px">ISP: <em>"Clients should not be forced to depend on interfaces they do not use."</em> A fat interface forces classes to implement irrelevant methods, usually with empty bodies or exceptions — a sure sign of ISP violation.</p>
+
+<div class="diag-wrap">
+<svg viewBox="0 0 680 310" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>ISP Fat Interface vs Segregated Interfaces</title>
+<defs><marker id="arr7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- BAD: Fat interface -->
+<text x="150" y="20" text-anchor="middle" fill="#C0392B" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">❌ Fat Interface</text>
+<rect x="30" y="30" width="240" height="130" rx="8" fill="#FCEAE8" stroke="#C0392B" stroke-width="1"/>
+<text x="150" y="52" text-anchor="middle" fill="#922b21" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">Worker (fat interface)</text>
+<text x="150" y="70" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">work()</text>
+<text x="150" y="86" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">eat()</text>
+<text x="150" y="102" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">sleep()</text>
+<text x="150" y="118" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">charge() ← robot can't do this!</text>
+<text x="150" y="134" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">diagnose() ← only for medical workers</text>
+<text x="150" y="150" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">prescribe() ← only for doctors</text>
+
+<rect x="30" y="200" width="110" height="45" rx="6" fill="#FCEAE8" stroke="#C0392B" stroke-width="0.5"/>
+<text x="85" y="220" text-anchor="middle" fill="#922b21" font-size="10" font-weight="500" font-family="Anthropic Sans,sans-serif">RobotWorker</text>
+<text x="85" y="236" text-anchor="middle" fill="#C0392B" font-size="9" font-family="Anthropic Sans,sans-serif">eat()=❌throw</text>
+
+<rect x="160" y="200" width="110" height="45" rx="6" fill="#FCEAE8" stroke="#C0392B" stroke-width="0.5"/>
+<text x="215" y="220" text-anchor="middle" fill="#922b21" font-size="10" font-weight="500" font-family="Anthropic Sans,sans-serif">NurseWorker</text>
+<text x="215" y="236" text-anchor="middle" fill="#C0392B" font-size="9" font-family="Anthropic Sans,sans-serif">prescribe()=❌throw</text>
+
+<line x1="100" y1="160" x2="88" y2="200" stroke="#C0392B" stroke-width="0.5" marker-end="url(#arr7)"/>
+<line x1="170" y1="160" x2="195" y2="200" stroke="#C0392B" stroke-width="0.5" marker-end="url(#arr7)"/>
+
+<!-- GOOD: Segregated -->
+<text x="520" y="20" text-anchor="middle" fill="#2d7a2d" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">✅ Segregated Interfaces</text>
+<rect x="370" y="30" width="120" height="56" rx="6" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="430" y="52" text-anchor="middle" fill="#2d5c3a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">Workable</text>
+<text x="430" y="68" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">work()</text>
+
+<rect x="510" y="30" width="140" height="56" rx="6" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="580" y="52" text-anchor="middle" fill="#0c3d7a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">Eatable</text>
+<text x="580" y="68" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">eat(), sleep()</text>
+
+<rect x="370" y="120" width="120" height="56" rx="6" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="0.5"/>
+<text x="430" y="142" text-anchor="middle" fill="#4a1775" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">Diagnosable</text>
+<text x="430" y="158" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">diagnose()</text>
+
+<rect x="510" y="120" width="140" height="56" rx="6" fill="#FFF8E1" stroke="#B05A1A" stroke-width="0.5"/>
+<text x="580" y="142" text-anchor="middle" fill="#7a3d0c" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">Prescribable</text>
+<text x="580" y="158" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">prescribe()</text>
+
+<!-- RobotWorker: only Workable -->
+<rect x="360" y="220" width="145" height="56" rx="6" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="432" y="243" text-anchor="middle" fill="#2d5c3a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">RobotWorker</text>
+<text x="432" y="261" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">implements Workable ✓</text>
+<line x1="413" y1="86" x2="410" y2="220" stroke="#4A7C59" stroke-width="0.5" stroke-dasharray="4 2" marker-end="url(#arr7)"/>
+
+<!-- DoctorWorker: all four -->
+<rect x="525" y="220" width="135" height="56" rx="6" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="592" y="243" text-anchor="middle" fill="#0c3d7a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">DoctorWorker</text>
+<text x="592" y="261" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">all 4 interfaces ✓</text>
+<line x1="575" y1="86" x2="575" y2="220" stroke="#1D5FA5" stroke-width="0.5" stroke-dasharray="4 2" marker-end="url(#arr7)"/>
+</svg>
+</div>
+
+<pre>
+// ✅ ISP Applied
+interface Workable    { void work(); }
+interface Eatable     { void eat(); void sleep(); }
+interface Diagnosable { void diagnose(); }
+interface Prescribable{ void prescribe(); }
+
+class RobotWorker implements Workable {
+    public void work() { /* only what robots do */ }
+}
+class DoctorWorker implements Workable, Eatable, Diagnosable, Prescribable {
+    public void work() { /* sees patients */ }
+    public void eat() { /* takes lunch */ }
+    public void sleep() { /* rests */ }
+    public void diagnose() { /* diagnoses */ }
+    public void prescribe() { /* prescribes */ }
+}
+</pre>
+`},
+    {icon:"🎤",color:"#FFF3E0",title:"Interview One-Liners — ISP",content:`
+<div class="oneliner"><strong>"ISP says: don't force a class to implement methods it will never use — split fat interfaces into focused, role-specific ones."</strong></div>
+<div class="oneliner"><strong>"The telltale sign of ISP violation: empty method bodies or UnsupportedOperationException in interface implementations."</strong></div>
+<div class="oneliner"><strong>"ISP enables the principle of least knowledge — a class only knows about the interface it needs, nothing more."</strong></div>
+<div class="oneliner"><strong>"In SDET work, ISP means your test utilities expose only what tests need — don't expose DB connections in a UI test helper interface."</strong></div>
+<div class="oneliner"><strong>"Java 8 default methods partially mitigate ISP issues — add new methods without breaking existing implementations."</strong></div>
+<div class="oneliner"><strong>"Role interfaces are the ISP pattern — each interface represents a role a class can play, not a complete specification."</strong></div>
+`},
+    {icon:"✅",color:"#E8F5E9",title:"Best Practices — ISP",content:`
+<ul class="checklist">
+  <li><div class="check-icon">✓</div><div>Aim for interfaces with 1–4 methods max — if it's getting long, split by client usage patterns</div></li>
+  <li><div class="check-icon">✓</div><div>Use Java 8 <code>default</code> methods sparingly for optional behaviors to avoid breaking existing implementations</div></li>
+  <li><div class="check-icon">✓</div><div>Name interfaces after the role they represent: <code>Readable</code>, <code>Writable</code>, <code>Printable</code> — not <code>Document</code></div></li>
+  <li><div class="check-icon">✓</div><div>In test frameworks: separate <code>DataProvider</code>, <code>HttpExecutor</code>, <code>Asserter</code> — don't bundle them in one <code>TestHelper</code></div></li>
+  <li><div class="check-icon">✓</div><div>Review mock setups: if your mock needs 10 stubbed methods but only 2 are called, that's an ISP smell</div></li>
+</ul>
+`},
+    {icon:"🎯",color:"#F3E5F5",title:"Interview Q&A — ISP",content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: How does ISP differ from SRP?</span><span class="qa-tag">Comparison</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">SRP applies to classes — a class should have one reason to change (one responsibility). ISP applies to interfaces — an interface should not force implementing classes to depend on methods they don't use. They're complementary: SRP keeps classes focused; ISP keeps interfaces focused. A class following SRP naturally leads to smaller, more cohesive interfaces, supporting ISP automatically. You apply SRP while designing classes; ISP while designing interfaces.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: How do Java 8 default methods interact with ISP?</span><span class="qa-tag">Java 8</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Default methods let you add new behavior to interfaces without forcing all implementations to change. This helps backward compatibility but can undermine ISP if overused — you might add methods that some implementors don't need. Best practice: use default methods for optional or utility behavior that makes sense for most implementors. Don't use them to add business logic to interfaces. Functional interfaces (one abstract method) are the extreme ISP case — one purpose, one method.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: Give an ISP example from Java standard library</span><span class="qa-tag">Java API</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Java's IO library is a perfect ISP example. Instead of one huge FileHandler interface, you have Readable (read), Writable (write), Closeable (close), Flushable (flush). A read-only file implements only Readable + Closeable. A PrintStream implements Writable + Flushable + Closeable. No class is forced to implement methods irrelevant to its role. Java Streams also follow ISP with separate AutoCloseable and Spliterator roles.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: How would you refactor a fat interface in a legacy codebase?</span><span class="qa-tag">Refactoring</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Step 1: Identify all method groups in the fat interface based on which clients use them. Step 2: Create smaller focused interfaces for each group. Step 3: Have the fat interface extend all the smaller ones (backward compatible). Step 4: Gradually migrate clients to use the smaller interfaces. Step 5: Eventually deprecate the fat interface. This incremental approach lets you apply ISP to legacy code without a big-bang rewrite.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: How does ISP apply to REST API client interfaces in automation?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">In a test framework, split your API client interfaces by domain: OrderApiClient (CRUD for orders), UserApiClient (auth, profile), ProductApiClient (catalog). Don't create one GodApiClient with 50 methods. Test classes only depend on the interface they need — OrderTests use OrderApiClient only. This means mocking is easier (mock 3 methods, not 50), tests are faster, and adding new API domains doesn't touch existing test clients.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: What is the "role interface" pattern and how does it relate to ISP?</span><span class="qa-tag">Pattern</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">The role interface pattern (coined by Martin Fowler) directly implements ISP. Instead of header interfaces (interface matching all public methods of a class), you define role interfaces — small interfaces representing a specific role the object plays for a particular client. Example: Customer object plays Borrower role for Library, Payer role for Billing, and Receiver role for Notifications. Each client only sees the relevant role interface. This is exactly what ISP recommends — interfaces defined from the client's perspective.</div></div>
+`}
+  ]
+},
+
+/* ─────────────────────────────────────────────────────────────
+   S6: DEPENDENCY INVERSION PRINCIPLE
+──────────────────────────────────────────────────────────────*/
+{
+  phase:1,
+  title:"D — Dependency Inversion Principle",
+  subtitle:"High-level modules should not depend on low-level modules. Both should depend on abstractions.",
+  sections:[
+    {icon:"📖",color:"#FCEAE8",title:"Overview — DIP Deep Dive",content:`
+<p style="margin-bottom:12px">DIP has two rules: (1) High-level modules should not import low-level modules directly — both depend on abstractions. (2) Abstractions should not depend on details — details depend on abstractions.</p>
+
+<div class="tip">🎯 DIP is what enables <strong>Dependency Injection</strong> (Spring's core feature), <strong>mocking in unit tests</strong>, and <strong>swapping implementations</strong> without recompiling business logic.</div>
+
+<div class="diag-wrap">
+<svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>DIP Before and After</title>
+<defs><marker id="arr8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- BEFORE -->
+<text x="140" y="20" text-anchor="middle" fill="#C0392B" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">❌ Before DIP</text>
+<rect x="40" y="32" width="200" height="56" rx="8" fill="#FCEAE8" stroke="#C0392B" stroke-width="1"/>
+<text x="140" y="55" text-anchor="middle" fill="#922b21" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">OrderService (high-level)</text>
+<text x="140" y="73" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">new MySQLOrderRepo() ← tightly coupled</text>
+<rect x="40" y="145" width="200" height="50" rx="8" fill="#F8D7DA" stroke="#C0392B" stroke-width="0.5"/>
+<text x="140" y="165" text-anchor="middle" fill="#922b21" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">MySQLOrderRepo</text>
+<text x="140" y="181" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">(low-level, concrete)</text>
+<line x1="140" y1="88" x2="140" y2="145" stroke="#C0392B" stroke-width="1.5" marker-end="url(#arr8)"/>
+<text x="175" y="120" text-anchor="start" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">direct dependency!</text>
+
+<text x="140" y="230" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">Cannot mock in tests</text>
+<text x="140" y="246" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">Cannot swap DB without editing OrderService</text>
+
+<!-- AFTER -->
+<text x="520" y="20" text-anchor="middle" fill="#2d7a2d" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">✅ After DIP</text>
+<rect x="420" y="32" width="220" height="56" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="1"/>
+<text x="530" y="55" text-anchor="middle" fill="#2d5c3a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">OrderService (high-level)</text>
+<text x="530" y="73" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">uses IOrderRepository ← abstraction</text>
+
+<rect x="420" y="140" width="220" height="42" rx="8" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="1"/>
+<text x="530" y="160" text-anchor="middle" fill="#0c3d7a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">«interface» IOrderRepo</text>
+<text x="530" y="176" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">save(), findById()</text>
+<line x1="530" y1="88" x2="530" y2="140" stroke="#4A7C59" stroke-width="0.5" stroke-dasharray="4 2" marker-end="url(#arr8)"/>
+
+<rect x="360" y="230" width="140" height="45" rx="6" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="430" y="250" text-anchor="middle" fill="#2d5c3a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">MySQLOrderRepo</text>
+<text x="430" y="266" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">implements IOrderRepo</text>
+
+<rect x="520" y="230" width="140" height="45" rx="6" fill="#FFF8E1" stroke="#B05A1A" stroke-width="0.5"/>
+<text x="590" y="250" text-anchor="middle" fill="#7a3d0c" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">MockOrderRepo</text>
+<text x="590" y="266" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">for unit tests ✓</text>
+
+<line x1="490" y1="182" x2="445" y2="230" stroke="#4A7C59" stroke-width="0.5" marker-end="url(#arr8)"/>
+<line x1="570" y1="182" x2="575" y2="230" stroke="#B05A1A" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr8)"/>
+</svg>
+</div>
+
+<pre>
+// ✅ DIP Applied — abstraction layer
+
+interface IOrderRepository {
+    void save(Order o);
+    Order findById(String id);
+}
+
+class OrderService {  // HIGH-LEVEL: doesn't know about MySQL
+    private final IOrderRepository repo;
+    OrderService(IOrderRepository repo) { this.repo = repo; } // injected!
+    void placeOrder(Order o) { repo.save(o); }
+}
+
+class MySQLOrderRepository implements IOrderRepository { /* DB details */ }
+class MongoOrderRepository implements IOrderRepository { /* Mongo details */ }
+
+// In tests — inject a mock:
+OrderService svc = new OrderService(mock(IOrderRepository.class));
+</pre>
+`},
+    {icon:"🎤",color:"#FFF3E0",title:"Interview One-Liners — DIP",content:`
+<div class="oneliner"><strong>"DIP says high-level business logic should not know or care about low-level implementation details like which database or file system is used."</strong></div>
+<div class="oneliner"><strong>"Dependency Injection is DIP in practice — Spring injects the right implementation at runtime so the high-level class stays pure."</strong></div>
+<div class="oneliner"><strong>"DIP is what makes unit testing possible — inject a mock dependency instead of the real one, test the logic in isolation."</strong></div>
+<div class="oneliner"><strong>"Without DIP, your OrderService is married to MySQL — migrate to PostgreSQL and you have to rewrite your business logic."</strong></div>
+<div class="oneliner"><strong>"The Hollywood Principle — 'Don't call us, we'll call you' — is DIP in human language: the framework injects dependencies, not you."</strong></div>
+<div class="oneliner"><strong>"DIP inverts the traditional dependency flow: instead of high-level depending on low-level, both depend on a shared abstraction."</strong></div>
+`},
+    {icon:"✅",color:"#E8F5E9",title:"Best Practices — DIP",content:`
+<ul class="checklist">
+  <li><div class="check-icon">✓</div><div>Never use <code>new ConcreteClass()</code> inside a high-level class — use constructor injection with an interface type</div></li>
+  <li><div class="check-icon">✓</div><div>In Spring: use <code>@Autowired</code> on constructors (preferred), not fields — makes dependencies explicit and testable</div></li>
+  <li><div class="check-icon">✓</div><div>Define interfaces in the high-level module package — not in the low-level module package</div></li>
+  <li><div class="check-icon">✓</div><div>For test automation: inject <code>WebDriver</code>, <code>HttpClient</code>, <code>DataProvider</code> via constructor — never instantiate in test methods</div></li>
+  <li><div class="check-icon">✓</div><div>Use IoC containers (Spring, Guice) for large projects — manual DI gets unwieldy beyond ~10 dependencies</div></li>
+</ul>
+`},
+    {icon:"🎯",color:"#F3E5F5",title:"Interview Q&A — DIP",content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: What's the difference between DIP and Dependency Injection?</span><span class="qa-tag">Core</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">DIP is a design principle — depend on abstractions. Dependency Injection (DI) is a technique — provide dependencies from the outside rather than creating them internally. DI is one way to implement DIP, but not the only way. Service locators, factory methods, and abstract factories also implement DIP. Spring's IoC container automates DI. You can have DI without DIP (inject a concrete class, not an interface) — that's incomplete. For full DIP, always inject via interface types.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: How does Spring Boot enforce DIP through @Autowired?</span><span class="qa-tag">Spring</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Spring's ApplicationContext manages bean creation and wiring. When OrderService declares a constructor parameter of type IOrderRepository, Spring scans for a bean implementing that interface and injects it automatically. This means OrderService never calls new — it declares what it needs (abstraction), and Spring provides what exists (implementation). Switching from MySQLOrderRepository to MongoOrderRepository only requires changing the @Bean configuration — OrderService code stays untouched. This is DIP fully automated.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: Can you show DIP with a Mockito example in tests?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a"><pre style="margin-top:8px">
+@ExtendWith(MockitoExtension.class)
+class OrderServiceTest {
+    @Mock IOrderRepository mockRepo; // DIP: inject abstraction
+    @InjectMocks OrderService orderService;
+
+    @Test
+    void shouldSaveOrder() {
+        Order order = new Order("o1", List.of("item1"));
+        orderService.placeOrder(order);
+        verify(mockRepo, times(1)).save(order);
+    }
+}
+// No DB, no network, pure logic test — enabled by DIP
+</pre></div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: What is the "Stable Dependencies Principle" and how does it relate to DIP?</span><span class="qa-tag">Advanced</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">The Stable Dependencies Principle (by Uncle Bob) says depend in the direction of stability — stable, abstract packages. DIP directs you toward the same goal at the class level: depend on abstractions (which are more stable than concretions). A concrete MySQL implementation changes more frequently than the IRepository interface. DIP makes your high-level module depend on the stable abstraction, protecting it from volatility in the concrete implementation. Both principles defend against change propagation.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: Constructor vs field vs setter injection — which is best?</span><span class="qa-tag">Spring</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Constructor injection is best: (1) Makes dependencies explicit — you see all dependencies at construction time; (2) Enables immutability — final fields; (3) Forces you to notice if a class has too many dependencies (>3–4 constructor parameters = SRP smell); (4) Mockito's @InjectMocks works cleanly with it. Field injection (@Autowired on fields) is convenient but hides dependencies, makes testing harder without Spring context, and couples to the framework. Setter injection is useful for optional dependencies only.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: How does DIP help in multi-tier enterprise applications?</span><span class="qa-tag">Architecture</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">In a typical Spring Boot layered app: Web layer depends on Service interfaces, Service layer depends on Repository interfaces, Repository interfaces are implemented by JPA classes. This way: (1) You can test web controllers without a real service; (2) You can test services without a real DB; (3) Swapping JPA for JDBC or MongoDB only touches the repository implementations. The entire application domain logic is insulated from infrastructure. This is hexagonal/clean architecture at its core — made possible by DIP.</div></div>
+`}
+  ]
+},
+
+/* ─────────────────────────────────────────────────────────────
+   S7: ALL 5 TOGETHER — Composite Example
+──────────────────────────────────────────────────────────────*/
+{
+  phase:2,
+  title:"All 5 Principles Together — Real System",
+  subtitle:"See all SOLID principles working in harmony in one e-commerce order system",
+  sections:[
+    {icon:"📖",color:"#E8F5E9",title:"Overview — SOLID In One System",content:`
+<p style="margin-bottom:12px">Now let's see all 5 principles applied together in a single, cohesive Java order-processing system. Each design decision maps to a SOLID principle.</p>
+
+<div class="diag-wrap">
+<svg viewBox="0 0 680 380" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>All SOLID Principles in One System</title>
+<defs><marker id="arr9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- D: Interfaces -->
+<text x="340" y="18" text-anchor="middle" fill="var(--color-text-primary)" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">Abstractions (D — Dependency Inversion)</text>
+<rect x="20" y="28" width="150" height="46" rx="6" fill="#FCEAE8" stroke="#C0392B" stroke-width="0.5"/>
+<text x="95" y="48" text-anchor="middle" fill="#922b21" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">IOrderRepository</text>
+<text x="95" y="64" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">save(), find()</text>
+
+<rect x="190" y="28" width="150" height="46" rx="6" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="265" y="48" text-anchor="middle" fill="#0c3d7a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">IPaymentGateway</text>
+<text x="265" y="64" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">charge()</text>
+
+<rect x="360" y="28" width="150" height="46" rx="6" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="435" y="48" text-anchor="middle" fill="#2d5c3a" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">INotifier</text>
+<text x="435" y="64" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">notify()</text>
+
+<rect x="530" y="28" width="135" height="46" rx="6" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="0.5"/>
+<text x="597" y="48" text-anchor="middle" fill="#4a1775" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">IDiscountPolicy</text>
+<text x="597" y="64" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">apply(price)</text>
+
+<!-- S: OrderService — one job -->
+<text x="340" y="108" text-anchor="middle" fill="var(--color-text-primary)" font-size="11" font-family="Anthropic Sans,sans-serif">S — Single Responsibility: OrderService coordinates only</text>
+<rect x="195" y="118" width="290" height="60" rx="10" fill="#E8F5E9" stroke="#4A7C59" stroke-width="1.5"/>
+<text x="340" y="143" text-anchor="middle" fill="#2d5c3a" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">OrderService</text>
+<text x="340" y="161" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">placeOrder() — uses all 4 interfaces via DIP</text>
+
+<line x1="95" y1="74" x2="240" y2="118" stroke="#C0392B" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr9)"/>
+<line x1="265" y1="74" x2="300" y2="118" stroke="#1D5FA5" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr9)"/>
+<line x1="435" y1="74" x2="390" y2="118" stroke="#4A7C59" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr9)"/>
+<line x1="597" y1="74" x2="450" y2="118" stroke="#7B3FA0" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr9)"/>
+
+<!-- O: Multiple discount implementations -->
+<text x="340" y="218" text-anchor="middle" fill="var(--color-text-primary)" font-size="11" font-family="Anthropic Sans,sans-serif">O — Open/Closed: Add new discounts/payments without modifying OrderService</text>
+<rect x="20" y="228" width="140" height="46" rx="6" fill="#FFF8E1" stroke="#B05A1A" stroke-width="0.5"/>
+<text x="90" y="248" text-anchor="middle" fill="#7a3d0c" font-size="10" font-weight="500" font-family="Anthropic Sans,sans-serif">NoDiscount</text>
+<text x="90" y="264" text-anchor="middle" fill="#B05A1A" font-size="9" font-family="Anthropic Sans,sans-serif">implements IDiscountPolicy</text>
+
+<rect x="175" y="228" width="140" height="46" rx="6" fill="#FFF8E1" stroke="#B05A1A" stroke-width="0.5"/>
+<text x="245" y="248" text-anchor="middle" fill="#7a3d0c" font-size="10" font-weight="500" font-family="Anthropic Sans,sans-serif">SeasonalDiscount</text>
+<text x="245" y="264" text-anchor="middle" fill="#B05A1A" font-size="9" font-family="Anthropic Sans,sans-serif">implements IDiscountPolicy</text>
+
+<rect x="365" y="228" width="140" height="46" rx="6" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="435" y="248" text-anchor="middle" fill="#0c3d7a" font-size="10" font-weight="500" font-family="Anthropic Sans,sans-serif">StripeGateway</text>
+<text x="435" y="264" text-anchor="middle" fill="#1D5FA5" font-size="9" font-family="Anthropic Sans,sans-serif">implements IPaymentGateway</text>
+
+<rect x="520" y="228" width="140" height="46" rx="6" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="590" y="248" text-anchor="middle" fill="#0c3d7a" font-size="10" font-weight="500" font-family="Anthropic Sans,sans-serif">PaypalGateway</text>
+<text x="590" y="264" text-anchor="middle" fill="#1D5FA5" font-size="9" font-family="Anthropic Sans,sans-serif">implements IPaymentGateway</text>
+
+<!-- L: Swappable, LSP -->
+<text x="340" y="320" text-anchor="middle" fill="var(--color-text-primary)" font-size="11" font-family="Anthropic Sans,sans-serif">L — Liskov: All implementations honor their interface contracts perfectly</text>
+<rect x="100" y="332" width="480" height="32" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="340" y="352" text-anchor="middle" fill="#2d5c3a" font-size="11" font-family="Anthropic Sans,sans-serif">Any impl can replace another — OrderService works identically regardless of which impl is injected</text>
+</svg>
+</div>
+
+<pre>
+// The entire SOLID-compliant order system in Java
+interface IOrderRepository  { void save(Order o); Order find(String id); }
+interface IPaymentGateway   { PayResult charge(double amount); }          // I: focused
+interface INotifier         { void notify(Order o); }                      // I: focused
+interface IDiscountPolicy   { double apply(double price); }                // I + O
+
+class OrderService {                          // S: one job
+    private final IOrderRepository repo;      // D: abstraction
+    private final IPaymentGateway payment;    // D: abstraction
+    private final INotifier notifier;         // D: abstraction
+    private final IDiscountPolicy discount;   // D: abstraction
+    
+    OrderService(IOrderRepository r, IPaymentGateway p,
+                 INotifier n, IDiscountPolicy d) {
+        this.repo=r; this.payment=p; this.notifier=n; this.discount=d;
+    }
+    void placeOrder(Order order) {
+        double finalPrice = discount.apply(order.getTotal()); // O: swap any discount
+        payment.charge(finalPrice);                           // L: any gateway works
+        repo.save(order);                                     // L: any repo works
+        notifier.notify(order);                               // L: any notifier works
+    }
+}
+// New payment method: add StripeGateway class, zero change to OrderService (OCP!)
+</pre>
+`},
+    {icon:"🎤",color:"#FFF3E0",title:"Interview One-Liners — SOLID Together",content:`
+<div class="oneliner"><strong>"In my order system, OrderService has one job (S), new payment methods are added as new classes (O), all gateways are interchangeable (L), interfaces are small and focused (I), and high-level logic never imports concrete DB code (D)."</strong></div>
+<div class="oneliner"><strong>"SOLID principles reinforce each other — SRP makes DIP easier, ISP makes LSP safer, OCP emerges naturally when DIP is applied."</strong></div>
+<div class="oneliner"><strong>"A SOLID codebase is a testable codebase — each principle removes a barrier to isolated unit testing."</strong></div>
+<div class="oneliner"><strong>"When I see a 500-line God class, I immediately map it to SOLID violations: SRP (too many jobs), DIP (concrete imports), ISP (fat interfaces)."</strong></div>
+<div class="oneliner"><strong>"SOLID isn't about perfection — it's about making the next change cheaper and safer than the previous one."</strong></div>
+`},
+    {icon:"✅",color:"#E8F5E9",title:"SOLID Principles — Master Checklist",content:`
+<ul class="checklist">
+  <li><div class="check-icon">S</div><div><strong>SRP:</strong> Does each class have exactly one reason to change? Is the class name a single, clear noun?</div></li>
+  <li><div class="check-icon">O</div><div><strong>OCP:</strong> Can I add a new feature by writing a new class, without editing existing working code?</div></li>
+  <li><div class="check-icon">L</div><div><strong>LSP:</strong> Can every subclass/implementation replace its parent/interface without the caller knowing?</div></li>
+  <li><div class="check-icon">I</div><div><strong>ISP:</strong> Does every class use all the methods in the interfaces it implements? No empty methods?</div></li>
+  <li><div class="check-icon">D</div><div><strong>DIP:</strong> Does every dependency flow toward an abstraction (interface)? No <code>new ConcreteClass()</code> in high-level code?</div></li>
+  <li><div class="check-icon">✓</div><div>Is each class independently unit-testable with mocked dependencies?</div></li>
+  <li><div class="check-icon">✓</div><div>Can implementations be swapped at runtime via config/DI without changing business logic?</div></li>
+</ul>
+`},
+    {icon:"🎯",color:"#F3E5F5",title:"Advanced Interview Q&A — SOLID Together",content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: Which SOLID principle is most important?</span><span class="qa-tag">Opinion</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">There's no single most important one, but DIP has the widest impact. Without DIP, everything is tightly coupled and untestable regardless of how well the other principles are followed. However, SRP is the entry point — it's the easiest to understand and applying it automatically leads toward the others. For SDETs specifically, DIP is critical because it's what enables mocking and test isolation. For architects, OCP prevents costly rewrites as requirements evolve.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: Can SOLID principles conflict with each other?</span><span class="qa-tag">Advanced</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Yes, occasionally. SRP says split classes; DIP says add abstraction layers. Taken to extremes, you get dozens of tiny interfaces and classes — over-engineering. ISP says split interfaces small; but too many tiny interfaces create cognitive overhead. OCP says add new classes; but sometimes you genuinely need to change existing behavior. The art is judgment: apply principles where they add value, not as dogma. In a startup prototype, relaxed SOLID is fine. In a 5-year-old payment system, strict SOLID saves lives.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: How do SOLID principles relate to Clean Architecture?</span><span class="qa-tag">Architecture</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Clean Architecture (Uncle Bob) is SOLID applied at the system level. The Dependency Rule (dependencies point inward toward domain) is DIP at architectural scale. Use Cases (application layer) are SRP at the service level. The plugin model (swap databases, frameworks, UIs) is OCP at the deployment level. Entity definitions (domain model) must honor LSP for polymorphism. Repository interfaces (ISP) expose only what the domain needs. SOLID at the class level + Clean Architecture at the system level = a fully principled, long-lived codebase.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: How would you introduce SOLID to a team that never heard of it?</span><span class="qa-tag">Leadership</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">I'd start with pain. Take the biggest "scary file" in the codebase — the 800-line God class everyone fears to touch. Show them: this file has 8 reasons to change (SRP). Changing the email template breaks order processing (no SRP). Adding a new payment method requires editing stable code (no OCP). Then show the refactored version — same behavior, 6 small classes, each testable. Run before/after test numbers. Pain + evidence + solution = adoption. Never start with the acronym; start with the problem they're already suffering.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: How does SOLID apply to microservices?</span><span class="qa-tag">Cloud</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">SOLID scales to the service level beautifully. SRP: each microservice has one business domain (Order Service, Payment Service). OCP: add new services without modifying existing ones (add a Recommendation Service). LSP: services interchangeable behind an API gateway — swap implementation, keep contract. ISP: API contracts expose only what consumers need (order consumer doesn't need payment internals). DIP: services depend on API contracts (OpenAPI specs), not concrete implementations. SOLID at class level + bounded contexts (DDD) = well-designed microservices.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: Describe a SOLID violation you fixed in production and its impact</span><span class="qa-tag">Behavioral</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Strong answer template: "In our payment service, a single PaymentProcessor class handled credit cards, UPI, and net banking with a giant if-else block (OCP violation). Adding a new payment method (BNPL) required editing this critical class, causing a production regression in credit card processing — unrelated code broken by a related change. We extracted an IPaymentStrategy interface, moved each method to its own class, and used a factory. After: adding BNPL was a new class only. Zero regression risk. Test coverage went from 40% to 95% because each strategy was independently testable."</div></div>
+`}
+  ]
+},
+
+/* ─────────────────────────────────────────────────────────────
+   S8: SOLID ANTI-PATTERNS & CODE SMELLS
+──────────────────────────────────────────────────────────────*/
+{
+  phase:2,
+  title:"SOLID Anti-Patterns & Code Smells",
+  subtitle:"Recognize violations instantly — become the senior voice in code review",
+  sections:[
+    {icon:"📖",color:"#FCEAE8",title:"The 10 Most Common SOLID Violations",content:`
+<div class="concept-grid">
+  <div class="concept-card"><div class="icon">🧟</div><div class="label">God Class</div><div class="desc">Violates SRP — does everything</div></div>
+  <div class="concept-card"><div class="icon">⛓️</div><div class="label">Tight Coupling</div><div class="desc">Violates DIP — new ConcreteClass()</div></div>
+  <div class="concept-card"><div class="icon">🔀</div><div class="label">Switch Explosion</div><div class="desc">Violates OCP — if/else for types</div></div>
+  <div class="concept-card"><div class="icon">💀</div><div class="label">UnsupportedOp</div><div class="desc">Violates LSP + ISP</div></div>
+  <div class="concept-card"><div class="icon">🏋️</div><div class="label">Fat Interface</div><div class="desc">Violates ISP — 20-method interface</div></div>
+  <div class="concept-card"><div class="icon">🔗</div><div class="label">instanceof Chains</div><div class="desc">Violates LSP — polymorphism broken</div></div>
+  <div class="concept-card"><div class="icon">🌊</div><div class="label">Spaghetti Deps</div><div class="desc">Violates DIP — circular imports</div></div>
+  <div class="concept-card"><div class="icon">🚫</div><div class="label">Empty Overrides</div><div class="desc">Violates LSP + ISP</div></div>
+</div>
+
+<div class="diag-wrap">
+<svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>SOLID Violations Quick Reference</title>
+<text x="340" y="22" text-anchor="middle" fill="var(--color-text-primary)" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">SOLID Violation Detection Map</text>
+<!-- S -->
+<rect x="20" y="35" width="120" height="80" rx="8" fill="#FCEAE8" stroke="#C0392B" stroke-width="0.5"/>
+<text x="80" y="56" text-anchor="middle" fill="#922b21" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">SRP ❌</text>
+<text x="80" y="73" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">Class &gt;200 lines</text>
+<text x="80" y="89" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">Name has "And"</text>
+<text x="80" y="105" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">&gt;10 pub methods</text>
+<!-- O -->
+<rect x="155" y="35" width="120" height="80" rx="8" fill="#FFF8E1" stroke="#B05A1A" stroke-width="0.5"/>
+<text x="215" y="56" text-anchor="middle" fill="#7a3d0c" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">OCP ❌</text>
+<text x="215" y="73" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">switch(type) chains</text>
+<text x="215" y="89" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">if-else for behavior</text>
+<text x="215" y="105" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">Edit=regression risk</text>
+<!-- L -->
+<rect x="290" y="35" width="120" height="80" rx="8" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="0.5"/>
+<text x="350" y="56" text-anchor="middle" fill="#4a1775" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">LSP ❌</text>
+<text x="350" y="73" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">instanceof checks</text>
+<text x="350" y="89" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">UnsupportedOpEx</text>
+<text x="350" y="105" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">Empty overrides</text>
+<!-- I -->
+<rect x="425" y="35" width="110" height="80" rx="8" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="480" y="56" text-anchor="middle" fill="#0c3d7a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">ISP ❌</text>
+<text x="480" y="73" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">&gt;5 method iface</text>
+<text x="480" y="89" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">Mock 10 methods</text>
+<text x="480" y="105" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">throw in impl</text>
+<!-- D -->
+<rect x="550" y="35" width="110" height="80" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="605" y="56" text-anchor="middle" fill="#2d5c3a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">DIP ❌</text>
+<text x="605" y="73" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">new Concrete()</text>
+<text x="605" y="89" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">Static util calls</text>
+<text x="605" y="105" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">No mockable dep</text>
+<!-- Before/After -->
+<text x="340" y="160" text-anchor="middle" fill="var(--color-text-primary)" font-size="11" font-weight="500" font-family="Anthropic Sans,sans-serif">Quick Fix Patterns</text>
+<text x="100" y="180" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">SRP → Extract Class</text>
+<text x="220" y="180" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">OCP → Strategy/Factory</text>
+<text x="340" y="180" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">LSP → Extract Interface</text>
+<text x="460" y="180" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">ISP → Split Interface</text>
+<text x="580" y="180" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">DIP → Inject via Ctor</text>
+<text x="100" y="200" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">or Decompose</text>
+<text x="220" y="200" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">or Template Method</text>
+<text x="340" y="200" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">or Separate Hierarchy</text>
+<text x="460" y="200" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">or Role Interface</text>
+<text x="580" y="200" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">or IoC Container</text>
+</svg>
+</div>
+`},
+    {icon:"🎤",color:"#FFF3E0",title:"Interview One-Liners — Anti-Patterns",content:`
+<div class="oneliner"><strong>"A God Class — one class doing everything — is a SRP, OCP, DIP, and ISP violation all at once. It's the root of all evil in OOP."</strong></div>
+<div class="oneliner"><strong>"When I see switch(type) with 10 cases and each case has logic — that's an OCP violation begging for polymorphism."</strong></div>
+<div class="oneliner"><strong>"instanceof is a code smell that tells me LSP has been violated somewhere upstream in the class hierarchy."</strong></div>
+<div class="oneliner"><strong>"A class that has 30 imports from unrelated packages — HTTP, DB, email, PDF, JSON — is the dependency-coupling smell that DIP exists to fix."</strong></div>
+<div class="oneliner"><strong>"Empty method bodies in interface implementations are the ISP smell — the interface is trying to do too much."</strong></div>
+`},
+    {icon:"✅",color:"#E8F5E9",title:"Code Review SOLID Checklist",content:`
+<ul class="checklist">
+  <li><div class="check-icon">✓</div><div>File length check: &gt;200 lines → investigate SRP</div></li>
+  <li><div class="check-icon">✓</div><div>Name check: "And", "Manager", "Helper", "Util" in class names → often SRP/ISP violation</div></li>
+  <li><div class="check-icon">✓</div><div>Switch/if-else on type → likely OCP violation → suggest polymorphism</div></li>
+  <li><div class="check-icon">✓</div><div><code>instanceof</code> in business logic → LSP violation → check hierarchy</div></li>
+  <li><div class="check-icon">✓</div><div>Interface with 10+ methods → ISP violation → split by client usage</div></li>
+  <li><div class="check-icon">✓</div><div><code>new ConcreteClass()</code> in high-level class → DIP violation → inject via interface</div></li>
+  <li><div class="check-icon">✓</div><div>Methods not mockable in tests → DIP violation</div></li>
+</ul>
+`},
+    {icon:"🎯",color:"#F3E5F5",title:"Q&A — Anti-Patterns Deep",content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: How do you refactor a God Class without breaking production?</span><span class="qa-tag">Refactoring</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">The Strangler Fig pattern: (1) Write tests for existing behavior (characterization tests); (2) Identify one cohesive cluster of methods; (3) Extract to a new class; (4) Delegate from the original class to the new one (don't break existing callers yet); (5) Gradually migrate callers to use the new class; (6) When no callers remain on the old delegating methods, remove them. This allows incremental, safe refactoring without a big-bang rewrite. Never refactor a God Class in one session.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: What tools help detect SOLID violations in Java projects?</span><span class="qa-tag">Tools</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">SonarQube — detects God classes (high cyclomatic complexity, too many methods), long methods, and coupling metrics. SpotBugs — finds bad patterns. IntelliJ IDEA's built-in inspections flag many SOLID issues. Checkstyle can enforce method count and class length limits. For DIP specifically, ArchUnit lets you write tests like: "classes in service layer should not depend on classes in repository.impl". PMD detects God class anti-patterns. In CI/CD, quality gate failures on these metrics act as automated SOLID enforcement.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: Is SOLID applicable to functional programming in Java?</span><span class="qa-tag">Functional</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Partially. Java Streams and lambdas apply SRP (each function does one thing), OCP (compose new behaviors via map/filter without modifying stream pipeline), and DIP (Function&lt;T,R&gt; interface). LSP applies to functional interfaces. ISP maps to using specific functional interfaces (Predicate, Supplier, Consumer) rather than one fat interface. However, LSP and ISP are less relevant in pure functional style since you don't deal with inheritance hierarchies. SOLID evolved for OOP; functional Java benefits mostly from SRP, OCP, and DIP.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: What's the "Feature Envy" code smell and which SOLID principle does it violate?</span><span class="qa-tag">Smells</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Feature Envy is when a method in class A accesses data from class B more than class A's own data. It signals that the method belongs in class B, not A. This violates SRP — class A has taken on a responsibility that belongs to class B. The fix (Move Method refactoring) restores each class to its proper responsibility. Feature Envy often co-occurs with DIP violations when a class reaches into low-level objects for data instead of asking for the computation through an interface.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: How do SOLID violations manifest as test problems?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">SRP violation → test class with 50+ test methods; must mock unrelated dependencies. OCP violation → tests break when adding new types; must update existing test conditionals. LSP violation → tests written for parent fail for child instances. ISP violation → test doubles must stub 15 methods but only 2 are relevant; fragile mocks. DIP violation → cannot write unit tests without a database/network/file system; tests are slow and environment-dependent. In short: untestable or slow tests are almost always a SOLID violation in the production code.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: What is "Primitive Obsession" and how does it relate to SOLID?</span><span class="qa-tag">Advanced</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Primitive Obsession is using primitives (String, int) for domain concepts that deserve their own class (e.g., using String for email, int for money). It violates SRP — validation logic for that primitive is scattered across many classes instead of owned by one Email or Money value object. It also breaks encapsulation. Fix: create value objects (Email, Money, PhoneNumber) that own their validation and formatting. These value objects are naturally SRP-compliant, and using them enables type-safe DIP (inject Email, not String).</div></div>
+`}
+  ]
+},
+
+/* ─────────────────────────────────────────────────────────────
+   S9: SOLID WITH SPRING BOOT
+──────────────────────────────────────────────────────────────*/
+{
+  phase:3,
+  title:"SOLID with Spring Boot Framework",
+  subtitle:"How Spring Boot enforces and enables SOLID by design",
+  sections:[
+    {icon:"📖",color:"#FFF3E0",title:"Spring Boot + SOLID — Deep Integration",content:`
+<p style="margin-bottom:12px">Spring Boot's entire architecture is built on SOLID principles. Understanding this helps you use Spring correctly and reason about your design decisions confidently.</p>
+
+<div class="diag-wrap">
+<svg viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Spring Boot SOLID Integration Map</title>
+<defs><marker id="arr10" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- Spring annotations -->
+<text x="340" y="22" text-anchor="middle" fill="var(--color-text-primary)" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">Spring Boot Annotation → SOLID Principle Mapping</text>
+<rect x="20" y="36" width="190" height="56" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="1"/>
+<text x="115" y="58" text-anchor="middle" fill="#2d5c3a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">@RestController</text>
+<text x="115" y="76" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">SRP: handles HTTP only</text>
+
+<rect x="230" y="36" width="190" height="56" rx="8" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="1"/>
+<text x="325" y="58" text-anchor="middle" fill="#0c3d7a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">@Service</text>
+<text x="325" y="76" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">SRP: business logic only</text>
+
+<rect x="440" y="36" width="220" height="56" rx="8" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="1"/>
+<text x="550" y="58" text-anchor="middle" fill="#4a1775" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">@Repository</text>
+<text x="550" y="76" text-anchor="middle" fill="#7B3FA0" font-size="10" font-family="Anthropic Sans,sans-serif">SRP: data access only</text>
+
+<rect x="20" y="120" width="190" height="56" rx="8" fill="#FFF8E1" stroke="#B05A1A" stroke-width="1"/>
+<text x="115" y="142" text-anchor="middle" fill="#7a3d0c" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">@Autowired (ctor)</text>
+<text x="115" y="160" text-anchor="middle" fill="#B05A1A" font-size="10" font-family="Anthropic Sans,sans-serif">DIP: inject abstraction</text>
+
+<rect x="230" y="120" width="190" height="56" rx="8" fill="#FCEAE8" stroke="#C0392B" stroke-width="1"/>
+<text x="325" y="142" text-anchor="middle" fill="#922b21" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">@Configuration @Bean</text>
+<text x="325" y="160" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Anthropic Sans,sans-serif">OCP: swap impl via config</text>
+
+<rect x="440" y="120" width="220" height="56" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="1"/>
+<text x="550" y="142" text-anchor="middle" fill="#2d5c3a" font-size="12" font-weight="500" font-family="Anthropic Sans,sans-serif">JpaRepository interface</text>
+<text x="550" y="160" text-anchor="middle" fill="#4A7C59" font-size="10" font-family="Anthropic Sans,sans-serif">ISP + LSP: focused, swappable</text>
+
+<!-- IoC Container -->
+<rect x="200" y="218" width="280" height="56" rx="12" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="1.5"/>
+<text x="340" y="242" text-anchor="middle" fill="#0c3d7a" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">Spring IoC Container</text>
+<text x="340" y="260" text-anchor="middle" fill="#1D5FA5" font-size="10" font-family="Anthropic Sans,sans-serif">DIP automated — wires all dependencies</text>
+
+<line x1="115" y1="92" x2="270" y2="218" stroke="#4A7C59" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr10)"/>
+<line x1="325" y1="92" x2="330" y2="218" stroke="#1D5FA5" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr10)"/>
+<line x1="550" y1="92" x2="415" y2="218" stroke="#7B3FA0" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr10)"/>
+<line x1="115" y1="176" x2="265" y2="218" stroke="#B05A1A" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr10)"/>
+<line x1="325" y1="176" x2="330" y2="218" stroke="#C0392B" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr10)"/>
+
+<text x="340" y="315" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11" font-family="Anthropic Sans,sans-serif">Spring Boot's layered architecture IS SOLID architecture</text>
+</svg>
+</div>
+
+<pre>
+// Spring Boot SOLID in action — full example
+@RestController                              // SRP: HTTP concern only
+@RequestMapping("/orders")
+public class OrderController {
+    private final IOrderService orderService;
+    @Autowired                               // DIP: inject by interface
+    public OrderController(IOrderService svc) { this.orderService = svc; }
+    @PostMapping
+    public ResponseEntity&lt;Order&gt; place(@RequestBody OrderRequest req) {
+        return ResponseEntity.ok(orderService.placeOrder(req));
+    }
+}
+
+@Service                                     // SRP: business logic only
+public class OrderServiceImpl implements IOrderService {  // OCP+LSP
+    private final IOrderRepository repo;
+    private final IPaymentGateway payment;
+    @Autowired
+    public OrderServiceImpl(IOrderRepository r, IPaymentGateway p) {
+        this.repo = r; this.payment = p;     // DIP: abstractions
+    }
+    public Order placeOrder(OrderRequest req) { /* business logic */ return null; }
+}
+
+@Configuration
+public class AppConfig {
+    @Bean
+    public IPaymentGateway paymentGateway() {
+        return new StripeGateway();          // OCP: change impl here, not in service
+    }
+}
+</pre>
+`},
+    {icon:"🎤",color:"#FFF3E0",title:"Interview One-Liners — Spring + SOLID",content:`
+<div class="oneliner"><strong>"Spring's @Service, @Repository, @Controller separation is SOLID's SRP enforced by the framework's opinionated structure."</strong></div>
+<div class="oneliner"><strong>"Spring's IoC container automates DIP — you declare what you need (interface), Spring decides what to inject (implementation)."</strong></div>
+<div class="oneliner"><strong>"Changing from MySQL to MongoDB in Spring only means changing one @Bean definition in @Configuration — that's OCP at framework level."</strong></div>
+<div class="oneliner"><strong>"Spring Data's JpaRepository is ISP in action — you extend only the interface relevant to your entity, not one giant data access god interface."</strong></div>
+<div class="oneliner"><strong>"Constructor injection in Spring is the DIP + immutability best practice — final fields, no field injection, testable without Spring context."</strong></div>
+`},
+    {icon:"✅",color:"#E8F5E9",title:"Spring Boot SOLID Best Practices",content:`
+<ul class="checklist">
+  <li><div class="check-icon">✓</div><div>Always inject by interface type in Spring — <code>@Autowired IOrderService</code>, not <code>OrderServiceImpl</code></div></li>
+  <li><div class="check-icon">✓</div><div>Use constructor injection (not field injection) — final fields, compile-time safety, testable with <code>@InjectMocks</code></div></li>
+  <li><div class="check-icon">✓</div><div>Keep <code>@Service</code> classes focused: if a service method calls 5 other services, extract to a separate orchestrator service (SRP)</div></li>
+  <li><div class="check-icon">✓</div><div>Use <code>@Configuration</code> classes to swap implementations — never change <code>@Service</code> to add new behavior (OCP)</div></li>
+  <li><div class="check-icon">✓</div><div>Use <code>@MockBean</code> in <code>@SpringBootTest</code> to inject mocks — validates DIP is correctly applied</div></li>
+</ul>
+`},
+    {icon:"🎯",color:"#F3E5F5",title:"Q&A — Spring + SOLID",content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: How does Spring @Conditional relate to OCP?</span><span class="qa-tag">Spring</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">@Conditional, @ConditionalOnProperty, and @Profile annotations let you activate different @Bean implementations based on environment without modifying any service code. Example: @ConditionalOnProperty(name="payment.provider", havingValue="stripe") activates StripeGateway; havingValue="paypal" activates PaypalGateway. The OrderService never changes. New payment provider = new @Bean class + new property value. This is OCP at the Spring configuration level — open for extension via configuration, closed for modification in business code.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: How do you test a Spring service without starting the application context?</span><span class="qa-tag">SDET</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Constructor injection + Mockito, no Spring involved: @ExtendWith(MockitoExtension.class) / @Mock IOrderRepository mockRepo / @InjectMocks OrderServiceImpl orderService. This is pure unit testing — no @SpringBootTest, no embedded server, no database. Fast (milliseconds), isolated, and proves DIP is correctly applied (if you can't do this, you have a DIP violation). @SpringBootTest is for integration tests only. The ability to test without Spring context is a key indicator of SOLID compliance.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: What is @Component vs @Service vs @Repository — why does it matter for SOLID?</span><span class="qa-tag">Spring</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">All three are @Component specializations that register beans. The difference is semantic: @Controller/RestController = HTTP layer, @Service = business layer, @Repository = data layer + exception translation. Using the right annotation enforces SRP at the architectural level — a developer seeing @Repository knows this class should NOT contain business logic. Spring also adds AOP advice based on these (e.g., @Repository gets SQLException-to-DataAccessException translation). Using @Component everywhere loses that structural clarity and weakens the SRP signal.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: How does Spring AOP relate to SRP?</span><span class="qa-tag">AOP</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">AOP (Aspect-Oriented Programming) in Spring extracts cross-cutting concerns (logging, security, transactions, caching) from business classes. Without AOP, each service method would have try/catch for transactions, logging calls, and security checks — violating SRP. With AOP: @Transactional handles transactions, @Secured handles security, @Cacheable handles caching — all without modifying the service method. The service method retains its single responsibility (business logic). AOP is SRP applied to cross-cutting concerns at the framework level.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: How would you apply SOLID to a Spring Batch job?</span><span class="qa-tag">Advanced</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Spring Batch's architecture naturally enforces SOLID. SRP: ItemReader (reads only), ItemProcessor (transforms only), ItemWriter (writes only) — three separate classes. OCP: add new data sources as new ItemReader implementations without modifying processing logic. LSP: any ItemReader implementation can be used by the Job without the Step knowing which. ISP: each batch interface (ItemReader, ItemProcessor, ItemWriter) has one method. DIP: Job depends on ItemReader interface, not FlatFileItemReader or JdbcCursorItemReader. It's a SOLID textbook implemented in a production framework.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: How do you enforce SOLID compliance at CI/CD level in a Spring project?</span><span class="qa-tag">DevOps</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Use ArchUnit for automated architectural enforcement in your test suite: test that @Service classes don't import from infrastructure packages (DIP); test that @Controller classes don't have @Repository injected (SRP); test that no class in the domain package imports Spring annotations (Clean Architecture + DIP). SonarQube quality gates can block PRs with cognitive complexity &gt;15 or class lines &gt;200. Checkstyle enforces method count. Together these create a CI/CD pipeline that prevents SOLID violations from merging — shifting quality left rather than catching it in code review.</div></div>
+`}
+  ]
+},
+
+/* ─────────────────────────────────────────────────────────────
+   S10: SOLID IN PRACTICE — INTERVIEW MASTERY
+──────────────────────────────────────────────────────────────*/
+{
+  phase:3,
+  title:"SOLID Mastery — Interview & Real-World Practice",
+  subtitle:"Your complete preparation for senior Java/SDET interviews on SOLID",
+  sections:[
+    {icon:"📖",color:"#E3F2FD",title:"Complete SOLID Reference Card",content:`
+<div class="diag-wrap">
+<svg viewBox="0 0 680 380" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>SOLID Complete Reference Card</title>
+<text x="340" y="22" text-anchor="middle" fill="var(--color-text-primary)" font-size="14" font-weight="500" font-family="Anthropic Sans,sans-serif">SOLID — Complete Reference Card</text>
+
+<!-- S -->
+<rect x="20" y="35" width="630" height="56" rx="8" fill="#E8F5E9" stroke="#4A7C59" stroke-width="0.5"/>
+<text x="40" y="58" fill="#2d5c3a" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">S — Single Responsibility</text>
+<text x="40" y="76" fill="#4A7C59" font-size="11" font-family="Anthropic Sans,sans-serif">Definition: One reason to change. Pattern: Extract Class. Smell: God Class, name with "And". Spring: @Service/@Repository/@Controller separation.</text>
+
+<!-- O -->
+<rect x="20" y="103" width="630" height="56" rx="8" fill="#E3F2FD" stroke="#1D5FA5" stroke-width="0.5"/>
+<text x="40" y="126" fill="#0c3d7a" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">O — Open/Closed</text>
+<text x="40" y="144" fill="#1D5FA5" font-size="11" font-family="Anthropic Sans,sans-serif">Definition: Extend via new class, don't modify. Pattern: Strategy, Decorator, Factory. Smell: switch(type). Spring: @ConditionalOnProperty, @Bean swap.</text>
+
+<!-- L -->
+<rect x="20" y="171" width="630" height="56" rx="8" fill="#F3E5F5" stroke="#7B3FA0" stroke-width="0.5"/>
+<text x="40" y="194" fill="#4a1775" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">L — Liskov Substitution</text>
+<text x="40" y="212" fill="#7B3FA0" font-size="11" font-family="Anthropic Sans,sans-serif">Definition: Subtypes honor parent contract. Pattern: Separate interfaces. Smell: instanceof, UnsupportedOpEx. Test: same test suite for all subtypes.</text>
+
+<!-- I -->
+<rect x="20" y="239" width="630" height="56" rx="8" fill="#FFF8E1" stroke="#B05A1A" stroke-width="0.5"/>
+<text x="40" y="262" fill="#7a3d0c" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">I — Interface Segregation</text>
+<text x="40" y="280" fill="#B05A1A" font-size="11" font-family="Anthropic Sans,sans-serif">Definition: Small, focused interfaces. Pattern: Role Interface. Smell: empty impls, 10+ method iface. Spring: JpaRepository&lt;T,ID&gt; per entity.</text>
+
+<!-- D -->
+<rect x="20" y="307" width="630" height="56" rx="8" fill="#FCEAE8" stroke="#C0392B" stroke-width="0.5"/>
+<text x="40" y="330" fill="#922b21" font-size="13" font-weight="500" font-family="Anthropic Sans,sans-serif">D — Dependency Inversion</text>
+<text x="40" y="348" fill="#C0392B" font-size="11" font-family="Anthropic Sans,sans-serif">Definition: Depend on abstractions. Pattern: DI via constructor. Smell: new ConcreteClass() in high-level. Spring: @Autowired on interface type.</text>
+</svg>
+</div>
+
+<div class="highlight">🎯 <strong>The Golden Rule:</strong> If you can write a clean JUnit test with Mockito mocks for every class in your system — your codebase is SOLID.</div>
+`},
+    {icon:"🎤",color:"#FFF3E0",title:"Master Interview One-Liners Collection",content:`
+<p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">The best 10 one-liners to have ready for ANY SOLID interview question:</p>
+<div class="oneliner"><strong>"SOLID is Robert C. Martin's five principles that transform code from working to maintainable — SRP, OCP, LSP, ISP, DIP."</strong></div>
+<div class="oneliner"><strong>"The ultimate SOLID test: can I unit-test this class with Mockito without a database, server, or file system? If not, I have DIP and SRP violations."</strong></div>
+<div class="oneliner"><strong>"SOLID's biggest ROI is in code reviews — 20 minutes applying these principles saves 20 hours of debugging six months later."</strong></div>
+<div class="oneliner"><strong>"Spring Boot's entire architecture is a SOLID lesson: SRP in layers, DIP in injection, OCP in configuration, ISP in repository interfaces, LSP in swappable beans."</strong></div>
+<div class="oneliner"><strong>"I treat SOLID as a set of questions: Can this class change for one reason? Can I extend without modifying? Can I swap? Can I implement fully? Can I inject it?"</strong></div>
+<div class="oneliner"><strong>"The real cost of ignoring SOLID is invisible — it accumulates as fear: the fear of touching existing code because you don't know what will break."</strong></div>
+<div class="oneliner"><strong>"In a SDET role, SOLID determines framework maintainability — a SOLID test framework has one test class per feature, swappable drivers, and no hard-coded dependencies."</strong></div>
+<div class="oneliner"><strong>"Over-engineering is the flip side — apply SOLID where volatility exists, not everywhere. A configuration file reader doesn't need six interfaces."</strong></div>
+`},
+    {icon:"✅",color:"#E8F5E9",title:"Final Master Checklist — Interview Ready",content:`
+<ul class="checklist">
+  <li><div class="check-icon">S</div><div>Can you explain SRP with a real Java example and state how it improves testability?</div></li>
+  <li><div class="check-icon">O</div><div>Can you refactor an if-else type-dispatch block using Strategy Pattern?</div></li>
+  <li><div class="check-icon">L</div><div>Can you explain the Rectangle-Square problem and provide the correct solution?</div></li>
+  <li><div class="check-icon">I</div><div>Can you identify a fat interface and split it into role interfaces with a Java example?</div></li>
+  <li><div class="check-icon">D</div><div>Can you write a Spring service using constructor injection and test it with Mockito?</div></li>
+  <li><div class="check-icon">✓</div><div>Can you name the design pattern for each SOLID principle? (Strategy→OCP, etc.)</div></li>
+  <li><div class="check-icon">✓</div><div>Can you spot SOLID violations in a code review scenario on a whiteboard?</div></li>
+  <li><div class="check-icon">✓</div><div>Can you explain how all 5 principles work together in a real system?</div></li>
+  <li><div class="check-icon">✓</div><div>Can you discuss trade-offs and when NOT to over-apply SOLID principles?</div></li>
+</ul>
+`},
+    {icon:"🎯",color:"#F3E5F5",title:"Final 6 Senior-Level Interview Questions",content:`
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q1: Design a notification system from scratch using all SOLID principles</span><span class="qa-tag">System Design</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a"><pre style="margin-top:8px">
+// ISP: Focused interfaces
+interface Notifiable   { void send(String msg, String recipient); }
+interface Loggable     { void log(String event); }
+interface Templatable  { String render(String template, Map&lt;String,String&gt; vars); }
+
+// OCP+LSP: Each channel is a new class implementing Notifiable
+class EmailNotifier implements Notifiable { public void send(String m, String r){/*email*/} }
+class SmsNotifier   implements Notifiable { public void send(String m, String r){/*sms*/} }
+class SlackNotifier implements Notifiable { public void send(String m, String r){/*slack*/} }
+
+// SRP: One class manages routing, doesn't handle channels
+class NotificationService {
+    private final List&lt;Notifiable&gt; channels;  // DIP: list of abstractions
+    private final Loggable logger;              // DIP: abstraction
+    NotificationService(List&lt;Notifiable&gt; c, Loggable l) { channels=c; logger=l; }
+    void notifyAll(String msg, String recipient) {
+        channels.forEach(c -> c.send(msg, recipient));  // LSP: any channel works
+        logger.log("Notification sent to " + recipient);
+    }
+}
+</pre></div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q2: What is Clean Architecture and how does SOLID map to it?</span><span class="qa-tag">Architecture</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Clean Architecture (Robert C. Martin) has concentric layers: Domain Entities → Use Cases → Interface Adapters → Frameworks/Drivers. The Dependency Rule: all dependencies point inward. Domain never knows about databases or HTTP. This maps to SOLID as: DIP (the dependency rule is DIP at architectural scale), SRP (each layer has one reason to change), OCP (swap database or framework without touching domain), LSP (any database implementation can fulfill the Repository interface), ISP (Repository interface exposes only what domain needs, not what the database can do). Clean Architecture is SOLID applied as system-level design philosophy.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q3: How would you evaluate a junior developer's PR for SOLID compliance?</span><span class="qa-tag">Leadership</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">My PR review SOLID checklist: (1) File length — &gt;200 lines, ask "what's the single responsibility here?"; (2) Constructor parameters — &gt;4 parameters, ask "is SRP met?"; (3) Interface parameters — all abstractions, no concrete types?; (4) instanceof usage — ask "does the interface need extending?"; (5) new ConcreteClass() inside a class — ask "should this be injected?"; (6) Empty method implementations — ask "is ISP violated?"; (7) Missing unit tests or tests requiring Spring context — ask "is DIP applied?". Frame feedback as questions, not commands — teach the principle, not just the fix.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q4: Can you explain the Ports and Adapters (Hexagonal) Architecture in SOLID terms?</span><span class="qa-tag">Architecture</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">Hexagonal Architecture (Alistair Cockburn) has a core domain surrounded by "ports" (interfaces) and "adapters" (implementations). Ports are ISP-compliant interfaces defined by the domain's needs. Adapters are OCP extensions — add REST adapter, CLI adapter, message queue adapter without modifying the domain. Dependency Inversion is the architectural law — domain defines port interfaces, adapters implement them. Liskov ensures all adapters are truly interchangeable. The whole pattern is SOLID at the architectural scale, enabling the domain to be tested in isolation from all infrastructure.</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q5: How does SOLID enable CI/CD and DevOps practices?</span><span class="qa-tag">DevOps</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a">SOLID enables fast CI/CD by making code independently deployable and testable. SRP = services are small, independently buildable and deployable (microservices). DIP = services test in isolation with mocks, no cascading dependencies. OCP = new features don't trigger retests of stable modules. LSP = canary deployments work because new implementations are true substitutes. ISP = consumer-driven contracts are small and focused. Together: fast test suites (unit tests per class, no integration required for logic), independent deployments (loosely coupled services), and zero-fear refactoring (tests prove contracts are honored).</div></div>
+<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)"><span>Q6: Final boss question — design a SOLID-compliant test automation framework</span><span class="qa-tag">SDET Boss</span><span style="margin-left:auto;font-size:16px">▾</span></div><div class="qa-a"><pre style="margin-top:8px">
+// Complete SOLID SDET Framework Design
+
+// ISP: Separate driver/data/assert interfaces
+interface DriverFactory   { WebDriver create(); }                    // ISP
+interface TestDataProvider{ &lt;T&gt; T load(String path, Class&lt;T&gt; type); }// ISP
+interface Reporter        { void report(TestResult result); }        // ISP
+
+// OCP+LSP: New browser = new class only
+class ChromeDriverFactory  implements DriverFactory { public WebDriver create(){/**/return null;} }
+class SafariDriverFactory  implements DriverFactory { public WebDriver create(){/**/return null;} }
+
+// SRP: BasePage has one job — page object lifecycle
+abstract class BasePage {
+    protected final WebDriver driver;
+    BasePage(WebDriver driver) { this.driver = driver; }   // DIP: abstraction
+}
+
+// DIP: BaseTest injects all dependencies
+abstract class BaseTest {
+    protected WebDriver driver;
+    protected TestDataProvider dataProvider;
+    protected Reporter reporter;
+    @BeforeEach
+    void setUp(DriverFactory factory, TestDataProvider dp, Reporter rep) {
+        this.driver = factory.create();   // DIP: any driver works (LSP)
+        this.dataProvider = dp;           // DIP: any data source (OCP)
+        this.reporter = rep;              // DIP: any reporter (OCP)
+    }
+}
+// Adding AppiumDriver = new class. Adding AllureReporter = new class.
+// Zero changes to BaseTest or any existing tests.
+</pre></div></div>
+`}
+  ]
+}
+
+]; // end SESSIONS
+
+/* ──────── STATE ──────── */
+let currentSession = 0;
+const completed = new Set();
+
+function phaseOf(si) {
+  for(let i=0;i<PHASES.length;i++){
+    const [a,b]=PHASES[i].range;
+    if(si>=a && si<b) return i;
+  }
+  return 0;
+}
+
+function phaseColor(si){ return PHASES[phaseOf(si)].color; }
+function phaseCls(si){ return PHASES[phaseOf(si)].cls; }
+
+function buildSessionStrip(){
+  const strip = document.getElementById('sess-strip');
+  strip.innerHTML='';
+  const pi = phaseOf(currentSession);
+  const [a,b]=PHASES[pi].range;
+  strip.style.setProperty('--phase-color', PHASES[pi].color);
+  for(let i=a;i<b;i++){
+    const btn = document.createElement('button');
+    btn.className='sess-btn'+(i===currentSession?' active':'')+(completed.has(i)&&i!==currentSession?' done':'');
+    btn.textContent=`S${i+1}: ${SESSIONS[i].title.split(' ').slice(0,3).join(' ')}...`;
+    btn.onclick=()=>goSession(i);
+    strip.appendChild(btn);
+  }
+}
+
+function buildPhaseButtons(){
+  const strip = document.getElementById('phase-strip');
+  [...strip.querySelectorAll('.phase-btn')].forEach((btn,i)=>{
+    btn.classList.toggle('active', i===phaseOf(currentSession));
+  });
+}
+
+function updateProgress(){
+  const total=SESSIONS.length;
+  const done=completed.size;
+  const pct=Math.round(((currentSession+1)/total)*100);
+  document.getElementById('prog-text').textContent=`Session ${currentSession+1} of ${total}`;
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+}
+
+function renderSession(){
+  const s = SESSIONS[currentSession];
+  const pc = phaseColor(currentSession);
+  const pcls = phaseCls(currentSession);
+  const pname = PHASES[phaseOf(currentSession)].name;
+
+  let html=`
+  <div class="sess-header ${pcls}" style="--phase-color:${pc}">
+    <div class="sess-phase-tag" style="background:${pc}">${pname}</div>
+    <div class="sess-title">Session ${currentSession+1}: ${s.title}</div>
+    <div class="sess-subtitle">${s.subtitle}</div>
+  </div>`;
+
+  s.sections.forEach((sec,idx)=>{
+    const secId=`sec-${currentSession}-${idx}`;
+    html+=`
+    <div class="sec-card">
+      <div class="sec-head" onclick="toggleSec('${secId}')">
+        <div class="sec-head-icon" style="background:${sec.color}">${sec.icon}</div>
+        <div class="sec-head-text">${sec.title}</div>
+        <div class="sec-chevron open" id="chev-${secId}">▾</div>
+      </div>
+      <div class="sec-body open" id="${secId}">${sec.content}</div>
+    </div>`;
+  });
+
+  html+=`
+  <div class="nav-row">
+    <button class="nav-btn" onclick="prevSession()" ${currentSession===0?'disabled':''}>← Previous</button>
+    <button class="nav-btn primary" onclick="nextSession()" ${currentSession===SESSIONS.length-1?'disabled':''}>
+      ${currentSession===SESSIONS.length-1?'🎉 Complete!':'Next Session →'}
+    </button>
+  </div>`;
+
+  const main = document.getElementById('main-content');
+  main.className=`content ${pcls}`;
+  main.style.setProperty('--phase-color', pc);
+  main.innerHTML=html;
+  main.scrollTo? main.scrollTo(0,0): window.scrollTo(0,0);
+  buildSessionStrip();
+  buildPhaseButtons();
+  updateProgress();
+}
+
+function goSession(i){
+  completed.add(currentSession);
+  currentSession=i;
+  renderSession();
+  document.querySelector('.content').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function goPhase(pi){
+  goSession(PHASES[pi].range[0]);
+}
+
+function nextSession(){
+  if(currentSession<SESSIONS.length-1){
+    completed.add(currentSession);
+    currentSession++;
+    renderSession();
+    window.scrollTo(0,0);
+  }
+}
+
+function prevSession(){
+  if(currentSession>0){
+    currentSession--;
+    renderSession();
+    window.scrollTo(0,0);
+  }
+}
+
+function toggleSec(id){
+  const body=document.getElementById(id);
+  const chev=document.getElementById('chev-'+id);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+function toggleQA(el){
+  const ans=el.nextElementSibling;
+  ans.classList.toggle('open');
+  const arrow=el.querySelector('[style*="font-size:16px"]')||el.lastElementChild;
+  if(arrow) arrow.textContent=ans.classList.contains('open')?'▴':'▾';
+}
+
+// Init
+renderSession();
+</script>
+</body>
+</html>

@@ -1,0 +1,1696 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,system-ui);color:var(--color-text-primary,#1a1a1a);background:transparent;font-size:13px}
+.portal{width:100%}
+.hdr{padding:.75rem 1rem 0;background:var(--color-background-secondary,#f7f7f8);border-radius:10px 10px 0 0;border-bottom:.5px solid var(--color-border-tertiary,#e0e0e0)}
+.phase-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.6rem}
+.badge{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600}
+.b1{background:#EEEDFE;color:#3C3489}.b2{background:#E1F5EE;color:#0F6E56}.b3{background:#FAEEDA;color:#633806}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:7px 12px;font-size:12px;font-weight:500;border:none;background:transparent;cursor:pointer;color:var(--color-text-secondary,#666);border-bottom:2px solid transparent;white-space:nowrap}
+.tab small{display:block;font-size:10px;font-weight:400}
+.tab.on{color:#534AB7;border-bottom:2px solid #534AB7}
+.body{padding:.875rem 1rem 0}
+.sess{display:none}.sess.on{display:block}
+
+/* op section */
+.op-section{margin-bottom:1rem}
+.op-title{font-size:13px;font-weight:600;color:#fff;background:#534AB7;padding:5px 12px;border-radius:6px 6px 0 0;display:flex;align-items:center;gap:6px}
+.op-title .cnt{font-size:10px;background:rgba(255,255,255,0.25);padding:1px 7px;border-radius:10px;font-weight:500}
+.op-body{border:.5px solid var(--color-border-tertiary,#e0e0e0);border-top:none;border-radius:0 0 6px 6px;overflow:hidden}
+
+/* sub ops */
+.sub-op{border-bottom:.5px solid var(--color-border-tertiary,#e0e0e0)}
+.sub-op:last-child{border-bottom:none}
+.sub-hd{padding:5px 10px;font-size:12px;font-weight:500;background:var(--color-background-secondary,#f7f7f8);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.sub-hd:hover{background:var(--color-background-primary,#fff)}
+.sub-hd .method{font-family:var(--font-mono,monospace);font-size:11px;color:#534AB7;background:#EEEDFE;padding:1px 6px;border-radius:4px}
+.sub-hd .ret{font-size:10px;color:var(--color-text-secondary,#666);margin-left:auto}
+.sub-hd .chv{font-size:12px;color:var(--color-text-secondary,#666);transition:transform .2s;margin-left:6px}
+.sub-body{display:none;background:var(--color-background-primary,#fff)}
+.cb{background:#1a1b2e;padding:.65rem .875rem;overflow-x:auto}
+.cb pre{font-family:var(--font-mono,monospace);font-size:11px;line-height:1.75;color:#cdd6f4;white-space:pre}
+.note{padding:.4rem .875rem;font-size:11.5px;color:var(--color-text-secondary,#666);border-top:.5px solid var(--color-border-tertiary,#e0e0e0);background:var(--color-background-secondary,#f7f7f8);line-height:1.5}
+.kw{color:#cba6f7}.cm{color:#6c7086;font-style:italic}.str{color:#a6e3a1}.num{color:#fab387}.cls{color:#89dceb}.fn{color:#89b4fa}.ann{color:#f38ba8}
+
+/* overview card */
+.ov{background:var(--color-background-secondary,#f7f7f8);border:.5px solid var(--color-border-tertiary,#e0e0e0);border-radius:8px;padding:.75rem .875rem;margin-bottom:.875rem}
+.ov h3{font-size:14px;font-weight:600;margin-bottom:.3rem}
+.ov p{font-size:12.5px;color:var(--color-text-secondary,#666);line-height:1.6}
+.ov .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:.5rem}
+.chip{font-size:11px;padding:2px 9px;border-radius:12px;font-weight:500;background:#EEEDFE;color:#3C3489}
+.chip.g{background:#E1F5EE;color:#0F6E56}
+.chip.o{background:#FAEEDA;color:#633806}
+.chip.r{background:#FEEDED;color:#891A1A}
+
+/* nav */
+.nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;border-top:.5px solid var(--color-border-tertiary,#e0e0e0);margin-top:.5rem}
+.nb{padding:5px 14px;font-size:12px;font-weight:500;border:.5px solid var(--color-border-secondary,#ccc);border-radius:6px;background:transparent;cursor:pointer;color:var(--color-text-primary,#1a1a1a)}
+.nb:hover{background:var(--color-background-secondary,#f7f7f8)}
+.nb.p{background:#534AB7;color:#fff;border-color:#534AB7}
+.nb.p:hover{background:#3C3489}
+.nb:disabled{opacity:.35;cursor:default}
+.prog{font-size:11px;color:var(--color-text-secondary,#666)}
+</style>
+</head>
+<body>
+<div class="portal">
+<div class="hdr">
+  <div class="phase-bar">
+    <span class="badge b1">List (S21–S23)</span>
+    <span class="badge b2">Set (S24–S26)</span>
+    <span class="badge b3">Map (S27–S29)</span>
+  </div>
+  <div class="tabs" id="tabrow">
+    <button class="tab on" data-i="0"><small>S21</small>ArrayList</button>
+    <button class="tab"    data-i="1"><small>S22</small>LinkedList</button>
+    <button class="tab"    data-i="2"><small>S23</small>Vector</button>
+    <button class="tab"    data-i="3"><small>S24</small>HashSet</button>
+    <button class="tab"    data-i="4"><small>S25</small>LinkedHashSet</button>
+    <button class="tab"    data-i="5"><small>S26</small>TreeSet</button>
+    <button class="tab"    data-i="6"><small>S27</small>HashMap</button>
+    <button class="tab"    data-i="7"><small>S28</small>LinkedHashMap</button>
+    <button class="tab"    data-i="8"><small>S29</small>TreeMap</button>
+  </div>
+</div>
+<div class="body">
+
+<!-- ========== S21 ArrayList ========== -->
+<div class="sess on" id="s0">
+<div class="ov">
+  <h3>S21 — ArrayList: All Operations</h3>
+  <p>ArrayList is a resizable-array List. Below is every operation type — declaration, add, update, delete, advanced, and iteration — with all method variants and complete code.</p>
+  <div class="chips">
+    <span class="chip">Ordered</span><span class="chip">Duplicates ✓</span><span class="chip">Null ✓</span>
+    <span class="chip g">get/set O(1)</span><span class="chip o">insert/del mid O(n)</span><span class="chip r">Not Thread-Safe</span>
+  </div>
+</div>
+
+<!-- 1. DECLARE -->
+<div class="op-section">
+  <div class="op-title">① DECLARE / INITIALISE <span class="cnt">6 ways</span></div>
+  <div class="op-body">
+    <div class="sub-op">
+      <div class="sub-hd" onclick="tog(this)"><span class="method">new ArrayList&lt;&gt;()</span><span class="ret">Empty list, default capacity 10</span><span class="chv">▼</span></div>
+      <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.ArrayList;
+<span class="kw">import</span> java.util.List;
+
+<span class="cm">// 1. Empty list — default initial capacity = 10</span>
+List&lt;String&gt; a = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+<span class="cm">// 2. Pre-sized capacity (avoids resize overhead)</span>
+List&lt;String&gt; b = <span class="kw">new</span> ArrayList&lt;&gt;(<span class="num">50</span>);
+
+<span class="cm">// 3. From another Collection</span>
+List&lt;String&gt; c = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"X"</span>,<span class="str">"Y"</span>,<span class="str">"Z"</span>));
+
+<span class="cm">// 4. Immutable list — no add/remove allowed</span>
+List&lt;String&gt; d = List.<span class="fn">of</span>(<span class="str">"A"</span>, <span class="str">"B"</span>, <span class="str">"C"</span>);
+
+<span class="cm">// 5. Mutable copy from immutable</span>
+List&lt;String&gt; e = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>));
+
+<span class="cm">// 6. Arrays.asList — fixed-size, allows set() but not add()/remove()</span>
+<span class="kw">import</span> java.util.Arrays;
+List&lt;String&gt; f = Arrays.<span class="fn">asList</span>(<span class="str">"P"</span>, <span class="str">"Q"</span>, <span class="str">"R"</span>);</pre></div>
+      <div class="note">💡 Always declare with <code>List&lt;T&gt;</code> interface type — not <code>ArrayList&lt;T&gt;</code> — for loose coupling.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. ADD -->
+<div class="op-section">
+  <div class="op-title">② ADD OPERATIONS <span class="cnt">5 ways</span></div>
+  <div class="op-body">
+    <div class="sub-op">
+      <div class="sub-hd" onclick="tog(this)"><span class="method">add / addAll / add(index)</span><span class="ret">boolean / void</span><span class="chv">▼</span></div>
+      <div class="sub-body"><div class="cb"><pre>List&lt;String&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+<span class="cm">// 1. add(E e) — appends to end — O(1) amortized</span>
+list.<span class="fn">add</span>(<span class="str">"Apple"</span>);
+list.<span class="fn">add</span>(<span class="str">"Banana"</span>);
+list.<span class="fn">add</span>(<span class="kw">null</span>);        <span class="cm">// null allowed</span>
+
+<span class="cm">// 2. add(int index, E e) — insert at index — O(n) shift</span>
+list.<span class="fn">add</span>(<span class="num">0</span>, <span class="str">"Mango"</span>);  <span class="cm">// [Mango, Apple, Banana, null]</span>
+
+<span class="cm">// 3. addAll(Collection c) — appends entire collection</span>
+list.<span class="fn">addAll</span>(List.<span class="fn">of</span>(<span class="str">"Cherry"</span>, <span class="str">"Grape"</span>));
+
+<span class="cm">// 4. addAll(int index, Collection c) — insert collection at index</span>
+list.<span class="fn">addAll</span>(<span class="num">1</span>, List.<span class="fn">of</span>(<span class="str">"Kiwi"</span>, <span class="str">"Peach"</span>));
+
+<span class="cm">// 5. Collections.addAll — adds varargs efficiently</span>
+<span class="kw">import</span> java.util.Collections;
+Collections.<span class="fn">addAll</span>(list, <span class="str">"Fig"</span>, <span class="str">"Date"</span>, <span class="str">"Plum"</span>);
+
+System.out.println(list);</pre></div>
+      <div class="note">⚠️ add(index, e) shifts all elements to the right — O(n). For bulk adds, addAll() is more efficient than looping add().</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. UPDATE -->
+<div class="op-section">
+  <div class="op-title">③ UPDATE OPERATIONS <span class="cnt">4 ways</span></div>
+  <div class="op-body">
+    <div class="sub-op">
+      <div class="sub-hd" onclick="tog(this)"><span class="method">set / replaceAll / Collections.fill / Collections.copy</span><span class="ret">E (old value)</span><span class="chv">▼</span></div>
+      <div class="sub-body"><div class="cb"><pre>List&lt;String&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>,<span class="str">"D"</span>));
+
+<span class="cm">// 1. set(int index, E e) — replace element at index — O(1)</span>
+String old = list.<span class="fn">set</span>(<span class="num">1</span>, <span class="str">"Z"</span>); <span class="cm">// old = "B", list = [A,Z,C,D]</span>
+
+<span class="cm">// 2. replaceAll(UnaryOperator) — transform every element (Java 8)</span>
+list.<span class="fn">replaceAll</span>(s -> s.<span class="fn">toLowerCase</span>()); <span class="cm">// [a, z, c, d]</span>
+
+<span class="cm">// 3. Collections.fill — replace ALL with same value</span>
+List&lt;String&gt; fill = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"X"</span>,<span class="str">"X"</span>,<span class="str">"X"</span>));
+Collections.<span class="fn">fill</span>(fill, <span class="str">"Y"</span>);   <span class="cm">// [Y, Y, Y]</span>
+
+<span class="cm">// 4. Collections.copy(dest, src) — copy src into dest (dest must be same size+)</span>
+List&lt;String&gt; dest = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"1"</span>,<span class="str">"2"</span>,<span class="str">"3"</span>));
+List&lt;String&gt; src  = List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>);
+Collections.<span class="fn">copy</span>(dest, src); <span class="cm">// dest = [A, B, C]</span></pre></div>
+      <div class="note">💡 replaceAll() is the Java 8 stream-free way to transform every element in-place. More concise than a for-loop with set().</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. DELETE -->
+<div class="op-section">
+  <div class="op-title">④ DELETE OPERATIONS <span class="cnt">6 ways</span></div>
+  <div class="op-body">
+    <div class="sub-op">
+      <div class="sub-hd" onclick="tog(this)"><span class="method">remove / removeAll / removeIf / clear / retainAll / subList.clear</span><span class="ret">boolean / E</span><span class="chv">▼</span></div>
+      <div class="sub-body"><div class="cb"><pre>List&lt;String&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>,<span class="str">"D"</span>,<span class="str">"E"</span>));
+
+<span class="cm">// 1. remove(int index) — remove by index, returns removed element</span>
+String removed = list.<span class="fn">remove</span>(<span class="num">0</span>); <span class="cm">// "A" removed → [B,C,D,E]</span>
+
+<span class="cm">// 2. remove(Object o) — remove FIRST occurrence of value</span>
+list.<span class="fn">remove</span>(<span class="str">"C"</span>);              <span class="cm">// → [B, D, E]</span>
+
+<span class="cm">// 3. removeAll(Collection c) — remove all matching elements</span>
+list.<span class="fn">removeAll</span>(List.<span class="fn">of</span>(<span class="str">"D"</span>,<span class="str">"E"</span>)); <span class="cm">// → [B]</span>
+
+<span class="cm">// 4. removeIf(Predicate) — remove elements matching condition (Java 8)</span>
+List&lt;Integer&gt; nums = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>));
+nums.<span class="fn">removeIf</span>(n -> n % <span class="num">2</span> == <span class="num">0</span>); <span class="cm">// remove evens → [1,3,5]</span>
+
+<span class="cm">// 5. retainAll — keep ONLY elements in given collection</span>
+List&lt;String&gt; l = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+l.<span class="fn">retainAll</span>(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"C"</span>)); <span class="cm">// → [A, C]</span>
+
+<span class="cm">// 6. clear() — remove ALL elements</span>
+l.<span class="fn">clear</span>(); <span class="cm">// → []</span>
+
+<span class="cm">// Bonus: subList range delete</span>
+List&lt;Integer&gt; big = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>));
+big.<span class="fn">subList</span>(<span class="num">1</span>, <span class="num">3</span>).<span class="fn">clear</span>(); <span class="cm">// removes index 1,2 → [1,4,5]</span></pre></div>
+      <div class="note">⚠️ Never use list.remove(int) when list holds Integers — it removes by index! Cast: list.remove(Integer.valueOf(3)) to remove by value.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 5. ADVANCED -->
+<div class="op-section">
+  <div class="op-title">⑤ ADVANCED OPERATIONS <span class="cnt">10 operations</span></div>
+  <div class="op-body">
+    <div class="sub-op">
+      <div class="sub-hd" onclick="tog(this)"><span class="method">sort / search / contains / subList / frequency / shuffle / reverse / copy / stream / unmodifiable</span><span class="ret">Various</span><span class="chv">▼</span></div>
+      <div class="sub-body"><div class="cb"><pre>List&lt;Integer&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="num">5</span>,<span class="num">2</span>,<span class="num">8</span>,<span class="num">1</span>,<span class="num">9</span>,<span class="num">3</span>));
+
+<span class="cm">// 1. Sort natural order</span>
+Collections.<span class="fn">sort</span>(list);              <span class="cm">// [1,2,3,5,8,9]</span>
+list.<span class="fn">sort</span>(Comparator.<span class="fn">naturalOrder</span>()); <span class="cm">// same, Java 8 style</span>
+
+<span class="cm">// 2. Sort reverse</span>
+list.<span class="fn">sort</span>(Comparator.<span class="fn">reverseOrder</span>()); <span class="cm">// [9,8,5,3,2,1]</span>
+
+<span class="cm">// 3. Binary search (list MUST be sorted first)</span>
+Collections.<span class="fn">sort</span>(list);
+<span class="kw">int</span> idx = Collections.<span class="fn">binarySearch</span>(list, <span class="num">5</span>); <span class="cm">// returns index</span>
+
+<span class="cm">// 4. contains / indexOf / lastIndexOf</span>
+System.out.println(list.<span class="fn">contains</span>(<span class="num">8</span>));    <span class="cm">// true</span>
+System.out.println(list.<span class="fn">indexOf</span>(<span class="num">3</span>));     <span class="cm">// first index</span>
+System.out.println(list.<span class="fn">lastIndexOf</span>(<span class="num">3</span>)); <span class="cm">// last index</span>
+
+<span class="cm">// 5. subList (view — changes reflect in original)</span>
+List&lt;Integer&gt; sub = list.<span class="fn">subList</span>(<span class="num">1</span>, <span class="num">4</span>);  <span class="cm">// [2,3,5]</span>
+
+<span class="cm">// 6. frequency</span>
+List&lt;String&gt; words = List.<span class="fn">of</span>(<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"a"</span>,<span class="str">"c"</span>,<span class="str">"a"</span>);
+System.out.println(Collections.<span class="fn">frequency</span>(<span class="kw">new</span> ArrayList&lt;&gt;(words), <span class="str">"a"</span>)); <span class="cm">// 3</span>
+
+<span class="cm">// 7. shuffle / reverse / min / max</span>
+Collections.<span class="fn">shuffle</span>(list);
+Collections.<span class="fn">reverse</span>(list);
+System.out.println(Collections.<span class="fn">min</span>(list));
+System.out.println(Collections.<span class="fn">max</span>(list));
+
+<span class="cm">// 8. Convert to array</span>
+String[] arr = list.<span class="fn">stream</span>().<span class="fn">map</span>(Object::toString).<span class="fn">toArray</span>(String[]::new);
+
+<span class="cm">// 9. Stream operations</span>
+list.<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(n -> n > <span class="num">3</span>)
+    .<span class="fn">map</span>(n -> n * <span class="num">2</span>)
+    .<span class="fn">sorted</span>()
+    .<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 10. Unmodifiable wrapper</span>
+List&lt;Integer&gt; unmod = Collections.<span class="fn">unmodifiableList</span>(list);</pre></div>
+      <div class="note">💡 subList() returns a view — modifications to it affect the original list. To get an independent copy: new ArrayList&lt;&gt;(list.subList(1,4)).</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 6. ITERATE -->
+<div class="op-section">
+  <div class="op-title">⑥ ITERATION <span class="cnt">8 ways</span></div>
+  <div class="op-body">
+    <div class="sub-op">
+      <div class="sub-hd" onclick="tog(this)"><span class="method">for / for-each / iterator / listIterator / forEach / stream / parallelStream / Enumeration</span><span class="ret">void</span><span class="chv">▼</span></div>
+      <div class="sub-body"><div class="cb"><pre>List&lt;String&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"Java"</span>,<span class="str">"Python"</span>,<span class="str">"Go"</span>));
+
+<span class="cm">// 1. Classic for loop — index access</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; list.<span class="fn">size</span>(); i++)
+    System.out.println(i + <span class="str">": "</span> + list.<span class="fn">get</span>(i));
+
+<span class="cm">// 2. Enhanced for-each — cleanest for read-only</span>
+<span class="kw">for</span> (String s : list) System.out.println(s);
+
+<span class="cm">// 3. Iterator — safe removal during iteration</span>
+<span class="kw">import</span> java.util.Iterator;
+Iterator&lt;String&gt; it = list.<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+    String s = it.<span class="fn">next</span>();
+    <span class="kw">if</span> (s.<span class="fn">equals</span>(<span class="str">"Go"</span>)) it.<span class="fn">remove</span>(); <span class="cm">// safe remove</span>
+}
+
+<span class="cm">// 4. ListIterator — bidirectional + set/add during iteration</span>
+<span class="kw">import</span> java.util.ListIterator;
+ListIterator&lt;String&gt; lit = list.<span class="fn">listIterator</span>();
+<span class="kw">while</span> (lit.<span class="fn">hasNext</span>()) {
+    String s = lit.<span class="fn">next</span>();
+    lit.<span class="fn">set</span>(s.<span class="fn">toUpperCase</span>()); <span class="cm">// replace in-place</span>
+}
+<span class="cm">// Traverse backwards</span>
+<span class="kw">while</span> (lit.<span class="fn">hasPrevious</span>()) System.out.println(lit.<span class="fn">previous</span>());
+
+<span class="cm">// 5. forEach lambda (Java 8)</span>
+list.<span class="fn">forEach</span>(s -> System.out.println(s));
+list.<span class="fn">forEach</span>(System.out::println); <span class="cm">// method reference</span>
+
+<span class="cm">// 6. Stream sequential</span>
+list.<span class="fn">stream</span>().<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 7. Parallel stream — multi-threaded iteration</span>
+list.<span class="fn">parallelStream</span>().<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 8. Iterate from specific index with listIterator(index)</span>
+ListIterator&lt;String&gt; fromIdx = list.<span class="fn">listIterator</span>(<span class="num">1</span>); <span class="cm">// start at index 1</span>
+<span class="kw">while</span> (fromIdx.<span class="fn">hasNext</span>()) System.out.println(fromIdx.<span class="fn">next</span>());</pre></div>
+      <div class="note">⚠️ Never use list.remove() inside a for-each — it causes ConcurrentModificationException. Use Iterator.remove() or removeIf() instead.</div></div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- END S21 -->
+
+<!-- ========== S22 LinkedList ========== -->
+<div class="sess" id="s1">
+<div class="ov">
+  <h3>S22 — LinkedList: All Operations</h3>
+  <p>LinkedList implements both List and Deque. Every node is an object with data + prev/next pointers. Optimal for frequent head/tail insertions, queue/stack use. Avoid index-based access — it's O(n).</p>
+  <div class="chips">
+    <span class="chip">Ordered</span><span class="chip">Duplicates ✓</span><span class="chip">Null ✓</span>
+    <span class="chip g">head/tail O(1)</span><span class="chip o">get(index) O(n)</span><span class="chip r">Not Thread-Safe</span>
+  </div>
+</div>
+
+<div class="op-section">
+  <div class="op-title">① DECLARE / INITIALISE <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">new LinkedList&lt;&gt;() / from collection / as Queue / as Deque / as Stack</span><span class="ret">Empty or populated</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.*;
+
+<span class="cm">// 1. Empty LinkedList as List</span>
+List&lt;String&gt; ll = <span class="kw">new</span> LinkedList&lt;&gt;();
+
+<span class="cm">// 2. From existing collection</span>
+List&lt;Integer&gt; ll2 = <span class="kw">new</span> LinkedList&lt;&gt;(List.<span class="fn">of</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>));
+
+<span class="cm">// 3. As Queue (FIFO)</span>
+Queue&lt;String&gt; q = <span class="kw">new</span> LinkedList&lt;&gt;();
+
+<span class="cm">// 4. As Deque (double-ended queue)</span>
+Deque&lt;String&gt; dq = <span class="kw">new</span> LinkedList&lt;&gt;();
+
+<span class="cm">// 5. As Stack (LIFO) via Deque</span>
+Deque&lt;String&gt; stack = <span class="kw">new</span> LinkedList&lt;&gt;();</pre></div>
+  <div class="note">💡 Prefer ArrayDeque for pure stack/queue use — better cache performance. Use LinkedList when you need both List and Deque features.</div></div></div></div>
+</div>
+
+<div class="op-section">
+  <div class="op-title">② ADD OPERATIONS <span class="cnt">10 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">add / addFirst / addLast / offer / offerFirst / offerLast / push / addAll / add(index)</span><span class="ret">boolean / void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>LinkedList&lt;String&gt; ll = <span class="kw">new</span> LinkedList&lt;&gt;();
+
+<span class="cm">// 1. add(E) — appends to TAIL — O(1)</span>
+ll.<span class="fn">add</span>(<span class="str">"A"</span>); ll.<span class="fn">add</span>(<span class="str">"B"</span>); ll.<span class="fn">add</span>(<span class="str">"C"</span>);
+
+<span class="cm">// 2. addFirst(E) — prepend to HEAD — O(1)</span>
+ll.<span class="fn">addFirst</span>(<span class="str">"HEAD"</span>); <span class="cm">// [HEAD, A, B, C]</span>
+
+<span class="cm">// 3. addLast(E) — append to TAIL — O(1) same as add()</span>
+ll.<span class="fn">addLast</span>(<span class="str">"TAIL"</span>); <span class="cm">// [HEAD, A, B, C, TAIL]</span>
+
+<span class="cm">// 4. add(int index, E) — insert at position — O(n) traversal</span>
+ll.<span class="fn">add</span>(<span class="num">2</span>, <span class="str">"X"</span>); <span class="cm">// [HEAD, A, X, B, C, TAIL]</span>
+
+<span class="cm">// 5. offer(E) — Queue API: adds to tail, returns true/false</span>
+ll.<span class="fn">offer</span>(<span class="str">"Q1"</span>);
+
+<span class="cm">// 6. offerFirst(E) — Deque: add to head</span>
+ll.<span class="fn">offerFirst</span>(<span class="str">"QF"</span>);
+
+<span class="cm">// 7. offerLast(E) — Deque: add to tail</span>
+ll.<span class="fn">offerLast</span>(<span class="str">"QL"</span>);
+
+<span class="cm">// 8. push(E) — Stack: pushes to HEAD (same as addFirst)</span>
+ll.<span class="fn">push</span>(<span class="str">"STACK-TOP"</span>);
+
+<span class="cm">// 9. addAll(Collection) — bulk add to tail</span>
+ll.<span class="fn">addAll</span>(List.<span class="fn">of</span>(<span class="str">"P"</span>,<span class="str">"Q"</span>,<span class="str">"R"</span>));
+
+<span class="cm">// 10. addAll(int index, Collection) — bulk insert at position</span>
+ll.<span class="fn">addAll</span>(<span class="num">0</span>, List.<span class="fn">of</span>(<span class="str">"START1"</span>,<span class="str">"START2"</span>));</pre></div>
+  <div class="note">💡 addFirst/addLast, offerFirst/offerLast, push/offer all ultimately modify head or tail pointers in O(1) — they are just different API names from List, Deque, and Queue interfaces.</div></div></div></div>
+</div>
+
+<div class="op-section">
+  <div class="op-title">③ UPDATE OPERATIONS <span class="cnt">3 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">set(index) / replaceAll / listIterator.set</span><span class="ret">E (old value)</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>LinkedList&lt;String&gt; ll = <span class="kw">new</span> LinkedList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+
+<span class="cm">// 1. set(int index, E e) — O(n) traversal to find index</span>
+String old = ll.<span class="fn">set</span>(<span class="num">1</span>, <span class="str">"Z"</span>); <span class="cm">// old = "B" → [A,Z,C]</span>
+
+<span class="cm">// 2. replaceAll — transform every element (Java 8)</span>
+ll.<span class="fn">replaceAll</span>(s -> s + <span class="str">"!"</span>); <span class="cm">// [A!, Z!, C!]</span>
+
+<span class="cm">// 3. ListIterator.set — most efficient for sequential update</span>
+ListIterator&lt;String&gt; lit = ll.<span class="fn">listIterator</span>();
+<span class="kw">while</span> (lit.<span class="fn">hasNext</span>()) {
+    String s = lit.<span class="fn">next</span>();
+    lit.<span class="fn">set</span>(s.<span class="fn">toLowerCase</span>()); <span class="cm">// [a!, z!, c!]</span>
+}</pre></div>
+  <div class="note">⚠️ Avoid set(index) in large LinkedLists — it traverses from head or tail to the index each time. Use ListIterator for sequential updates.</div></div></div></div>
+</div>
+
+<div class="op-section">
+  <div class="op-title">④ DELETE OPERATIONS <span class="cnt">10 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove / removeFirst / removeLast / poll / pollFirst / pollLast / pop / removeIf / clear / removeAll</span><span class="ret">E / boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>LinkedList&lt;String&gt; ll = <span class="kw">new</span> LinkedList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>,<span class="str">"D"</span>));
+
+<span class="cm">// 1. remove() — removes HEAD, throws if empty</span>
+ll.<span class="fn">remove</span>(); <span class="cm">// → [B,C,D]</span>
+
+<span class="cm">// 2. remove(int index) — remove by index — O(n)</span>
+ll.<span class="fn">remove</span>(<span class="num">1</span>); <span class="cm">// removes "C" → [B,D]</span>
+
+<span class="cm">// 3. remove(Object) — remove first occurrence — O(n)</span>
+ll.<span class="fn">remove</span>(<span class="str">"D"</span>); <span class="cm">// → [B]</span>
+
+ll = <span class="kw">new</span> LinkedList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>,<span class="str">"D"</span>));
+
+<span class="cm">// 4. removeFirst() — remove HEAD, throws if empty</span>
+ll.<span class="fn">removeFirst</span>(); <span class="cm">// removes A</span>
+
+<span class="cm">// 5. removeLast() — remove TAIL, throws if empty</span>
+ll.<span class="fn">removeLast</span>(); <span class="cm">// removes D</span>
+
+<span class="cm">// 6. poll() — remove HEAD, returns null if empty (safe)</span>
+String head = ll.<span class="fn">poll</span>(); <span class="cm">// B — null-safe</span>
+
+<span class="cm">// 7. pollFirst() / pollLast() — remove head/tail, null if empty</span>
+ll.<span class="fn">pollFirst</span>();
+ll.<span class="fn">pollLast</span>();
+
+<span class="cm">// 8. pop() — Stack: remove HEAD, throws if empty</span>
+ll = <span class="kw">new</span> LinkedList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"X"</span>,<span class="str">"Y"</span>));
+ll.<span class="fn">pop</span>(); <span class="cm">// X</span>
+
+<span class="cm">// 9. removeIf(Predicate) — conditional remove (Java 8)</span>
+LinkedList&lt;Integer&gt; nums = <span class="kw">new</span> LinkedList&lt;&gt;(List.<span class="fn">of</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>));
+nums.<span class="fn">removeIf</span>(n -> n % <span class="num">2</span> == <span class="num">0</span>); <span class="cm">// [1, 3]</span>
+
+<span class="cm">// 10. clear() — remove everything</span>
+nums.<span class="fn">clear</span>();</pre></div>
+  <div class="note">💡 Prefer poll()/pollFirst()/pollLast() over remove/removeFirst/removeLast when the list might be empty — poll returns null instead of throwing NoSuchElementException.</div></div></div></div>
+</div>
+
+<div class="op-section">
+  <div class="op-title">⑤ ADVANCED OPERATIONS <span class="cnt">8 operations</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">peek / peekFirst / peekLast / contains / descendingIterator / sort / toArray / stream</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>LinkedList&lt;Integer&gt; ll = <span class="kw">new</span> LinkedList&lt;&gt;(List.<span class="fn">of</span>(<span class="num">5</span>,<span class="num">3</span>,<span class="num">8</span>,<span class="num">1</span>));
+
+<span class="cm">// 1. peek() — view HEAD without removing (null if empty)</span>
+System.out.println(ll.<span class="fn">peek</span>());      <span class="cm">// 5</span>
+
+<span class="cm">// 2. peekFirst() / peekLast()</span>
+System.out.println(ll.<span class="fn">peekFirst</span>()); <span class="cm">// 5</span>
+System.out.println(ll.<span class="fn">peekLast</span>());  <span class="cm">// 1</span>
+
+<span class="cm">// 3. element() — view HEAD, throws if empty</span>
+System.out.println(ll.<span class="fn">element</span>()); <span class="cm">// 5</span>
+
+<span class="cm">// 4. contains / indexOf / lastIndexOf</span>
+System.out.println(ll.<span class="fn">contains</span>(<span class="num">8</span>));     <span class="cm">// true</span>
+System.out.println(ll.<span class="fn">indexOf</span>(<span class="num">3</span>));      <span class="cm">// 1</span>
+
+<span class="cm">// 5. descendingIterator — reverse order</span>
+Iterator&lt;Integer&gt; desc = ll.<span class="fn">descendingIterator</span>();
+<span class="kw">while</span> (desc.<span class="fn">hasNext</span>()) System.out.print(desc.<span class="fn">next</span>() + <span class="str">" "</span>);
+<span class="cm">// 1 8 3 5</span>
+
+<span class="cm">// 6. sort with Comparator</span>
+ll.<span class="fn">sort</span>(Comparator.<span class="fn">naturalOrder</span>()); <span class="cm">// [1,3,5,8]</span>
+
+<span class="cm">// 7. toArray</span>
+Object[] arr = ll.<span class="fn">toArray</span>();
+Integer[] typed = ll.<span class="fn">toArray</span>(<span class="kw">new</span> Integer[<span class="num">0</span>]);
+
+<span class="cm">// 8. Stream operations</span>
+ll.<span class="fn">stream</span>()
+  .<span class="fn">filter</span>(n -> n > <span class="num">3</span>)
+  .<span class="fn">mapToInt</span>(Integer::intValue)
+  .<span class="fn">sum</span>();</pre></div>
+  <div class="note">💡 descendingIterator() is unique to Deque/LinkedList — no equivalent in ArrayList. Use it for reverse traversal without creating a reversed copy.</div></div></div></div>
+</div>
+
+<div class="op-section">
+  <div class="op-title">⑥ ITERATION <span class="cnt">7 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">for / for-each / iterator / listIterator / descendingIterator / forEach / stream</span><span class="ret">void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>LinkedList&lt;String&gt; ll = <span class="kw">new</span> LinkedList&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+
+<span class="cm">// 1. Classic for — avoid for large lists (O(n²) total!)</span>
+<span class="kw">for</span> (<span class="kw">int</span> i=<span class="num">0</span>; i&lt;ll.<span class="fn">size</span>(); i++) System.out.println(ll.<span class="fn">get</span>(i)); <span class="cm">// BAD!</span>
+
+<span class="cm">// 2. Enhanced for-each — O(n) — preferred</span>
+<span class="kw">for</span> (String s : ll) System.out.println(s);
+
+<span class="cm">// 3. Iterator — safe remove</span>
+Iterator&lt;String&gt; it = ll.<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+    <span class="kw">if</span> (it.<span class="fn">next</span>().<span class="fn">equals</span>(<span class="str">"B"</span>)) it.<span class="fn">remove</span>();
+}
+
+<span class="cm">// 4. ListIterator — bidirectional + set/add</span>
+ListIterator&lt;String&gt; lit = ll.<span class="fn">listIterator</span>();
+<span class="kw">while</span> (lit.<span class="fn">hasNext</span>()) lit.<span class="fn">set</span>(lit.<span class="fn">next</span>() + <span class="str">"*"</span>);
+
+<span class="cm">// 5. descendingIterator — unique to Deque — tail to head</span>
+Iterator&lt;String&gt; rev = ll.<span class="fn">descendingIterator</span>();
+<span class="kw">while</span> (rev.<span class="fn">hasNext</span>()) System.out.println(rev.<span class="fn">next</span>());
+
+<span class="cm">// 6. forEach lambda</span>
+ll.<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 7. Stream</span>
+ll.<span class="fn">stream</span>().<span class="fn">filter</span>(s -> s.<span class="fn">startsWith</span>(<span class="str">"A"</span>)).<span class="fn">forEach</span>(System.out::println);</pre></div>
+  <div class="note">⚠️ NEVER use index-based for loop on LinkedList for performance-critical code — get(i) traverses from head each time making it O(n²) total. Use for-each or Iterator instead.</div></div></div></div>
+</div>
+</div>
+<!-- END S22 -->
+
+<!-- ========== S23 Vector ========== -->
+<div class="sess" id="s2">
+<div class="ov">
+  <h3>S23 — Vector: All Operations</h3>
+  <p>Vector is a synchronized dynamic array — legacy predecessor to ArrayList. Every method acquires an intrinsic lock. Avoid in new code; shown here for legacy understanding and SDET interviews.</p>
+  <div class="chips">
+    <span class="chip">Ordered</span><span class="chip">Duplicates ✓</span><span class="chip">Null ✓</span>
+    <span class="chip g">Thread-Safe</span><span class="chip o">get/set O(1)</span><span class="chip r">Slow (synchronized)</span>
+  </div>
+</div>
+<div class="op-section">
+  <div class="op-title">① DECLARE <span class="cnt">4 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">new Vector&lt;&gt;() / capacity / increment / from collection</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.Vector;
+<span class="kw">import</span> java.util.List;
+
+<span class="cm">// 1. Default — capacity 10</span>
+Vector&lt;String&gt; v1 = <span class="kw">new</span> Vector&lt;&gt;();
+
+<span class="cm">// 2. Custom initial capacity</span>
+Vector&lt;String&gt; v2 = <span class="kw">new</span> Vector&lt;&gt;(<span class="num">20</span>);
+
+<span class="cm">// 3. Initial capacity + capacityIncrement (grows by fixed amount)</span>
+Vector&lt;String&gt; v3 = <span class="kw">new</span> Vector&lt;&gt;(<span class="num">5</span>, <span class="num">3</span>); <span class="cm">// start=5, grow by 3</span>
+
+<span class="cm">// 4. From collection</span>
+Vector&lt;String&gt; v4 = <span class="kw">new</span> Vector&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">② ADD OPERATIONS <span class="cnt">6 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">add / addElement / insertElementAt / addAll / add(index) / setSize</span><span class="ret">boolean / void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Vector&lt;String&gt; v = <span class="kw">new</span> Vector&lt;&gt;();
+
+<span class="cm">// 1. add(E) — modern API</span>
+v.<span class="fn">add</span>(<span class="str">"Java"</span>); v.<span class="fn">add</span>(<span class="str">"Python"</span>);
+
+<span class="cm">// 2. addElement(E) — legacy API, same as add()</span>
+v.<span class="fn">addElement</span>(<span class="str">"C++"</span>);
+
+<span class="cm">// 3. add(int index, E) — insert at position</span>
+v.<span class="fn">add</span>(<span class="num">1</span>, <span class="str">"Kotlin"</span>); <span class="cm">// [Java, Kotlin, Python, C++]</span>
+
+<span class="cm">// 4. insertElementAt(E, int index) — legacy version of add(index, E)</span>
+v.<span class="fn">insertElementAt</span>(<span class="str">"Go"</span>, <span class="num">0</span>);
+
+<span class="cm">// 5. addAll(Collection) — bulk add</span>
+v.<span class="fn">addAll</span>(List.<span class="fn">of</span>(<span class="str">"Ruby"</span>,<span class="str">"Swift"</span>));
+
+<span class="cm">// 6. addAll(int index, Collection)</span>
+v.<span class="fn">addAll</span>(<span class="num">0</span>, List.<span class="fn">of</span>(<span class="str">"Rust"</span>,<span class="str">"Scala"</span>));</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">③ UPDATE <span class="cnt">3 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">set / setElementAt / replaceAll</span><span class="ret">E / void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Vector&lt;String&gt; v = <span class="kw">new</span> Vector&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+
+<span class="cm">// 1. set(int index, E) — modern API</span>
+v.<span class="fn">set</span>(<span class="num">0</span>, <span class="str">"Z"</span>);
+
+<span class="cm">// 2. setElementAt(E, int index) — legacy API</span>
+v.<span class="fn">setElementAt</span>(<span class="str">"X"</span>, <span class="num">1</span>); <span class="cm">// [Z, X, C]</span>
+
+<span class="cm">// 3. replaceAll — Java 8</span>
+v.<span class="fn">replaceAll</span>(s -> s.<span class="fn">toLowerCase</span>());</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">④ DELETE <span class="cnt">8 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove / removeElement / removeElementAt / removeAllElements / removeAll / removeIf / clear / retainAll</span><span class="ret">boolean / void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Vector&lt;String&gt; v = <span class="kw">new</span> Vector&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>,<span class="str">"D"</span>));
+
+<span class="cm">// 1. remove(int index) — modern</span>
+v.<span class="fn">remove</span>(<span class="num">0</span>); <span class="cm">// removes A</span>
+
+<span class="cm">// 2. remove(Object) — modern</span>
+v.<span class="fn">remove</span>(<span class="str">"B"</span>);
+
+<span class="cm">// 3. removeElement(Object) — legacy, returns boolean</span>
+v.<span class="fn">removeElement</span>(<span class="str">"C"</span>);
+
+<span class="cm">// 4. removeElementAt(int) — legacy</span>
+v = <span class="kw">new</span> Vector&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+v.<span class="fn">removeElementAt</span>(<span class="num">1</span>); <span class="cm">// removes B</span>
+
+<span class="cm">// 5. removeAllElements() — legacy, same as clear()</span>
+v.<span class="fn">removeAllElements</span>();
+
+<span class="cm">// 6. removeAll(Collection)</span>
+v = <span class="kw">new</span> Vector&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+v.<span class="fn">removeAll</span>(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"C"</span>));
+
+<span class="cm">// 7. removeIf — Java 8</span>
+v = <span class="kw">new</span> Vector&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"Java"</span>,<span class="str">"Go"</span>,<span class="str">"Kotlin"</span>));
+v.<span class="fn">removeIf</span>(s -> s.<span class="fn">length</span>() &lt; <span class="num">4</span>); <span class="cm">// removes "Go"</span>
+
+<span class="cm">// 8. clear()</span>
+v.<span class="fn">clear</span>();</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑤ ADVANCED <span class="cnt">7 operations</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">capacity / trimToSize / ensureCapacity / elementAt / firstElement / lastElement / copyInto</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Vector&lt;String&gt; v = <span class="kw">new</span> Vector&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+
+<span class="cm">// 1. capacity() — total allocated slots</span>
+System.out.println(v.<span class="fn">capacity</span>()); <span class="cm">// 10 (default)</span>
+
+<span class="cm">// 2. trimToSize() — shrink capacity to current size</span>
+v.<span class="fn">trimToSize</span>(); <span class="cm">// capacity = 3</span>
+
+<span class="cm">// 3. ensureCapacity — pre-grow to at least given size</span>
+v.<span class="fn">ensureCapacity</span>(<span class="num">100</span>);
+
+<span class="cm">// 4. elementAt(int) — legacy version of get()</span>
+System.out.println(v.<span class="fn">elementAt</span>(<span class="num">0</span>)); <span class="cm">// A</span>
+
+<span class="cm">// 5. firstElement() / lastElement() — legacy</span>
+System.out.println(v.<span class="fn">firstElement</span>());
+System.out.println(v.<span class="fn">lastElement</span>());
+
+<span class="cm">// 6. copyInto — copy into plain array</span>
+String[] arr = <span class="kw">new</span> String[v.<span class="fn">size</span>()];
+v.<span class="fn">copyInto</span>(arr);
+
+<span class="cm">// 7. subList / sort / contains</span>
+v.<span class="fn">sort</span>(Comparator.<span class="fn">naturalOrder</span>());
+System.out.println(v.<span class="fn">contains</span>(<span class="str">"A"</span>));
+System.out.println(v.<span class="fn">indexOf</span>(<span class="str">"B"</span>));</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑥ ITERATION <span class="cnt">6 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">Enumeration / for / for-each / Iterator / ListIterator / forEach</span><span class="ret">void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.Enumeration;
+Vector&lt;String&gt; v = <span class="kw">new</span> Vector&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+
+<span class="cm">// 1. Enumeration — legacy, fail-safe (no ConcurrentModificationException)</span>
+Enumeration&lt;String&gt; en = v.<span class="fn">elements</span>();
+<span class="kw">while</span> (en.<span class="fn">hasMoreElements</span>())
+    System.out.println(en.<span class="fn">nextElement</span>());
+
+<span class="cm">// 2. Classic for loop</span>
+<span class="kw">for</span> (<span class="kw">int</span> i=<span class="num">0</span>; i&lt;v.<span class="fn">size</span>(); i++) System.out.println(v.<span class="fn">get</span>(i));
+
+<span class="cm">// 3. Enhanced for-each</span>
+<span class="kw">for</span> (String s : v) System.out.println(s);
+
+<span class="cm">// 4. Iterator — fail-fast</span>
+Iterator&lt;String&gt; it = v.<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) System.out.println(it.<span class="fn">next</span>());
+
+<span class="cm">// 5. ListIterator — bidirectional</span>
+ListIterator&lt;String&gt; lit = v.<span class="fn">listIterator</span>(v.<span class="fn">size</span>()); <span class="cm">// from end</span>
+<span class="kw">while</span> (lit.<span class="fn">hasPrevious</span>()) System.out.println(lit.<span class="fn">previous</span>());
+
+<span class="cm">// 6. forEach lambda</span>
+v.<span class="fn">forEach</span>(System.out::println);</pre></div>
+  <div class="note">💡 Enumeration is fail-safe — it does NOT throw ConcurrentModificationException. Iterator is fail-fast. For new code, always prefer Iterator or forEach.</div></div></div></div>
+</div>
+</div>
+
+<!-- ========== S24 HashSet ========== -->
+<div class="sess" id="s3">
+<div class="ov">
+  <h3>S24 — HashSet: All Operations</h3>
+  <p>HashSet = unique elements + O(1) average operations. No index, no order guarantee. Backed by HashMap. Must override hashCode() + equals() for custom objects.</p>
+  <div class="chips">
+    <span class="chip">Unordered</span><span class="chip">No Duplicates</span><span class="chip">1 Null ✓</span>
+    <span class="chip g">add/remove/contains O(1)</span><span class="chip r">Not Thread-Safe</span>
+  </div>
+</div>
+<div class="op-section">
+  <div class="op-title">① DECLARE <span class="cnt">4 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">new HashSet / capacity / loadFactor / from collection</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.HashSet;
+<span class="kw">import</span> java.util.Set;
+
+<span class="cm">// 1. Empty — default capacity 16, load factor 0.75</span>
+Set&lt;String&gt; s1 = <span class="kw">new</span> HashSet&lt;&gt;();
+
+<span class="cm">// 2. Custom capacity</span>
+Set&lt;String&gt; s2 = <span class="kw">new</span> HashSet&lt;&gt;(<span class="num">32</span>);
+
+<span class="cm">// 3. Custom capacity + load factor</span>
+Set&lt;String&gt; s3 = <span class="kw">new</span> HashSet&lt;&gt;(<span class="num">32</span>, <span class="num">0.8f</span>);
+
+<span class="cm">// 4. From collection (de-duplicates automatically)</span>
+Set&lt;String&gt; s4 = <span class="kw">new</span> HashSet&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"A"</span>,<span class="str">"C"</span>));
+System.out.println(s4); <span class="cm">// {A, B, C}</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">② ADD <span class="cnt">3 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">add / addAll / Collections.addAll</span><span class="ret">boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Set&lt;String&gt; set = <span class="kw">new</span> HashSet&lt;&gt;();
+
+<span class="cm">// 1. add(E) — returns true if added, false if duplicate</span>
+System.out.println(set.<span class="fn">add</span>(<span class="str">"Apple"</span>));  <span class="cm">// true</span>
+System.out.println(set.<span class="fn">add</span>(<span class="str">"Apple"</span>));  <span class="cm">// false — duplicate ignored</span>
+set.<span class="fn">add</span>(<span class="kw">null</span>);                            <span class="cm">// one null allowed</span>
+
+<span class="cm">// 2. addAll(Collection) — adds all, ignores duplicates</span>
+set.<span class="fn">addAll</span>(List.<span class="fn">of</span>(<span class="str">"Mango"</span>,<span class="str">"Apple"</span>,<span class="str">"Kiwi"</span>)); <span class="cm">// Apple ignored</span>
+
+<span class="cm">// 3. Collections.addAll — varargs</span>
+<span class="kw">import</span> java.util.Collections;
+Collections.<span class="fn">addAll</span>(set, <span class="str">"X"</span>, <span class="str">"Y"</span>, <span class="str">"Z"</span>);
+
+System.out.println(set);</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">③ UPDATE <span class="cnt">2 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove + add / replaceAll (Java 8 streams)</span><span class="ret">Set&lt;T&gt;</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="cm">// Sets have NO set(index) — elements are unordered, no index</span>
+<span class="cm">// To "update" an element: remove old, add new</span>
+Set&lt;String&gt; set = <span class="kw">new</span> HashSet&lt;&gt;(Set.<span class="fn">of</span>(<span class="str">"Apple"</span>,<span class="str">"Banana"</span>));
+
+<span class="cm">// 1. Remove + re-add (the only direct update)</span>
+set.<span class="fn">remove</span>(<span class="str">"Apple"</span>);
+set.<span class="fn">add</span>(<span class="str">"Mango"</span>);     <span class="cm">// "Apple" replaced by "Mango"</span>
+
+<span class="cm">// 2. Create new set with transformation (stream)</span>
+Set&lt;String&gt; upper = set.<span class="fn">stream</span>()
+    .<span class="fn">map</span>(String::toUpperCase)
+    .<span class="fn">collect</span>(java.util.stream.Collectors.<span class="fn">toSet</span>());
+System.out.println(upper);</pre></div>
+  <div class="note">⚠️ HashSet has no update/set operation — elements are identified by their hash. To modify, remove and re-add. For mutable objects used as keys, never mutate the fields used in hashCode() after insertion.</div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">④ DELETE <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove / removeAll / removeIf / retainAll / clear</span><span class="ret">boolean / void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Set&lt;String&gt; set = <span class="kw">new</span> HashSet&lt;&gt;(Set.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>,<span class="str">"D"</span>,<span class="str">"E"</span>));
+
+<span class="cm">// 1. remove(Object) — O(1) average</span>
+set.<span class="fn">remove</span>(<span class="str">"A"</span>); <span class="cm">// true if existed</span>
+
+<span class="cm">// 2. removeAll(Collection)</span>
+set.<span class="fn">removeAll</span>(Set.<span class="fn">of</span>(<span class="str">"B"</span>,<span class="str">"C"</span>));
+
+<span class="cm">// 3. removeIf(Predicate) — Java 8</span>
+set.<span class="fn">removeIf</span>(s -> s.<span class="fn">equals</span>(<span class="str">"D"</span>));
+
+<span class="cm">// 4. retainAll — keep ONLY matching</span>
+set = <span class="kw">new</span> HashSet&lt;&gt;(Set.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+set.<span class="fn">retainAll</span>(Set.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"C"</span>)); <span class="cm">// {A, C}</span>
+
+<span class="cm">// 5. clear()</span>
+set.<span class="fn">clear</span>();</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑤ ADVANCED <span class="cnt">8 operations</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">contains / size / isEmpty / union / intersection / difference / toArray / stream</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Set&lt;Integer&gt; a = <span class="kw">new</span> HashSet&lt;&gt;(Set.<span class="fn">of</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>));
+Set&lt;Integer&gt; b = <span class="kw">new</span> HashSet&lt;&gt;(Set.<span class="fn">of</span>(<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>));
+
+<span class="cm">// 1. contains — O(1)</span>
+System.out.println(a.<span class="fn">contains</span>(<span class="num">3</span>)); <span class="cm">// true</span>
+
+<span class="cm">// 2. size / isEmpty</span>
+System.out.println(a.<span class="fn">size</span>()); <span class="cm">// 4</span>
+System.out.println(a.<span class="fn">isEmpty</span>()); <span class="cm">// false</span>
+
+<span class="cm">// 3. Union (A ∪ B)</span>
+Set&lt;Integer&gt; union = <span class="kw">new</span> HashSet&lt;&gt;(a);
+union.<span class="fn">addAll</span>(b); <span class="cm">// {1,2,3,4,5,6}</span>
+
+<span class="cm">// 4. Intersection (A ∩ B)</span>
+Set&lt;Integer&gt; inter = <span class="kw">new</span> HashSet&lt;&gt;(a);
+inter.<span class="fn">retainAll</span>(b); <span class="cm">// {3,4}</span>
+
+<span class="cm">// 5. Difference (A - B)</span>
+Set&lt;Integer&gt; diff = <span class="kw">new</span> HashSet&lt;&gt;(a);
+diff.<span class="fn">removeAll</span>(b); <span class="cm">// {1,2}</span>
+
+<span class="cm">// 6. Subset check</span>
+System.out.println(a.<span class="fn">containsAll</span>(Set.<span class="fn">of</span>(<span class="num">1</span>,<span class="num">2</span>))); <span class="cm">// true</span>
+
+<span class="cm">// 7. toArray</span>
+Object[] arr = a.<span class="fn">toArray</span>();
+Integer[] typed = a.<span class="fn">toArray</span>(<span class="kw">new</span> Integer[<span class="num">0</span>]);
+
+<span class="cm">// 8. Stream filter</span>
+a.<span class="fn">stream</span>().<span class="fn">filter</span>(n -> n &gt; <span class="num">2</span>).<span class="fn">forEach</span>(System.out::println);</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑥ ITERATION <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">for-each / Iterator / forEach / stream / toArray+loop</span><span class="ret">void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Set&lt;String&gt; set = <span class="kw">new</span> HashSet&lt;&gt;(Set.<span class="fn">of</span>(<span class="str">"X"</span>,<span class="str">"Y"</span>,<span class="str">"Z"</span>));
+
+<span class="cm">// 1. Enhanced for-each — most common</span>
+<span class="kw">for</span> (String s : set) System.out.println(s);
+
+<span class="cm">// 2. Iterator — safe remove during iteration</span>
+Iterator&lt;String&gt; it = set.<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+    <span class="kw">if</span> (it.<span class="fn">next</span>().<span class="fn">equals</span>(<span class="str">"Y"</span>)) it.<span class="fn">remove</span>();
+}
+
+<span class="cm">// 3. forEach lambda</span>
+set.<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 4. Stream</span>
+set.<span class="fn">stream</span>().<span class="fn">sorted</span>().<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 5. Convert to List then iterate with index</span>
+List&lt;String&gt; lst = <span class="kw">new</span> ArrayList&lt;&gt;(set);
+<span class="kw">for</span> (<span class="kw">int</span> i=<span class="num">0</span>; i&lt;lst.<span class="fn">size</span>(); i++) System.out.println(i+<span class="str">": "</span>+lst.<span class="fn">get</span>(i));</pre></div>
+  <div class="note">⚠️ Order is NOT guaranteed in HashSet iteration. For sorted iteration use TreeSet, for insertion-order use LinkedHashSet.</div></div></div></div>
+</div>
+</div>
+
+<!-- ========== S25 LinkedHashSet ========== -->
+<div class="sess" id="s4">
+<div class="ov">
+  <h3>S25 — LinkedHashSet: All Operations</h3>
+  <p>LinkedHashSet = HashSet + insertion-order maintained via doubly-linked list. Same O(1) ops as HashSet with predictable iteration. Slight memory overhead per entry.</p>
+  <div class="chips">
+    <span class="chip">Insertion-Ordered</span><span class="chip">No Duplicates</span><span class="chip">1 Null ✓</span>
+    <span class="chip g">O(1) average</span><span class="chip r">Not Thread-Safe</span>
+  </div>
+</div>
+<div class="op-section">
+  <div class="op-title">① DECLARE <span class="cnt">4 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">new LinkedHashSet / capacity / load factor / from collection</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.LinkedHashSet;
+<span class="kw">import</span> java.util.Set;
+
+<span class="cm">// 1. Empty</span>
+Set&lt;String&gt; lhs = <span class="kw">new</span> LinkedHashSet&lt;&gt;();
+
+<span class="cm">// 2. Custom capacity</span>
+Set&lt;String&gt; lhs2 = <span class="kw">new</span> LinkedHashSet&lt;&gt;(<span class="num">32</span>);
+
+<span class="cm">// 3. Capacity + load factor</span>
+Set&lt;String&gt; lhs3 = <span class="kw">new</span> LinkedHashSet&lt;&gt;(<span class="num">32</span>, <span class="num">0.8f</span>);
+
+<span class="cm">// 4. From collection — preserves FIRST-SEEN order</span>
+Set&lt;String&gt; lhs4 = <span class="kw">new</span> LinkedHashSet&lt;&gt;(
+    List.<span class="fn">of</span>(<span class="str">"C"</span>,<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"A"</span>,<span class="str">"C"</span>));
+System.out.println(lhs4); <span class="cm">// [C, A, B] — first-seen order</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">② ADD <span class="cnt">3 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">add / addAll / Collections.addAll</span><span class="ret">boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Set&lt;String&gt; lhs = <span class="kw">new</span> LinkedHashSet&lt;&gt;();
+
+<span class="cm">// 1. add — returns false if duplicate; order preserved</span>
+lhs.<span class="fn">add</span>(<span class="str">"Banana"</span>);
+lhs.<span class="fn">add</span>(<span class="str">"Apple"</span>);
+lhs.<span class="fn">add</span>(<span class="str">"Cherry"</span>);
+lhs.<span class="fn">add</span>(<span class="str">"Apple"</span>); <span class="cm">// false — duplicate, order NOT changed</span>
+System.out.println(lhs); <span class="cm">// [Banana, Apple, Cherry]</span>
+
+<span class="cm">// 2. addAll</span>
+lhs.<span class="fn">addAll</span>(List.<span class="fn">of</span>(<span class="str">"Date"</span>,<span class="str">"Elderberry"</span>));
+
+<span class="cm">// 3. Collections.addAll</span>
+Collections.<span class="fn">addAll</span>(lhs, <span class="str">"Fig"</span>, <span class="str">"Grape"</span>);</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">③ UPDATE <span class="cnt">2 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove + add / stream map to new set</span><span class="ret">void / Set</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Set&lt;String&gt; lhs = <span class="kw">new</span> LinkedHashSet&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>));
+
+<span class="cm">// 1. Remove old + add new — note: new element goes to END</span>
+lhs.<span class="fn">remove</span>(<span class="str">"A"</span>);
+lhs.<span class="fn">add</span>(<span class="str">"A_updated"</span>); <span class="cm">// [B, C, A_updated]</span>
+System.out.println(lhs);
+
+<span class="cm">// 2. Transform via stream — returns new set preserving stream order</span>
+Set&lt;String&gt; upper = lhs.<span class="fn">stream</span>()
+    .<span class="fn">map</span>(String::toUpperCase)
+    .<span class="fn">collect</span>(java.util.stream.Collectors.<span class="fn">toCollection</span>(LinkedHashSet::new));
+System.out.println(upper);</pre></div>
+  <div class="note">💡 Collecting to LinkedHashSet via stream: use Collectors.toCollection(LinkedHashSet::new) — not Collectors.toSet() which may return any Set type.</div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">④ DELETE <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove / removeAll / removeIf / retainAll / clear</span><span class="ret">boolean / void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Set&lt;String&gt; lhs = <span class="kw">new</span> LinkedHashSet&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>,<span class="str">"D"</span>));
+
+<span class="cm">// 1. remove(Object) — O(1)</span>
+lhs.<span class="fn">remove</span>(<span class="str">"B"</span>); <span class="cm">// [A, C, D]</span>
+
+<span class="cm">// 2. removeAll</span>
+lhs.<span class="fn">removeAll</span>(Set.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"C"</span>)); <span class="cm">// [D]</span>
+
+<span class="cm">// 3. removeIf — Java 8</span>
+lhs = <span class="kw">new</span> LinkedHashSet&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"Java"</span>,<span class="str">"Go"</span>,<span class="str">"Kotlin"</span>));
+lhs.<span class="fn">removeIf</span>(s -> s.<span class="fn">length</span>() &lt;= <span class="num">2</span>); <span class="cm">// removes "Go"</span>
+
+<span class="cm">// 4. retainAll — intersection in-place</span>
+lhs.<span class="fn">retainAll</span>(Set.<span class="fn">of</span>(<span class="str">"Java"</span>)); <span class="cm">// [Java]</span>
+
+<span class="cm">// 5. clear</span>
+lhs.<span class="fn">clear</span>();</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑤ ADVANCED <span class="cnt">6 ops</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">contains / size / union / intersection / difference / toList</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Set&lt;String&gt; lhs = <span class="kw">new</span> LinkedHashSet&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>,<span class="str">"D"</span>));
+Set&lt;String&gt; other = <span class="kw">new</span> LinkedHashSet&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"C"</span>,<span class="str">"D"</span>,<span class="str">"E"</span>));
+
+<span class="cm">// 1. contains — O(1)</span>
+System.out.println(lhs.<span class="fn">contains</span>(<span class="str">"B"</span>)); <span class="cm">// true</span>
+
+<span class="cm">// 2. size / isEmpty</span>
+System.out.println(lhs.<span class="fn">size</span>());
+
+<span class="cm">// 3. Union — preserves insertion order of lhs first</span>
+Set&lt;String&gt; union = <span class="kw">new</span> LinkedHashSet&lt;&gt;(lhs);
+union.<span class="fn">addAll</span>(other); <span class="cm">// [A,B,C,D,E]</span>
+
+<span class="cm">// 4. Intersection — order of lhs preserved</span>
+Set&lt;String&gt; inter = <span class="kw">new</span> LinkedHashSet&lt;&gt;(lhs);
+inter.<span class="fn">retainAll</span>(other); <span class="cm">// [C, D]</span>
+
+<span class="cm">// 5. Difference</span>
+Set&lt;String&gt; diff = <span class="kw">new</span> LinkedHashSet&lt;&gt;(lhs);
+diff.<span class="fn">removeAll</span>(other); <span class="cm">// [A, B]</span>
+
+<span class="cm">// 6. Convert to ordered List</span>
+List&lt;String&gt; ordered = <span class="kw">new</span> ArrayList&lt;&gt;(lhs);</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑥ ITERATION <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">for-each / Iterator / forEach / stream / toList+for</span><span class="ret">void — insertion order guaranteed</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Set&lt;String&gt; lhs = <span class="kw">new</span> LinkedHashSet&lt;&gt;(List.<span class="fn">of</span>(<span class="str">"C"</span>,<span class="str">"A"</span>,<span class="str">"B"</span>));
+
+<span class="cm">// 1. for-each — guaranteed insertion order</span>
+<span class="kw">for</span> (String s : lhs) System.out.println(s); <span class="cm">// C, A, B</span>
+
+<span class="cm">// 2. Iterator — safe remove</span>
+Iterator&lt;String&gt; it = lhs.<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+    <span class="kw">if</span> (it.<span class="fn">next</span>().<span class="fn">equals</span>(<span class="str">"A"</span>)) it.<span class="fn">remove</span>();
+}
+
+<span class="cm">// 3. forEach lambda</span>
+lhs.<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 4. Stream — sequential, insertion-order</span>
+lhs.<span class="fn">stream</span>().<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 5. Index-based via toList</span>
+List&lt;String&gt; lst = <span class="kw">new</span> ArrayList&lt;&gt;(lhs);
+<span class="kw">for</span> (<span class="kw">int</span> i=<span class="num">0</span>; i&lt;lst.<span class="fn">size</span>(); i++)
+    System.out.println(i + <span class="str">": "</span> + lst.<span class="fn">get</span>(i));</pre></div></div></div></div>
+</div>
+</div>
+
+<!-- ========== S26 TreeSet ========== -->
+<div class="sess" id="s5">
+<div class="ov">
+  <h3>S26 — TreeSet: All Operations</h3>
+  <p>TreeSet = sorted unique elements backed by Red-Black tree. O(log n) for everything. Rich NavigableSet API for range queries. No null elements allowed.</p>
+  <div class="chips">
+    <span class="chip">Sorted</span><span class="chip">No Duplicates</span><span class="chip r">No Null</span>
+    <span class="chip g">O(log n)</span><span class="chip o">NavigableSet API</span>
+  </div>
+</div>
+<div class="op-section">
+  <div class="op-title">① DECLARE <span class="cnt">4 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">new TreeSet / Comparator / from collection / from SortedSet</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.*;
+
+<span class="cm">// 1. Natural order (Comparable elements)</span>
+TreeSet&lt;Integer&gt; ts1 = <span class="kw">new</span> TreeSet&lt;&gt;();
+
+<span class="cm">// 2. Custom Comparator — reverse order</span>
+TreeSet&lt;String&gt; ts2 = <span class="kw">new</span> TreeSet&lt;&gt;(Comparator.<span class="fn">reverseOrder</span>());
+
+<span class="cm">// 3. From collection — auto-sorted, duplicates removed</span>
+TreeSet&lt;Integer&gt; ts3 = <span class="kw">new</span> TreeSet&lt;&gt;(List.<span class="fn">of</span>(<span class="num">5</span>,<span class="num">1</span>,<span class="num">3</span>,<span class="num">2</span>,<span class="num">1</span>));
+System.out.println(ts3); <span class="cm">// [1, 2, 3, 5]</span>
+
+<span class="cm">// 4. Declared as NavigableSet to expose full API</span>
+NavigableSet&lt;Integer&gt; ts4 = <span class="kw">new</span> TreeSet&lt;&gt;();</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">② ADD <span class="cnt">3 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">add / addAll / Collections.addAll</span><span class="ret">boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeSet&lt;Integer&gt; ts = <span class="kw">new</span> TreeSet&lt;&gt;();
+
+<span class="cm">// 1. add — auto-sorted, returns false if duplicate</span>
+ts.<span class="fn">add</span>(<span class="num">50</span>); ts.<span class="fn">add</span>(<span class="num">10</span>); ts.<span class="fn">add</span>(<span class="num">30</span>); ts.<span class="fn">add</span>(<span class="num">10</span>); <span class="cm">// 10 ignored</span>
+System.out.println(ts); <span class="cm">// [10, 30, 50]</span>
+
+<span class="cm">// 2. addAll — add collection, all sorted on insert</span>
+ts.<span class="fn">addAll</span>(List.<span class="fn">of</span>(<span class="num">20</span>,<span class="num">40</span>,<span class="num">60</span>)); <span class="cm">// [10,20,30,40,50,60]</span>
+
+<span class="cm">// 3. Collections.addAll — varargs</span>
+Collections.<span class="fn">addAll</span>(ts, <span class="num">5</span>, <span class="num">15</span>, <span class="num">25</span>);</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">③ UPDATE <span class="cnt">2 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove + add / stream map to new TreeSet</span><span class="ret">void / TreeSet</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeSet&lt;Integer&gt; ts = <span class="kw">new</span> TreeSet&lt;&gt;(Set.<span class="fn">of</span>(<span class="num">10</span>,<span class="num">20</span>,<span class="num">30</span>));
+
+<span class="cm">// 1. Remove old + add new (new value auto-sorted)</span>
+ts.<span class="fn">remove</span>(<span class="num">20</span>);
+ts.<span class="fn">add</span>(<span class="num">25</span>);       <span class="cm">// [10, 25, 30]</span>
+
+<span class="cm">// 2. Transform via stream — produces new TreeSet</span>
+TreeSet&lt;Integer&gt; doubled = ts.<span class="fn">stream</span>()
+    .<span class="fn">map</span>(n -> n * <span class="num">2</span>)
+    .<span class="fn">collect</span>(java.util.stream.Collectors.<span class="fn">toCollection</span>(TreeSet::new));
+System.out.println(doubled); <span class="cm">// [20, 50, 60]</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">④ DELETE <span class="cnt">6 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove / pollFirst / pollLast / removeAll / removeIf / clear</span><span class="ret">boolean / E</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeSet&lt;Integer&gt; ts = <span class="kw">new</span> TreeSet&lt;&gt;(List.<span class="fn">of</span>(<span class="num">10</span>,<span class="num">20</span>,<span class="num">30</span>,<span class="num">40</span>,<span class="num">50</span>));
+
+<span class="cm">// 1. remove(Object) — O(log n)</span>
+ts.<span class="fn">remove</span>(<span class="num">30</span>); <span class="cm">// [10,20,40,50]</span>
+
+<span class="cm">// 2. pollFirst() — remove + return SMALLEST</span>
+System.out.println(ts.<span class="fn">pollFirst</span>()); <span class="cm">// 10 — removed</span>
+
+<span class="cm">// 3. pollLast() — remove + return LARGEST</span>
+System.out.println(ts.<span class="fn">pollLast</span>());  <span class="cm">// 50 — removed</span>
+
+<span class="cm">// 4. removeAll(Collection)</span>
+ts.<span class="fn">removeAll</span>(Set.<span class="fn">of</span>(<span class="num">20</span>));
+
+<span class="cm">// 5. removeIf — Java 8</span>
+ts = <span class="kw">new</span> TreeSet&lt;&gt;(List.<span class="fn">of</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>));
+ts.<span class="fn">removeIf</span>(n -> n % <span class="num">2</span> == <span class="num">0</span>); <span class="cm">// [1,3,5]</span>
+
+<span class="cm">// 6. clear()</span>
+ts.<span class="fn">clear</span>();</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑤ ADVANCED (NavigableSet) <span class="cnt">12 operations</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">first/last / floor/ceiling/lower/higher / headSet/tailSet/subSet / descendingSet / contains</span><span class="ret">E / SortedSet</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeSet&lt;Integer&gt; ts = <span class="kw">new</span> TreeSet&lt;&gt;(List.<span class="fn">of</span>(<span class="num">10</span>,<span class="num">20</span>,<span class="num">30</span>,<span class="num">40</span>,<span class="num">50</span>));
+
+<span class="cm">// 1. first() / last() — min / max</span>
+System.out.println(ts.<span class="fn">first</span>()); <span class="cm">// 10</span>
+System.out.println(ts.<span class="fn">last</span>());  <span class="cm">// 50</span>
+
+<span class="cm">// 2. floor(e) — greatest ≤ e (inclusive)</span>
+System.out.println(ts.<span class="fn">floor</span>(<span class="num">25</span>));   <span class="cm">// 20</span>
+
+<span class="cm">// 3. ceiling(e) — smallest ≥ e (inclusive)</span>
+System.out.println(ts.<span class="fn">ceiling</span>(<span class="num">25</span>)); <span class="cm">// 30</span>
+
+<span class="cm">// 4. lower(e) — strictly less than e</span>
+System.out.println(ts.<span class="fn">lower</span>(<span class="num">30</span>));   <span class="cm">// 20</span>
+
+<span class="cm">// 5. higher(e) — strictly greater than e</span>
+System.out.println(ts.<span class="fn">higher</span>(<span class="num">30</span>));  <span class="cm">// 40</span>
+
+<span class="cm">// 6. headSet(to) — elements STRICTLY less than to</span>
+System.out.println(ts.<span class="fn">headSet</span>(<span class="num">30</span>));       <span class="cm">// [10, 20]</span>
+System.out.println(ts.<span class="fn">headSet</span>(<span class="num">30</span>, <span class="kw">true</span>)); <span class="cm">// [10, 20, 30] inclusive</span>
+
+<span class="cm">// 7. tailSet(from) — elements ≥ from</span>
+System.out.println(ts.<span class="fn">tailSet</span>(<span class="num">30</span>));       <span class="cm">// [30, 40, 50]</span>
+System.out.println(ts.<span class="fn">tailSet</span>(<span class="num">30</span>, <span class="kw">false</span>));<span class="cm">// [40, 50] exclusive</span>
+
+<span class="cm">// 8. subSet(from, to) — [from, to) by default</span>
+System.out.println(ts.<span class="fn">subSet</span>(<span class="num">20</span>, <span class="num">40</span>));              <span class="cm">// [20, 30]</span>
+System.out.println(ts.<span class="fn">subSet</span>(<span class="num">20</span>,<span class="kw">true</span>,<span class="num">40</span>,<span class="kw">true</span>));    <span class="cm">// [20,30,40]</span>
+
+<span class="cm">// 9. descendingSet — reverse view</span>
+System.out.println(ts.<span class="fn">descendingSet</span>()); <span class="cm">// [50,40,30,20,10]</span>
+
+<span class="cm">// 10. contains</span>
+System.out.println(ts.<span class="fn">contains</span>(<span class="num">20</span>)); <span class="cm">// true — O(log n)</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑥ ITERATION <span class="cnt">6 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">for-each / Iterator / descendingIterator / forEach / stream / descendingSet+forEach</span><span class="ret">void — ascending or descending</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeSet&lt;Integer&gt; ts = <span class="kw">new</span> TreeSet&lt;&gt;(List.<span class="fn">of</span>(<span class="num">30</span>,<span class="num">10</span>,<span class="num">50</span>,<span class="num">20</span>));
+
+<span class="cm">// 1. for-each — ascending order guaranteed</span>
+<span class="kw">for</span> (<span class="kw">int</span> n : ts) System.out.print(n + <span class="str">" "</span>); <span class="cm">// 10 20 30 50</span>
+
+<span class="cm">// 2. Iterator — ascending, safe remove</span>
+Iterator&lt;Integer&gt; it = ts.<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+    <span class="kw">if</span> (it.<span class="fn">next</span>() &lt; <span class="num">25</span>) it.<span class="fn">remove</span>(); <span class="cm">// removes 10, 20</span>
+}
+
+<span class="cm">// 3. descendingIterator — reverse / descending order</span>
+ts = <span class="kw">new</span> TreeSet&lt;&gt;(List.<span class="fn">of</span>(<span class="num">10</span>,<span class="num">20</span>,<span class="num">30</span>,<span class="num">40</span>));
+Iterator&lt;Integer&gt; desc = ts.<span class="fn">descendingIterator</span>();
+<span class="kw">while</span> (desc.<span class="fn">hasNext</span>()) System.out.print(desc.<span class="fn">next</span>() + <span class="str">" "</span>); <span class="cm">// 40 30 20 10</span>
+
+<span class="cm">// 4. forEach lambda</span>
+ts.<span class="fn">forEach</span>(n -> System.out.print(n + <span class="str">" "</span>));
+
+<span class="cm">// 5. Stream — sorted (already sorted in TreeSet)</span>
+ts.<span class="fn">stream</span>().<span class="fn">filter</span>(n -> n > <span class="num">15</span>).<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 6. Iterate descending set</span>
+ts.<span class="fn">descendingSet</span>().<span class="fn">forEach</span>(System.out::println);</pre></div></div></div></div>
+</div>
+</div>
+
+<!-- ========== S27 HashMap ========== -->
+<div class="sess" id="s6">
+<div class="ov">
+  <h3>S27 — HashMap: All Operations</h3>
+  <p>HashMap = unordered key-value store. Unique keys, duplicate values OK. Backed by array of buckets. O(1) average for put/get/remove. Most widely used Map. Not thread-safe.</p>
+  <div class="chips">
+    <span class="chip">Unordered</span><span class="chip">Unique Keys</span><span class="chip">1 Null Key ✓</span>
+    <span class="chip g">get/put O(1)</span><span class="chip r">Not Thread-Safe</span>
+  </div>
+</div>
+<div class="op-section">
+  <div class="op-title">① DECLARE <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">new HashMap / capacity / loadFactor / from Map / Map.of</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.HashMap;
+<span class="kw">import</span> java.util.Map;
+
+<span class="cm">// 1. Empty — default capacity 16, load factor 0.75</span>
+Map&lt;String, Integer&gt; m1 = <span class="kw">new</span> HashMap&lt;&gt;();
+
+<span class="cm">// 2. Custom initial capacity</span>
+Map&lt;String, Integer&gt; m2 = <span class="kw">new</span> HashMap&lt;&gt;(<span class="num">32</span>);
+
+<span class="cm">// 3. Custom capacity + load factor</span>
+Map&lt;String, Integer&gt; m3 = <span class="kw">new</span> HashMap&lt;&gt;(<span class="num">32</span>, <span class="num">0.8f</span>);
+
+<span class="cm">// 4. From another Map</span>
+Map&lt;String, Integer&gt; seed = Map.<span class="fn">of</span>(<span class="str">"a"</span>,<span class="num">1</span>, <span class="str">"b"</span>,<span class="num">2</span>);
+Map&lt;String, Integer&gt; m4 = <span class="kw">new</span> HashMap&lt;&gt;(seed);
+
+<span class="cm">// 5. Immutable map (Java 9+)</span>
+Map&lt;String, Integer&gt; m5 = Map.<span class="fn">of</span>(<span class="str">"x"</span>,<span class="num">10</span>, <span class="str">"y"</span>,<span class="num">20</span>);</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">② ADD / PUT <span class="cnt">6 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">put / putAll / putIfAbsent / computeIfAbsent / merge / putAll</span><span class="ret">V (old value) / null</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Map&lt;String, Integer&gt; map = <span class="kw">new</span> HashMap&lt;&gt;();
+
+<span class="cm">// 1. put(K, V) — insert or overwrite; returns old value</span>
+map.<span class="fn">put</span>(<span class="str">"Alice"</span>, <span class="num">90</span>);
+Integer old = map.<span class="fn">put</span>(<span class="str">"Alice"</span>, <span class="num">95</span>); <span class="cm">// old = 90</span>
+
+<span class="cm">// 2. putIfAbsent — only puts if key NOT present</span>
+map.<span class="fn">putIfAbsent</span>(<span class="str">"Bob"</span>, <span class="num">85</span>);  <span class="cm">// adds Bob=85</span>
+map.<span class="fn">putIfAbsent</span>(<span class="str">"Alice"</span>, <span class="num">0</span>);  <span class="cm">// ignored — Alice exists</span>
+
+<span class="cm">// 3. computeIfAbsent — compute value lazily if absent</span>
+map.<span class="fn">computeIfAbsent</span>(<span class="str">"Zara"</span>, k -> k.<span class="fn">length</span>()); <span class="cm">// Zara=4</span>
+
+<span class="cm">// 4. putAll — add all from another map</span>
+map.<span class="fn">putAll</span>(Map.<span class="fn">of</span>(<span class="str">"Carol"</span>,<span class="num">88</span>, <span class="str">"Dave"</span>,<span class="num">72</span>));
+
+<span class="cm">// 5. merge — combine existing value with new value</span>
+map.<span class="fn">merge</span>(<span class="str">"Alice"</span>, <span class="num">5</span>, Integer::sum); <span class="cm">// Alice = 95+5 = 100</span>
+map.<span class="fn">merge</span>(<span class="str">"New"</span>,   <span class="num">1</span>, Integer::sum); <span class="cm">// inserts New=1 (no prior value)</span>
+
+<span class="cm">// 6. compute — recompute value for key regardless</span>
+map.<span class="fn">compute</span>(<span class="str">"Bob"</span>, (k, v) -> v == <span class="kw">null</span> ? <span class="num">1</span> : v + <span class="num">10</span>); <span class="cm">// Bob=95</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">③ UPDATE <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">put / replace / replaceAll / compute / computeIfPresent</span><span class="ret">V / boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Map&lt;String, Integer&gt; map = <span class="kw">new</span> HashMap&lt;&gt;(Map.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="num">1</span>,<span class="str">"B"</span>,<span class="num">2</span>,<span class="str">"C"</span>,<span class="num">3</span>));
+
+<span class="cm">// 1. put — overwrites if key exists</span>
+map.<span class="fn">put</span>(<span class="str">"A"</span>, <span class="num">99</span>); <span class="cm">// A updated to 99</span>
+
+<span class="cm">// 2. replace(K, V) — updates only if key exists, returns old value</span>
+Integer prev = map.<span class="fn">replace</span>(<span class="str">"B"</span>, <span class="num">20</span>); <span class="cm">// prev = 2, now B=20</span>
+
+<span class="cm">// 3. replace(K, oldVal, newVal) — conditional update</span>
+boolean ok = map.<span class="fn">replace</span>(<span class="str">"C"</span>, <span class="num">3</span>, <span class="num">30</span>); <span class="cm">// only if C==3 → C=30</span>
+
+<span class="cm">// 4. replaceAll — update every value with BiFunction</span>
+map.<span class="fn">replaceAll</span>((k, v) -> v * <span class="num">10</span>); <span class="cm">// A=990, B=200, C=300</span>
+
+<span class="cm">// 5. computeIfPresent — update only if key present</span>
+map.<span class="fn">computeIfPresent</span>(<span class="str">"A"</span>, (k, v) -> v + <span class="num">1</span>); <span class="cm">// A=991</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">④ DELETE <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove(K) / remove(K,V) / entrySet.removeIf / clear / keySet.removeAll</span><span class="ret">V / boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Map&lt;String, Integer&gt; map = <span class="kw">new</span> HashMap&lt;&gt;(Map.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="num">1</span>,<span class="str">"B"</span>,<span class="num">2</span>,<span class="str">"C"</span>,<span class="num">3</span>,<span class="str">"D"</span>,<span class="num">4</span>));
+
+<span class="cm">// 1. remove(K) — removes entry, returns value or null</span>
+Integer v = map.<span class="fn">remove</span>(<span class="str">"A"</span>); <span class="cm">// v=1, A removed</span>
+
+<span class="cm">// 2. remove(K, V) — conditional remove — returns boolean</span>
+boolean removed = map.<span class="fn">remove</span>(<span class="str">"B"</span>, <span class="num">99</span>); <span class="cm">// false — B=2, not 99</span>
+removed = map.<span class="fn">remove</span>(<span class="str">"B"</span>, <span class="num">2</span>);          <span class="cm">// true — B=2 matches</span>
+
+<span class="cm">// 3. removeIf via entrySet (Java 8)</span>
+map.<span class="fn">entrySet</span>().<span class="fn">removeIf</span>(e -> e.<span class="fn">getValue</span>() &gt; <span class="num">3</span>); <span class="cm">// removes D=4</span>
+
+<span class="cm">// 4. Remove by keys (keySet)</span>
+map.<span class="fn">keySet</span>().<span class="fn">removeAll</span>(Set.<span class="fn">of</span>(<span class="str">"C"</span>));
+
+<span class="cm">// 5. clear()</span>
+map.<span class="fn">clear</span>();</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑤ ADVANCED <span class="cnt">10 operations</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">get / getOrDefault / containsKey / containsValue / size / keySet / values / entrySet / merge / stream</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Map&lt;String, Integer&gt; map = <span class="kw">new</span> HashMap&lt;&gt;(Map.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="num">1</span>,<span class="str">"B"</span>,<span class="num">2</span>,<span class="str">"C"</span>,<span class="num">3</span>));
+
+<span class="cm">// 1. get — returns null if not found</span>
+System.out.println(map.<span class="fn">get</span>(<span class="str">"A"</span>));                    <span class="cm">// 1</span>
+
+<span class="cm">// 2. getOrDefault — safe null fallback</span>
+System.out.println(map.<span class="fn">getOrDefault</span>(<span class="str">"Z"</span>, -<span class="num">1</span>));       <span class="cm">// -1</span>
+
+<span class="cm">// 3. containsKey / containsValue</span>
+System.out.println(map.<span class="fn">containsKey</span>(<span class="str">"B"</span>));            <span class="cm">// true</span>
+System.out.println(map.<span class="fn">containsValue</span>(<span class="num">3</span>));             <span class="cm">// true</span>
+
+<span class="cm">// 4. size / isEmpty</span>
+System.out.println(map.<span class="fn">size</span>()); System.out.println(map.<span class="fn">isEmpty</span>());
+
+<span class="cm">// 5. keySet / values / entrySet</span>
+Set&lt;String&gt; keys = map.<span class="fn">keySet</span>();
+Collection&lt;Integer&gt; vals = map.<span class="fn">values</span>();
+Set&lt;Map.Entry&lt;String,Integer&gt;&gt; entries = map.<span class="fn">entrySet</span>();
+
+<span class="cm">// 6. Word frequency using merge</span>
+Map&lt;String,Integer&gt; freq = <span class="kw">new</span> HashMap&lt;&gt;();
+<span class="kw">for</span> (String w : <span class="str">"a b a c a b"</span>.<span class="fn">split</span>(<span class="str">" "</span>))
+    freq.<span class="fn">merge</span>(w, <span class="num">1</span>, Integer::sum);
+System.out.println(freq); <span class="cm">// {a=3, b=2, c=1}</span>
+
+<span class="cm">// 7. Invert map (swap K↔V)</span>
+Map&lt;Integer,String&gt; inv = <span class="kw">new</span> HashMap&lt;&gt;();
+map.<span class="fn">forEach</span>((k,v) -> inv.<span class="fn">put</span>(v, k));
+
+<span class="cm">// 8. Filter entries to new map</span>
+Map&lt;String,Integer&gt; filtered = map.<span class="fn">entrySet</span>().<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(e -> e.<span class="fn">getValue</span>() &gt; <span class="num">1</span>)
+    .<span class="fn">collect</span>(java.util.stream.Collectors.<span class="fn">toMap</span>(Map.Entry::getKey, Map.Entry::getValue));
+
+<span class="cm">// 9. Sort by value</span>
+map.<span class="fn">entrySet</span>().<span class="fn">stream</span>()
+    .<span class="fn">sorted</span>(Map.Entry.<span class="fn">comparingByValue</span>())
+    .<span class="fn">forEach</span>(e -> System.out.println(e.<span class="fn">getKey</span>() + <span class="str">"="</span> + e.<span class="fn">getValue</span>()));
+
+<span class="cm">// 10. Unmodifiable map</span>
+Map&lt;String,Integer&gt; unmod = Collections.<span class="fn">unmodifiableMap</span>(map);</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑥ ITERATION <span class="cnt">7 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">entrySet / keySet / values / forEach / stream / iterator / entrySet.iterator</span><span class="ret">void</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Map&lt;String, Integer&gt; map = <span class="kw">new</span> HashMap&lt;&gt;(Map.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="num">1</span>,<span class="str">"B"</span>,<span class="num">2</span>,<span class="str">"C"</span>,<span class="num">3</span>));
+
+<span class="cm">// 1. entrySet for-each — MOST EFFICIENT (key + value in one step)</span>
+<span class="kw">for</span> (Map.Entry&lt;String,Integer&gt; e : map.<span class="fn">entrySet</span>())
+    System.out.println(e.<span class="fn">getKey</span>() + <span class="str">" → "</span> + e.<span class="fn">getValue</span>());
+
+<span class="cm">// 2. keySet for-each — then get(key) — one extra lookup</span>
+<span class="kw">for</span> (String k : map.<span class="fn">keySet</span>())
+    System.out.println(k + <span class="str">" = "</span> + map.<span class="fn">get</span>(k));
+
+<span class="cm">// 3. values only</span>
+<span class="kw">for</span> (<span class="kw">int</span> v : map.<span class="fn">values</span>()) System.out.println(v);
+
+<span class="cm">// 4. forEach BiConsumer (Java 8) — cleanest</span>
+map.<span class="fn">forEach</span>((k, v) -> System.out.println(k + <span class="str">": "</span> + v));
+
+<span class="cm">// 5. Stream on entrySet</span>
+map.<span class="fn">entrySet</span>().<span class="fn">stream</span>()
+    .<span class="fn">sorted</span>(Map.Entry.<span class="fn">comparingByKey</span>())
+    .<span class="fn">forEach</span>(e -> System.out.println(e.<span class="fn">getKey</span>() + <span class="str">"="</span> + e.<span class="fn">getValue</span>()));
+
+<span class="cm">// 6. Iterator on entrySet — safe remove</span>
+Iterator&lt;Map.Entry&lt;String,Integer&gt;&gt; it = map.<span class="fn">entrySet</span>().<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+    Map.Entry&lt;String,Integer&gt; e = it.<span class="fn">next</span>();
+    <span class="kw">if</span> (e.<span class="fn">getValue</span>() == <span class="num">1</span>) it.<span class="fn">remove</span>(); <span class="cm">// safe removal</span>
+}
+
+<span class="cm">// 7. Stream on values</span>
+<span class="kw">int</span> total = map.<span class="fn">values</span>().<span class="fn">stream</span>().<span class="fn">mapToInt</span>(Integer::intValue).<span class="fn">sum</span>();</pre></div>
+  <div class="note">💡 Prefer entrySet() over keySet() for iteration — keySet() requires an extra get() call per entry, adding unnecessary overhead.</div></div></div></div>
+</div>
+</div>
+
+<!-- ========== S28 LinkedHashMap ========== -->
+<div class="sess" id="s7">
+<div class="ov">
+  <h3>S28 — LinkedHashMap: All Operations</h3>
+  <p>LinkedHashMap = HashMap + doubly-linked list for insertion-order (or access-order) iteration. Same O(1) ops. Ideal for ordered maps and LRU caches via removeEldestEntry().</p>
+  <div class="chips">
+    <span class="chip">Insertion-Ordered</span><span class="chip">Unique Keys</span><span class="chip">1 Null Key ✓</span>
+    <span class="chip g">O(1) average</span><span class="chip o">LRU Support</span>
+  </div>
+</div>
+<div class="op-section">
+  <div class="op-title">① DECLARE <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">empty / capacity / loadFactor / accessOrder / from Map</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.LinkedHashMap;
+<span class="kw">import</span> java.util.Map;
+
+<span class="cm">// 1. Default insertion-order map</span>
+Map&lt;String,Integer&gt; lhm = <span class="kw">new</span> LinkedHashMap&lt;&gt;();
+
+<span class="cm">// 2. Custom capacity</span>
+Map&lt;String,Integer&gt; lhm2 = <span class="kw">new</span> LinkedHashMap&lt;&gt;(<span class="num">32</span>);
+
+<span class="cm">// 3. Capacity + load factor</span>
+Map&lt;String,Integer&gt; lhm3 = <span class="kw">new</span> LinkedHashMap&lt;&gt;(<span class="num">32</span>, <span class="num">0.8f</span>);
+
+<span class="cm">// 4. Access-order mode (true) — for LRU cache</span>
+Map&lt;String,Integer&gt; lru = <span class="kw">new</span> LinkedHashMap&lt;&gt;(<span class="num">16</span>, <span class="num">0.75f</span>, <span class="kw">true</span>);
+
+<span class="cm">// 5. From existing map — preserves iteration order</span>
+Map&lt;String,Integer&gt; lhm5 = <span class="kw">new</span> LinkedHashMap&lt;&gt;(Map.<span class="fn">of</span>(<span class="str">"x"</span>,<span class="num">1</span>,<span class="str">"y"</span>,<span class="num">2</span>));</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">② ADD / PUT <span class="cnt">6 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">put / putIfAbsent / putAll / computeIfAbsent / merge / compute</span><span class="ret">V / null</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Map&lt;String,Integer&gt; lhm = <span class="kw">new</span> LinkedHashMap&lt;&gt;();
+
+<span class="cm">// 1. put — inserts; order is based on FIRST insertion</span>
+lhm.<span class="fn">put</span>(<span class="str">"C"</span>, <span class="num">3</span>); lhm.<span class="fn">put</span>(<span class="str">"A"</span>, <span class="num">1</span>); lhm.<span class="fn">put</span>(<span class="str">"B"</span>, <span class="num">2</span>);
+System.out.println(lhm); <span class="cm">// {C=3, A=1, B=2} — insertion order!</span>
+
+<span class="cm">// 2. put existing key — updates VALUE, order stays same</span>
+lhm.<span class="fn">put</span>(<span class="str">"A"</span>, <span class="num">99</span>); <span class="cm">// order unchanged: {C=3, A=99, B=2}</span>
+
+<span class="cm">// 3. putIfAbsent</span>
+lhm.<span class="fn">putIfAbsent</span>(<span class="str">"D"</span>, <span class="num">4</span>); <span class="cm">// adds D at end</span>
+lhm.<span class="fn">putIfAbsent</span>(<span class="str">"A"</span>, <span class="num">0</span>);  <span class="cm">// ignored — A exists</span>
+
+<span class="cm">// 4. putAll</span>
+lhm.<span class="fn">putAll</span>(Map.<span class="fn">of</span>(<span class="str">"E"</span>,<span class="num">5</span>,<span class="str">"F"</span>,<span class="num">6</span>));
+
+<span class="cm">// 5. computeIfAbsent</span>
+lhm.<span class="fn">computeIfAbsent</span>(<span class="str">"G"</span>, k -> k.<span class="fn">length</span>()); <span class="cm">// G=1</span>
+
+<span class="cm">// 6. merge</span>
+lhm.<span class="fn">merge</span>(<span class="str">"A"</span>, <span class="num">1</span>, Integer::sum); <span class="cm">// A = 99+1 = 100</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">③ UPDATE <span class="cnt">4 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">put / replace / replaceAll / computeIfPresent</span><span class="ret">V / boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Map&lt;String,Integer&gt; lhm = <span class="kw">new</span> LinkedHashMap&lt;&gt;(
+    Map.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="num">1</span>,<span class="str">"B"</span>,<span class="num">2</span>,<span class="str">"C"</span>,<span class="num">3</span>));
+
+<span class="cm">// 1. put — update value, order preserved</span>
+lhm.<span class="fn">put</span>(<span class="str">"A"</span>, <span class="num">100</span>);
+
+<span class="cm">// 2. replace(K, V)</span>
+lhm.<span class="fn">replace</span>(<span class="str">"B"</span>, <span class="num">200</span>);
+
+<span class="cm">// 3. replace(K, oldV, newV) — conditional</span>
+lhm.<span class="fn">replace</span>(<span class="str">"C"</span>, <span class="num">3</span>, <span class="num">300</span>); <span class="cm">// only if C==3</span>
+
+<span class="cm">// 4. replaceAll — update all values</span>
+lhm.<span class="fn">replaceAll</span>((k, v) -> v * <span class="num">2</span>);
+System.out.println(lhm);</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">④ DELETE <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove / remove(K,V) / entrySet.removeIf / clear / LRU removeEldest</span><span class="ret">V / boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>Map&lt;String,Integer&gt; lhm = <span class="kw">new</span> LinkedHashMap&lt;&gt;(
+    Map.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="num">1</span>,<span class="str">"B"</span>,<span class="num">2</span>,<span class="str">"C"</span>,<span class="num">3</span>,<span class="str">"D"</span>,<span class="num">4</span>));
+
+<span class="cm">// 1. remove(K)</span>
+lhm.<span class="fn">remove</span>(<span class="str">"A"</span>);
+
+<span class="cm">// 2. remove(K, V) — conditional</span>
+lhm.<span class="fn">remove</span>(<span class="str">"B"</span>, <span class="num">2</span>); <span class="cm">// true</span>
+
+<span class="cm">// 3. removeIf via entrySet</span>
+lhm.<span class="fn">entrySet</span>().<span class="fn">removeIf</span>(e -> e.<span class="fn">getValue</span>() &gt; <span class="num">3</span>);
+
+<span class="cm">// 4. clear()</span>
+lhm.<span class="fn">clear</span>();
+
+<span class="cm">// 5. Auto-evict via removeEldestEntry (LRU cache)</span>
+Map&lt;Integer,String&gt; lruCache = <span class="kw">new</span> LinkedHashMap&lt;&gt;(<span class="num">16</span>, <span class="num">0.75f</span>, <span class="kw">true</span>) {
+    <span class="ann">@Override</span>
+    <span class="kw">protected boolean</span> <span class="fn">removeEldestEntry</span>(Map.Entry&lt;Integer,String&gt; e) {
+        <span class="kw">return</span> <span class="fn">size</span>() &gt; <span class="num">3</span>; <span class="cm">// max 3 entries — LRU evicted automatically</span>
+    }
+};
+lruCache.<span class="fn">put</span>(<span class="num">1</span>,<span class="str">"One"</span>); lruCache.<span class="fn">put</span>(<span class="num">2</span>,<span class="str">"Two"</span>); lruCache.<span class="fn">put</span>(<span class="num">3</span>,<span class="str">"Three"</span>);
+lruCache.<span class="fn">get</span>(<span class="num">1</span>);                 <span class="cm">// access 1 — moves to end</span>
+lruCache.<span class="fn">put</span>(<span class="num">4</span>,<span class="str">"Four"</span>);          <span class="cm">// 2 evicted (LRU)</span>
+System.out.println(lruCache);    <span class="cm">// {3=Three, 1=One, 4=Four}</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑤ ADVANCED <span class="cnt">8 operations</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">get / getOrDefault / containsKey / containsValue / firstKey / lastKey (via iterator) / entrySet / stream</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>LinkedHashMap&lt;String,Integer&gt; lhm = <span class="kw">new</span> LinkedHashMap&lt;&gt;();
+lhm.<span class="fn">put</span>(<span class="str">"First"</span>,<span class="num">1</span>); lhm.<span class="fn">put</span>(<span class="str">"Second"</span>,<span class="num">2</span>); lhm.<span class="fn">put</span>(<span class="str">"Third"</span>,<span class="num">3</span>);
+
+<span class="cm">// 1. get / getOrDefault</span>
+System.out.println(lhm.<span class="fn">get</span>(<span class="str">"First"</span>));             <span class="cm">// 1</span>
+System.out.println(lhm.<span class="fn">getOrDefault</span>(<span class="str">"Missing"</span>,<span class="num">0</span>)); <span class="cm">// 0</span>
+
+<span class="cm">// 2. containsKey / containsValue</span>
+System.out.println(lhm.<span class="fn">containsKey</span>(<span class="str">"Second"</span>));   <span class="cm">// true</span>
+System.out.println(lhm.<span class="fn">containsValue</span>(<span class="num">3</span>));         <span class="cm">// true</span>
+
+<span class="cm">// 3. Get FIRST key (insertion order)</span>
+String firstKey = lhm.<span class="fn">entrySet</span>().<span class="fn">iterator</span>().<span class="fn">next</span>().<span class="fn">getKey</span>();
+System.out.println(<span class="str">"First: "</span> + firstKey); <span class="cm">// First</span>
+
+<span class="cm">// 4. Get LAST key</span>
+Map.Entry&lt;String,Integer&gt; last = <span class="kw">null</span>;
+<span class="kw">for</span> (Map.Entry&lt;String,Integer&gt; e : lhm.<span class="fn">entrySet</span>()) last = e;
+System.out.println(<span class="str">"Last: "</span> + last.<span class="fn">getKey</span>()); <span class="cm">// Third</span>
+
+<span class="cm">// 5. Sort by value into new LinkedHashMap</span>
+lhm.<span class="fn">entrySet</span>().<span class="fn">stream</span>()
+    .<span class="fn">sorted</span>(Map.Entry.<span class="fn">comparingByValue</span>())
+    .<span class="fn">forEach</span>(e -> System.out.println(e.<span class="fn">getKey</span>()+<span class="str">"="</span>+e.<span class="fn">getValue</span>()));
+
+<span class="cm">// 6. Filter to new LinkedHashMap preserving order</span>
+<span class="kw">import</span> java.util.stream.Collectors;
+Map&lt;String,Integer&gt; filtered = lhm.<span class="fn">entrySet</span>().<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(e -> e.<span class="fn">getValue</span>() &gt; <span class="num">1</span>)
+    .<span class="fn">collect</span>(Collectors.<span class="fn">toMap</span>(Map.Entry::getKey, Map.Entry::getValue,
+        (a,b)->a, LinkedHashMap::new));
+System.out.println(filtered); <span class="cm">// {Second=2, Third=3}</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑥ ITERATION <span class="cnt">6 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">entrySet / keySet / values / forEach / stream / iterator</span><span class="ret">void — guaranteed insertion order</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>LinkedHashMap&lt;String,Integer&gt; lhm = <span class="kw">new</span> LinkedHashMap&lt;&gt;();
+lhm.<span class="fn">put</span>(<span class="str">"C"</span>,<span class="num">3</span>); lhm.<span class="fn">put</span>(<span class="str">"A"</span>,<span class="num">1</span>); lhm.<span class="fn">put</span>(<span class="str">"B"</span>,<span class="num">2</span>);
+
+<span class="cm">// 1. entrySet for-each — insertion order guaranteed</span>
+<span class="kw">for</span> (Map.Entry&lt;String,Integer&gt; e : lhm.<span class="fn">entrySet</span>())
+    System.out.println(e.<span class="fn">getKey</span>() + <span class="str">" → "</span> + e.<span class="fn">getValue</span>());
+<span class="cm">// C → 3, A → 1, B → 2</span>
+
+<span class="cm">// 2. keySet — insertion order</span>
+<span class="kw">for</span> (String k : lhm.<span class="fn">keySet</span>()) System.out.println(k);
+
+<span class="cm">// 3. values — insertion order</span>
+<span class="kw">for</span> (<span class="kw">int</span> v : lhm.<span class="fn">values</span>()) System.out.println(v);
+
+<span class="cm">// 4. forEach — cleanest</span>
+lhm.<span class="fn">forEach</span>((k, v) -> System.out.println(k + <span class="str">":"</span> + v));
+
+<span class="cm">// 5. Stream</span>
+lhm.<span class="fn">entrySet</span>().<span class="fn">stream</span>()
+    .<span class="fn">map</span>(e -> e.<span class="fn">getKey</span>() + <span class="str">"="</span> + e.<span class="fn">getValue</span>())
+    .<span class="fn">forEach</span>(System.out::println);
+
+<span class="cm">// 6. Iterator with safe remove</span>
+Iterator&lt;Map.Entry&lt;String,Integer&gt;&gt; it = lhm.<span class="fn">entrySet</span>().<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+    Map.Entry&lt;String,Integer&gt; e = it.<span class="fn">next</span>();
+    <span class="kw">if</span> (e.<span class="fn">getValue</span>() == <span class="num">1</span>) it.<span class="fn">remove</span>();
+}</pre></div></div></div></div>
+</div>
+</div>
+
+<!-- ========== S29 TreeMap ========== -->
+<div class="sess" id="s8">
+<div class="ov">
+  <h3>S29 — TreeMap: All Operations</h3>
+  <p>TreeMap = sorted key-value Red-Black tree. O(log n) for all ops. Rich NavigableMap API: floor, ceiling, headMap, tailMap, subMap, pollFirstEntry, pollLastEntry. No null keys.</p>
+  <div class="chips">
+    <span class="chip">Key-Sorted</span><span class="chip">Unique Keys</span><span class="chip r">No Null Key</span>
+    <span class="chip g">O(log n)</span><span class="chip o">NavigableMap API</span>
+  </div>
+</div>
+<div class="op-section">
+  <div class="op-title">① DECLARE <span class="cnt">4 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">new TreeMap / Comparator / from Map / as NavigableMap</span><span class="ret">Various</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre><span class="kw">import</span> java.util.*;
+
+<span class="cm">// 1. Natural key order</span>
+TreeMap&lt;String,Integer&gt; tm = <span class="kw">new</span> TreeMap&lt;&gt;();
+
+<span class="cm">// 2. Custom Comparator</span>
+TreeMap&lt;String,Integer&gt; desc = <span class="kw">new</span> TreeMap&lt;&gt;(Comparator.<span class="fn">reverseOrder</span>());
+
+<span class="cm">// 3. From existing Map — keys auto-sorted</span>
+Map&lt;String,Integer&gt; raw = Map.<span class="fn">of</span>(<span class="str">"Banana"</span>,<span class="num">2</span>,<span class="str">"Apple"</span>,<span class="num">5</span>,<span class="str">"Cherry"</span>,<span class="num">1</span>);
+TreeMap&lt;String,Integer&gt; fromMap = <span class="kw">new</span> TreeMap&lt;&gt;(raw);
+System.out.println(fromMap); <span class="cm">// {Apple=5, Banana=2, Cherry=1}</span>
+
+<span class="cm">// 4. Declared as NavigableMap to expose full API</span>
+NavigableMap&lt;String,Integer&gt; nm = <span class="kw">new</span> TreeMap&lt;&gt;();</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">② ADD / PUT <span class="cnt">5 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">put / putAll / putIfAbsent / computeIfAbsent / merge</span><span class="ret">V / null</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeMap&lt;String,Integer&gt; tm = <span class="kw">new</span> TreeMap&lt;&gt;();
+
+<span class="cm">// 1. put — auto-sorted by key</span>
+tm.<span class="fn">put</span>(<span class="str">"Mango"</span>, <span class="num">3</span>);
+tm.<span class="fn">put</span>(<span class="str">"Apple"</span>, <span class="num">5</span>);
+tm.<span class="fn">put</span>(<span class="str">"Banana"</span>, <span class="num">2</span>);
+System.out.println(tm); <span class="cm">// {Apple=5, Banana=2, Mango=3}</span>
+
+<span class="cm">// 2. putAll</span>
+tm.<span class="fn">putAll</span>(Map.<span class="fn">of</span>(<span class="str">"Cherry"</span>,<span class="num">1</span>, <span class="str">"Date"</span>,<span class="num">4</span>));
+
+<span class="cm">// 3. putIfAbsent</span>
+tm.<span class="fn">putIfAbsent</span>(<span class="str">"Apple"</span>, <span class="num">0</span>); <span class="cm">// ignored — Apple exists</span>
+tm.<span class="fn">putIfAbsent</span>(<span class="str">"Kiwi"</span>,   <span class="num">6</span>); <span class="cm">// added</span>
+
+<span class="cm">// 4. computeIfAbsent</span>
+tm.<span class="fn">computeIfAbsent</span>(<span class="str">"Fig"</span>, k -> k.<span class="fn">length</span>()); <span class="cm">// Fig=3</span>
+
+<span class="cm">// 5. merge</span>
+tm.<span class="fn">merge</span>(<span class="str">"Apple"</span>, <span class="num">1</span>, Integer::sum); <span class="cm">// Apple = 5+1 = 6</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">③ UPDATE <span class="cnt">4 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">put / replace / replaceAll / computeIfPresent</span><span class="ret">V / boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeMap&lt;String,Integer&gt; tm = <span class="kw">new</span> TreeMap&lt;&gt;(Map.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="num">1</span>,<span class="str">"B"</span>,<span class="num">2</span>,<span class="str">"C"</span>,<span class="num">3</span>));
+
+<span class="cm">// 1. put — overwrites, key order stays</span>
+tm.<span class="fn">put</span>(<span class="str">"B"</span>, <span class="num">99</span>);
+
+<span class="cm">// 2. replace(K, V)</span>
+tm.<span class="fn">replace</span>(<span class="str">"A"</span>, <span class="num">100</span>);
+
+<span class="cm">// 3. replace(K, oldV, newV)</span>
+tm.<span class="fn">replace</span>(<span class="str">"C"</span>, <span class="num">3</span>, <span class="num">300</span>); <span class="cm">// only if C==3</span>
+
+<span class="cm">// 4. replaceAll</span>
+tm.<span class="fn">replaceAll</span>((k, v) -> v * <span class="num">10</span>);
+System.out.println(tm); <span class="cm">// sorted order preserved</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">④ DELETE <span class="cnt">7 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">remove / remove(K,V) / pollFirstEntry / pollLastEntry / headMap.clear / removeIf / clear</span><span class="ret">V / Map.Entry / boolean</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeMap&lt;Integer,String&gt; tm = <span class="kw">new</span> TreeMap&lt;&gt;(
+    Map.<span class="fn">of</span>(<span class="num">10</span>,<span class="str">"A"</span>,<span class="num">20</span>,<span class="str">"B"</span>,<span class="num">30</span>,<span class="str">"C"</span>,<span class="num">40</span>,<span class="str">"D"</span>,<span class="num">50</span>,<span class="str">"E"</span>));
+
+<span class="cm">// 1. remove(K) — O(log n)</span>
+String v = tm.<span class="fn">remove</span>(<span class="num">30</span>); <span class="cm">// "C" removed</span>
+
+<span class="cm">// 2. remove(K, V) — conditional</span>
+tm.<span class="fn">remove</span>(<span class="num">40</span>, <span class="str">"D"</span>); <span class="cm">// true — 40=D matches</span>
+
+<span class="cm">// 3. pollFirstEntry — remove + return min entry</span>
+Map.Entry&lt;Integer,String&gt; min = tm.<span class="fn">pollFirstEntry</span>();
+System.out.println(min); <span class="cm">// 10=A</span>
+
+<span class="cm">// 4. pollLastEntry — remove + return max entry</span>
+Map.Entry&lt;Integer,String&gt; max = tm.<span class="fn">pollLastEntry</span>();
+System.out.println(max); <span class="cm">// 50=E</span>
+
+<span class="cm">// 5. Range delete via headMap</span>
+tm = <span class="kw">new</span> TreeMap&lt;&gt;(Map.<span class="fn">of</span>(<span class="num">10</span>,<span class="str">"A"</span>,<span class="num">20</span>,<span class="str">"B"</span>,<span class="num">30</span>,<span class="str">"C"</span>,<span class="num">40</span>,<span class="str">"D"</span>));
+tm.<span class="fn">headMap</span>(<span class="num">25</span>).<span class="fn">clear</span>(); <span class="cm">// removes 10,20 (keys &lt; 25)</span>
+
+<span class="cm">// 6. removeIf via entrySet</span>
+tm.<span class="fn">entrySet</span>().<span class="fn">removeIf</span>(e -> e.<span class="fn">getValue</span>().<span class="fn">equals</span>(<span class="str">"C"</span>));
+
+<span class="cm">// 7. clear()</span>
+tm.<span class="fn">clear</span>();</pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑤ ADVANCED (NavigableMap) <span class="cnt">14 operations</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">firstKey/lastKey / firstEntry/lastEntry / floorKey/ceilingKey / lowerKey/higherKey / headMap/tailMap/subMap / descendingMap / containsKey</span><span class="ret">K / V / SortedMap</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeMap&lt;Integer,String&gt; tm = <span class="kw">new</span> TreeMap&lt;&gt;(
+    Map.<span class="fn">of</span>(<span class="num">10</span>,<span class="str">"A"</span>,<span class="num">20</span>,<span class="str">"B"</span>,<span class="num">30</span>,<span class="str">"C"</span>,<span class="num">40</span>,<span class="str">"D"</span>,<span class="num">50</span>,<span class="str">"E"</span>));
+
+<span class="cm">// 1. firstKey / lastKey</span>
+System.out.println(tm.<span class="fn">firstKey</span>()); <span class="cm">// 10</span>
+System.out.println(tm.<span class="fn">lastKey</span>());  <span class="cm">// 50</span>
+
+<span class="cm">// 2. firstEntry / lastEntry (key+value)</span>
+System.out.println(tm.<span class="fn">firstEntry</span>()); <span class="cm">// 10=A</span>
+System.out.println(tm.<span class="fn">lastEntry</span>());  <span class="cm">// 50=E</span>
+
+<span class="cm">// 3. floorKey — greatest key ≤ given</span>
+System.out.println(tm.<span class="fn">floorKey</span>(<span class="num">25</span>));   <span class="cm">// 20</span>
+System.out.println(tm.<span class="fn">floorEntry</span>(<span class="num">25</span>)); <span class="cm">// 20=B</span>
+
+<span class="cm">// 4. ceilingKey — smallest key ≥ given</span>
+System.out.println(tm.<span class="fn">ceilingKey</span>(<span class="num">25</span>));   <span class="cm">// 30</span>
+System.out.println(tm.<span class="fn">ceilingEntry</span>(<span class="num">25</span>)); <span class="cm">// 30=C</span>
+
+<span class="cm">// 5. lowerKey — strictly less than given</span>
+System.out.println(tm.<span class="fn">lowerKey</span>(<span class="num">30</span>)); <span class="cm">// 20</span>
+
+<span class="cm">// 6. higherKey — strictly greater than given</span>
+System.out.println(tm.<span class="fn">higherKey</span>(<span class="num">30</span>)); <span class="cm">// 40</span>
+
+<span class="cm">// 7. headMap(toKey) — keys STRICTLY less than toKey</span>
+System.out.println(tm.<span class="fn">headMap</span>(<span class="num">30</span>));        <span class="cm">// {10=A, 20=B}</span>
+System.out.println(tm.<span class="fn">headMap</span>(<span class="num">30</span>,<span class="kw">true</span>));   <span class="cm">// {10=A, 20=B, 30=C}</span>
+
+<span class="cm">// 8. tailMap(fromKey) — keys ≥ fromKey</span>
+System.out.println(tm.<span class="fn">tailMap</span>(<span class="num">30</span>));        <span class="cm">// {30=C, 40=D, 50=E}</span>
+System.out.println(tm.<span class="fn">tailMap</span>(<span class="num">30</span>,<span class="kw">false</span>));  <span class="cm">// {40=D, 50=E}</span>
+
+<span class="cm">// 9. subMap(from, to) — [from, to)</span>
+System.out.println(tm.<span class="fn">subMap</span>(<span class="num">20</span>,<span class="num">40</span>));              <span class="cm">// {20=B, 30=C}</span>
+System.out.println(tm.<span class="fn">subMap</span>(<span class="num">20</span>,<span class="kw">true</span>,<span class="num">40</span>,<span class="kw">true</span>));   <span class="cm">// {20,30,40}</span>
+
+<span class="cm">// 10. descendingMap — reverse-sorted view</span>
+System.out.println(tm.<span class="fn">descendingMap</span>()); <span class="cm">// {50,40,30,20,10}</span>
+
+<span class="cm">// 11. descendingKeySet</span>
+System.out.println(tm.<span class="fn">descendingKeySet</span>()); <span class="cm">// [50,40,30,20,10]</span>
+
+<span class="cm">// 12. containsKey / containsValue</span>
+System.out.println(tm.<span class="fn">containsKey</span>(<span class="num">20</span>));    <span class="cm">// true — O(log n)</span>
+System.out.println(tm.<span class="fn">containsValue</span>(<span class="str">"C"</span>)); <span class="cm">// true — O(n)</span></pre></div></div></div></div>
+</div>
+<div class="op-section">
+  <div class="op-title">⑥ ITERATION <span class="cnt">7 ways</span></div>
+  <div class="op-body"><div class="sub-op"><div class="sub-hd" onclick="tog(this)"><span class="method">entrySet / keySet / values / forEach / stream / descendingMap / headMap/tailMap iteration</span><span class="ret">void — always in sorted key order</span><span class="chv">▼</span></div>
+  <div class="sub-body"><div class="cb"><pre>TreeMap&lt;Integer,String&gt; tm = <span class="kw">new</span> TreeMap&lt;&gt;(
+    Map.<span class="fn">of</span>(<span class="num">30</span>,<span class="str">"C"</span>,<span class="num">10</span>,<span class="str">"A"</span>,<span class="num">50</span>,<span class="str">"E"</span>,<span class="num">20</span>,<span class="str">"B"</span>,<span class="num">40</span>,<span class="str">"D"</span>));
+
+<span class="cm">// 1. entrySet for-each — ascending key order</span>
+<span class="kw">for</span> (Map.Entry&lt;Integer,String&gt; e : tm.<span class="fn">entrySet</span>())
+    System.out.println(e.<span class="fn">getKey</span>() + <span class="str">" → "</span> + e.<span class="fn">getValue</span>());
+<span class="cm">// 10→A, 20→B, 30→C, 40→D, 50→E</span>
+
+<span class="cm">// 2. keySet for-each — ascending</span>
+<span class="kw">for</span> (<span class="kw">int</span> k : tm.<span class="fn">keySet</span>()) System.out.print(k + <span class="str">" "</span>);
+
+<span class="cm">// 3. values only — in key-sorted order</span>
+<span class="kw">for</span> (String v : tm.<span class="fn">values</span>()) System.out.print(v + <span class="str">" "</span>);
+
+<span class="cm">// 4. forEach lambda</span>
+tm.<span class="fn">forEach</span>((k, v) -> System.out.println(k + <span class="str">":"</span> + v));
+
+<span class="cm">// 5. Stream — already sorted</span>
+tm.<span class="fn">entrySet</span>().<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(e -> e.<span class="fn">getKey</span>() &gt; <span class="num">20</span>)
+    .<span class="fn">forEach</span>(e -> System.out.println(e.<span class="fn">getKey</span>() + <span class="str">"="</span> + e.<span class="fn">getValue</span>()));
+
+<span class="cm">// 6. Descending iteration via descendingMap</span>
+tm.<span class="fn">descendingMap</span>().<span class="fn">forEach</span>((k,v) -> System.out.println(k+<span class="str">"="</span>+v));
+<span class="cm">// 50→E, 40→D, 30→C, 20→B, 10→A</span>
+
+<span class="cm">// 7. Range iteration — only keys in [20, 40]</span>
+tm.<span class="fn">subMap</span>(<span class="num">20</span>, <span class="kw">true</span>, <span class="num">40</span>, <span class="kw">true</span>)
+  .<span class="fn">forEach</span>((k,v) -> System.out.println(k+<span class="str">"="</span>+v));
+<span class="cm">// 20=B, 30=C, 40=D</span></pre></div>
+  <div class="note">💡 TreeMap iteration is ALWAYS in sorted key order — no sort() call needed. Use descendingMap() or descendingKeySet() for reverse order. Use subMap/headMap/tailMap for efficient range iteration without scanning the whole map.</div></div></div></div>
+</div>
+</div>
+
+</div><!-- body -->
+
+<div class="nav">
+  <button class="nb" id="pb" onclick="go(-1)" disabled>← Prev</button>
+  <span class="prog" id="pt">Session 21 of 29</span>
+  <button class="nb p" id="nb2" onclick="go(1)">Next →</button>
+</div>
+</div>
+
+<script>
+var cur=0,total=9,base=21;
+function go(d){var n=cur+d;if(n<0||n>=total)return;document.getElementById('s'+cur).classList.remove('on');document.querySelectorAll('.tab')[cur].classList.remove('on');cur=n;document.getElementById('s'+cur).classList.add('on');var ts=document.querySelectorAll('.tab');ts[cur].classList.add('on');ts[cur].scrollIntoView({block:'nearest',inline:'center'});upd();}
+document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.getAttribute('data-i'));document.getElementById('s'+cur).classList.remove('on');document.querySelectorAll('.tab')[cur].classList.remove('on');cur=i;document.getElementById('s'+cur).classList.add('on');document.querySelectorAll('.tab')[cur].classList.add('on');b.scrollIntoView({block:'nearest',inline:'center'});upd();});});
+function tog(h){var b=h.nextElementSibling,o=b.style.display==='block';b.style.display=o?'none':'block';h.querySelector('.chv').style.transform=o?'':'rotate(180deg)';}
+function upd(){document.getElementById('pb').disabled=cur===0;document.getElementById('nb2').disabled=cur===total-1;document.getElementById('pt').textContent='Session '+(base+cur)+' of '+(base+total-1);}
+upd();
+</script>
+</body>
+</html>

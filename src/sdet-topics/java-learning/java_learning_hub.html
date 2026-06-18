@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>java learning hub</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+:root{--accent:#5048c8;--accent-light:#eeedfe;--accent-mid:#7f77dd;--ok:#1d9e75;--ok-light:#e1f5ee;--warn:#ba7517;--warn-light:#faeeda;--danger:#a32d2d;--danger-light:#fcebeb;--code-bg:rgba(0,0,0,0.04)}
+
+.hub{padding:1rem 0}
+.phase-bar{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.phase-pill{font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-secondary)}
+.phase-pill.active{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent)}
+
+.tab-bar{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;flex-wrap:nowrap}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;font-size:12px;padding:6px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab-btn:hover{background:var(--color-background-primary);border-color:var(--color-border-secondary)}
+.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.tab-btn.done::after{content:" ✓";opacity:.7}
+
+.progress-track{height:3px;background:var(--color-background-secondary);border-radius:2px;margin:10px 0 18px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease}
+
+.session{animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.section-label i{font-size:14px}
+
+.overview-card{background:var(--accent-light);border:0.5px solid var(--accent-mid);border-radius:var(--border-radius-lg);padding:14px 16px}
+.overview-card .title{font-size:16px;font-weight:500;color:var(--accent);margin-bottom:6px}
+.overview-card p{font-size:13px;color:#534ab7;line-height:1.6}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.meta-item{background:rgba(255,255,255,0.6);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px}
+.meta-item strong{display:block;color:var(--accent);font-weight:500;margin-bottom:2px;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.meta-item span{color:#534ab7}
+
+.oneliner-list{display:flex;flex-direction:column;gap:6px}
+.oneliner{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-left:3px solid var(--accent-mid);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:8px 12px;font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.oneliner strong{color:var(--color-text-primary);font-weight:500}
+
+.concept-block{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px}
+.concept-block h4{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.concept-block p{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+
+.arch-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;margin-top:8px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);line-height:1.8;overflow-x:auto}
+.arch-box .kw{color:var(--accent);font-weight:500}
+.arch-box .cm{color:var(--ok);opacity:.8}
+.arch-box .cls{color:#D85A30}
+.arch-box .str{color:var(--warn)}
+
+.code-block{background:rgba(0,0,0,0.03);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px;overflow-x:auto}
+.code-block .code-title{font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.code-block pre{font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);line-height:1.7;white-space:pre}
+.code-block .kw{color:var(--accent);font-weight:500}
+.code-block .cm{color:#0F6E56;font-style:italic}
+.code-block .str{color:#854F0B}
+.code-block .cls{color:#D85A30}
+.code-block .num{color:var(--accent)}
+.code-block .ann{color:#993556}
+
+.bp-list{display:flex;flex-direction:column;gap:6px}
+.bp-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.bp-icon{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;margin-top:1px}
+.bp-icon.ok{background:var(--ok-light);color:var(--ok)}
+.bp-icon.warn{background:var(--warn-light);color:var(--warn)}
+
+.qa-list{display:flex;flex-direction:column;gap:8px}
+.qa-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.qa-q{padding:10px 14px;font-size:13px;font-weight:500;color:var(--color-text-primary);background:var(--color-background-secondary);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.qa-a{padding:10px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.6;display:none;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.qa-a.open{display:block}
+
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;margin-right:4px}
+.badge.fund{background:var(--ok-light);color:var(--ok)}
+.badge.inter{background:var(--warn-light);color:var(--warn)}
+.badge.adv{background:var(--danger-light);color:var(--danger)}
+
+.nav-row{display:flex;justify-content:space-between;margin-top:16px}
+.nav-btn{font-size:13px;padding:7px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;display:flex;align-items:center;gap:6px}
+.nav-btn:hover{background:var(--color-background-secondary)}
+.nav-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.nav-btn.primary:hover{opacity:.9}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tag{font-size:11px;padding:3px 9px;border-radius:10px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+</style>
+</head>
+<body>
+  <div class="hub">
+  <div class="phase-bar" id="phaseBar"></div>
+  <div class="tab-bar" id="tabBar"></div>
+  <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+  <div id="sessionContent"></div>
+</div>
+
+<script>
+const sessions = [
+  {
+    id:0, title:"Static Keyword", phase:"Fundamentals", badge:"fund",
+    tags:["static variable","static method","static block","memory"],
+    overview:{
+      def:"The static keyword in Java means 'belongs to the class, not to any object'. Static members are shared across all instances.",
+      what:"A modifier that makes a field or method belong to the class itself.",
+      why:"To share data across all objects and call utility methods without creating an object.",
+      when:"When a field should be common to all objects (e.g., a counter), or a method doesn't depend on instance state.",
+      where:"Variables, methods, blocks, and nested classes.",
+      how:"Simply prefix the member with the static keyword inside a class."
+    },
+    oneliners:[
+      "<strong>static variable</strong> — One copy shared by all objects of the class.",
+      "<strong>static method</strong> — Can be called without creating an instance; uses ClassName.method().",
+      "<strong>static block</strong> — Runs once when the class loads into memory, before any object is created.",
+      "<strong>static vs instance</strong> — static belongs to class, instance belongs to object.",
+      "<strong>main() is static</strong> — JVM calls main() without creating an object of the class."
+    ],
+    concepts:[
+      {title:"Memory Model", body:"Static members live in the Method Area (class-level memory). Instance members live in the Heap per object. Static is loaded once at class load time.",arch:`<span class='cm'>// Memory layout</span>
+<span class='kw'>Class</span> Counter {
+  ┌─────────────────────────────┐
+  │  Method Area (static)       │
+  │  count = 0  ← shared       │
+  └─────────────────────────────┘
+  ┌────────┐  ┌────────┐
+  │ obj1   │  │ obj2   │  ← Heap
+  │ name=A │  │ name=B │
+  └────────┘  └────────┘`},
+      {title:"Static Block Execution Order", body:"Static block runs once when class is loaded — before constructors, before main(). Useful for one-time initializations.",arch:`<span class='kw'>static</span> { <span class='cm'>// runs first</span> }
+constructor()  { <span class='cm'>// runs when new obj</span> }
+main()         { <span class='cm'>// entry point</span> }`}
+    ],
+    codes:[
+      {title:"Example 1 — Static variable as shared counter",code:`<span class='kw'>class</span> <span class='cls'>Counter</span> {
+    <span class='kw'>static int</span> count = <span class='num'>0</span>; <span class='cm'>// shared across all objects</span>
+    <span class='kw'>String</span> name;
+
+    <span class='cls'>Counter</span>(<span class='kw'>String</span> name) {
+        <span class='kw'>this</span>.name = name;
+        count++; <span class='cm'>// increments shared counter</span>
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cls'>Counter</span> c1 = <span class='kw'>new</span> <span class='cls'>Counter</span>(<span class='str'>"Alice"</span>);
+        <span class='cls'>Counter</span> c2 = <span class='kw'>new</span> <span class='cls'>Counter</span>(<span class='str'>"Bob"</span>);
+        System.out.println(<span class='cls'>Counter</span>.count); <span class='cm'>// prints 2</span>
+    }
+}`},
+      {title:"Example 2 — Static method (utility)",code:`<span class='kw'>class</span> <span class='cls'>MathUtils</span> {
+    <span class='cm'>// static method — no object needed</span>
+    <span class='kw'>static int</span> square(<span class='kw'>int</span> n) {
+        <span class='kw'>return</span> n * n;
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cm'>// Call directly on class name</span>
+        System.out.println(<span class='cls'>MathUtils</span>.square(<span class='num'>5</span>)); <span class='cm'>// 25</span>
+    }
+}`},
+      {title:"Example 3 — Static block (one-time init)",code:`<span class='kw'>class</span> <span class='cls'>Config</span> {
+    <span class='kw'>static String</span> dbUrl;
+
+    <span class='kw'>static</span> { <span class='cm'>// runs once when class loads</span>
+        dbUrl = <span class='str'>"jdbc:mysql://localhost/mydb"</span>;
+        System.out.println(<span class='str'>"DB configured"</span>);
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        System.out.println(<span class='cls'>Config</span>.dbUrl);
+    }
+}`},
+      {title:"Example 4 — Static vs Instance method difference",code:`<span class='kw'>class</span> <span class='cls'>Demo</span> {
+    <span class='kw'>int</span> x = <span class='num'>10</span>;          <span class='cm'>// instance variable</span>
+    <span class='kw'>static int</span> y = <span class='num'>20</span>;  <span class='cm'>// static variable</span>
+
+    <span class='kw'>void</span> instanceMethod() {
+        System.out.println(x); <span class='cm'>// ✅ can access x</span>
+        System.out.println(y); <span class='cm'>// ✅ can access y</span>
+    }
+
+    <span class='kw'>static void</span> staticMethod() {
+        <span class='cm'>// System.out.println(x); ❌ ERROR! no object</span>
+        System.out.println(y); <span class='cm'>// ✅ ok</span>
+    }
+}`},
+      {title:"Example 5 — Static nested class",code:`<span class='kw'>class</span> <span class='cls'>Outer</span> {
+    <span class='kw'>static int</span> data = <span class='num'>100</span>;
+
+    <span class='kw'>static class</span> <span class='cls'>Inner</span> { <span class='cm'>// can exist without Outer object</span>
+        <span class='kw'>void</span> show() {
+            System.out.println(data); <span class='cm'>// access outer static</span>
+        }
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cls'>Outer</span>.<span class='cls'>Inner</span> obj = <span class='kw'>new</span> <span class='cls'>Outer</span>.<span class='cls'>Inner</span>();
+        obj.show(); <span class='cm'>// 100</span>
+    }
+}`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Use static for constants — combine with final: static final double PI = 3.14;"},
+      {ok:true,text:"Use static utility methods in helper classes (Math, Collections, Arrays)."},
+      {ok:false,text:"Don't make mutable static fields in multi-threaded apps — causes race conditions."},
+      {ok:false,text:"Don't access static members via object reference (obj.staticVar) — use ClassName.staticVar."},
+      {ok:true,text:"Static blocks are great for loading properties files or JDBC driver registration."}
+    ],
+    qa:[
+      {q:"Q1. Can we override a static method in Java?",a:"No. Static methods are resolved at compile time (early binding), not runtime. You can redeclare it in a subclass (method hiding), but that is NOT overriding. Polymorphism doesn't apply to static methods."},
+      {q:"Q2. Why is main() method static?",a:"JVM calls main() before any object is created. If it weren't static, the JVM would need to instantiate the class first — but it wouldn't know which constructor to use. Static allows JVM to call it directly via ClassName.main()."},
+      {q:"Q3. What is static import in Java?",a:"static import lets you use static members of a class without the class name prefix. Example: import static java.lang.Math.PI; Then you can write PI instead of Math.PI."},
+      {q:"Q4. When does static block execute?",a:"Exactly once — when the class is loaded by the ClassLoader. It runs before any constructor and before the main() method if it's in the same class. Order: static block → main() → constructors."},
+      {q:"Q5. Can a static method access instance variables?",a:"No. A static method has no 'this' reference. It doesn't know which object's instance variables to access. You'd need to pass an object reference as a parameter to access instance data."}
+    ]
+  },
+  {
+    id:1, title:"Constructors", phase:"Fundamentals", badge:"fund",
+    tags:["default","parameterized","copy constructor","constructor chaining","this()"],
+    overview:{
+      def:"A constructor is a special method that is called automatically when an object is created using new. It initializes the object's state.",
+      what:"A block of code that sets up an object's initial values when it is created.",
+      why:"To ensure every object starts with valid, meaningful data.",
+      when:"Always — every class has at least one constructor (JVM provides default if none written).",
+      where:"Inside a class, at the same level as methods.",
+      how:"Define a method with the same name as the class, no return type (not even void)."
+    },
+    oneliners:[
+      "<strong>Constructor</strong> — Same name as class, no return type, called automatically on 'new'.",
+      "<strong>Default constructor</strong> — Provided by JVM only if you write zero constructors.",
+      "<strong>Constructor overloading</strong> — Multiple constructors with different parameter lists.",
+      "<strong>this()</strong> — Calls another constructor of the same class; must be the first statement.",
+      "<strong>Constructors are NOT inherited</strong> — A subclass doesn't inherit parent constructors."
+    ],
+    concepts:[
+      {title:"Types of Constructors", body:"Java has three types: Default (no-arg), Parameterized (takes arguments), and Copy constructor (takes same-class object to duplicate it).",arch:`<span class='kw'>class</span> <span class='cls'>Student</span> {
+  <span class='cls'>Student</span>() { }              <span class='cm'>// Default</span>
+  <span class='cls'>Student</span>(String n) { }     <span class='cm'>// Parameterized</span>
+  <span class='cls'>Student</span>(<span class='cls'>Student</span> s) { }   <span class='cm'>// Copy</span>
+}`},
+      {title:"Constructor Chaining with this()", body:"Use this() to call another constructor in the same class. Reduces code duplication. Must be the FIRST line.",arch:`<span class='cls'>Box</span>() → <span class='cls'>Box</span>(<span class='kw'>int</span> l) → <span class='cls'>Box</span>(<span class='kw'>int</span> l, <span class='kw'>int</span> w, <span class='kw'>int</span> h)
+<span class='cm'>// chain with this(l, 1, 1) etc.</span>`}
+    ],
+    codes:[
+      {title:"Example 1 — Default vs Parameterized constructor",code:`<span class='kw'>class</span> <span class='cls'>Student</span> {
+    <span class='kw'>String</span> name;
+    <span class='kw'>int</span> age;
+
+    <span class='cm'>// Default constructor</span>
+    <span class='cls'>Student</span>() {
+        name = <span class='str'>"Unknown"</span>;
+        age = <span class='num'>0</span>;
+    }
+
+    <span class='cm'>// Parameterized constructor</span>
+    <span class='cls'>Student</span>(<span class='kw'>String</span> name, <span class='kw'>int</span> age) {
+        <span class='kw'>this</span>.name = name; <span class='cm'>// 'this' distinguishes param from field</span>
+        <span class='kw'>this</span>.age = age;
+    }
+
+    <span class='kw'>void</span> display() {
+        System.out.println(name + <span class='str">" - "</span> + age);
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cls'>Student</span> s1 = <span class='kw'>new</span> <span class='cls'>Student</span>();           <span class='cm'>// Unknown - 0</span>
+        <span class='cls'>Student</span> s2 = <span class='kw'>new</span> <span class='cls'>Student</span>(<span class='str'>"Ram"</span>, <span class='num'>20</span>); <span class='cm'>// Ram - 20</span>
+        s1.display(); s2.display();
+    }
+}`},
+      {title:"Example 2 — Copy Constructor",code:`<span class='kw'>class</span> <span class='cls'>Point</span> {
+    <span class='kw'>int</span> x, y;
+
+    <span class='cls'>Point</span>(<span class='kw'>int</span> x, <span class='kw'>int</span> y) {
+        <span class='kw'>this</span>.x = x; <span class='kw'>this</span>.y = y;
+    }
+
+    <span class='cm'>// Copy constructor — creates independent copy</span>
+    <span class='cls'>Point</span>(<span class='cls'>Point</span> p) {
+        <span class='kw'>this</span>.x = p.x;
+        <span class='kw'>this</span>.y = p.y;
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cls'>Point</span> p1 = <span class='kw'>new</span> <span class='cls'>Point</span>(<span class='num'>3</span>, <span class='num'>4</span>);
+        <span class='cls'>Point</span> p2 = <span class='kw'>new</span> <span class='cls'>Point</span>(p1); <span class='cm'>// copy</span>
+        p2.x = <span class='num'>10</span>; <span class='cm'>// p1.x stays 3 — independent</span>
+        System.out.println(p1.x + <span class='str'>" "</span> + p2.x); <span class='cm'>// 3 10</span>
+    }
+}`},
+      {title:"Example 3 — Constructor Chaining with this()",code:`<span class='kw'>class</span> <span class='cls'>Box</span> {
+    <span class='kw'>int</span> l, w, h;
+
+    <span class='cls'>Box</span>() {
+        <span class='kw'>this</span>(<span class='num'>1</span>, <span class='num'>1</span>, <span class='num'>1</span>); <span class='cm'>// chains to 3-arg constructor</span>
+    }
+
+    <span class='cls'>Box</span>(<span class='kw'>int</span> side) {
+        <span class='kw'>this</span>(side, side, side); <span class='cm'>// cube</span>
+    }
+
+    <span class='cls'>Box</span>(<span class='kw'>int</span> l, <span class='kw'>int</span> w, <span class='kw'>int</span> h) {
+        <span class='kw'>this</span>.l=l; <span class='kw'>this</span>.w=w; <span class='kw'>this</span>.h=h;
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cls'>Box</span> b = <span class='kw'>new</span> <span class='cls'>Box</span>(<span class='num'>5</span>); <span class='cm'>// 5×5×5</span>
+        System.out.println(b.l + <span class='str'>"x"</span> + b.w + <span class='str'>"x"</span> + b.h);
+    }
+}`},
+      {title:"Example 4 — Constructor with Validation",code:`<span class='kw'>class</span> <span class='cls'>BankAccount</span> {
+    <span class='kw'>String</span> owner;
+    <span class='kw'>double</span> balance;
+
+    <span class='cls'>BankAccount</span>(<span class='kw'>String</span> owner, <span class='kw'>double</span> balance) {
+        <span class='kw'>if</span> (balance < <span class='num'>0</span>)
+            <span class='kw'>throw new</span> <span class='cls'>IllegalArgumentException</span>(<span class='str'>"Negative balance!"</span>);
+        <span class='kw'>this</span>.owner = owner;
+        <span class='kw'>this</span>.balance = balance;
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cls'>BankAccount</span> acc = <span class='kw'>new</span> <span class='cls'>BankAccount</span>(<span class='str'>"Raj"</span>, <span class='num'>5000</span>);
+        System.out.println(acc.owner + <span class='str'>": "</span> + acc.balance);
+    }
+}`},
+      {title:"Example 5 — Private constructor (Singleton pattern)",code:`<span class='kw'>class</span> <span class='cls'>Singleton</span> {
+    <span class='kw'>private static</span> <span class='cls'>Singleton</span> instance;
+
+    <span class='kw'>private</span> <span class='cls'>Singleton</span>() { <span class='cm'>// no external new</span> }
+
+    <span class='kw'>public static</span> <span class='cls'>Singleton</span> getInstance() {
+        <span class='kw'>if</span> (instance == <span class='kw'>null</span>)
+            instance = <span class='kw'>new</span> <span class='cls'>Singleton</span>();
+        <span class='kw'>return</span> instance;
+    }
+}
+<span class='cm'>// Usage: Singleton s = Singleton.getInstance();</span>`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Always validate parameters in constructors to guarantee object integrity."},
+      {ok:true,text:"Use constructor chaining (this()) to avoid duplicate initialization code."},
+      {ok:false,text:"Don't put heavy business logic or I/O in constructors — use factory methods instead."},
+      {ok:false,text:"Don't call overridable methods in constructors — can cause issues with subclasses."},
+      {ok:true,text:"Use private constructor + static factory method for controlled instantiation (Singleton, Builder)."}
+    ],
+    qa:[
+      {q:"Q1. What is the difference between constructor and method?",a:"Constructor has same name as class, no return type, and is called automatically on new. A method has a different name (usually), has a return type (even void), and is called explicitly. Constructors initialize objects; methods define behavior."},
+      {q:"Q2. Can a constructor be private?",a:"Yes. Private constructor prevents external instantiation. Used in Singleton pattern, utility classes (like java.lang.Math), and factory method patterns."},
+      {q:"Q3. What happens if you don't write any constructor?",a:"JVM automatically provides a default no-arg constructor. But if you write even ONE parameterized constructor, the JVM does NOT provide the default. You must explicitly define it if needed."},
+      {q:"Q4. What is constructor overloading?",a:"Defining multiple constructors with different parameter lists (different number or types of parameters). JVM picks the right one based on arguments passed. This allows flexible object creation."},
+      {q:"Q5. Can a constructor return a value?",a:"No. Constructors cannot have a return type — not even void. They implicitly return the newly created object. If you add a return type, it becomes a regular method, not a constructor."}
+    ]
+  },
+  {
+    id:2, title:"this Keyword", phase:"Fundamentals", badge:"fund",
+    tags:["this variable","this()","this method call","current object"],
+    overview:{
+      def:"'this' is a reference variable that refers to the current object — the object on which a method or constructor is being called.",
+      what:"A special keyword pointing to the current class instance.",
+      why:"To remove ambiguity when variable names collide, to call constructors, pass current object.",
+      when:"Inside instance methods and constructors — never in static contexts.",
+      where:"Inside class methods and constructors.",
+      how:"Just write 'this' to refer to the current object, or this() to call another constructor."
+    },
+    oneliners:[
+      "<strong>this.variable</strong> — Refers to instance variable when local variable has same name.",
+      "<strong>this()</strong> — Calls another constructor in same class; must be first statement.",
+      "<strong>this as argument</strong> — Pass current object to another method: someMethod(this).",
+      "<strong>this as return</strong> — Return current object: return this; (enables method chaining).",
+      "<strong>this in static</strong> — Cannot use 'this' in static context — static has no object."
+    ],
+    concepts:[
+      {title:"5 Uses of this Keyword", body:"this.var (disambiguation), this() (constructor call), this as arg, this as return value, calling instance method via this.",arch:`<span class='num'>1.</span> <span class='kw'>this</span>.name = name;        <span class='cm'>// distinguish field vs param</span>
+<span class='num'>2.</span> <span class='kw'>this</span>(<span class='num'>10</span>);               <span class='cm'>// constructor chaining</span>
+<span class='num'>3.</span> show(<span class='kw'>this</span>);             <span class='cm'>// pass current obj</span>
+<span class='num'>4.</span> <span class='kw'>return this</span>;            <span class='cm'>// fluent/builder pattern</span>
+<span class='num'>5.</span> <span class='kw'>this</span>.display();         <span class='cm'>// call instance method</span>`}
+    ],
+    codes:[
+      {title:"Example 1 — Disambiguate field vs parameter",code:`<span class='kw'>class</span> <span class='cls'>Employee</span> {
+    <span class='kw'>String</span> name;  <span class='cm'>// field</span>
+    <span class='kw'>int</span> salary;
+
+    <span class='cls'>Employee</span>(<span class='kw'>String</span> name, <span class='kw'>int</span> salary) {
+        <span class='cm'>// 'name' alone = local param, this.name = field</span>
+        <span class='kw'>this</span>.name = name;
+        <span class='kw'>this</span>.salary = salary;
+    }
+
+    <span class='kw'>void</span> show() {
+        System.out.println(<span class='kw'>this</span>.name + <span class='str'>": "</span> + <span class='kw'>this</span>.salary);
+    }
+}`},
+      {title:"Example 2 — this() for constructor chaining",code:`<span class='kw'>class</span> <span class='cls'>Car</span> {
+    <span class='kw'>String</span> brand;
+    <span class='kw'>String</span> color;
+
+    <span class='cls'>Car</span>(<span class='kw'>String</span> brand) {
+        <span class='kw'>this</span>(brand, <span class='str'>"White"</span>); <span class='cm'>// chains to 2-param</span>
+    }
+
+    <span class='cls'>Car</span>(<span class='kw'>String</span> brand, <span class='kw'>String</span> color) {
+        <span class='kw'>this</span>.brand = brand;
+        <span class='kw'>this</span>.color = color;
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cls'>Car</span> c = <span class='kw'>new</span> <span class='cls'>Car</span>(<span class='str'>"Honda"</span>); <span class='cm'>// Honda White</span>
+        System.out.println(c.brand + <span class='str'>" "</span> + c.color);
+    }
+}`},
+      {title:"Example 3 — Pass this as argument",code:`<span class='kw'>class</span> <span class='cls'>Printer</span> {
+    <span class='kw'>void</span> print(<span class='cls'>Person</span> p) {
+        System.out.println(<span class='str'>"Printing: "</span> + p.name);
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>Person</span> {
+    <span class='kw'>String</span> name = <span class='str'>"Priya"</span>;
+
+    <span class='kw'>void</span> sendToPrinter() {
+        <span class='cls'>Printer</span> pr = <span class='kw'>new</span> <span class='cls'>Printer</span>();
+        pr.print(<span class='kw'>this</span>); <span class='cm'>// passes current Person object</span>
+    }
+}`},
+      {title:"Example 4 — Return this (method chaining / builder)",code:`<span class='kw'>class</span> <span class='cls'>Builder</span> {
+    <span class='kw'>String</span> name;
+    <span class='kw'>int</span> age;
+
+    <span class='cls'>Builder</span> setName(<span class='kw'>String</span> name) {
+        <span class='kw'>this</span>.name = name;
+        <span class='kw'>return this</span>; <span class='cm'>// returns same object</span>
+    }
+
+    <span class='cls'>Builder</span> setAge(<span class='kw'>int</span> age) {
+        <span class='kw'>this</span>.age = age;
+        <span class='kw'>return this</span>;
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cm'>// Fluent chaining — each returns 'this'</span>
+        <span class='cls'>Builder</span> b = <span class='kw'>new</span> <span class='cls'>Builder</span>()
+            .setName(<span class='str'>"Amit"</span>)
+            .setAge(<span class='num'>25</span>);
+        System.out.println(b.name + <span class='str'>" "</span> + b.age);
+    }
+}`},
+      {title:"Example 5 — this cannot be used in static",code:`<span class='kw'>class</span> <span class='cls'>Demo</span> {
+    <span class='kw'>int</span> x = <span class='num'>10</span>;
+
+    <span class='kw'>void</span> instanceMethod() {
+        System.out.println(<span class='kw'>this</span>.x); <span class='cm'>// ✅ valid</span>
+    }
+
+    <span class='kw'>static void</span> staticMethod() {
+        <span class='cm'>// System.out.println(this.x); ❌ compile error</span>
+        <span class='cm'>// static methods have no 'this' reference</span>
+        System.out.println(<span class='str'>"No this in static"</span>);
+    }
+}`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Always use this.field in constructors when parameter names match field names."},
+      {ok:true,text:"Use return this; to implement fluent API / builder patterns."},
+      {ok:false,text:"Don't use this() after any other statement in a constructor — it must be line 1."},
+      {ok:false,text:"Don't use this in static methods — it won't compile."},
+      {ok:true,text:"Passing this as argument is a common pattern in Observer and Callback designs."}
+    ],
+    qa:[
+      {q:"Q1. What is the main purpose of the 'this' keyword?",a:"'this' refers to the current instance. Its primary use is to disambiguate instance variables from local variables/parameters with the same name. It also chains constructors, passes the current object as argument, and enables method chaining via return this."},
+      {q:"Q2. Can this() and super() both appear in a constructor?",a:"No. Both must be the first statement in a constructor, so they cannot coexist. You can use one or the other. Using super() is preferred in inheritance scenarios."},
+      {q:"Q3. What is the difference between this and this()?",a:"'this' is a reference to the current object. 'this()' is a constructor call that invokes another constructor in the same class. They are two different uses of the same keyword."},
+      {q:"Q4. How does 'return this' enable method chaining?",a:"When a method returns 'this', it returns the same object. The caller can immediately call another method on that object. This creates a fluent interface: obj.setName('X').setAge(20).build() — each method operates on the same object."},
+      {q:"Q5. Is 'this' a keyword or a variable?",a:"'this' is a reference variable (implicitly declared by the JVM) that holds the reference to the current object. It behaves like a final variable — you cannot reassign it (this = something; is illegal)."}
+    ]
+  },
+  {
+    id:3, title:"super Keyword", phase:"Fundamentals", badge:"fund",
+    tags:["super variable","super()","method overriding","parent class"],
+    overview:{
+      def:"'super' refers to the immediate parent class object. It accesses parent class members (fields, methods, constructors) from within a subclass.",
+      what:"A reference to the parent class, used inside child class methods/constructors.",
+      why:"To reuse parent class logic, avoid code duplication, and call overridden methods.",
+      when:"In subclass constructors and methods when you need parent class behavior.",
+      where:"Inside instance methods and constructors of a subclass.",
+      how:"Use super.field, super.method(), or super() to access parent members."
+    },
+    oneliners:[
+      "<strong>super.variable</strong> — Accesses parent class field hidden by child class field.",
+      "<strong>super.method()</strong> — Calls parent class version of an overridden method.",
+      "<strong>super()</strong> — Calls parent class constructor; must be first statement in child constructor.",
+      "<strong>super() is implicit</strong> — If you don't call super(), JVM inserts super() automatically.",
+      "<strong>super vs this</strong> — super refers to parent class; this refers to current class."
+    ],
+    concepts:[
+      {title:"super in Inheritance Chain", body:"super links child to parent. In constructors, super() ensures parent is initialized first. In methods, super.method() lets you extend (not replace) parent behavior.",arch:`<span class='cls'>Animal</span> (parent)
+    └── <span class='cls'>Dog</span> (child)
+         └── <span class='cls'>GoldenRetriever</span> (grandchild)
+
+<span class='kw'>super</span>() only calls <span class='cm'>IMMEDIATE</span> parent
+<span class='kw'>super</span>.speak() → <span class='cls'>Dog</span>'s speak, <span class='kw'>not</span> Animal's`},
+      {title:"Constructor Call Order", body:"When you create a child object, the parent constructor always runs first. super() ensures proper top-down initialization.",arch:`<span class='kw'>new</span> <span class='cls'>Dog</span>() called
+  → <span class='cls'>Dog</span> constructor runs
+    → <span class='kw'>super</span>() called first  
+      → <span class='cls'>Animal</span> constructor runs
+        → Object constructor runs
+  → back to <span class='cls'>Dog</span> constructor body`}
+    ],
+    codes:[
+      {title:"Example 1 — super() to call parent constructor",code:`<span class='kw'>class</span> <span class='cls'>Animal</span> {
+    <span class='kw'>String</span> name;
+    <span class='cls'>Animal</span>(<span class='kw'>String</span> name) {
+        <span class='kw'>this</span>.name = name;
+        System.out.println(<span class='str'>"Animal: "</span> + name);
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>Dog</span> <span class='kw'>extends</span> <span class='cls'>Animal</span> {
+    <span class='kw'>String</span> breed;
+    <span class='cls'>Dog</span>(<span class='kw'>String</span> name, <span class='kw'>String</span> breed) {
+        <span class='kw'>super</span>(name);  <span class='cm'>// must be first line</span>
+        <span class='kw'>this</span>.breed = breed;
+        System.out.println(<span class='str'>"Dog breed: "</span> + breed);
+    }
+}
+<span class='cm'>// new Dog("Rex","Lab") prints:</span>
+<span class='cm'>// Animal: Rex → Dog breed: Lab</span>`},
+      {title:"Example 2 — super.method() to extend parent behavior",code:`<span class='kw'>class</span> <span class='cls'>Vehicle</span> {
+    <span class='kw'>void</span> start() {
+        System.out.println(<span class='str'>"Engine started"</span>);
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>ElectricCar</span> <span class='kw'>extends</span> <span class='cls'>Vehicle</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>void</span> start() {
+        <span class='kw'>super</span>.start(); <span class='cm'>// reuse parent logic</span>
+        System.out.println(<span class='str'>"Battery activated"</span>);
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='kw'>new</span> <span class='cls'>ElectricCar</span>().start();
+        <span class='cm'>// Engine started → Battery activated</span>
+    }
+}`},
+      {title:"Example 3 — super.field to access hidden parent field",code:`<span class='kw'>class</span> <span class='cls'>Parent</span> {
+    <span class='kw'>int</span> x = <span class='num'>10</span>; <span class='cm'>// parent's x</span>
+}
+
+<span class='kw'>class</span> <span class='cls'>Child</span> <span class='kw'>extends</span> <span class='cls'>Parent</span> {
+    <span class='kw'>int</span> x = <span class='num'>20</span>; <span class='cm'>// child's x — hides parent's</span>
+
+    <span class='kw'>void</span> show() {
+        System.out.println(<span class='kw'>this</span>.x);  <span class='cm'>// 20 (child)</span>
+        System.out.println(<span class='kw'>super</span>.x); <span class='cm'>// 10 (parent)</span>
+    }
+}`},
+      {title:"Example 4 — Automatic super() insertion by JVM",code:`<span class='kw'>class</span> <span class='cls'>A</span> {
+    <span class='cls'>A</span>() { System.out.println(<span class='str'>"A constructor"</span>); }
+}
+
+<span class='kw'>class</span> <span class='cls'>B</span> <span class='kw'>extends</span> <span class='cls'>A</span> {
+    <span class='cls'>B</span>() {
+        <span class='cm'>// super() is automatically added here by JVM</span>
+        System.out.println(<span class='str'>"B constructor"</span>);
+    }
+}
+<span class='cm'>// new B() → "A constructor" then "B constructor"</span>`},
+      {title:"Example 5 — Multi-level super chain",code:`<span class='kw'>class</span> <span class='cls'>Shape</span> {
+    <span class='kw'>void</span> draw() { System.out.println(<span class='str'>"Drawing shape"</span>); }
+}
+<span class='kw'>class</span> <span class='cls'>Circle</span> <span class='kw'>extends</span> <span class='cls'>Shape</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>void</span> draw() {
+        <span class='kw'>super</span>.draw();
+        System.out.println(<span class='str'>"Drawing circle"</span>);
+    }
+}
+<span class='kw'>class</span> <span class='cls'>FilledCircle</span> <span class='kw'>extends</span> <span class='cls'>Circle</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>void</span> draw() {
+        <span class='kw'>super</span>.draw(); <span class='cm'>// calls Circle.draw()</span>
+        System.out.println(<span class='str'>"Filling circle"</span>);
+    }
+    <span class='cm'>// Output: Drawing shape → Drawing circle → Filling circle</span>
+}`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Always call super() in child constructor when parent has parameterized constructor."},
+      {ok:true,text:"Use super.method() to extend (not replace) parent behavior in overridden methods."},
+      {ok:false,text:"Don't call super() after any statement — it MUST be the first line in constructor."},
+      {ok:false,text:"Don't use super in a class that doesn't extend anything meaningful (implicitly extends Object)."},
+      {ok:true,text:"Use @Override annotation with super.method() to clearly indicate intentional override + extension."}
+    ],
+    qa:[
+      {q:"Q1. What is the difference between super and super()?",a:"'super' is a reference to the parent object used to access parent fields (super.x) and methods (super.method()). 'super()' is a constructor call that invokes the parent class constructor. Both use the keyword super but serve different purposes."},
+      {q:"Q2. Is super() mandatory in every child constructor?",a:"Not explicitly. If you don't write super(), JVM automatically inserts super() (no-arg) as the first statement. But if the parent has only parameterized constructors (no default), you MUST explicitly call the right super() — otherwise it's a compile error."},
+      {q:"Q3. Can we use super in a static method?",a:"No. super (like this) is tied to object instances. Static methods have no object context, so super cannot be used in static methods. This will cause a compile-time error."},
+      {q:"Q4. What happens if you call super() and this() in the same constructor?",a:"Compile error. Both super() and this() must be the first statement of a constructor. You can only use one of them. If you need both, restructure so this() delegates to a constructor that calls super()."},
+      {q:"Q5. Can super access grandparent class directly?",a:"No. super only reaches the immediate parent. To access grandparent logic, the parent must call super itself. You cannot write super.super — Java doesn't support that."}
+    ]
+  },
+  {
+    id:4, title:"Abstract Classes", phase:"Intermediate", badge:"inter",
+    tags:["abstract","partial implementation","template method","cannot instantiate"],
+    overview:{
+      def:"An abstract class is a class declared with the 'abstract' keyword. It can have both abstract methods (no body) and concrete methods (with body). It cannot be instantiated directly.",
+      what:"A class that serves as a blueprint with some methods defined and some left for subclasses.",
+      why:"To enforce a contract while providing shared default behavior to all subclasses.",
+      when:"When multiple related classes share common code but each has some unique behavior.",
+      where:"Declared as a class with abstract keyword; subclasses use extends.",
+      how:"Declare class with abstract; mark incomplete methods as abstract; subclasses override them."
+    },
+    oneliners:[
+      "<strong>abstract class</strong> — Cannot be instantiated; must be extended.",
+      "<strong>abstract method</strong> — No body; subclass MUST override it or also be abstract.",
+      "<strong>Abstract class can have constructors</strong> — Called via super() from subclass.",
+      "<strong>0 to 100% abstract</strong> — An abstract class can have 0 or more abstract methods.",
+      "<strong>Abstract vs Interface</strong> — Abstract class has state + partial impl; interface is pure contract (pre-Java 8)."
+    ],
+    concepts:[
+      {title:"Abstract Class Architecture", body:"Abstract class sits between a concrete class (fully implemented) and an interface (fully abstract). It's perfect for Template Method pattern.",arch:`<span class='cm'>// Template Method Pattern</span>
+<span class='kw'>abstract class</span> <span class='cls'>Game</span> {
+  <span class='kw'>abstract void</span> initialize(); <span class='cm'>// MUST override</span>
+  <span class='kw'>abstract void</span> play();       <span class='cm'>// MUST override</span>
+
+  <span class='kw'>final void</span> run() {          <span class='cm'>// algorithm fixed</span>
+    initialize();
+    play();
+    end();
+  }
+  <span class='kw'>void</span> end() {                <span class='cm'>// optional override</span>
+    System.out.println(<span class='str'>"Game over"</span>);
+  }
+}`}
+    ],
+    codes:[
+      {title:"Example 1 — Basic abstract class and override",code:`<span class='kw'>abstract class</span> <span class='cls'>Shape</span> {
+    <span class='kw'>String</span> color;
+
+    <span class='cls'>Shape</span>(<span class='kw'>String</span> color) {       <span class='cm'>// constructor allowed</span>
+        <span class='kw'>this</span>.color = color;
+    }
+
+    <span class='kw'>abstract double</span> area();   <span class='cm'>// no body — must override</span>
+
+    <span class='kw'>void</span> display() {           <span class='cm'>// concrete shared method</span>
+        System.out.println(color + <span class='str'>" shape, area = "</span> + area());
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>Circle</span> <span class='kw'>extends</span> <span class='cls'>Shape</span> {
+    <span class='kw'>double</span> r;
+    <span class='cls'>Circle</span>(<span class='kw'>String</span> c, <span class='kw'>double</span> r) { <span class='kw'>super</span>(c); <span class='kw'>this</span>.r=r; }
+
+    <span class='ann'>@Override</span>
+    <span class='kw'>double</span> area() { <span class='kw'>return</span> Math.PI * r * r; }
+}
+
+<span class='kw'>class</span> <span class='cls'>Rectangle</span> <span class='kw'>extends</span> <span class='cls'>Shape</span> {
+    <span class='kw'>double</span> l, w;
+    <span class='cls'>Rectangle</span>(<span class='kw'>String</span> c, <span class='kw'>double</span> l, <span class='kw'>double</span> w) {
+        <span class='kw'>super</span>(c); <span class='kw'>this</span>.l=l; <span class='kw'>this</span>.w=w;
+    }
+    <span class='ann'>@Override</span>
+    <span class='kw'>double</span> area() { <span class='kw'>return</span> l * w; }
+}
+
+<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='cls'>Shape</span> s = <span class='kw'>new</span> <span class='cls'>Circle</span>(<span class='str'>"Red"</span>, <span class='num'>5</span>); <span class='cm'>// polymorphism</span>
+    s.display(); <span class='cm'>// Red shape, area = 78.5</span>
+}`},
+      {title:"Example 2 — Template Method pattern",code:`<span class='kw'>abstract class</span> <span class='cls'>DataProcessor</span> {
+    <span class='cm'>// Template method — algorithm skeleton</span>
+    <span class='kw'>final void</span> process() {
+        readData();
+        processData(); <span class='cm'>// abstract — specific to subclass</span>
+        writeResult();
+    }
+
+    <span class='kw'>void</span> readData() {
+        System.out.println(<span class='str'>"Reading data..."</span>);
+    }
+    <span class='kw'>abstract void</span> processData(); <span class='cm'>// subclass defines this</span>
+    <span class='kw'>void</span> writeResult() {
+        System.out.println(<span class='str'>"Writing result..."</span>);
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>CSVProcessor</span> <span class='kw'>extends</span> <span class='cls'>DataProcessor</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>void</span> processData() {
+        System.out.println(<span class='str'>"Parsing CSV columns"</span>);
+    }
+}`},
+      {title:"Example 3 — Abstract class with constructor chain",code:`<span class='kw'>abstract class</span> <span class='cls'>Employee</span> {
+    <span class='kw'>String</span> name;
+    <span class='kw'>int</span> id;
+
+    <span class='cls'>Employee</span>(<span class='kw'>String</span> name, <span class='kw'>int</span> id) {
+        <span class='kw'>this</span>.name = name; <span class='kw'>this</span>.id = id;
+    }
+
+    <span class='kw'>abstract double</span> calculateSalary();
+
+    <span class='kw'>void</span> printInfo() {
+        System.out.println(id + <span class='str'>": "</span> + name +
+            <span class='str'>" | Salary: "</span> + calculateSalary());
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>Contractor</span> <span class='kw'>extends</span> <span class='cls'>Employee</span> {
+    <span class='kw'>int</span> hours; <span class='kw'>double</span> rate;
+    <span class='cls'>Contractor</span>(<span class='kw'>String</span> n, <span class='kw'>int</span> id, <span class='kw'>int</span> h, <span class='kw'>double</span> r) {
+        <span class='kw'>super</span>(n, id); <span class='kw'>this</span>.hours=h; <span class='kw'>this</span>.rate=r;
+    }
+    <span class='ann'>@Override</span>
+    <span class='kw'>double</span> calculateSalary() { <span class='kw'>return</span> hours * rate; }
+}`},
+      {title:"Example 4 — Abstract class reference (polymorphism)",code:`<span class='kw'>abstract class</span> <span class='cls'>Animal</span> {
+    <span class='kw'>abstract void</span> sound();
+    <span class='kw'>void</span> breathe() { System.out.println(<span class='str'>"Breathing..."</span>); }
+}
+<span class='kw'>class</span> <span class='cls'>Cat</span> <span class='kw'>extends</span> <span class='cls'>Animal</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>void</span> sound() { System.out.println(<span class='str'>"Meow"</span>); }
+}
+<span class='kw'>class</span> <span class='cls'>Dog</span> <span class='kw'>extends</span> <span class='cls'>Animal</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>void</span> sound() { System.out.println(<span class='str'>"Woof"</span>); }
+}
+
+<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='cls'>Animal</span>[] animals = { <span class='kw'>new</span> <span class='cls'>Cat</span>(), <span class='kw'>new</span> <span class='cls'>Dog</span>() };
+    <span class='kw'>for</span> (<span class='cls'>Animal</span> a : animals) a.sound(); <span class='cm'>// Meow, Woof</span>
+}`},
+      {title:"Example 5 — Cannot instantiate abstract class",code:`<span class='kw'>abstract class</span> <span class='cls'>Vehicle</span> {
+    <span class='kw'>abstract void</span> fuel();
+}
+
+<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='cm'>// Vehicle v = new Vehicle(); ❌ COMPILE ERROR</span>
+    <span class='cm'>// Cannot instantiate abstract class</span>
+
+    <span class='kw'>Vehicle</span> v = <span class='kw'>new</span> <span class='cls'>Vehicle</span>() { <span class='cm'>// ✅ anonymous class</span>
+        <span class='ann'>@Override</span>
+        <span class='kw'>void</span> fuel() { System.out.println(<span class='str'>"Petrol"</span>); }
+    };
+    v.fuel();
+}`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Use abstract class when subclasses share common fields/methods (IS-A relationship)."},
+      {ok:true,text:"Use Template Method pattern with abstract class to define algorithm skeleton."},
+      {ok:false,text:"Don't use abstract class if you only need a pure contract — use an interface instead."},
+      {ok:false,text:"Don't add too many abstract methods — defeats the purpose of sharing code."},
+      {ok:true,text:"Mark template methods as final in abstract class to prevent subclasses from breaking the algorithm."}
+    ],
+    qa:[
+      {q:"Q1. What is the difference between abstract class and interface?",a:"Abstract class can have constructors, fields, and both abstract and concrete methods. Interface (pre-Java 8) can only have abstract methods. From Java 8+, interfaces can have default and static methods too. Use abstract class for IS-A with shared state; use interface for CAN-DO contracts (like Serializable, Runnable)."},
+      {q:"Q2. Can abstract class have a constructor?",a:"Yes. Even though you can't instantiate it directly, the constructor is called via super() from the subclass constructor. This allows the abstract class to initialize its own fields."},
+      {q:"Q3. What if a subclass doesn't override all abstract methods?",a:"The subclass must also be declared abstract. This cascades down until some concrete class overrides ALL abstract methods. A non-abstract class that leaves any abstract method unimplemented causes a compile error."},
+      {q:"Q4. Can abstract class have static methods?",a:"Yes. Static methods belong to the class and can exist in abstract classes. They can be called via ClassName.method() and don't require overriding."},
+      {q:"Q5. What is the Template Method design pattern?",a:"It's a behavioral pattern where the abstract class defines the skeleton of an algorithm in a template method (often marked final), and lets subclasses override specific steps. The overall algorithm structure is fixed; only the variable parts are abstract."}
+    ]
+  },
+  {
+    id:5, title:"Interfaces", phase:"Intermediate", badge:"inter",
+    tags:["interface","implements","default method","functional interface","multiple inheritance"],
+    overview:{
+      def:"An interface is a fully abstract type that defines a contract — a set of method signatures that implementing classes MUST provide. From Java 8, interfaces can also have default and static methods.",
+      what:"A blueprint of behavior; a pure contract defining 'what to do' without 'how to do it'.",
+      why:"To achieve full abstraction, multiple inheritance of type, and loose coupling.",
+      when:"When unrelated classes need to share behavior (Comparable, Runnable, Serializable).",
+      where:"Declared with interface keyword; classes use implements.",
+      how:"Define interface with abstract methods; class implements and provides method bodies."
+    },
+    oneliners:[
+      "<strong>interface</strong> — Pure contract; all methods implicitly public abstract (pre-Java 8).",
+      "<strong>implements</strong> — A class can implement MULTIPLE interfaces (solving multiple inheritance).",
+      "<strong>default method</strong> — Java 8+: interface can have a method with body using default keyword.",
+      "<strong>Functional interface</strong> — Interface with exactly ONE abstract method; used with lambdas.",
+      "<strong>Interface fields</strong> — All fields are implicitly public static final (constants)."
+    ],
+    concepts:[
+      {title:"Interface vs Abstract Class Quick Compare", body:"",arch:`                <span class='cls'>Interface</span>        <span class='kw'>Abstract Class</span>
+Constructor:    ❌ No             ✅ Yes
+Fields:         constants only   any type
+Multi-inherit:  ✅ multiple      ❌ single
+Access:         public only      any modifier
+When:           CAN-DO           IS-A + shared code`},
+      {title:"Java 8+ Interface Features", body:"Default methods allow adding new methods to interfaces without breaking existing implementations. Static methods provide utility methods.",arch:`<span class='kw'>interface</span> <span class='cls'>Greeter</span> {
+  <span class='kw'>void</span> greet(<span class='kw'>String</span> name);          <span class='cm'>// abstract</span>
+  <span class='kw'>default void</span> wave() { ... }       <span class='cm'>// default</span>
+  <span class='kw'>static void</span> info() { ... }        <span class='cm'>// static</span>
+}`}
+    ],
+    codes:[
+      {title:"Example 1 — Basic interface and implementation",code:`<span class='kw'>interface</span> <span class='cls'>Drawable</span> {
+    <span class='cm'>// implicitly: public abstract</span>
+    <span class='kw'>void</span> draw();
+    <span class='kw'>void</span> resize(<span class='kw'>int</span> factor);
+}
+
+<span class='kw'>class</span> <span class='cls'>Circle</span> <span class='kw'>implements</span> <span class='cls'>Drawable</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>public void</span> draw() {
+        System.out.println(<span class='str'>"Drawing Circle"</span>);
+    }
+    <span class='ann'>@Override</span>
+    <span class='kw'>public void</span> resize(<span class='kw'>int</span> factor) {
+        System.out.println(<span class='str'>"Resizing by: "</span> + factor);
+    }
+}`},
+      {title:"Example 2 — Multiple interface implementation",code:`<span class='kw'>interface</span> <span class='cls'>Flyable</span>  { <span class='kw'>void</span> fly(); }
+<span class='kw'>interface</span> <span class='cls'>Swimmable</span> { <span class='kw'>void</span> swim(); }
+
+<span class='cm'>// Duck can fly AND swim — multiple inheritance</span>
+<span class='kw'>class</span> <span class='cls'>Duck</span> <span class='kw'>implements</span> <span class='cls'>Flyable</span>, <span class='cls'>Swimmable</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>public void</span> fly()  { System.out.println(<span class='str'>"Duck flying"</span>); }
+    <span class='ann'>@Override</span>
+    <span class='kw'>public void</span> swim() { System.out.println(<span class='str'>"Duck swimming"</span>); }
+}
+
+<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='cls'>Duck</span> d = <span class='kw'>new</span> <span class='cls'>Duck</span>();
+    d.fly(); d.swim();
+}`},
+      {title:"Example 3 — Interface with default method (Java 8)",code:`<span class='kw'>interface</span> <span class='cls'>Logger</span> {
+    <span class='kw'>void</span> log(<span class='kw'>String</span> msg);  <span class='cm'>// abstract</span>
+
+    <span class='cm'>// default: concrete method in interface</span>
+    <span class='kw'>default void</span> logError(<span class='kw'>String</span> msg) {
+        log(<span class='str'>"[ERROR] "</span> + msg);
+    }
+
+    <span class='kw'>static void</span> version() {
+        System.out.println(<span class='str'>"Logger v1.0"</span>);
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>ConsoleLogger</span> <span class='kw'>implements</span> <span class='cls'>Logger</span> {
+    <span class='ann'>@Override</span>
+    <span class='kw'>public void</span> log(<span class='kw'>String</span> msg) {
+        System.out.println(msg);
+    }
+    <span class='cm'>// logError() inherited from interface</span>
+}`},
+      {title:"Example 4 — Functional interface + Lambda",code:`<span class='ann'>@FunctionalInterface</span>
+<span class='kw'>interface</span> <span class='cls'>Calculator</span> {
+    <span class='kw'>int</span> compute(<span class='kw'>int</span> a, <span class='kw'>int</span> b); <span class='cm'>// single abstract method</span>
+}
+
+<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='cm'>// Lambda expression implements the interface</span>
+    <span class='cls'>Calculator</span> add  = (a, b) -> a + b;
+    <span class='cls'>Calculator</span> mult = (a, b) -> a * b;
+
+    System.out.println(add.compute(<span class='num'>5</span>, <span class='num'>3</span>));  <span class='cm'>// 8</span>
+    System.out.println(mult.compute(<span class='num'>5</span>, <span class='num'>3</span>)); <span class='cm'>// 15</span>
+}`},
+      {title:"Example 5 — Interface constant and polymorphism",code:`<span class='kw'>interface</span> <span class='cls'>MathConstants</span> {
+    <span class='cm'>// implicitly: public static final</span>
+    <span class='kw'>double</span> PI = <span class='num'>3.14159</span>;
+    <span class='kw'>double</span> E  = <span class='num'>2.71828</span>;
+}
+
+<span class='kw'>interface</span> <span class='cls'>Shape</span> {
+    <span class='kw'>double</span> area();
+}
+
+<span class='kw'>class</span> <span class='cls'>Circle</span> <span class='kw'>implements</span> <span class='cls'>Shape</span>, <span class='cls'>MathConstants</span> {
+    <span class='kw'>double</span> r;
+    <span class='cls'>Circle</span>(<span class='kw'>double</span> r) { <span class='kw'>this</span>.r = r; }
+
+    <span class='ann'>@Override</span>
+    <span class='kw'>public double</span> area() { <span class='kw'>return</span> PI * r * r; }
+}
+
+<span class='cm'>// Polymorphism: Shape reference</span>
+<span class='cls'>Shape</span> s = <span class='kw'>new</span> <span class='cls'>Circle</span>(<span class='num'>7</span>);
+System.out.println(s.area()); <span class='cm'>// 153.93</span>`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Use interfaces to define capabilities (Runnable, Comparable, Serializable) — favor composition over inheritance."},
+      {ok:true,text:"Use @FunctionalInterface annotation on single-abstract-method interfaces to enable lambda usage."},
+      {ok:false,text:"Don't put state (non-constant fields) in interfaces — they can't hold instance variables."},
+      {ok:false,text:"Don't create too many methods in one interface — violates Interface Segregation Principle (ISP)."},
+      {ok:true,text:"Use default methods carefully — they can cause conflicts when a class implements multiple interfaces with same default method name."}
+    ],
+    qa:[
+      {q:"Q1. How does Java support multiple inheritance through interfaces?",a:"Java doesn't allow multiple class inheritance (to avoid the Diamond Problem). But a class can implement multiple interfaces. Since interfaces (pre-Java 8) have no state and no implementation, there's no ambiguity about which parent's data to use."},
+      {q:"Q2. What is the Diamond Problem and how does Java 8 handle it?",a:"When two interfaces have the same default method and a class implements both, there's ambiguity. Java 8 resolves this by requiring the implementing class to explicitly override the conflicting method. The class must provide its own implementation to compile."},
+      {q:"Q3. Can an interface extend another interface?",a:"Yes. An interface can extend one or more interfaces using the extends keyword (not implements). The implementing class must then implement all methods from the entire hierarchy."},
+      {q:"Q4. What is a marker interface?",a:"An interface with no methods. It 'marks' a class as having a property. Examples: Serializable, Cloneable, Remote. The JVM or frameworks check for these interfaces using instanceof to enable special behaviors."},
+      {q:"Q5. What is the difference between abstract class and interface in Java 8+?",a:"With Java 8+, interfaces can have default and static methods, narrowing the gap. Key remaining differences: abstract class has constructors and instance variables (state), can use any access modifier. Interface has no constructors, only constants, and all methods are public. Abstract class = IS-A + shared state; Interface = CAN-DO contract."}
+    ]
+  },
+  {
+    id:6, title:"Exception Handling Basics", phase:"Intermediate", badge:"inter",
+    tags:["try","catch","Exception","Error","Throwable","checked","unchecked"],
+    overview:{
+      def:"Exception handling is a mechanism to handle runtime errors gracefully, preventing program crashes. Java uses try-catch blocks to intercept and handle exceptions.",
+      what:"A way to catch and respond to runtime errors without crashing the program.",
+      why:"To make programs robust and user-friendly; to separate error-handling from normal logic.",
+      when:"Whenever an operation can fail at runtime (file I/O, network, parsing, null access).",
+      where:"Around risky code using try-catch; method declaration using throws.",
+      how:"Wrap risky code in try; catch specific exception types; handle them appropriately."
+    },
+    oneliners:[
+      "<strong>Exception</strong> — Runtime event that disrupts normal program flow; must be handled.",
+      "<strong>try block</strong> — Contains the risky code that might throw an exception.",
+      "<strong>catch block</strong> — Catches and handles the exception thrown in try block.",
+      "<strong>Checked exception</strong> — Must be handled at compile time (IOException, SQLException).",
+      "<strong>Unchecked exception</strong> — RuntimeException; not mandatory to handle (NullPointerException, ArrayIndexOutOfBoundsException)."
+    ],
+    concepts:[
+      {title:"Java Exception Hierarchy", body:"All exceptions stem from Throwable. Error is for JVM-level issues. Exception splits into checked and unchecked.",arch:`<span class='cls'>Throwable</span>
+├── <span class='cls'>Error</span>            <span class='cm'>// don't catch (StackOverflow, OutOfMemory)</span>
+└── <span class='cls'>Exception</span>
+    ├── <span class='cls'>IOException</span>   <span class='cm'>// Checked — must handle</span>
+    ├── <span class='cls'>SQLException</span>  <span class='cm'>// Checked</span>
+    └── <span class='cls'>RuntimeException</span>   <span class='cm'>// Unchecked</span>
+        ├── <span class='cls'>NullPointerException</span>
+        ├── <span class='cls'>ArrayIndexOutOfBoundsException</span>
+        └── <span class='cls'>NumberFormatException</span>`},
+      {title:"try-catch Flow", body:"JVM executes try block. If an exception occurs, execution jumps to matching catch block. Code after the throw point in try is skipped.",arch:`try {
+  statement1  <span class='cm'>// executes</span>
+  statement2  <span class='cm'>// throws here</span>
+  statement3  <span class='cm'>// SKIPPED</span>
+} catch (<span class='cls'>ExType</span> e) {
+  <span class='cm'>// handles exception</span>
+}
+<span class='cm'>// continues here</span>`}
+    ],
+    codes:[
+      {title:"Example 1 — Basic try-catch",code:`<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='kw'>try</span> {
+        <span class='kw'>int</span> result = <span class='num'>10</span> / <span class='num'>0</span>; <span class='cm'>// throws ArithmeticException</span>
+        System.out.println(result); <span class='cm'>// NEVER executes</span>
+    } <span class='kw'>catch</span> (<span class='cls'>ArithmeticException</span> e) {
+        <span class='cm'>// e.getMessage() returns "/ by zero"</span>
+        System.out.println(<span class='str'>"Error: "</span> + e.getMessage());
+    }
+    System.out.println(<span class='str'>"Program continues"</span>); <span class='cm'>// executes</span>
+}`},
+      {title:"Example 2 — Catching NullPointerException",code:`<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='kw'>String</span> str = <span class='kw'>null</span>;
+    <span class='kw'>try</span> {
+        <span class='cm'>// Calling method on null throws NPE</span>
+        System.out.println(str.length());
+    } <span class='kw'>catch</span> (<span class='cls'>NullPointerException</span> e) {
+        System.out.println(<span class='str'>"Null reference caught!"</span>);
+        e.printStackTrace(); <span class='cm'>// prints full stack trace</span>
+    }
+}`},
+      {title:"Example 3 — NumberFormatException (parsing)",code:`<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='kw'>String</span> input = <span class='str'>"abc"</span>;
+    <span class='kw'>try</span> {
+        <span class='kw'>int</span> num = Integer.parseInt(input); <span class='cm'>// throws NFE</span>
+        System.out.println(<span class='str'>"Parsed: "</span> + num);
+    } <span class='kw'>catch</span> (<span class='cls'>NumberFormatException</span> e) {
+        System.out.println(<span class='str'>"Invalid number: "</span> + input);
+    }
+}`},
+      {title:"Example 4 — ArrayIndexOutOfBoundsException",code:`<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='kw'>int</span>[] arr = {<span class='num'>1</span>, <span class='num'>2</span>, <span class='num'>3</span>};
+    <span class='kw'>try</span> {
+        System.out.println(arr[<span class='num'>10</span>]); <span class='cm'>// index 10 doesn't exist</span>
+    } <span class='kw'>catch</span> (<span class='cls'>ArrayIndexOutOfBoundsException</span> e) {
+        System.out.println(<span class='str'>"Invalid array index!"</span>);
+        System.out.println(<span class='str'>"Max index is: "</span> + (arr.length-<span class='num'>1</span>));
+    }
+}`},
+      {title:"Example 5 — Catching parent exception (Exception class)",code:`<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='kw'>try</span> {
+        <span class='kw'>int</span>[] arr = <span class='kw'>new int</span>[<span class='num'>5</span>];
+        arr[<span class='num'>10</span>] = <span class='num'>100</span>;
+    } <span class='kw'>catch</span> (<span class='cls'>Exception</span> e) {
+        <span class='cm'>// catches ANY exception (use specific types in production)</span>
+        System.out.println(<span class='str'>"Exception type: "</span> + e.getClass().getName());
+        System.out.println(<span class='str'>"Message: "</span> + e.getMessage());
+    }
+}`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Always catch the most specific exception type first, then more general ones."},
+      {ok:true,text:"Log the full stack trace (e.printStackTrace() or logger.error()) for debugging."},
+      {ok:false,text:"Never catch Exception or Throwable broadly without re-throwing or logging — it hides bugs."},
+      {ok:false,text:"Never use exception handling for normal flow control — it's expensive and misleading."},
+      {ok:true,text:"Always include meaningful messages in catch blocks to aid troubleshooting."}
+    ],
+    qa:[
+      {q:"Q1. What is the difference between checked and unchecked exceptions?",a:"Checked exceptions (IOException, SQLException) are checked at compile time. You MUST handle them with try-catch or declare with throws. Unchecked exceptions (RuntimeException and subclasses) are optional to handle — they represent programming errors like null access or bad array index."},
+      {q:"Q2. What is the difference between Error and Exception?",a:"Both extend Throwable, but Error represents serious JVM-level problems (OutOfMemoryError, StackOverflowError) that typically cannot be recovered from. Exception represents conditions your program can and should handle."},
+      {q:"Q3. Can we have multiple catch blocks for one try?",a:"Yes. You can have multiple catch blocks, each catching a different exception type. They're evaluated top to bottom. Always place specific exceptions before general ones, or you'll get a compile error (unreachable catch block)."},
+      {q:"Q4. What happens if an exception is not caught?",a:"It propagates up the call stack. If no method in the call chain handles it, the JVM's default exception handler catches it, prints the stack trace, and terminates the program (or thread)."},
+      {q:"Q5. What is e.getMessage() vs e.printStackTrace()?",a:"e.getMessage() returns just the exception message (a String). e.printStackTrace() prints the full call stack showing where the exception originated and how it propagated — much more useful for debugging."}
+    ]
+  },
+  {
+    id:7, title:"Advanced Exception Handling", phase:"Advanced", badge:"adv",
+    tags:["multi-catch","nested try","finally","throw","throws","try-with-resources"],
+    overview:{
+      def:"Advanced exception handling covers multiple catch blocks, nested try, finally block for cleanup, throw to manually raise exceptions, and throws to declare exceptions.",
+      what:"Deeper exception control — multi-catch, cleanup with finally, manual throwing.",
+      why:"To handle complex error scenarios, guarantee resource cleanup, and create clean APIs.",
+      when:"In file handling, database operations, multi-step transactions, and library design.",
+      where:"Inside methods; declared on method signatures with throws.",
+      how:"Combine try-multi-catch-finally; use throw to raise; throws on method signature."
+    },
+    oneliners:[
+      "<strong>Multiple catch</strong> — Handle different exceptions differently in the same try block.",
+      "<strong>finally</strong> — Always executes (success or failure); used for cleanup (close streams).",
+      "<strong>throw</strong> — Manually throw an exception: throw new ExceptionType('message').",
+      "<strong>throws</strong> — Declares that a method may throw: void read() throws IOException.",
+      "<strong>try-with-resources</strong> — Java 7+: auto-closes resources that implement AutoCloseable."
+    ],
+    concepts:[
+      {title:"finally Block Guarantee", body:"finally always runs — whether try succeeded, catch caught, or even if return is called inside try. Only System.exit() prevents it.",arch:`<span class='kw'>try</span>    { risky code }
+<span class='kw'>catch</span>  { handle error }
+<span class='kw'>finally</span> { ALWAYS runs ← cleanup here }`},
+      {title:"throw vs throws", body:"These are commonly confused in interviews.",arch:`<span class='kw'>throw</span>   → action  → used inside method body
+            → manually raises an exception
+            → <span class='kw'>throw new</span> <span class='cls'>IOException</span>(<span class='str'>"file missing"</span>);
+
+<span class='kw'>throws</span>  → declaration → used in method signature
+            → tells caller what might be thrown
+            → <span class='kw'>void</span> read() <span class='kw'>throws</span> <span class='cls'>IOException</span> { }`}
+    ],
+    codes:[
+      {title:"Example 1 — Multiple catch blocks",code:`<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='kw'>try</span> {
+        <span class='kw'>String</span> s = <span class='kw'>null</span>;
+        System.out.println(s.length()); <span class='cm'>// NPE</span>
+        <span class='kw'>int</span>[] arr = <span class='kw'>new int</span>[<span class='num'>3</span>];
+        arr[<span class='num'>5</span>] = <span class='num'>10</span>; <span class='cm'>// AIOOBE (never reached here)</span>
+    } <span class='kw'>catch</span> (<span class='cls'>NullPointerException</span> e) {
+        System.out.println(<span class='str'>"Null pointer: "</span> + e.getMessage());
+    } <span class='kw'>catch</span> (<span class='cls'>ArrayIndexOutOfBoundsException</span> e) {
+        System.out.println(<span class='str'>"Array index: "</span> + e.getMessage());
+    } <span class='kw'>catch</span> (<span class='cls'>Exception</span> e) { <span class='cm'>// parent — must be last</span>
+        System.out.println(<span class='str'>"General: "</span> + e.getMessage());
+    }
+}`},
+      {title:"Example 2 — Multi-catch (Java 7 syntax | pipe)",code:`<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='kw'>try</span> {
+        <span class='kw'>int</span> n = Integer.parseInt(<span class='str'>"abc"</span>);
+        <span class='kw'>int</span>[] arr = <span class='kw'>new int</span>[n];
+    } <span class='kw'>catch</span> (<span class='cls'>NumberFormatException</span> | <span class='cls'>NegativeArraySizeException</span> e) {
+        <span class='cm'>// handle two exception types the same way</span>
+        System.out.println(<span class='str'>"Input error: "</span> + e.getMessage());
+    }
+}`},
+      {title:"Example 3 — finally block for cleanup",code:`<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='cls'>Scanner</span> sc = <span class='kw'>null</span>;
+    <span class='kw'>try</span> {
+        sc = <span class='kw'>new</span> <span class='cls'>Scanner</span>(<span class='kw'>new</span> <span class='cls'>File</span>(<span class='str'>"data.txt"</span>));
+        System.out.println(sc.nextLine());
+    } <span class='kw'>catch</span> (<span class='cls'>FileNotFoundException</span> e) {
+        System.out.println(<span class='str'>"File not found!"</span>);
+    } <span class='kw'>finally</span> {
+        <span class='cm'>// Always runs — close resource</span>
+        <span class='kw'>if</span> (sc != <span class='kw'>null</span>) sc.close();
+        System.out.println(<span class='str'>"Scanner closed."</span>);
+    }
+}`},
+      {title:"Example 4 — throw keyword (manual exception)",code:`<span class='kw'>class</span> <span class='cls'>AgeValidator</span> {
+    <span class='kw'>static void</span> validate(<span class='kw'>int</span> age) {
+        <span class='kw'>if</span> (age < <span class='num'>0</span> || age > <span class='num'>150</span>) {
+            <span class='cm'>// manually throw an exception</span>
+            <span class='kw'>throw new</span> <span class='cls'>IllegalArgumentException</span>(
+                <span class='str'>"Invalid age: "</span> + age);
+        }
+        System.out.println(<span class='str'>"Age valid: "</span> + age);
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        validate(<span class='num'>25</span>);  <span class='cm'>// ok</span>
+        validate(<span class='num'>-5</span>);  <span class='cm'>// throws IllegalArgumentException</span>
+    }
+}`},
+      {title:"Example 5 — throws declaration + Nested try",code:`<span class='kw'>class</span> <span class='cls'>FileReader</span> {
+    <span class='cm'>// throws declares checked exceptions to caller</span>
+    <span class='kw'>void</span> readFile(<span class='kw'>String</span> path) <span class='kw'>throws</span> <span class='cls'>IOException</span> {
+        <span class='kw'>try</span> {
+            <span class='cls'>FileInputStream</span> fis = <span class='kw'>new</span> <span class='cls'>FileInputStream</span>(path);
+            <span class='kw'>try</span> { <span class='cm'>// nested try</span>
+                <span class='kw'>int</span> data = fis.read();
+                System.out.println(<span class='str'>"Data: "</span> + data);
+            } <span class='kw'>catch</span> (<span class='cls'>IOException</span> e) {
+                System.out.println(<span class='str'>"Read error"</span>);
+            } <span class='kw'>finally</span> {
+                fis.close(); <span class='cm'>// inner finally</span>
+            }
+        } <span class='kw'>catch</span> (<span class='cls'>FileNotFoundException</span> e) {
+            <span class='kw'>throw</span> e; <span class='cm'>// re-throw to caller</span>
+        }
+    }
+}`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Use finally for resource cleanup (close files, DB connections, streams)."},
+      {ok:true,text:"Prefer try-with-resources (Java 7+) over manual finally for AutoCloseable resources."},
+      {ok:false,text:"Don't swallow exceptions with an empty catch block — always log or re-throw."},
+      {ok:false,text:"Don't throw Exception directly — use specific exception types for clarity."},
+      {ok:true,text:"Use throws on method signatures for checked exceptions to propagate them to caller."}
+    ],
+    qa:[
+      {q:"Q1. Does finally execute if there's a return in try block?",a:"Yes. finally executes even if try has a return statement. The return value is calculated, then finally runs, then the method actually returns. If finally also has a return, it overrides the try's return — which is considered bad practice."},
+      {q:"Q2. What is the difference between throw and throws?",a:"throw (no s) is used inside a method body to actually raise an exception: throw new IOException(). throws (with s) is used in the method signature to declare what exceptions the method might propagate: void read() throws IOException. throw = action, throws = declaration."},
+      {q:"Q3. What is try-with-resources?",a:"Java 7+ feature. Resources that implement AutoCloseable are automatically closed at the end of the try block — no finally needed. Syntax: try (FileInputStream fis = new FileInputStream(f)) { ... } — fis.close() is called automatically."},
+      {q:"Q4. Can we have try without catch?",a:"Yes — try-finally is valid (no catch). The finally block handles cleanup and any exception propagates up. try without both catch and finally is a compile error."},
+      {q:"Q5. What is exception chaining?",a:"Wrapping one exception in another to preserve the original cause. Example: catch (IOException e) { throw new ServiceException('Failed', e); } — the original IOException is the 'cause' and can be retrieved via getCause(). Helps debug root causes in layered architectures."}
+    ]
+  },
+  {
+    id:8, title:"Exception with Methods", phase:"Advanced", badge:"adv",
+    tags:["throws propagation","method chaining exceptions","checked","re-throw"],
+    overview:{
+      def:"Exception handling interacts deeply with methods — methods declare what exceptions they throw, callers must handle them, and exceptions propagate up the call stack if not caught.",
+      what:"How exceptions flow through method calls — propagation, declaration, and delegation.",
+      why:"To design clean APIs where callers know what errors to expect and handle them appropriately.",
+      when:"In layered architectures (controller → service → repository) with I/O or business validation.",
+      where:"Method signatures with throws; call sites with try-catch.",
+      how:"Declare throws on method signature; caller catches or also declares throws."
+    },
+    oneliners:[
+      "<strong>Propagation</strong> — Uncaught exception moves up the call stack to the caller.",
+      "<strong>throws chain</strong> — If caller doesn't handle, it must also declare throws.",
+      "<strong>Checked exception</strong> — Method using checked exceptions must declare throws or catch.",
+      "<strong>Re-throw</strong> — Catch then throw same/different exception: catch(E e){throw new RuntimeEx(e);}",
+      "<strong>Exception translation</strong> — Convert low-level exception to domain exception for clean API."
+    ],
+    concepts:[
+      {title:"Call Stack Propagation", body:"When a method throws and doesn't catch, the exception travels up to the caller. Each frame in the stack is a method. The first matching catch wins.",arch:`main() 
+  → connectDB()      <span class='kw'>throws</span> <span class='cls'>SQLException</span>
+      → openConn()   <span class='kw'>throws</span> <span class='cls'>SQLException</span>
+          ← exception bubbles back up →
+main() must catch OR also declare <span class='kw'>throws</span>`}
+    ],
+    codes:[
+      {title:"Example 1 — Method throws propagation",code:`<span class='kw'>class</span> <span class='cls'>FileService</span> {
+    <span class='cm'>// declares it may throw IOException</span>
+    <span class='kw'>void</span> readFile(<span class='kw'>String</span> path) <span class='kw'>throws</span> <span class='cls'>IOException</span> {
+        <span class='cls'>FileInputStream</span> f = <span class='kw'>new</span> <span class='cls'>FileInputStream</span>(path);
+        f.read();
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='cls'>FileService</span> fs = <span class='kw'>new</span> <span class='cls'>FileService</span>();
+        <span class='kw'>try</span> {
+            fs.readFile(<span class='str'>"data.txt"</span>); <span class='cm'>// caller handles it</span>
+        } <span class='kw'>catch</span> (<span class='cls'>IOException</span> e) {
+            System.out.println(<span class='str'>"IO Error: "</span> + e.getMessage());
+        }
+    }
+}`},
+      {title:"Example 2 — Exception chain across multiple methods",code:`<span class='kw'>class</span> <span class='cls'>App</span> {
+    <span class='kw'>void</span> method3() <span class='kw'>throws</span> <span class='cls'>ArithmeticException</span> {
+        <span class='kw'>int</span> x = <span class='num'>5</span> / <span class='num'>0</span>; <span class='cm'>// throws here</span>
+    }
+
+    <span class='kw'>void</span> method2() <span class='kw'>throws</span> <span class='cls'>ArithmeticException</span> {
+        method3(); <span class='cm'>// passes exception up</span>
+    }
+
+    <span class='kw'>void</span> method1() {
+        <span class='kw'>try</span> {
+            method2(); <span class='cm'>// caught here</span>
+        } <span class='kw'>catch</span> (<span class='cls'>ArithmeticException</span> e) {
+            System.out.println(<span class='str'>"Caught in method1: "</span> + e.getMessage());
+        }
+    }
+}`},
+      {title:"Example 3 — Exception translation (wrap)",code:`<span class='kw'>class</span> <span class='cls'>UserService</span> {
+    <span class='kw'>void</span> loadUser(<span class='kw'>int</span> id) <span class='kw'>throws</span> <span class='cls'>ServiceException</span> {
+        <span class='kw'>try</span> {
+            <span class='cm'>// Low-level DB call</span>
+            queryDatabase(id);
+        } <span class='kw'>catch</span> (<span class='cls'>SQLException</span> e) {
+            <span class='cm'>// Translate to domain exception</span>
+            <span class='kw'>throw new</span> <span class='cls'>ServiceException</span>(<span class='str'>"User load failed"</span>, e);
+        }
+    }
+
+    <span class='kw'>void</span> queryDatabase(<span class='kw'>int</span> id) <span class='kw'>throws</span> <span class='cls'>SQLException</span> {
+        <span class='kw'>throw new</span> <span class='cls'>SQLException</span>(<span class='str'>"DB connection lost"</span>);
+    }
+}
+<span class='cm'>// ServiceException wraps cause: new ServiceException(msg, cause)</span>`},
+      {title:"Example 4 — Override rule: subclass cannot throw more checked exceptions",code:`<span class='kw'>class</span> <span class='cls'>Parent</span> {
+    <span class='kw'>void</span> work() <span class='kw'>throws</span> <span class='cls'>IOException</span> { }
+}
+
+<span class='kw'>class</span> <span class='cls'>Child</span> <span class='kw'>extends</span> <span class='cls'>Parent</span> {
+    <span class='cm'>// ✅ can throw same or narrower checked exception</span>
+    <span class='ann'>@Override</span>
+    <span class='kw'>void</span> work() <span class='kw'>throws</span> <span class='cls'>FileNotFoundException</span> { }
+
+    <span class='cm'>// ❌ COMPILE ERROR: cannot throw broader exception</span>
+    <span class='cm'>// void work() throws Exception { }</span>
+
+    <span class='cm'>// ✅ unchecked exceptions are always ok</span>
+    <span class='cm'>// void work() throws RuntimeException { }</span>
+}`},
+      {title:"Example 5 — Re-throwing and wrapping exceptions",code:`<span class='kw'>void</span> process() {
+    <span class='kw'>try</span> {
+        riskyOperation();
+    } <span class='kw'>catch</span> (<span class='cls'>IOException</span> e) {
+        <span class='cm'>// Option 1: re-throw same exception</span>
+        <span class='kw'>throw</span> e;
+
+        <span class='cm'>// Option 2: wrap in RuntimeException (unchecked)</span>
+        <span class='cm'>// throw new RuntimeException("Process failed", e);</span>
+
+        <span class='cm'>// Option 3: log and swallow (use carefully!)</span>
+        <span class='cm'>// logger.error("Failed", e);</span>
+    }
+}`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Use exception translation in service layers — don't leak low-level exceptions (SQLException) to controllers."},
+      {ok:true,text:"Always preserve the original cause when wrapping: new ServiceException('msg', originalException)."},
+      {ok:false,text:"Don't declare 'throws Exception' on methods — it's too broad and forces callers to handle everything."},
+      {ok:false,text:"Don't re-throw exception and lose the original cause — always chain with cause parameter."},
+      {ok:true,text:"Follow the override rule: subclass overriding method cannot declare broader checked exceptions than parent."}
+    ],
+    qa:[
+      {q:"Q1. What is exception propagation?",a:"When a method throws an exception and doesn't catch it, the exception travels up the call stack to the calling method. This continues until a catch block handles it, or the JVM's default handler prints the stack trace and exits."},
+      {q:"Q2. What is the exception override rule?",a:"An overriding method in a subclass can only declare the same checked exception, a subclass of it, or no exception. It cannot declare broader checked exceptions than the parent method. Unchecked exceptions (RuntimeException) have no such restriction."},
+      {q:"Q3. What is the difference between re-throw and wrap?",a:"Re-throw: catch an exception and throw it again (same type). Wrap: catch and throw a new exception that contains the original as its cause — new RuntimeException('msg', e). Wrapping is used for exception translation between layers."},
+      {q:"Q4. Can a method declare throws for unchecked exceptions?",a:"Yes, but it's optional and not recommended (it's misleading because callers don't need to handle it). Throws declaration is meaningful only for checked exceptions."},
+      {q:"Q5. What happens if main() throws an exception?",a:"If main() doesn't catch an exception, it propagates to the JVM. The JVM calls the thread's uncaught exception handler, which by default prints the exception and stack trace to stderr and terminates the program."}
+    ]
+  },
+  {
+    id:9, title:"Custom Exceptions", phase:"Advanced", badge:"adv",
+    tags:["custom exception","extends Exception","business exception","checked","unchecked"],
+    overview:{
+      def:"Custom exceptions are user-defined exception classes that extend Exception or RuntimeException. They represent domain-specific error conditions meaningful to your application.",
+      what:"Application-specific exceptions that represent business rules violations or domain errors.",
+      why:"To make error handling expressive, type-safe, and meaningful to the problem domain.",
+      when:"When built-in exceptions don't semantically describe the error (e.g. InvalidAgeException).",
+      where:"Defined as separate classes; thrown in service/validation layers; caught in controllers.",
+      how:"Create a class extending Exception (checked) or RuntimeException (unchecked); add constructors."
+    },
+    oneliners:[
+      "<strong>Custom checked</strong> — extends Exception; caller MUST handle or declare throws.",
+      "<strong>Custom unchecked</strong> — extends RuntimeException; optional to handle.",
+      "<strong>Meaningful name</strong> — Name tells exactly what went wrong: InsufficientFundsException.",
+      "<strong>Add fields</strong> — Custom exception can hold extra error info (error code, field name).",
+      "<strong>Exception hierarchy</strong> — Custom exceptions can form their own hierarchy for fine-grained handling."
+    ],
+    concepts:[
+      {title:"Anatomy of a Custom Exception", body:"A well-designed custom exception has multiple constructors, can carry extra context, and has a meaningful name ending in 'Exception'.",arch:`<span class='kw'>class</span> <span class='cls'>MyException</span> <span class='kw'>extends</span> <span class='cls'>Exception</span> {
+  <span class='cm'>// Extra fields for context</span>
+  <span class='kw'>private int</span> errorCode;
+
+  <span class='cm'>// Constructor 1: message only</span>
+  <span class='cls'>MyException</span>(<span class='kw'>String</span> msg) { <span class='kw'>super</span>(msg); }
+
+  <span class='cm'>// Constructor 2: message + cause</span>
+  <span class='cls'>MyException</span>(<span class='kw'>String</span> msg, <span class='cls'>Throwable</span> cause) {
+      <span class='kw'>super</span>(msg, cause);
+  }
+
+  <span class='cm'>// Constructor 3: with error code</span>
+  <span class='cls'>MyException</span>(<span class='kw'>String</span> msg, <span class='kw'>int</span> code) {
+      <span class='kw'>super</span>(msg); <span class='kw'>this</span>.errorCode = code;
+  }
+}`}
+    ],
+    codes:[
+      {title:"Example 1 — Simple custom checked exception",code:`<span class='cm'>// Custom checked exception</span>
+<span class='kw'>class</span> <span class='cls'>InvalidAgeException</span> <span class='kw'>extends</span> <span class='cls'>Exception</span> {
+    <span class='cls'>InvalidAgeException</span>(<span class='kw'>String</span> message) {
+        <span class='kw'>super</span>(message); <span class='cm'>// pass to Exception</span>
+    }
+}
+
+<span class='kw'>class</span> <span class='cls'>Voter</span> {
+    <span class='kw'>void</span> checkEligibility(<span class='kw'>int</span> age)
+            <span class='kw'>throws</span> <span class='cls'>InvalidAgeException</span> {
+        <span class='kw'>if</span> (age < <span class='num'>18</span>)
+            <span class='kw'>throw new</span> <span class='cls'>InvalidAgeException</span>(
+                <span class='str'>"Age "</span> + age + <span class='str'>" is below 18"</span>);
+        System.out.println(<span class='str'>"Eligible to vote!"</span>);
+    }
+
+    <span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+        <span class='kw'>try</span> {
+            <span class='kw'>new</span> <span class='cls'>Voter</span>().checkEligibility(<span class='num'>16</span>);
+        } <span class='kw'>catch</span> (<span class='cls'>InvalidAgeException</span> e) {
+            System.out.println(<span class='str'>"Error: "</span> + e.getMessage());
+        }
+    }
+}`},
+      {title:"Example 2 — Custom unchecked exception",code:`<span class='cm'>// Unchecked — no throws needed on callers</span>
+<span class='kw'>class</span> <span class='cls'>InsufficientFundsException</span>
+        <span class='kw'>extends</span> <span class='cls'>RuntimeException</span> {
+    <span class='kw'>private double</span> amount;
+
+    <span class='cls'>InsufficientFundsException</span>(<span class='kw'>double</span> amount) {
+        <span class='kw'>super</span>(<span class='str'>"Insufficient funds. Needed: "</span> + amount);
+        <span class='kw'>this</span>.amount = amount;
+    }
+
+    <span class='kw'>public double</span> getAmount() { <span class='kw'>return</span> amount; }
+}
+
+<span class='kw'>class</span> <span class='cls'>BankAccount</span> {
+    <span class='kw'>double</span> balance = <span class='num'>500</span>;
+
+    <span class='kw'>void</span> withdraw(<span class='kw'>double</span> amount) {
+        <span class='kw'>if</span> (amount > balance)
+            <span class='kw'>throw new</span> <span class='cls'>InsufficientFundsException</span>(amount);
+        balance -= amount;
+    }
+}`},
+      {title:"Example 3 — Exception with error code field",code:`<span class='kw'>class</span> <span class='cls'>AppException</span> <span class='kw'>extends</span> <span class='cls'>RuntimeException</span> {
+    <span class='kw'>private final int</span> errorCode;
+
+    <span class='cls'>AppException</span>(<span class='kw'>String</span> msg, <span class='kw">int</span> errorCode) {
+        <span class='kw'>super</span>(msg);
+        <span class='kw'>this</span>.errorCode = errorCode;
+    }
+
+    <span class='kw'>public int</span> getErrorCode() { <span class='kw'>return</span> errorCode; }
+}
+
+<span class='kw'>public static void</span> main(<span class='kw'>String</span>[] args) {
+    <span class='kw'>try</span> {
+        <span class='kw'>throw new</span> <span class='cls'>AppException</span>(<span class='str'>"User not found"</span>, <span class='num'>404</span>);
+    } <span class='kw'>catch</span> (<span class='cls'>AppException</span> e) {
+        System.out.println(e.getErrorCode() +
+            <span class='str'>": "</span> + e.getMessage()); <span class='cm'>// 404: User not found</span>
+    }
+}`},
+      {title:"Example 4 — Custom exception hierarchy",code:`<span class='cm'>// Base domain exception</span>
+<span class='kw'>class</span> <span class='cls'>DatabaseException</span> <span class='kw'>extends</span> <span class='cls'>RuntimeException</span> {
+    <span class='cls'>DatabaseException</span>(<span class='kw'>String</span> msg) { <span class='kw'>super</span>(msg); }
+}
+
+<span class='cm'>// Specific sub-exceptions</span>
+<span class='kw'>class</span> <span class='cls'>ConnectionException</span> <span class='kw'>extends</span> <span class='cls'>DatabaseException</span> {
+    <span class='cls'>ConnectionException</span>(<span class='kw'>String</span> msg) { <span class='kw'>super</span>(msg); }
+}
+
+<span class='kw'>class</span> <span class='cls'>QueryException</span> <span class='kw'>extends</span> <span class='cls'>DatabaseException</span> {
+    <span class='cls'>QueryException</span>(<span class='kw'>String</span> msg) { <span class='kw'>super</span>(msg); }
+}
+
+<span class='cm'>// Caller can catch specific or base type</span>
+<span class='kw'>try</span> {
+    <span class='kw'>throw new</span> <span class='cls'>ConnectionException</span>(<span class='str'>"DB down"</span>);
+} <span class='kw'>catch</span> (<span class='cls'>ConnectionException</span> e) {
+    System.out.println(<span class='str'>"Connection: "</span> + e.getMessage());
+} <span class='kw'>catch</span> (<span class='cls'>DatabaseException</span> e) {
+    System.out.println(<span class='str'>"DB error: "</span> + e.getMessage());
+}`},
+      {title:"Example 5 — Custom exception with cause (chaining)",code:`<span class='kw'>class</span> <span class='cls'>ServiceException</span> <span class='kw'>extends</span> <span class='cls'>RuntimeException</span> {
+    <span class='cls'>ServiceException</span>(<span class='kw'>String</span> msg) {
+        <span class='kw'>super</span>(msg);
+    }
+    <span class='cm'>// Constructor with cause for chaining</span>
+    <span class='cls'>ServiceException</span>(<span class='kw'>String</span> msg, <span class='cls'>Throwable</span> cause) {
+        <span class='kw'>super</span>(msg, cause); <span class='cm'>// preserves original</span>
+    }
+}
+
+<span class='kw'>void</span> loadData() {
+    <span class='kw'>try</span> {
+        <span class='kw'>throw new</span> <span class='cls'>IOException</span>(<span class='str'>"File missing"</span>);
+    } <span class='kw'>catch</span> (<span class='cls'>IOException</span> e) {
+        <span class='cm'>// Wrap low-level in domain exception</span>
+        <span class='kw'>throw new</span> <span class='cls'>ServiceException</span>(<span class='str'>"Data load failed"</span>, e);
+        <span class='cm'>// getCause() returns the IOException</span>
+    }
+}`}
+    ],
+    bestPractices:[
+      {ok:true,text:"Name custom exceptions descriptively ending in 'Exception': InsufficientFundsException."},
+      {ok:true,text:"Provide at least two constructors: one with message, one with message + cause."},
+      {ok:false,text:"Don't create too many custom exceptions — group related ones in a hierarchy."},
+      {ok:false,text:"Don't extend Error — only extend Exception or RuntimeException."},
+      {ok:true,text:"Prefer unchecked (RuntimeException) for programming errors; checked for recoverable business conditions."}
+    ],
+    qa:[
+      {q:"Q1. When should you create a custom exception?",a:"When a built-in exception doesn't clearly describe the domain error. For example, IllegalArgumentException could mean many things, but InvalidAgeException is specific. Custom exceptions make code self-documenting and allow fine-grained catch blocks."},
+      {q:"Q2. Should custom exceptions be checked or unchecked?",a:"Use checked (extends Exception) for recoverable conditions the caller is expected to handle (InvalidUserInputException). Use unchecked (extends RuntimeException) for programming errors or conditions callers typically can't recover from (InternalServiceException, ConfigurationException)."},
+      {q:"Q3. Why add multiple constructors to a custom exception?",a:"To give callers flexibility: message-only for simple cases, message+cause for exception chaining (preserving root cause), and custom fields (errorCode) for rich error context. Following this pattern aligns with the standard Exception class design."},
+      {q:"Q4. What is the serialVersionUID in custom exceptions?",a:"Custom exceptions should declare private static final long serialVersionUID = 1L; because Exception implements Serializable. Without it, Java generates one based on class structure. If the class changes, deserialization can fail in distributed systems. It's best practice to always declare it explicitly."},
+      {q:"Q5. How do you test custom exceptions in unit tests?",a:"Use JUnit's assertThrows: assertThrows(InvalidAgeException.class, () -> voter.checkEligibility(16)); — it verifies the right exception type is thrown. You can also capture the exception to check its message or custom fields: InvalidAgeException e = assertThrows(...); assertEquals('...', e.getMessage());"}
+    ]
+  }
+];
+
+const phases = ["Fundamentals","Intermediate","Advanced"];
+let current = 0;
+const seen = new Set();
+
+function phaseOf(s){ return s.phase; }
+function badgeClass(s){ return s.badge; }
+
+function renderPhaseBar(){
+  const bar = document.getElementById('phaseBar');
+  bar.innerHTML = phases.map(p=>{
+    const inPhase = sessions.some(s=>s.phase===p && s.id===current);
+    return `<span class="phase-pill ${inPhase?'active':''}">${p}</span>`;
+  }).join('');
+}
+
+function renderTabs(){
+  const bar = document.getElementById('tabBar');
+  bar.innerHTML = sessions.map(s=>`
+    <button class="tab-btn ${s.id===current?'active':''} ${seen.has(s.id)&&s.id!==current?'done':''}"
+      onclick="goTo(${s.id})">
+      S${s.id+1}. ${s.title}
+    </button>`).join('');
+  bar.children[current].scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+}
+
+function renderProgress(){
+  const fill = document.getElementById('progFill');
+  fill.style.width = (((seen.size)/(sessions.length))*100)+'%';
+}
+
+function renderSession(s){
+  const o = s.overview;
+  return `
+<div class="session">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <span class="badge ${badgeClass(s)}">${s.phase}</span>
+    <h2 style="font-size:18px;font-weight:500;color:var(--color-text-primary)">Session ${s.id+1}: ${s.title}</h2>
+  </div>
+  <div class="tag-row">${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+
+  <div class="section">
+    <div class="section-label"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+    <div class="overview-card">
+      <div class="title">${s.title}</div>
+      <p>${o.def}</p>
+      <div class="meta-grid">
+        <div class="meta-item"><strong>What</strong><span>${o.what}</span></div>
+        <div class="meta-item"><strong>Why</strong><span>${o.why}</span></div>
+        <div class="meta-item"><strong>When</strong><span>${o.when}</span></div>
+        <div class="meta-item"><strong>How</strong><span>${o.how}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label"><i class="ti ti-message-2" aria-hidden="true"></i> Interview one-liners</div>
+    <div class="oneliner-list">
+      ${s.oneliners.map(l=>`<div class="oneliner">${l}</div>`).join('')}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label"><i class="ti ti-topology-star" aria-hidden="true"></i> Concepts & architecture</div>
+    ${s.concepts.map(c=>`
+      <div class="concept-block">
+        <h4><i class="ti ti-bulb" aria-hidden="true"></i> ${c.title}</h4>
+        ${c.body?`<p>${c.body}</p>`:''}
+        ${c.arch?`<div class="arch-box"><pre>${c.arch}</pre></div>`:''}
+      </div>`).join('')}
+  </div>
+
+  <div class="section">
+    <div class="section-label"><i class="ti ti-code" aria-hidden="true"></i> Code examples</div>
+    ${s.codes.map((c,i)=>`
+      <div class="code-block">
+        <div class="code-title"><i class="ti ti-file-code" aria-hidden="true"></i> ${c.title}</div>
+        <pre>${c.code}</pre>
+      </div>`).join('')}
+  </div>
+
+  <div class="section">
+    <div class="section-label"><i class="ti ti-checklist" aria-hidden="true"></i> Best practices</div>
+    <div class="bp-list">
+      ${s.bestPractices.map(b=>`
+        <div class="bp-item">
+          <div class="bp-icon ${b.ok?'ok':'warn'}">${b.ok?'✓':'!'}</div>
+          <span>${b.text}</span>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label"><i class="ti ti-help-circle" aria-hidden="true"></i> Interview Q&A (SDET style)</div>
+    <div class="qa-list">
+      ${s.qa.map((q,i)=>`
+        <div class="qa-item">
+          <div class="qa-q" onclick="toggleQA(this)">${q.q} <i class="ti ti-chevron-down" aria-hidden="true"></i></div>
+          <div class="qa-a">${q.a}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="goTo(${s.id-1})" ${s.id===0?'disabled':''}>
+      <i class="ti ti-arrow-left" aria-hidden="true"></i> Previous
+    </button>
+    <button class="nav-btn primary" onclick="goTo(${s.id+1})" ${s.id===sessions.length-1?'disabled':''}>
+      Next <i class="ti ti-arrow-right" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>`;
+}
+
+function toggleQA(el){
+  const ans = el.nextElementSibling;
+  ans.classList.toggle('open');
+}
+
+function goTo(id){
+  if(id<0||id>=sessions.length) return;
+  seen.add(current);
+  current=id;
+  seen.add(current);
+  document.getElementById('sessionContent').innerHTML = renderSession(sessions[current]);
+  renderTabs();
+  renderPhaseBar();
+  renderProgress();
+  document.querySelector('.hub').scrollIntoView({behavior:'smooth'});
+}
+
+goTo(0);
+</script>
+</body>
+</html>

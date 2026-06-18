@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>postman load testing course</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:1rem 0}
+.phase-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.phase-pill{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;border:0.5px solid}
+.phase-fund{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.phase-inter{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.phase-adv{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.tab-bar{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;margin-bottom:18px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.tab-bar::-webkit-scrollbar{height:3px}
+.tab-bar::-webkit-scrollbar-thumb{background:var(--color-border-secondary);border-radius:2px}
+.tab-btn{flex-shrink:0;font-size:12px;padding:6px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab-btn:hover{background:var(--color-background-secondary)}
+.tab-btn.active{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.tab-btn.done{border-color:#5DCAA5;color:#085041}
+.tab-btn.done.active{background:#E1F5EE}
+.progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.progress-bar{flex:1;height:5px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#534AB7,#1D9E75);border-radius:3px;transition:width .4s}
+.progress-txt{font-size:12px;color:var(--color-text-secondary);min-width:60px;text-align:right}
+.session{display:none;animation:fadeIn .2s ease}
+.session.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.session-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;padding:14px 16px;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary)}
+.session-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0}
+.session-meta h2{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.session-meta p{font-size:13px;color:var(--color-text-secondary)}
+.section-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 10px;display:flex;align-items:center;gap:6px}
+.section-title::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px}
+.card p,.card li{font-size:14px;line-height:1.7;color:var(--color-text-primary)}
+.card ul,.card ol{padding-left:18px}
+.card li{margin-bottom:4px}
+.oneliner{background:var(--color-background-secondary);border-left:3px solid #534AB7;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:8px 12px;margin-bottom:8px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:12px;font-family:var(--font-mono);font-size:12px;line-height:1.7;overflow-x:auto;white-space:pre;color:var(--color-text-primary)}
+.code-comment{color:var(--color-text-secondary)}
+.code-key{color:#534AB7}
+.code-str{color:#0F6E56}
+.code-num{color:#854F0B}
+.code-fn{color:#993556}
+.qa-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px;overflow:hidden}
+.qa-q{padding:10px 14px;font-size:13px;font-weight:500;cursor:pointer;background:var(--color-background-secondary);display:flex;justify-content:space-between;align-items:center;color:var(--color-text-primary)}
+.qa-q .arrow{transition:transform .2s;font-size:11px}
+.qa-a{display:none;padding:10px 14px;font-size:13px;line-height:1.7;color:var(--color-text-secondary);border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.qa-item.open .qa-a{display:block}
+.qa-item.open .arrow{transform:rotate(90deg)}
+.checklist-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;color:var(--color-text-primary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.checklist-item:last-child{border-bottom:none}
+.check-icon{color:#1D9E75;font-size:13px;flex-shrink:0;margin-top:2px}
+.arch-box{display:flex;gap:0;margin:10px 0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.arch-node{flex:1;padding:10px 8px;text-align:center;font-size:12px;font-weight:500;border-right:0.5px solid var(--color-border-tertiary)}
+.arch-node:last-child{border-right:none}
+.arch-arrow{display:flex;align-items:center;padding:0 4px;font-size:12px;color:var(--color-text-secondary);flex-shrink:0}
+.flow-wrap{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:10px 0}
+.flow-step{padding:8px 12px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);white-space:nowrap}
+.flow-arr{padding:0 6px;color:var(--color-text-tertiary);font-size:13px}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:500;margin:2px 2px}
+.badge-p{background:#EEEDFE;color:#3C3489}
+.badge-g{background:#EAF3DE;color:#27500A}
+.badge-a{background:#FAEEDA;color:#633806}
+.badge-r{background:#FCEBEB;color:#A32D2D}
+.next-btn{margin-top:20px;padding:8px 20px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);cursor:pointer;font-size:13px;float:right}
+.next-btn:hover{background:var(--color-background-secondary)}
+.mark-done{margin-top:20px;padding:8px 20px;border:0.5px solid #5DCAA5;border-radius:var(--border-radius-md);background:transparent;color:#085041;cursor:pointer;font-size:13px;float:left}
+.mark-done:hover{background:#E1F5EE}
+.clearfix::after{content:'';display:table;clear:both}
+</style>
+</head>
+<body>
+  <div class="wrap">
+<h2 class="sr-only" style="position:absolute;left:-9999px">Postman Load & Performance Testing — 10-Session Course</h2>
+
+<div class="phase-bar">
+  <span class="phase-pill phase-fund">Phase 1: Fundamentals — Sessions 1–3</span>
+  <span class="phase-pill phase-inter">Phase 2: Intermediate — Sessions 4–6</span>
+  <span class="phase-pill phase-adv">Phase 3: Advanced — Sessions 7–10</span>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:10%"></div></div>
+  <span class="progress-txt" id="prog-txt">Session 1 / 10</span>
+</div>
+
+<div class="tab-bar" id="tab-bar">
+  <button class="tab-btn active" onclick="goTab(0)">01 · Basics</button>
+  <button class="tab-btn" onclick="goTab(1)">02 · Types</button>
+  <button class="tab-btn" onclick="goTab(2)">03 · Postman Intro</button>
+  <button class="tab-btn" onclick="goTab(3)">04 · Collections & Env</button>
+  <button class="tab-btn" onclick="goTab(4)">05 · Newman CLI</button>
+  <button class="tab-btn" onclick="goTab(5)">06 · Metrics & KPIs</button>
+  <button class="tab-btn" onclick="goTab(6)">07 · Strategy</button>
+  <button class="tab-btn" onclick="goTab(7)">08 · Scripting</button>
+  <button class="tab-btn" onclick="goTab(8)">09 · CI/CD</button>
+  <button class="tab-btn" onclick="goTab(9)">10 · Reporting</button>
+</div>
+
+<!-- ========== SESSION 1 ========== -->
+<div class="session active" id="s0">
+  <div class="session-header">
+    <div class="session-num" style="background:#EEEDFE;color:#3C3489">01</div>
+    <div class="session-meta">
+      <h2>Performance Testing — The Big Picture</h2>
+      <p>What it is · Why it matters · Where it fits · Core vocabulary every tester must know</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p><strong style="font-weight:500">Simple definition:</strong> Performance testing is the practice of evaluating how a system behaves under a given workload — measuring speed, stability, scalability, and resource usage before real users feel the pain.</p>
+    <ul style="margin-top:10px">
+      <li><strong style="font-weight:500">What:</strong> Simulate real user traffic and measure system response under various load conditions.</li>
+      <li><strong style="font-weight:500">Why:</strong> To catch bottlenecks, memory leaks, slow queries, and breaking points before they reach production.</li>
+      <li><strong style="font-weight:500">When:</strong> After functional testing passes — ideally every sprint, and always before a major release.</li>
+      <li><strong style="font-weight:500">Where:</strong> APIs, web apps, microservices, databases, message queues — anywhere traffic flows.</li>
+      <li><strong style="font-weight:500">How:</strong> Using tools (Postman + Newman, JMeter, k6) to send concurrent requests and record metrics.</li>
+    </ul>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"Performance testing validates that a system meets defined SLAs under expected and peak traffic conditions."</div>
+  <div class="oneliner">"It is a non-functional testing type focused on speed, scalability, stability, and resource utilization."</div>
+  <div class="oneliner">"We run performance tests to identify bottlenecks early in the SDLC — fixing them post-production is 10× more expensive."</div>
+  <div class="oneliner">"Performance testing is not a one-time activity; it must be integrated into every CI/CD pipeline as a quality gate."</div>
+  <div class="oneliner">"Without performance testing, you are guessing your system's capacity — and users will find the limit before you do."</div>
+
+  <div class="section-title"><i class="ti ti-topology-star" aria-hidden="true"></i> Concepts & Architecture</div>
+  <div class="card">
+    <p style="margin-bottom:10px;font-weight:500">Key Performance Metrics (must memorize):</p>
+    <ul>
+      <li><strong style="font-weight:500">Response Time:</strong> Total time from request sent to response received. Target: &lt;2s for web APIs.</li>
+      <li><strong style="font-weight:500">Throughput:</strong> Number of requests processed per second (RPS / TPS).</li>
+      <li><strong style="font-weight:500">Error Rate:</strong> Percentage of failed requests out of total. Acceptable: &lt;1%.</li>
+      <li><strong style="font-weight:500">Latency:</strong> Network + processing delay (not the same as response time).</li>
+      <li><strong style="font-weight:500">Concurrency:</strong> Number of simultaneous users/threads hitting the system at once.</li>
+      <li><strong style="font-weight:500">Percentiles (P90, P95, P99):</strong> 90% of users experience ≤ P90 response time. More realistic than average.</li>
+      <li><strong style="font-weight:500">Saturation Point:</strong> The load level beyond which performance degrades rapidly.</li>
+    </ul>
+  </div>
+  <div class="card" style="margin-top:0">
+    <p style="font-weight:500;margin-bottom:8px">Performance Testing Lifecycle:</p>
+    <div class="flow-wrap">
+      <div class="flow-step">Requirements &amp; Goals</div><div class="flow-arr">→</div>
+      <div class="flow-step">Test Planning</div><div class="flow-arr">→</div>
+      <div class="flow-step">Environment Setup</div><div class="flow-arr">→</div>
+      <div class="flow-step">Script Design</div><div class="flow-arr">→</div>
+      <div class="flow-step">Execution</div><div class="flow-arr">→</div>
+      <div class="flow-step">Analysis</div><div class="flow-arr">→</div>
+      <div class="flow-step">Reporting</div>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — Basic Postman pre-request timer setup</p>
+  <div class="code-block"><span class="code-comment">// Pre-request Script in Postman
+// Purpose: Record the exact timestamp before the request fires
+// pm       = Postman sandbox global object
+// globals  = key-value store shared across all requests</span>
+
+<span class="code-fn">pm</span>.<span class="code-key">globals</span>.<span class="code-fn">set</span>(<span class="code-str">"startTime"</span>, <span class="code-fn">Date</span>.<span class="code-fn">now</span>());
+<span class="code-comment">// Date.now() returns milliseconds since Unix epoch (e.g. 1716900000000)
+// We store it as a global so the Test script can read it after response</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Measure response time in Test script</p>
+  <div class="code-block"><span class="code-comment">// Test Script — runs AFTER response is received
+// pm.response.responseTime = built-in Postman property (ms)
+// pm.test() = registers a named test assertion</span>
+
+<span class="code-key">const</span> responseTime = <span class="code-fn">pm</span>.response.responseTime; <span class="code-comment">// e.g. 320 (ms)</span>
+<span class="code-key">const</span> threshold    = <span class="code-num">2000</span>;                       <span class="code-comment">// SLA = 2 seconds</span>
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"Response time is within SLA"</span>, () => {
+    <span class="code-comment">// pm.expect is Chai-style assertion library built into Postman
+    // .to.be.below(N) = assert value is strictly less than N</span>
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(responseTime).<span class="code-key">to</span>.<span class="code-key">be</span>.<span class="code-fn">below</span>(threshold);
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — Assert HTTP status code</p>
+  <div class="code-block"><span class="code-comment">// Test Script — validate successful response
+// pm.response.code = HTTP status integer (200, 201, 404, 500 etc.)
+// Under load, servers sometimes return 503 (overloaded) — catch it!</span>
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"Status is 200 OK — server is healthy"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.code).<span class="code-key">to</span>.<span class="code-fn">equal</span>(<span class="code-num">200</span>);
+});
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"No server error (5xx)"</span>, () => {
+    <span class="code-comment">// lessThan(500) ensures 200, 201, 301, 404 all pass this check
+    // This is a broad safety net for load test health</span>
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.code).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">lessThan</span>(<span class="code-num">500</span>);
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Log custom metric to console</p>
+  <div class="code-block"><span class="code-comment">// console.log() writes to the Postman Console (View → Show Postman Console)
+// Essential for debugging during performance runs</span>
+
+<span class="code-key">const</span> endpoint  = <span class="code-fn">pm</span>.request.url.<span class="code-fn">toString</span>();
+<span class="code-key">const</span> method    = <span class="code-fn">pm</span>.request.method;   <span class="code-comment">// "GET", "POST" etc.</span>
+<span class="code-key">const</span> respTime  = <span class="code-fn">pm</span>.response.responseTime;
+<span class="code-key">const</span> respSize  = <span class="code-fn">pm</span>.response.responseSize; <span class="code-comment">// bytes</span>
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[PERF] <span class="code-key">${method}</span> <span class="code-key">${endpoint}</span> | <span class="code-key">${respTime}</span>ms | <span class="code-key">${respSize}</span>B`</span>);</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — Store and compare response times across iterations</p>
+  <div class="code-block"><span class="code-comment">// Track cumulative average response time across iterations
+// pm.environment.get/set = per-environment storage (persists across requests in a run)</span>
+
+<span class="code-key">let</span> prevTotal = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"totalTime"</span>)) || <span class="code-num">0</span>;
+<span class="code-key">let</span> prevCount = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"reqCount"</span>))  || <span class="code-num">0</span>;
+
+prevTotal += <span class="code-fn">pm</span>.response.responseTime;  <span class="code-comment">// accumulate</span>
+prevCount += <span class="code-num">1</span>;                          <span class="code-comment">// increment counter</span>
+
+<span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"totalTime"</span>, prevTotal);
+<span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"reqCount"</span>,  prevCount);
+
+<span class="code-key">const</span> avg = (prevTotal / prevCount).<span class="code-fn">toFixed</span>(<span class="code-num">2</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Running avg response time: <span class="code-key">${avg}</span>ms over <span class="code-key">${prevCount}</span> requests`</span>);</div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Always define clear performance goals (SLAs) before writing a single test script.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Test in a production-like environment — load test results from dev/staging with different specs are misleading.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Never use production data with real PII in load tests — use anonymized/synthetic datasets.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Monitor server-side metrics (CPU, memory, DB connections) alongside client-side response time.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Use percentiles (P95, P99) not averages — averages hide outliers that real users experience.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Baseline first — run with 1 user to establish the "healthy" response time before adding load.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the difference between performance testing and load testing? <span class="arrow">›</span></div><div class="qa-a">Performance testing is the umbrella term covering all tests that evaluate non-functional characteristics (speed, stability, scalability). Load testing is a specific sub-type that applies a defined expected load to measure system behavior. Every load test is a performance test, but not every performance test is a load test.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: Why are percentiles better than average response time? <span class="arrow">›</span></div><div class="qa-a">Averages mask outliers. If 99% of requests take 200ms but 1% take 60,000ms, the average may still look acceptable. P99 = 60,000ms immediately flags the problem. Real users experience those outliers — they are not statistical anomalies to be ignored.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is a saturation point? <span class="arrow">›</span></div><div class="qa-a">The saturation point is the load level at which adding more users causes performance to degrade sharply — response times spike, error rate rises, and throughput plateaus or drops. Identifying it is the core goal of stress testing. Beyond this point the system is overwhelmed.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What would you monitor on the server side during a load test? <span class="arrow">›</span></div><div class="qa-a">CPU utilization (watch for sustained &gt;80%), heap/RAM usage (memory leaks show as steady growth), database connection pool exhaustion, disk I/O wait, garbage collection pause time (JVM apps), and network bandwidth saturation. Client-side metrics alone tell an incomplete story.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: At what stage of SDLC should performance testing begin? <span class="arrow">›</span></div><div class="qa-a">Performance testing should begin at the API design stage (reviewing SLAs), first execute in the integration testing phase, and run continuously in CI/CD pipelines. Shift-left performance testing means not waiting until a system is fully built — component-level benchmarks catch issues earlier and cheaper.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(0)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="next-btn" onclick="goTab(1)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ========== SESSION 2 ========== -->
+<div class="session" id="s1">
+  <div class="session-header">
+    <div class="session-num" style="background:#EEEDFE;color:#3C3489">02</div>
+    <div class="session-meta">
+      <h2>Types of Performance Testing</h2>
+      <p>Load · Stress · Soak · Spike · Smoke · Scalability — when to use each and what to look for</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Performance testing is not a single test — it is a family of test types, each designed to answer a different question about your system's behavior under various load patterns.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+      <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">
+        <p style="font-size:12px;font-weight:500;color:#3C3489;margin-bottom:4px">Load Test</p>
+        <p style="font-size:12px;color:var(--color-text-secondary)">Can we handle expected users?</p>
+      </div>
+      <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">
+        <p style="font-size:12px;font-weight:500;color:#993C1D;margin-bottom:4px">Stress Test</p>
+        <p style="font-size:12px;color:var(--color-text-secondary)">When does the system break?</p>
+      </div>
+      <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">
+        <p style="font-size:12px;font-weight:500;color:#085041;margin-bottom:4px">Soak Test</p>
+        <p style="font-size:12px;color:var(--color-text-secondary)">Does it degrade over time?</p>
+      </div>
+      <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">
+        <p style="font-size:12px;font-weight:500;color:#633806;margin-bottom:4px">Spike Test</p>
+        <p style="font-size:12px;color:var(--color-text-secondary)">Can it survive sudden bursts?</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"Load testing verifies behavior under the expected production load defined in the SLA."</div>
+  <div class="oneliner">"Stress testing deliberately overwhelms the system to find its breaking point and observe failure mode."</div>
+  <div class="oneliner">"Soak testing (endurance testing) runs normal load for hours to surface memory leaks and connection pool exhaustion."</div>
+  <div class="oneliner">"Spike testing simulates flash-crowd events — like a product launch or viral post — with an instant load jump."</div>
+  <div class="oneliner">"Smoke testing with one virtual user is the sanity check that the test script itself works before scaling load."</div>
+
+  <div class="section-title"><i class="ti ti-topology-star" aria-hidden="true"></i> Concepts — Load Profiles</div>
+  <div class="card">
+    <p style="font-weight:500;margin-bottom:10px">Each test type has a distinct load shape over time:</p>
+    <ul>
+      <li><strong style="font-weight:500">Load Test:</strong> Ramp up to target VUs → hold steady for 15–30 min → ramp down. Validates SLAs at normal peak.</li>
+      <li><strong style="font-weight:500">Stress Test:</strong> Ramp up in steps (100 → 200 → 500 → 1000 VUs) until errors/timeouts breach thresholds. Find the breaking point.</li>
+      <li><strong style="font-weight:500">Soak / Endurance Test:</strong> Hold 60–80% of peak load for 2–8 hours. Look for memory growth, performance degradation curve.</li>
+      <li><strong style="font-weight:500">Spike Test:</strong> Idle → instant jump to 5–10× normal load → immediate drop back. Test auto-scaling and recovery speed.</li>
+      <li><strong style="font-weight:500">Smoke Test:</strong> 1 VU, 1–5 iterations. Validates scripts, environment, and assertions before any real load run.</li>
+      <li><strong style="font-weight:500">Scalability Test:</strong> Incremental user increase while measuring if throughput scales linearly. Find where cost-efficiency breaks.</li>
+    </ul>
+  </div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — Smoke test: 1 iteration, assert basics</p>
+  <div class="code-block"><span class="code-comment">// Smoke Test Script — minimal sanity check
+// Run this FIRST before any load test to verify the script works
+// and the test environment is reachable</span>
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"[SMOKE] Server is alive — status 200"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.code).<span class="code-key">to</span>.<span class="code-fn">equal</span>(<span class="code-num">200</span>);
+});
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"[SMOKE] Response body is not empty"</span>, () => {
+    <span class="code-comment">// pm.response.text() returns raw response body as string</span>
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.<span class="code-fn">text</span>()).<span class="code-key">to</span>.<span class="code-fn">not</span>.<span class="code-fn">be</span>.<span class="code-fn">empty</span>;
+});
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"[SMOKE] Content-Type is JSON"</span>, () => {
+    <span class="code-comment">// pm.response.headers.get() fetches a specific header value</span>
+    <span class="code-key">const</span> ct = <span class="code-fn">pm</span>.response.headers.<span class="code-fn">get</span>(<span class="code-str">"Content-Type"</span>);
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(ct).<span class="code-key">to</span>.<span class="code-fn">include</span>(<span class="code-str">"application/json"</span>);
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Load test threshold check</p>
+  <div class="code-block"><span class="code-comment">// Load Test assertion — enforce SLA thresholds
+// These thresholds should come from your NFR (Non-Functional Requirements) document</span>
+
+<span class="code-key">const</span> LOAD_THRESHOLD_MS  = <span class="code-num">2000</span>; <span class="code-comment">// SLA: response &lt; 2s under normal load</span>
+<span class="code-key">const</span> STRESS_THRESHOLD_MS = <span class="code-num">5000</span>; <span class="code-comment">// Acceptable degradation under stress</span>
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"[LOAD] Response within 2s SLA"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.responseTime).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">below</span>(LOAD_THRESHOLD_MS);
+});
+
+<span class="code-comment">// Conditional check: alert (not fail) if approaching stress threshold</span>
+<span class="code-key">if</span> (<span class="code-fn">pm</span>.response.responseTime > <span class="code-num">1500</span>) {
+    <span class="code-fn">console</span>.<span class="code-fn">warn</span>(<span class="code-str">`⚠ Approaching SLA limit: <span class="code-key">${pm.response.responseTime}</span>ms`</span>);
+}</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — Soak test memory leak detection via response-time trend</p>
+  <div class="code-block"><span class="code-comment">// Soak Test — detect degradation over time
+// We track a "degradation factor" — if current response time is 2×
+// the baseline, the system is likely suffering from a memory leak</span>
+
+<span class="code-key">const</span> baseline = <span class="code-fn">parseFloat</span>(<span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"baselineResponseTime"</span>)) || <span class="code-num">0</span>;
+<span class="code-key">const</span> current  = <span class="code-fn">pm</span>.response.responseTime;
+
+<span class="code-comment">// On first iteration, store baseline</span>
+<span class="code-key">if</span> (!baseline) {
+    <span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"baselineResponseTime"</span>, current);
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[SOAK] Baseline established: <span class="code-key">${current}</span>ms`</span>);
+} <span class="code-key">else</span> {
+    <span class="code-key">const</span> degradation = ((current - baseline) / baseline * <span class="code-num">100</span>).<span class="code-fn">toFixed</span>(<span class="code-num">1</span>);
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[SOAK] Degradation: <span class="code-key">${degradation}</span>% (was <span class="code-key">${baseline}</span>ms, now <span class="code-key">${current}</span>ms)`</span>);
+    
+    <span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"[SOAK] No critical performance degradation (&lt;50%)"</span>, () => {
+        <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(current).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">below</span>(baseline * <span class="code-num">1.5</span>); <span class="code-comment">// max 50% degradation</span>
+    });
+}</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Spike test: track error rate surge</p>
+  <div class="code-block"><span class="code-comment">// Spike Test — count errors during load burst
+// We use a global counter to accumulate error rate across iterations
+// This would be run with Newman --iteration-count set high</span>
+
+<span class="code-key">let</span> errorCount = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"errorCount"</span>))  || <span class="code-num">0</span>;
+<span class="code-key">let</span> totalReqs  = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"totalReqs"</span>))  || <span class="code-num">0</span>;
+
+totalReqs++;
+
+<span class="code-key">if</span> (<span class="code-fn">pm</span>.response.code >= <span class="code-num">500</span>) {
+    errorCount++;  <span class="code-comment">// 5xx = server-side failure under spike</span>
+    <span class="code-fn">console</span>.<span class="code-fn">error</span>(<span class="code-str">`[SPIKE] Server error: HTTP <span class="code-key">${pm.response.code}</span>`</span>);
+}
+
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"errorCount"</span>, errorCount);
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"totalReqs"</span>,  totalReqs);
+
+<span class="code-key">const</span> errorRate = ((errorCount / totalReqs) * <span class="code-num">100</span>).<span class="code-fn">toFixed</span>(<span class="code-num">2</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[SPIKE] Error rate: <span class="code-key">${errorRate}</span>% (<span class="code-key">${errorCount}</span>/<span class="code-key">${totalReqs}</span>)`</span>);</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — Stress test: escalating threshold per iteration</p>
+  <div class="code-block"><span class="code-comment">// Stress Test — threshold grows with each step
+// Use environment variable "stressLevel" (set externally per run)
+// stressLevel 1 = normal, 2 = 2× load, 3 = 3× load etc.</span>
+
+<span class="code-key">const</span> stressLevel = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"stressLevel"</span>)) || <span class="code-num">1</span>;
+<span class="code-key">const</span> baseThreshold = <span class="code-num">1000</span>; <span class="code-comment">// 1s baseline</span>
+
+<span class="code-comment">// Allow progressively more latency at higher stress levels
+// stressLevel 1 → 2000ms, level 2 → 3000ms, level 3 → 4000ms</span>
+<span class="code-key">const</span> dynamicThreshold = baseThreshold + (stressLevel * <span class="code-num">1000</span>);
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">`[STRESS L<span class="code-key">${stressLevel}</span>] Response &lt; <span class="code-key">${dynamicThreshold}</span>ms`</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.responseTime).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">below</span>(dynamicThreshold);
+});</div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Always run a smoke test before any load/stress/soak run to confirm script and environment are healthy.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Document the load profile (users, ramp-up time, hold duration, ramp-down) for every test type in a test plan.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>For soak tests, monitor memory on the server every 15 minutes — a steady upward trend means a memory leak.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Stress test to failure — deliberately — then document the failure mode (graceful error pages vs hard crash).</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Spike test after every auto-scaling configuration change to verify scale-out response time is acceptable.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: How is a soak test different from a load test? <span class="arrow">›</span></div><div class="qa-a">A load test runs for 15–30 minutes to validate SLA at peak load. A soak test runs the same or slightly lower load for hours (2–8+) to detect time-based degradations like memory leaks, connection pool leaks, and log file growth. The duration is the key differentiator.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What failure modes does stress testing reveal? <span class="arrow">›</span></div><div class="qa-a">Stress testing reveals: deadlocks under concurrency, database connection pool exhaustion, thread pool saturation, cascading service failures (one slow dependency blocks all threads), queue back-pressure, and whether the system fails gracefully (returns 503) or catastrophically (crashes / data corruption).</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: When would you use a spike test in real life? <span class="arrow">›</span></div><div class="qa-a">Any time a traffic burst is expected: product launches, marketing campaign emails going out, Black Friday sales, live sports broadcasts, or viral social media moments. You simulate the expected peak multiplied by a safety margin (e.g., 3–5×) to confirm auto-scaling and CDNs can absorb it.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is a realistic load for a load test? <span class="arrow">›</span></div><div class="qa-a">Use production analytics to determine your peak concurrent user count (not total daily users). For APIs, use APM data on peak RPS. If no production data exists, use: total daily active users ÷ 8 hours ÷ average session length × concurrency factor (typically 10–20%). Always add a 20–30% buffer above historical peak.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: Can Postman alone run all these test types? <span class="arrow">›</span></div><div class="qa-a">Postman + Newman can simulate all test types via iteration count and delay configuration. However, true concurrent load (hundreds of VUs) requires Newman run in parallel processes or a dedicated tool like k6 or JMeter. Postman's strength is API correctness and scripting richness; Newman handles moderate load runs well in CI pipelines.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(1)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="next-btn" onclick="goTab(2)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ========== SESSION 3 ========== -->
+<div class="session" id="s2">
+  <div class="session-header">
+    <div class="session-num" style="background:#EEEDFE;color:#3C3489">03</div>
+    <div class="session-meta">
+      <h2>Postman for Performance Testing — Introduction</h2>
+      <p>Architecture, workspace, collection runner, and Postman's role in the testing stack</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p><strong style="font-weight:500">What is Postman?</strong> Postman is an API platform that lets you design, test, document, and monitor APIs. For performance testing it provides: a GUI request builder, a collection runner (for sequential/iteration-based runs), and a JavaScript sandbox for writing assertions and capturing metrics.</p>
+    <p style="margin-top:8px"><strong style="font-weight:500">Postman's role:</strong> It sits at the <em>API layer</em> of performance testing — it does not generate browser-level load (no JS rendering). It is best suited for REST, SOAP, GraphQL, and WebSocket API performance validation.</p>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"Postman is an API-first performance testing tool — it validates response times, status codes, and payloads at the HTTP layer."</div>
+  <div class="oneliner">"Postman's Collection Runner enables sequential multi-step API flow performance testing with variable injection."</div>
+  <div class="oneliner">"The Postman sandbox gives testers a JavaScript environment to write custom assertions, extract tokens, and chain requests."</div>
+  <div class="oneliner">"Postman + Newman is the standard combination for integrating API performance gates into CI/CD pipelines."</div>
+  <div class="oneliner">"Environments in Postman decouple test scripts from infrastructure — the same collection runs against dev, staging, and prod by switching one environment file."</div>
+
+  <div class="section-title"><i class="ti ti-topology-star" aria-hidden="true"></i> Postman Architecture</div>
+  <div class="card">
+    <p style="font-weight:500;margin-bottom:8px">Key Postman components for performance testing:</p>
+    <div class="arch-box">
+      <div class="arch-node" style="background:#EEEDFE;color:#3C3489">Collection<br><span style="font-size:11px;font-weight:400">Grouped requests</span></div>
+      <div class="arch-node" style="background:#E1F5EE;color:#085041">Environment<br><span style="font-size:11px;font-weight:400">Variables per env</span></div>
+      <div class="arch-node" style="background:#FAEEDA;color:#633806">Test Scripts<br><span style="font-size:11px;font-weight:400">JS assertions</span></div>
+      <div class="arch-node" style="background:#FCEBEB;color:#A32D2D">Runner<br><span style="font-size:11px;font-weight:400">Execute N times</span></div>
+    </div>
+    <p style="font-size:13px;color:var(--color-text-secondary);margin-top:10px">Variable scope hierarchy (widest → narrowest): Global → Collection → Environment → Data File → Local</p>
+  </div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — Using environment variables in a request</p>
+  <div class="code-block"><span class="code-comment">// In Postman URL bar you write: {{baseUrl}}/api/users
+// In Pre-request Script you can set or verify the variable:
+
+// pm.environment.get() reads from current environment
+const baseUrl = pm.environment.get("baseUrl");
+// e.g. baseUrl = "https://api.staging.myapp.com"
+
+console.log("Running against:", baseUrl);
+// This lets you switch between dev/staging/prod by changing Environment
+// without touching the request URL or test scripts</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Chain requests: extract token from login, use in next request</p>
+  <div class="code-block"><span class="code-comment">// Request 1: POST /auth/login  → Test Script
+// This is a realistic performance scenario — most APIs require auth first</span>
+
+<span class="code-key">const</span> responseJson = <span class="code-fn">pm</span>.response.<span class="code-fn">json</span>();
+<span class="code-comment">// pm.response.json() parses the JSON response body into a JS object</span>
+
+<span class="code-key">const</span> token = responseJson.data.accessToken;
+<span class="code-comment">// Navigate the JSON tree to extract the JWT access token</span>
+
+<span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"authToken"</span>, token);
+<span class="code-comment">// Store token so Request 2 can use it in its Authorization header</span>
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"Login successful — token received"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(token).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-key">a</span>(<span class="code-str">"string"</span>).<span class="code-fn">with</span>.lengthOf.<span class="code-fn">above</span>(<span class="code-num">10</span>);
+});
+
+<span class="code-comment">// Request 2 Authorization header: Bearer {{authToken}}
+// Postman substitutes {{authToken}} from environment automatically</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — Validate response schema under load</p>
+  <div class="code-block"><span class="code-comment">// Schema validation ensures that under load the server doesn't return
+// truncated or malformed JSON (a common sign of memory pressure)
+// tv4 is a JSON Schema validator available in the Postman sandbox</span>
+
+<span class="code-key">const</span> schema = {
+    <span class="code-str">"type"</span>: <span class="code-str">"object"</span>,
+    <span class="code-str">"required"</span>: [<span class="code-str">"id"</span>, <span class="code-str">"name"</span>, <span class="code-str">"email"</span>], <span class="code-comment">// mandatory fields</span>
+    <span class="code-str">"properties"</span>: {
+        <span class="code-str">"id"</span>:    { <span class="code-str">"type"</span>: <span class="code-str">"integer"</span> },
+        <span class="code-str">"name"</span>:  { <span class="code-str">"type"</span>: <span class="code-str">"string"</span>  },
+        <span class="code-str">"email"</span>: { <span class="code-str">"type"</span>: <span class="code-str">"string"</span>  }
+    }
+};
+
+<span class="code-key">const</span> body = <span class="code-fn">pm</span>.response.<span class="code-fn">json</span>();
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"Response schema is valid under load"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">tv4</span>.<span class="code-fn">validate</span>(body, schema)).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-key">true</span>;
+    <span class="code-comment">// tv4.validate(data, schema) returns true if data matches schema</span>
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Data-driven test with CSV variables</p>
+  <div class="code-block"><span class="code-comment">// Data-driven testing: load different user IDs from a CSV file
+// CSV file (users.csv):
+//   userId,expectedName
+//   1,Alice
+//   2,Bob
+//   3,Charlie
+//
+// In Collection Runner: select "users.csv" as Data File
+// pm.iterationData.get() reads the current row's column value</span>
+
+<span class="code-key">const</span> userId       = <span class="code-fn">pm</span>.iterationData.<span class="code-fn">get</span>(<span class="code-str">"userId"</span>);
+<span class="code-key">const</span> expectedName = <span class="code-fn">pm</span>.iterationData.<span class="code-fn">get</span>(<span class="code-str">"expectedName"</span>);
+
+<span class="code-comment">// URL: GET {{baseUrl}}/api/users/{{userId}}
+// Postman substitutes {{userId}} per iteration from CSV</span>
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">`User <span class="code-key">${userId}</span> returns correct name`</span>, () => {
+    <span class="code-key">const</span> body = <span class="code-fn">pm</span>.response.<span class="code-fn">json</span>();
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(body.name).<span class="code-key">to</span>.<span class="code-fn">equal</span>(expectedName);
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — Set dynamic delay between requests (throttle simulation)</p>
+  <div class="code-block"><span class="code-comment">// Pre-request Script: inject artificial think time between requests
+// This simulates real user behavior (users don't hammer APIs instantly)
+// setTimeout() is available in Postman's sandbox</span>
+
+<span class="code-key">const</span> thinkTimeMs = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"thinkTime"</span>)) || <span class="code-num">500</span>;
+<span class="code-comment">// Read think time from environment (default 500ms if not set)
+// Set "thinkTime" to 0 for stress test, 1000+ for load test with pacing</span>
+
+<span class="code-fn">setTimeout</span>(() => {}, thinkTimeMs);
+<span class="code-comment">// Note: In Newman CLI you can also use --delay-request flag
+// newman run collection.json --delay-request 500</span></div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Keep one concern per collection — auth flows, user journeys, admin APIs all in separate collections.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Use environment files, never hardcode URLs or credentials in requests — secrets go in Postman Vault.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Name every test assertion clearly with context prefix: [LOAD], [SMOKE], [STRESS] — helps triage failures fast.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Use CSV data files for load tests so different users/tokens hit the API — avoid cache-hit inflation from identical requests.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Export collections as JSON and version control them in Git alongside application code.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is the variable scope hierarchy in Postman? <span class="arrow">›</span></div><div class="qa-a">From narrowest to widest: Local (set during script execution, not persisted) → Data (CSV/JSON file, per iteration) → Environment (current env) → Collection (collection-level variables) → Global (cross-collection). Narrower scope overrides wider. Local variables are the most specific but disappear after the request execution ends.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is the difference between pre-request script and test script in Postman? <span class="arrow">›</span></div><div class="qa-a">The pre-request script runs before the request is sent — used for setting headers, computing auth tokens, setting timestamps, or configuring dynamic data. The test script runs after the response is received — used for assertions on status code, response body, response time, and headers. Both share the same pm sandbox object.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: How does Postman Collection Runner differ from Newman? <span class="arrow">›</span></div><div class="qa-a">Collection Runner is the GUI-based runner inside the Postman desktop app — good for manual exploratory performance runs with visual feedback. Newman is the CLI-based headless runner that runs collections from the terminal — essential for CI/CD integration, scripting parallel runs, and generating reports programmatically.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you handle authentication tokens that expire during a long load test run? <span class="arrow">›</span></div><div class="qa-a">Add a collection-level pre-request script that checks token expiry time against current time. If expired (or within 60 seconds of expiry), it fires a synchronous auth request using pm.sendRequest(), extracts the new token, and updates the environment variable. All subsequent requests in that iteration then use the fresh token automatically.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What types of APIs can Postman performance test? <span class="arrow">›</span></div><div class="qa-a">REST (HTTP/HTTPS) — primary use case. SOAP (XML over HTTP). GraphQL (POST with JSON query body). WebSockets (Postman v10+ has WebSocket request support). gRPC (Postman supports gRPC since v9.7). Not suitable for: browser-rendered performance (no JS execution), UDP protocols, or raw TCP connections.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(2)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="next-btn" onclick="goTab(3)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ========== SESSION 4 ========== -->
+<div class="session" id="s3">
+  <div class="session-header">
+    <div class="session-num" style="background:#E1F5EE;color:#085041">04</div>
+    <div class="session-meta">
+      <h2>Collections, Environments & Data Files</h2>
+      <p>Building reusable, parameterized test suites for performance runs</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>A well-structured Postman collection is the foundation of every performance test. Collections organize requests into folders (user journeys), environments inject infrastructure config, and data files drive variability across iterations — together they form the complete test harness.</p>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"A Postman Collection is a versioned, portable test suite — one JSON file that encodes all requests, scripts, and assertions."</div>
+  <div class="oneliner">"Environments separate infrastructure config from test logic — the same collection runs against any environment by swapping one file."</div>
+  <div class="oneliner">"Data files (CSV or JSON) enable data-driven load tests where each iteration uses a different user, payload, or scenario."</div>
+  <div class="oneliner">"Collection-level pre-request scripts run before every request in the collection — ideal for token refresh and global setup."</div>
+  <div class="oneliner">"Pre-populating the environment with baseUrl, authToken, and thinkTime makes collection scripts environment-agnostic."</div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — Collection-level pre-request: auto-refresh token</p>
+  <div class="code-block"><span class="code-comment">// Collection Pre-request Script (runs before EVERY request)
+// Checks if auth token is expired and refreshes it automatically
+// This is critical for long-running soak tests (tokens expire in 1hr)</span>
+
+<span class="code-key">const</span> tokenExpiry = <span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"tokenExpiry"</span>);
+<span class="code-key">const</span> now         = <span class="code-fn">Date</span>.<span class="code-fn">now</span>();
+
+<span class="code-comment">// Only refresh if token is missing OR expired (with 60s buffer)</span>
+<span class="code-key">if</span> (!tokenExpiry || now > (tokenExpiry - <span class="code-num">60000</span>)) {
+    
+    <span class="code-fn">pm</span>.<span class="code-fn">sendRequest</span>({
+        url:    <span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"baseUrl"</span>) + <span class="code-str">"/auth/token"</span>,
+        method: <span class="code-str">"POST"</span>,
+        <span class="code-comment">// header object sets request headers</span>
+        header: { <span class="code-str">"Content-Type"</span>: <span class="code-str">"application/json"</span> },
+        body: {
+            mode: <span class="code-str">"raw"</span>,
+            raw: <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>({
+                clientId:     <span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"clientId"</span>),
+                clientSecret: <span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"clientSecret"</span>)
+            })
+        }
+    }, (err, res) => {
+        <span class="code-key">if</span> (!err) {
+            <span class="code-key">const</span> data = res.<span class="code-fn">json</span>();
+            <span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"authToken"</span>,  data.access_token);
+            <span class="code-comment">// expiresIn is seconds; convert to epoch ms for comparison</span>
+            <span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"tokenExpiry"</span>, now + data.expires_in * <span class="code-num">1000</span>);
+        }
+    });
+}</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Folder-level pre-request: set folder-specific headers</p>
+  <div class="code-block"><span class="code-comment">// Folder Pre-request Script (only runs for requests in THIS folder)
+// Use case: "Admin API" folder needs a different auth header
+// than the "User API" folder in the same collection</span>
+
+<span class="code-comment">// pm.request.headers.add() injects a header into the outgoing request</span>
+<span class="code-fn">pm</span>.request.headers.<span class="code-fn">add</span>({
+    key:   <span class="code-str">"X-Admin-Key"</span>,
+    value: <span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"adminApiKey"</span>)
+});
+
+<span class="code-fn">pm</span>.request.headers.<span class="code-fn">add</span>({
+    key:   <span class="code-str">"X-Correlation-ID"</span>,         <span class="code-comment">// for distributed tracing</span>
+    value: <span class="code-fn">pm</span>.<span class="code-fn">variables</span>.<span class="code-fn">replaceIn</span>(<span class="code-str">"{{$guid}}"</span>) <span class="code-comment">// built-in random GUID</span>
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — JSON data file and iterationData access</p>
+  <div class="code-block"><span class="code-comment">// Data file: users.json (used instead of CSV for complex objects)
+// [
+//   { "userId": 1, "role": "admin",    "expectedStatus": 200 },
+//   { "userId": 2, "role": "viewer",   "expectedStatus": 200 },
+//   { "userId": 3, "role": "blocked",  "expectedStatus": 403 }
+// ]
+//
+// Test Script reads each row per iteration:</span>
+
+<span class="code-key">const</span> userId         = <span class="code-fn">pm</span>.iterationData.<span class="code-fn">get</span>(<span class="code-str">"userId"</span>);
+<span class="code-key">const</span> role           = <span class="code-fn">pm</span>.iterationData.<span class="code-fn">get</span>(<span class="code-str">"role"</span>);
+<span class="code-key">const</span> expectedStatus = <span class="code-fn">pm</span>.iterationData.<span class="code-fn">get</span>(<span class="code-str">"expectedStatus"</span>);
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">`[LOAD] User <span class="code-key">${userId}</span> (<span class="code-key">${role}</span>) returns HTTP <span class="code-key">${expectedStatus}</span>`</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.code).<span class="code-key">to</span>.<span class="code-fn">equal</span>(expectedStatus);
+});
+
+<span class="code-comment">// This test verifies authorization logic doesn't break under load</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Environment file (JSON export structure)</p>
+  <div class="code-block"><span class="code-comment">// This is what a Postman Environment JSON looks like when exported
+// Version this file in Git — one file per environment (dev/staging/prod)</span>
+
+{
+  <span class="code-str">"id"</span>: <span class="code-str">"env-staging-001"</span>,
+  <span class="code-str">"name"</span>: <span class="code-str">"Staging Environment"</span>,
+  <span class="code-str">"values"</span>: [
+    { <span class="code-str">"key"</span>: <span class="code-str">"baseUrl"</span>,      <span class="code-str">"value"</span>: <span class="code-str">"https://api.staging.myapp.com"</span>, <span class="code-str">"enabled"</span>: <span class="code-key">true</span>  },
+    { <span class="code-str">"key"</span>: <span class="code-str">"clientId"</span>,    <span class="code-str">"value"</span>: <span class="code-str">"staging-client-abc"</span>,           <span class="code-str">"enabled"</span>: <span class="code-key">true</span>  },
+    { <span class="code-str">"key"</span>: <span class="code-str">"clientSecret"</span>,<span class="code-str">"value"</span>: <span class="code-str">"{{SECRET_FROM_CI}}"</span>,           <span class="code-str">"enabled"</span>: <span class="code-key">true</span>  },
+    <span class="code-comment">// clientSecret is injected by CI as env variable — never hardcoded!</span>
+    { <span class="code-str">"key"</span>: <span class="code-str">"thinkTime"</span>,   <span class="code-str">"value"</span>: <span class="code-str">"500"</span>,                         <span class="code-str">"enabled"</span>: <span class="code-key">true</span>  }
+  ]
+}</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — Dynamic request body using environment + iteration data</p>
+  <div class="code-block"><span class="code-comment">// Pre-request Script: build a dynamic POST body combining
+// environment data (fixed per env) and iteration data (varies per run)
+// This simulates realistic varied payloads in a load test</span>
+
+<span class="code-key">const</span> region    = <span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"region"</span>);         <span class="code-comment">// e.g. "us-east-1"</span>
+<span class="code-key">const</span> productId = <span class="code-fn">pm</span>.iterationData.<span class="code-fn">get</span>(<span class="code-str">"productId"</span>);  <span class="code-comment">// from CSV</span>
+<span class="code-key">const</span> quantity  = <span class="code-fn">pm</span>.iterationData.<span class="code-fn">get</span>(<span class="code-str">"quantity"</span>);   <span class="code-comment">// from CSV</span>
+
+<span class="code-key">const</span> requestBody = {
+    region,
+    productId:  <span class="code-fn">parseInt</span>(productId),
+    quantity:   <span class="code-fn">parseInt</span>(quantity),
+    timestamp:  <span class="code-fn">new</span> <span class="code-fn">Date</span>().<span class="code-fn">toISOString</span>(),  <span class="code-comment">// dynamic timestamp per request</span>
+    requestId:  <span class="code-fn">pm</span>.<span class="code-fn">variables</span>.<span class="code-fn">replaceIn</span>(<span class="code-str">"{{$guid}}"</span>)  <span class="code-comment">// unique ID per request</span>
+};
+
+<span class="code-comment">// Inject into request body as environment variable
+// Then in the Body tab use {{dynamicBody}} as raw JSON</span>
+<span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"dynamicBody"</span>, <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(requestBody));</div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Export and version-control all collections and environments in Git — treat them as code, not configuration.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Use JSON data files over CSV when payloads are nested objects — CSV only supports flat key-value pairs.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Never store secrets (API keys, passwords) in environment files committed to Git — inject them via CI/CD environment variables.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Prefix test names with the test type [SMOKE]/[LOAD]/[STRESS] so reports are instantly readable.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Use different CSV data files for different load levels — 10-user CSV for smoke, 1000-user CSV for load test.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: How do you handle different base URLs for dev, staging, and production? <span class="arrow">›</span></div><div class="qa-a">Create three Postman environment files (dev.env.json, staging.env.json, prod.env.json) each with a baseUrl variable pointing to the respective server. The collection uses {{baseUrl}} everywhere. In Newman: newman run collection.json --environment staging.env.json. Switch environments without touching the collection.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is pm.sendRequest() and when do you use it? <span class="arrow">›</span></div><div class="qa-a">pm.sendRequest() fires an asynchronous HTTP request from within a pre-request or test script. Primary use case in performance testing: refreshing authentication tokens that expire during long soak tests without breaking the test flow. It accepts a request config object and a callback function that processes the response.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What are Postman's built-in dynamic variables? <span class="arrow">›</span></div><div class="qa-a">Postman provides dynamic variables accessible via {{$variableName}} syntax: {{$guid}} (random UUID v4), {{$timestamp}} (Unix epoch seconds), {{$isoTimestamp}} (ISO 8601 date), {{$randomInt}} (random integer 0–1000), {{$randomEmail}}, {{$randomFullName}}, and many more. These are invaluable for generating unique request IDs and test data without external libraries.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How many iterations can Postman Collection Runner handle? <span class="arrow">›</span></div><div class="qa-a">The Collection Runner GUI is limited to a few hundred iterations before it becomes slow or crashes due to memory usage in the Electron app. For large-scale runs (1000+ iterations), use Newman CLI which is headless and memory-efficient. For true concurrent load (hundreds of VUs simultaneously), orchestrate multiple Newman processes or use a dedicated load tool.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How do you share collections with your team? <span class="arrow">›</span></div><div class="qa-a">Three methods: (1) Postman Workspace — invite team members to a shared workspace, all changes sync in real time. (2) Export to JSON and commit to Git — team imports the file. (3) Postman API — use the API to programmatically push/pull collections as part of a CI/CD pipeline. Method (1) is best for active development, method (2) for release snapshots, method (3) for automation.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(3)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="next-btn" onclick="goTab(4)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ========== SESSION 5 ========== -->
+<div class="session" id="s4">
+  <div class="session-header">
+    <div class="session-num" style="background:#E1F5EE;color:#085041">05</div>
+    <div class="session-meta">
+      <h2>Newman CLI — Headless Load Execution</h2>
+      <p>Running collections from terminal, parallel execution, and reporter output</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p><strong style="font-weight:500">Newman</strong> is Postman's official command-line collection runner. It executes Postman collections headlessly — no GUI required — making it the standard tool for CI/CD integration, automated performance gate checks, and scripting parallel load runs from the terminal.</p>
+    <p style="margin-top:8px">Install: <code style="font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);padding:2px 6px;border-radius:4px">npm install -g newman</code></p>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"Newman is the Node.js-based CLI runner that executes Postman collections without a GUI — essential for CI/CD pipelines."</div>
+  <div class="oneliner">"The --iteration-count flag drives sequential load volume; --delay-request adds think time between requests."</div>
+  <div class="oneliner">"Newman reporters (htmlextra, junit, json) transform raw run results into dashboards, CI gates, and trend charts."</div>
+  <div class="oneliner">"Running Newman in parallel shell processes is the simplest way to simulate concurrent virtual users with Postman collections."</div>
+  <div class="oneliner">"newman run exits with a non-zero code if any assertion fails — this is the performance quality gate hook for CI."</div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — Basic Newman run command</p>
+  <div class="code-block"><span class="code-comment"># Basic Newman CLI syntax
+# newman run [collection] [options]</span>
+
+newman run MyAPI_Collection.json \
+  --environment staging.env.json \
+  --iteration-count 100 \            <span class="code-comment"># run the collection 100 times sequentially</span>
+  --delay-request 500 \              <span class="code-comment"># 500ms think time between requests (simulate pacing)</span>
+  --timeout-request 5000 \           <span class="code-comment"># fail request if no response in 5 seconds</span>
+  --reporters cli,htmlextra \        <span class="code-comment"># output to terminal AND HTML report</span>
+  --reporter-htmlextra-export report.html  <span class="code-comment"># save HTML report here</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Newman with data file (data-driven load test)</p>
+  <div class="code-block"><span class="code-comment"># Data-driven load test using CSV file
+# Newman auto-sets --iteration-count to number of rows in CSV
+# unless --iteration-count is specified (then it cycles through CSV rows)</span>
+
+newman run UserJourney.json \
+  --environment prod.env.json \
+  --iteration-data users_1000.csv \  <span class="code-comment"># 1000 rows = 1000 different users</span>
+  --delay-request 200 \
+  --reporters cli,json \
+  --reporter-json-export results.json  <span class="code-comment"># machine-readable for trend analysis</span>
+
+<span class="code-comment"># Parse results.json to extract key metrics:
+# results.run.stats.requests    → total requests
+# results.run.stats.assertions  → pass/fail count
+# results.run.timings.duration  → total run duration (ms)</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — Parallel Newman processes (simulating concurrent VUs)</p>
+  <div class="code-block"><span class="code-comment">#!/bin/bash
+# parallel_load.sh — run 5 Newman processes concurrently
+# Each process = 1 virtual user stream
+# 5 processes × 200 iterations = 1000 total requests concurrently</span>
+
+VU_COUNT=5           <span class="code-comment"># number of virtual users (parallel processes)</span>
+ITERATIONS=200       <span class="code-comment"># iterations per virtual user</span>
+COLLECTION="api_tests.json"
+ENVIRONMENT="staging.env.json"
+
+<span class="code-key">for</span> i in $(seq 1 $VU_COUNT); <span class="code-key">do</span>
+    newman run $COLLECTION \
+      --environment $ENVIRONMENT \
+      --iteration-count $ITERATIONS \
+      --delay-request 300 \
+      --reporters json \
+      --reporter-json-export "results_vu${i}.json" &  <span class="code-comment"># & = background process</span>
+<span class="code-key">done</span>
+
+<span class="code-key">wait</span>  <span class="code-comment"># wait for all background processes to complete</span>
+echo "All $VU_COUNT virtual users completed"</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Newman as Node.js module (programmatic execution)</p>
+  <div class="code-block"><span class="code-comment">// run_load.js — use Newman as a Node.js library for custom orchestration
+// Install: npm install newman</span>
+
+<span class="code-key">const</span> newman = <span class="code-fn">require</span>(<span class="code-str">"newman"</span>);
+
+newman.<span class="code-fn">run</span>({
+    collection:  <span class="code-str">"./collections/api_tests.json"</span>,
+    environment: <span class="code-str">"./environments/staging.json"</span>,
+    iterationCount: <span class="code-num">50</span>,
+    delayRequest:   <span class="code-num">500</span>,    <span class="code-comment">// ms between requests</span>
+    timeoutRequest: <span class="code-num">3000</span>,   <span class="code-comment">// ms before request times out</span>
+    reporters: [<span class="code-str">"cli"</span>, <span class="code-str">"htmlextra"</span>],
+    reporter: {
+        htmlextra: { export: <span class="code-str">"./reports/load_report.html"</span> }
+    }
+}, (err, summary) => {
+    <span class="code-key">if</span> (err) <span class="code-key">throw</span> err;  <span class="code-comment">// Newman setup error (not assertion failure)</span>
+    
+    <span class="code-comment">// summary.run.stats contains the test results</span>
+    <span class="code-key">const</span> { requests, assertions } = summary.run.stats;
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Requests: <span class="code-key">${requests.total}</span> | Assertions: <span class="code-key">${assertions.total}</span>`</span>);
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Failed assertions: <span class="code-key">${assertions.failed}</span>`</span>);
+    
+    <span class="code-comment">// Exit with error code if any assertion failed (for CI gate)</span>
+    <span class="code-key">if</span> (summary.run.failures.length > <span class="code-num">0</span>) process.<span class="code-fn">exit</span>(<span class="code-num">1</span>);
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — Parse Newman JSON output for metrics</p>
+  <div class="code-block"><span class="code-comment">// parse_metrics.js — extract performance KPIs from Newman JSON report</span>
+
+<span class="code-key">const</span> fs      = <span class="code-fn">require</span>(<span class="code-str">"fs"</span>);
+<span class="code-key">const</span> results = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(<span class="code-fn">fs</span>.<span class="code-fn">readFileSync</span>(<span class="code-str">"results.json"</span>, <span class="code-str">"utf8"</span>));
+
+<span class="code-key">const</span> run       = results.run;
+<span class="code-key">const</span> timings   = run.timings;      <span class="code-comment">// duration, started, completed</span>
+<span class="code-key">const</span> stats     = run.stats;        <span class="code-comment">// requests, assertions totals</span>
+<span class="code-key">const</span> executions = run.executions;  <span class="code-comment">// array of individual request results</span>
+
+<span class="code-comment">// Calculate average response time manually from execution array</span>
+<span class="code-key">const</span> responseTimes = executions.<span class="code-fn">map</span>(e => e.response?.responseTime || <span class="code-num">0</span>);
+<span class="code-key">const</span> avgRT = (responseTimes.<span class="code-fn">reduce</span>((a, b) => a + b, <span class="code-num">0</span>) / responseTimes.length).<span class="code-fn">toFixed</span>(<span class="code-num">2</span>);
+
+<span class="code-comment">// P95 calculation: sort array, pick 95th percentile index</span>
+responseTimes.<span class="code-fn">sort</span>((a, b) => a - b);
+<span class="code-key">const</span> p95 = responseTimes[<span class="code-fn">Math</span>.<span class="code-fn">floor</span>(responseTimes.length * <span class="code-num">0.95</span>)];
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Total Requests: <span class="code-key">${stats.requests.total}</span>`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Failed: <span class="code-key">${stats.assertions.failed}</span>`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Avg Response Time: <span class="code-key">${avgRT}</span>ms`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`P95 Response Time: <span class="code-key">${p95}</span>ms`</span>);</div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Always set --timeout-request — without it, hung connections block the entire run indefinitely.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Install newman-reporter-htmlextra for human-readable reports: <code style="font-size:11px;font-family:var(--font-mono)">npm i -g newman-reporter-htmlextra</code></span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Use the JSON reporter output for trend analysis — store results in a time-series database like InfluxDB or just S3.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Inject secrets via environment variables (<code style="font-size:11px;font-family:var(--font-mono)">--env-var key=value</code>) rather than embedding them in env files.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Check Newman's exit code in CI: exit 0 = all assertions passed, exit 1 = failures — wire this to your pipeline's pass/fail gate.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: How do you simulate 100 concurrent users with Newman? <span class="arrow">›</span></div><div class="qa-a">Newman runs requests sequentially in a single process, so it cannot natively do true concurrency. To simulate 100 VUs: run 100 Newman processes in parallel using bash background jobs (&), Docker containers (each running newman), or a Node.js script spawning 100 child_process.exec() calls simultaneously. Each process runs its own iteration stream independently.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What reporters are available for Newman and when do you use each? <span class="arrow">›</span></div><div class="qa-a">Built-in: cli (terminal output), json (machine-readable), junit (XML for CI systems like Jenkins/GitHub Actions), and progress. Third-party: htmlextra (rich HTML report with charts and timeline — best for stakeholders), allure (test management), csv. Use cli for quick checks, junit in CI pipelines, htmlextra for sprint demo reports, json for trend aggregation scripts.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: How do you inject environment variables from CI into Newman? <span class="arrow">›</span></div><div class="qa-a">Use --env-var flag: newman run collection.json --env-var "baseUrl=$BASE_URL" --env-var "apiKey=$API_KEY". $BASE_URL and $API_KEY are CI/CD pipeline environment variables (set in GitHub Actions secrets, Jenkins credentials, etc.). This pattern keeps sensitive values out of all committed files while still being accessible at runtime.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is the difference between --iteration-count and --iteration-data? <span class="arrow">›</span></div><div class="qa-a">--iteration-count specifies how many times to run the collection (default: 1). --iteration-data provides a CSV/JSON file whose rows are fed as data per iteration, with the total iterations automatically set to the number of data rows (unless overridden by --iteration-count). Using both together: if CSV has 10 rows and --iteration-count is 50, Newman cycles through the 10 rows 5 times.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How do you calculate P95 response time from Newman output? <span class="arrow">›</span></div><div class="qa-a">Newman's JSON report contains run.executions — an array of each request execution object. Each has a response.responseTime property. Extract all responseTime values into an array, sort ascending, then pick the value at index Math.floor(array.length × 0.95). This gives the 95th percentile: 95% of requests were faster than this value.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(4)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="next-btn" onclick="goTab(5)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ========== SESSION 6 ========== -->
+<div class="session" id="s5">
+  <div class="session-header">
+    <div class="session-num" style="background:#E1F5EE;color:#085041">06</div>
+    <div class="session-meta">
+      <h2>Metrics, KPIs & Thresholds</h2>
+      <p>What to measure, how to interpret, and how to set meaningful pass/fail gates</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Metrics without thresholds are just numbers. A performance test only has business value when you define what "pass" and "fail" mean before running it. This session teaches you how to select the right KPIs, derive thresholds from SLAs, and build assertion-based quality gates in Postman scripts.</p>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"A performance KPI is only actionable when paired with a threshold — 'response time' is a metric, '&lt;2s at P95' is a KPI."</div>
+  <div class="oneliner">"P95 response time is the industry-standard SLA metric — it represents the experience of the slowest 5% of your users."</div>
+  <div class="oneliner">"Error rate above 1% under load is a red flag — it means the system is beginning to shed requests under pressure."</div>
+  <div class="oneliner">"Throughput (TPS) must be validated against business capacity requirements, not just technical maximums."</div>
+  <div class="oneliner">"Apdex score combines response time and error rate into a single 0–1 satisfaction index used to summarize user experience."</div>
+
+  <div class="section-title"><i class="ti ti-topology-star" aria-hidden="true"></i> Concepts — KPI Reference</div>
+  <div class="card">
+    <table style="width:100%;font-size:13px;border-collapse:collapse">
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)">
+        <td style="padding:7px 6px;font-weight:500">Metric</td>
+        <td style="padding:7px 6px;font-weight:500">Unit</td>
+        <td style="padding:7px 6px;font-weight:500">Green (good)</td>
+        <td style="padding:7px 6px;font-weight:500">Red (bad)</td>
+      </tr>
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)">
+        <td style="padding:7px 6px">P95 Response Time</td><td style="padding:7px 6px">ms</td>
+        <td style="padding:7px 6px;color:#085041">&lt; 2000</td><td style="padding:7px 6px;color:#A32D2D">&gt; 5000</td>
+      </tr>
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)">
+        <td style="padding:7px 6px">Error Rate</td><td style="padding:7px 6px">%</td>
+        <td style="padding:7px 6px;color:#085041">&lt; 1%</td><td style="padding:7px 6px;color:#A32D2D">&gt; 5%</td>
+      </tr>
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)">
+        <td style="padding:7px 6px">Throughput (TPS)</td><td style="padding:7px 6px">req/s</td>
+        <td style="padding:7px 6px;color:#085041">Meets NFR</td><td style="padding:7px 6px;color:#A32D2D">Drops under load</td>
+      </tr>
+      <tr>
+        <td style="padding:7px 6px">Apdex Score</td><td style="padding:7px 6px">0–1</td>
+        <td style="padding:7px 6px;color:#085041">&gt; 0.85</td><td style="padding:7px 6px;color:#A32D2D">&lt; 0.5</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — Multi-threshold assertion (tiered SLA)</p>
+  <div class="code-block"><span class="code-comment">// Tiered SLA check: GOOD / WARN / FAIL thresholds
+// This pattern is used in production monitoring too (Green/Amber/Red)</span>
+
+<span class="code-key">const</span> rt        = <span class="code-fn">pm</span>.response.responseTime;
+<span class="code-key">const</span> GOOD_MS   = <span class="code-num">1000</span>;  <span class="code-comment">// under 1s = excellent</span>
+<span class="code-key">const</span> WARN_MS   = <span class="code-num">2000</span>;  <span class="code-comment">// 1-2s = acceptable (SLA boundary)</span>
+<span class="code-key">const</span> FAIL_MS   = <span class="code-num">5000</span>;  <span class="code-comment">// over 5s = SLA breach</span>
+
+<span class="code-key">let</span> status = <span class="code-str">"🟢 GOOD"</span>;
+<span class="code-key">if</span> (rt > GOOD_MS && rt <= WARN_MS) status = <span class="code-str">"🟡 WARN"</span>;
+<span class="code-key">if</span> (rt > WARN_MS)                  status = <span class="code-str">"🔴 BREACH"</span>;
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[SLA] <span class="code-key">${status}</span> | <span class="code-key">${rt}</span>ms`</span>);
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"SLA: Response within 2s threshold (P-SLA)"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(rt).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">below</span>(WARN_MS);
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Calculate Apdex score in test script</p>
+  <div class="code-block"><span class="code-comment">// Apdex (Application Performance Index) formula:
+// Apdex = (Satisfied + Tolerating/2) / Total
+// Satisfied  = response time ≤ T (target, e.g. 1000ms)
+// Tolerating = T < response time ≤ 4T (e.g. 1001ms–4000ms)
+// Frustrated = response time > 4T (e.g. > 4000ms)</span>
+
+<span class="code-key">const</span> T  = <span class="code-num">1000</span>;  <span class="code-comment">// target response time in ms</span>
+<span class="code-key">const</span> rt = <span class="code-fn">pm</span>.response.responseTime;
+
+<span class="code-key">let</span> satisfied  = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"apdex_sat"</span>)) || <span class="code-num">0</span>;
+<span class="code-key">let</span> tolerating = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"apdex_tol"</span>)) || <span class="code-num">0</span>;
+<span class="code-key">let</span> total      = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"apdex_tot"</span>)) || <span class="code-num">0</span>;
+
+<span class="code-key">if</span>      (rt <= T)      satisfied++;
+<span class="code-key">else if</span> (rt <= T * <span class="code-num">4</span>) tolerating++;
+<span class="code-comment">// else: frustrated — not counted in numerator</span>
+total++;
+
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"apdex_sat"</span>, satisfied);
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"apdex_tol"</span>, tolerating);
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"apdex_tot"</span>, total);
+
+<span class="code-key">const</span> apdex = ((satisfied + tolerating / <span class="code-num">2</span>) / total).<span class="code-fn">toFixed</span>(<span class="code-num">2</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Apdex: <span class="code-key">${apdex}</span> (<span class="code-key">${total}</span> samples)`</span>);</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — Response time percentile tracker</p>
+  <div class="code-block"><span class="code-comment">// Build a response time array and compute P95 at end of run
+// Best used in collection-level test script (runs after every request)</span>
+
+<span class="code-key">let</span> times = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"rtArray"</span>) || <span class="code-str">"[]"</span>);
+<span class="code-comment">// Push current request's response time to the array</span>
+times.<span class="code-fn">push</span>(<span class="code-fn">pm</span>.response.responseTime);
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"rtArray"</span>, <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(times));
+
+<span class="code-comment">// Every 100 requests, log the current P95 (don't compute every request = slow)</span>
+<span class="code-key">if</span> (times.length % <span class="code-num">100</span> === <span class="code-num">0</span>) {
+    <span class="code-key">const</span> sorted = [...times].<span class="code-fn">sort</span>((a, b) => a - b);
+    <span class="code-key">const</span> p95    = sorted[<span class="code-fn">Math</span>.<span class="code-fn">floor</span>(sorted.length * <span class="code-num">0.95</span>)];
+    <span class="code-key">const</span> p99    = sorted[<span class="code-fn">Math</span>.<span class="code-fn">floor</span>(sorted.length * <span class="code-num">0.99</span>)];
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[METRICS @ <span class="code-key">${times.length}</span>req] P95=<span class="code-key">${p95}</span>ms P99=<span class="code-key">${p99}</span>ms`</span>);
+}</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Track and assert error rate</p>
+  <div class="code-block"><span class="code-comment">// Error Rate = (failed requests / total requests) × 100
+// Industry standard threshold: &lt; 1% error rate under normal load</span>
+
+<span class="code-key">let</span> errors = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"errCount"</span>))  || <span class="code-num">0</span>;
+<span class="code-key">let</span> total  = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"reqTotal"</span>)) || <span class="code-num">0</span>;
+
+total++;
+<span class="code-key">if</span> (<span class="code-fn">pm</span>.response.code >= <span class="code-num">400</span>) errors++;  <span class="code-comment">// count 4xx AND 5xx as errors</span>
+
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"errCount"</span>, errors);
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"reqTotal"</span>, total);
+
+<span class="code-key">const</span> errorRate = (errors / total * <span class="code-num">100</span>).<span class="code-fn">toFixed</span>(<span class="code-num">2</span>);
+
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"[KPI] Error rate below 1%"</span>, () => {
+    <span class="code-comment">// This test fails the entire run if error rate breaches threshold</span>
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">parseFloat</span>(errorRate)).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">below</span>(<span class="code-num">1.0</span>);
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — TPS (Throughput) calculation</p>
+  <div class="code-block"><span class="code-comment">// Throughput = total successful requests / total time (seconds)
+// Run this as a final summary in the last request's test script</span>
+
+<span class="code-key">const</span> startTime = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"testStartTime"</span>)) || <span class="code-fn">Date</span>.<span class="code-fn">now</span>();
+<span class="code-key">const</span> endTime   = <span class="code-fn">Date</span>.<span class="code-fn">now</span>();
+<span class="code-key">const</span> durationS = (endTime - startTime) / <span class="code-num">1000</span>;  <span class="code-comment">// convert ms to seconds</span>
+
+<span class="code-key">const</span> totalRequests = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"reqTotal"</span>)) || <span class="code-num">1</span>;
+<span class="code-key">const</span> tps           = (totalRequests / durationS).<span class="code-fn">toFixed</span>(<span class="code-num">2</span>);
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[SUMMARY] Throughput: <span class="code-key">${tps}</span> req/s over <span class="code-key">${durationS.toFixed(1)}</span>s`</span>);
+
+<span class="code-comment">// Assert minimum throughput from NFR
+// e.g. NFR says "system must handle at least 50 TPS"</span>
+<span class="code-key">const</span> MIN_TPS = <span class="code-num">50</span>;
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">`[KPI] Throughput ≥ <span class="code-key">${MIN_TPS}</span> TPS`</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">parseFloat</span>(tps)).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">at</span>.<span class="code-fn">least</span>(MIN_TPS);
+});</div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Get SLA thresholds signed off by Product/Business before writing tests — technical thresholds must map to business requirements.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Track P50, P90, P95, P99 — not just average. Report P95 as the primary SLA metric to stakeholders.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Define separate thresholds for different request types: write operations (POST/PUT) are typically slower than reads (GET).</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Store metric history across runs — a single run result is meaningless without a trend to compare against.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Use Apdex as the executive summary metric — it combines response time and error rate into one number stakeholders understand.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is Apdex score and how is it calculated? <span class="arrow">›</span></div><div class="qa-a">Apdex (Application Performance Index) is a standardized metric from 0 to 1.0 that measures user satisfaction with response times. Formula: (Satisfied + Tolerating/2) / Total. Satisfied = RT ≤ T, Tolerating = T &lt; RT ≤ 4T, Frustrated = RT &gt; 4T. T is your defined target (e.g., 1000ms). Score above 0.85 = Excellent, above 0.7 = Good, below 0.5 = Unacceptable.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: Why is average response time misleading? <span class="arrow">›</span></div><div class="qa-a">Averages are skewed by high-volume low-latency requests masking rare but severe outliers. Example: 990 requests at 100ms and 10 requests at 30,000ms gives an average of ~400ms — looks fine. But P99 = 30,000ms reveals that 1% of users wait 30 seconds. Percentiles reveal the tail latency that matters most for user experience.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What is an acceptable error rate under load testing? <span class="arrow">›</span></div><div class="qa-a">Under normal load: &lt;0.1% (almost zero). Under peak load: &lt;1%. Under stress test at 150% of peak: up to 5% may be acceptable depending on business requirements. Any sustained error rate above 5% indicates the system is actively shedding requests and is beyond its reliable operating range. Zero tolerance for 5xx errors in financial or healthcare APIs.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you define a performance SLA for a new API? <span class="arrow">›</span></div><div class="qa-a">Start with stakeholder interviews: what response time makes users abandon the page? (Research suggests 3s is the abandon threshold for web). Then analyze similar endpoints: check APM data for comparable endpoints. Create a tiered SLA: P50 &lt; 300ms, P95 &lt; 1000ms, P99 &lt; 3000ms. Add error rate: &lt;0.5% under normal load. Document these as NFRs (Non-Functional Requirements) and baseline against them from day one.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What is the difference between latency and response time? <span class="arrow">›</span></div><div class="qa-a">Latency is purely the network delay — the time for a packet to travel from client to server and back (RTT). Response time is the total client-perceived time: network latency + server processing time + serialization/deserialization time. In performance testing we primarily measure response time (end-to-end). High latency with low server processing = network problem. Normal latency with high response time = server-side bottleneck.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(5)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="next-btn" onclick="goTab(6)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ========== SESSION 7 ========== -->
+<div class="session" id="s6">
+  <div class="session-header">
+    <div class="session-num" style="background:#FAEEDA;color:#633806">07</div>
+    <div class="session-meta">
+      <h2>Performance Testing Strategy</h2>
+      <p>Test planning, approach, risk-based prioritization, and the NFR-to-test mapping process</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>A performance test without a strategy is just running scripts. Strategy means: knowing which APIs to test, what load to apply, what metrics to capture, what pass/fail criteria to enforce, and how to triage failures. This session covers how to build a performance testing strategy from business requirements to test execution.</p>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"Performance test strategy starts with business requirements — identify the critical user journeys that must meet SLAs."</div>
+  <div class="oneliner">"Risk-based performance testing prioritizes APIs by business impact × technical complexity × historical failure rate."</div>
+  <div class="oneliner">"The test environment must mirror production in terms of infrastructure sizing — a 2-core test server gives invalid results for a 16-core prod cluster."</div>
+  <div class="oneliner">"A performance test strategy document defines scope, load model, entry/exit criteria, and escalation path — it is the contract between QA and the business."</div>
+  <div class="oneliner">"Shift-left performance testing embeds performance gates in every pull request — catching regressions at commit time, not pre-release."</div>
+
+  <div class="section-title"><i class="ti ti-topology-star" aria-hidden="true"></i> Strategy Framework</div>
+  <div class="card">
+    <p style="font-weight:500;margin-bottom:8px">6-Step Performance Test Strategy:</p>
+    <ol style="padding-left:18px">
+      <li style="margin-bottom:8px"><strong style="font-weight:500">Define Objectives:</strong> What business transactions must perform within SLA? Get sign-off from Product/Arch.</li>
+      <li style="margin-bottom:8px"><strong style="font-weight:500">Identify Test Scope:</strong> Which APIs, user journeys, and integration points. Use production traffic data for prioritization.</li>
+      <li style="margin-bottom:8px"><strong style="font-weight:500">Design Load Model:</strong> Map test types to scenarios. Define VU counts, ramp profiles, think times, test duration.</li>
+      <li style="margin-bottom:8px"><strong style="font-weight:500">Build Test Scripts:</strong> Postman collections with data files, chained auth, assertions for all KPIs.</li>
+      <li style="margin-bottom:8px"><strong style="font-weight:500">Execute &amp; Monitor:</strong> Run tests, capture server-side metrics simultaneously (APM, CloudWatch, Prometheus).</li>
+      <li><strong style="font-weight:500">Analyze &amp; Report:</strong> Identify bottlenecks, compare against SLAs, create trend charts, file defects with evidence.</li>
+    </ol>
+  </div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — Multi-step user journey (login → search → checkout)</p>
+  <div class="code-block"><span class="code-comment">// This models a realistic e-commerce user journey as a Postman collection
+// Each step has a response time assertion matching its SLA
+// Run all 3 as a collection → measures end-to-end journey performance</span>
+
+<span class="code-comment">// Request 1 — POST /auth/login
+// Expected SLA: &lt; 500ms (fast auth is critical for UX)</span>
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"[JOURNEY/Login] Auth within 500ms SLA"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.responseTime).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">below</span>(<span class="code-num">500</span>);
+});
+<span class="code-key">const</span> token = <span class="code-fn">pm</span>.response.<span class="code-fn">json</span>().accessToken;
+<span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"authToken"</span>, token);
+
+<span class="code-comment">// Request 2 — GET /products/search?q={{searchQuery}}
+// Expected SLA: &lt; 1000ms (search is read-heavy, usually fast)</span>
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"[JOURNEY/Search] Product search within 1s SLA"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.responseTime).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">below</span>(<span class="code-num">1000</span>);
+});
+
+<span class="code-comment">// Request 3 — POST /orders/checkout
+// Expected SLA: &lt; 3000ms (complex write = more latency allowed)</span>
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"[JOURNEY/Checkout] Order creation within 3s SLA"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.responseTime).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">below</span>(<span class="code-num">3000</span>);
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Load model configuration as environment variables</p>
+  <div class="code-block"><span class="code-comment">// Define the load model in environment file — not hardcoded in scripts
+// This lets you run smoke/load/stress by just changing the environment file</span>
+
+<span class="code-comment">// smoke.env.json</span>
+{ <span class="code-str">"virtualUsers"</span>: <span class="code-str">"1"</span>,   <span class="code-str">"iterations"</span>: <span class="code-str">"5"</span>,    <span class="code-str">"thinkTime"</span>: <span class="code-str">"0"</span>   }
+
+<span class="code-comment">// load.env.json</span>
+{ <span class="code-str">"virtualUsers"</span>: <span class="code-str">"50"</span>,  <span class="code-str">"iterations"</span>: <span class="code-str">"200"</span>,  <span class="code-str">"thinkTime"</span>: <span class="code-str">"500"</span> }
+
+<span class="code-comment">// stress.env.json</span>
+{ <span class="code-str">"virtualUsers"</span>: <span class="code-str">"200"</span>, <span class="code-str">"iterations"</span>: <span class="code-str">"1000"</span>, <span class="code-str">"thinkTime"</span>: <span class="code-str">"100"</span> }
+
+<span class="code-comment">// Newman CLI — just swap the --environment flag:
+// newman run collection.json --environment smoke.env.json
+// newman run collection.json --environment load.env.json
+// newman run collection.json --environment stress.env.json</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — Entry/exit criteria check at test start</p>
+  <div class="code-block"><span class="code-comment">// Pre-request Script on first request in collection
+// Verify entry criteria before starting expensive load test
+// Abort early if environment is not ready</span>
+
+<span class="code-key">const</span> requiredVars = [<span class="code-str">"baseUrl"</span>, <span class="code-str">"authToken"</span>, <span class="code-str">"thinkTime"</span>];
+
+requiredVars.<span class="code-fn">forEach</span>(varName => {
+    <span class="code-key">const</span> value = <span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(varName);
+    <span class="code-key">if</span> (!value) {
+        <span class="code-comment">// postman.setNextRequest(null) stops the collection run immediately</span>
+        postman.<span class="code-fn">setNextRequest</span>(<span class="code-key">null</span>);
+        <span class="code-fn">console</span>.<span class="code-fn">error</span>(<span class="code-str">`[ABORT] Missing required variable: <span class="code-key">${varName}</span>`</span>);
+        <span class="code-key">throw</span> <span class="code-key">new</span> <span class="code-fn">Error</span>(<span class="code-str">`Entry criteria failed: <span class="code-key">${varName}</span> not set`</span>);
+    }
+});
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"[ENTRY] All entry criteria met — starting performance test"</span>);</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Risk-based prioritization scoring in comments</p>
+  <div class="code-block"><span class="code-comment">// Performance Test Prioritization Matrix
+// Each API scored: Business Impact (1-3) × Traffic Volume (1-3) × Complexity (1-3)
+// Max score = 27 (highest priority), Min = 1 (lowest priority)
+//
+// API                  | Impact | Traffic | Complexity | Score | Priority
+// POST /orders/checkout|   3    |    3    |     3      |  27   | P1 — MUST TEST
+// GET  /products/search|   3    |    3    |     2      |  18   | P1 — MUST TEST
+// POST /auth/login     |   3    |    3    |     1      |   9   | P2 — SHOULD TEST
+// GET  /user/profile   |   2    |    2    |     1      |   4   | P3 — NICE TO HAVE
+// GET  /health         |   1    |    3    |     1      |   3   | P3 — MONITOR ONLY
+//
+// Focus your Postman collections on P1 endpoints first</span>
+
+<span class="code-key">const</span> priorityScore = (impact, traffic, complexity) => impact * traffic * complexity;
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Checkout score:"</span>, priorityScore(<span class="code-num">3</span>, <span class="code-num">3</span>, <span class="code-num">3</span>)); <span class="code-comment">// 27</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Search score:"</span>,   priorityScore(<span class="code-num">3</span>, <span class="code-num">3</span>, <span class="code-num">2</span>)); <span class="code-comment">// 18</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — Conditional request flow (skip slow endpoints in smoke test)</p>
+  <div class="code-block"><span class="code-comment">// Strategy: In smoke test mode, skip heavy analytical endpoints
+// Use environment variable "testMode" = "smoke" | "load" | "stress"
+// This lets one collection serve all test types</span>
+
+<span class="code-key">const</span> testMode = <span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"testMode"</span>) || <span class="code-str">"smoke"</span>;
+
+<span class="code-key">if</span> (testMode === <span class="code-str">"smoke"</span>) {
+    <span class="code-comment">// Skip heavy report generation in smoke mode</span>
+    <span class="code-comment">// postman.setNextRequest() jumps to a named request or null to stop</span>
+    postman.<span class="code-fn">setNextRequest</span>(<span class="code-str">"Health Check"</span>);  <span class="code-comment">// skip to lightweight endpoint</span>
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"[SMOKE] Skipping heavy report endpoint"</span>);
+} <span class="code-key">else</span> {
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[<span class="code-key">${testMode.toUpperCase()}</span>] Running full endpoint suite`</span>);
+    <span class="code-comment">// null = continue to next request in default order</span>
+    postman.<span class="code-fn">setNextRequest</span>(<span class="code-key">null</span>);
+}</div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Write a 1-page Performance Test Plan: scope, entry/exit criteria, load model, tools, environments, reporting plan.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Test the most critical user journeys end-to-end (login → action → response), not just isolated endpoints.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Run a baseline test with 1 VU immediately after every major deployment to detect performance regressions early.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Coordinate load tests with the operations team — warn them before generating heavy traffic on shared environments.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Document findings as defects with reproducible steps, baseline comparison, environment details, and impact assessment.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: How do you create a load model for an API you've never tested before? <span class="arrow">›</span></div><div class="qa-a">Step 1: Get production traffic data from APM tools (New Relic, Datadog) or server logs — extract peak concurrent users and peak RPS. Step 2: If no production data exists, use stakeholder estimates: "How many users do you expect at launch? What's the expected growth?" Step 3: Add a safety margin of 20–30% above the stated peak. Step 4: Identify the busiest 1-hour window and model your test after that pattern (ramp-up, steady state, ramp-down).</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is the difference between think time, ramp-up time, and hold time? <span class="arrow">›</span></div><div class="qa-a">Think time = the pause between requests within one user session (simulates reading a page, filling a form). Ramp-up time = the period over which virtual users are added to reach the target concurrency (gradual start prevents thundering herd). Hold time (steady state) = the duration at peak load during which metrics are captured for SLA validation. All three are configured in the load model.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: What are entry and exit criteria in performance testing? <span class="arrow">›</span></div><div class="qa-a">Entry criteria = conditions that must be true before starting a performance test run: smoke test passing, test environment ready, test data loaded, monitoring configured, team notified. Exit criteria = conditions that define when the test is complete: all SLA assertions passed, minimum run duration met, no critical errors in server logs. Without these, tests start in bad environments and stop prematurely.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you handle test data management in large load tests? <span class="arrow">›</span></div><div class="qa-a">Three strategies: (1) Synthetic data generation — create a script that pre-populates the test DB with 10,000 test users before the run. (2) CSV/JSON data files — maintain a pool of realistic (anonymized) test accounts in data files and cycle through them. (3) Data teardown/setup — use collection pre-run scripts to reset state. Never share test data files with real PII; use a data masking tool to anonymize production dumps.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What is shift-left performance testing? <span class="arrow">›</span></div><div class="qa-a">Shift-left means moving performance testing earlier in the SDLC. Instead of testing only in a pre-production phase, run Newman-based performance gates on every pull request in CI/CD. If a new endpoint's response time under 10 VUs exceeds the P95 SLA, the PR is blocked. This catches regressions at the code commit level — when fixes are cheap — rather than finding them during a release cycle when they're expensive and stressful.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(6)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="next-btn" onclick="goTab(7)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ========== SESSION 8 ========== -->
+<div class="session" id="s7">
+  <div class="session-header">
+    <div class="session-num" style="background:#FAEEDA;color:#633806">08</div>
+    <div class="session-meta">
+      <h2>Advanced Scripting & Test Patterns</h2>
+      <p>Reusable utilities, dynamic payloads, conditional flows, and retry logic</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Advanced Postman scripting transforms basic request chains into production-grade load test harnesses. This session covers utility functions, retry patterns, dynamic throttling, and the patterns that distinguish senior SDET-level test engineers from juniors.</p>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"postman.setNextRequest() enables conditional flow control — retry failed requests, skip endpoints, or build loops."</div>
+  <div class="oneliner">"Collection-level scripts define shared utility functions accessible to all requests — DRY principle applied to test code."</div>
+  <div class="oneliner">"Retry logic in Postman prevents transient network failures from failing an entire performance run prematurely."</div>
+  <div class="oneliner">"Dynamic think time based on response time (faster response → less wait) creates a more realistic user behavior model."</div>
+  <div class="oneliner">"Correlation extraction — pulling dynamic IDs from responses and injecting into subsequent requests — is essential for realistic API load tests."</div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — Retry logic for transient failures</p>
+  <div class="code-block"><span class="code-comment">// Test Script: Retry up to 3 times on 5xx errors
+// This prevents transient server hiccups from killing a long load run
+// Uses postman.setNextRequest() to re-run the same request</span>
+
+<span class="code-key">const</span> MAX_RETRIES   = <span class="code-num">3</span>;
+<span class="code-key">const</span> CURRENT_REQ   = <span class="code-str">"Get Product Details"</span>;  <span class="code-comment">// must match request NAME exactly</span>
+
+<span class="code-key">let</span> retryCount = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"retryCount"</span>)) || <span class="code-num">0</span>;
+
+<span class="code-key">if</span> (<span class="code-fn">pm</span>.response.code >= <span class="code-num">500</span> && retryCount < MAX_RETRIES) {
+    retryCount++;
+    <span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"retryCount"</span>, retryCount);
+    <span class="code-fn">console</span>.<span class="code-fn">warn</span>(<span class="code-str">`[RETRY <span class="code-key">${retryCount}</span>/<span class="code-key">${MAX_RETRIES}</span>] Server error: HTTP <span class="code-key">${pm.response.code}</span>`</span>);
+    postman.<span class="code-fn">setNextRequest</span>(CURRENT_REQ);  <span class="code-comment">// re-run THIS request</span>
+} <span class="code-key">else</span> {
+    <span class="code-comment">// Reset retry counter for next request in collection</span>
+    <span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"retryCount"</span>, <span class="code-num">0</span>);
+    <span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"Request succeeded (with retry if needed)"</span>, () => {
+        <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.code).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-fn">below</span>(<span class="code-num">500</span>);
+    });
+}</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Correlation: extract dynamic ID from response</p>
+  <div class="code-block"><span class="code-comment">// Correlation Pattern: extract a dynamically created resource ID
+// from one response and use it in the next request URL
+// Example: POST /orders → returns orderId → GET /orders/{orderId}/status</span>
+
+<span class="code-comment">// Request 1 — POST /orders — Test Script:</span>
+<span class="code-key">const</span> responseBody = <span class="code-fn">pm</span>.response.<span class="code-fn">json</span>();
+<span class="code-key">const</span> orderId      = responseBody.data.id;  <span class="code-comment">// dynamic ID from server</span>
+
+<span class="code-fn">pm</span>.<span class="code-fn">expect</span>(orderId).<span class="code-key">to</span>.<span class="code-fn">be</span>.<span class="code-key">a</span>(<span class="code-str">"string"</span>);  <span class="code-comment">// validate it exists</span>
+<span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"orderId"</span>, orderId);   <span class="code-comment">// store for next request</span>
+
+<span class="code-comment">// Request 2 URL: GET {{baseUrl}}/orders/{{orderId}}/status
+// Postman substitutes {{orderId}} from environment automatically
+// This is "correlation" — linking requests via extracted dynamic values</span>
+
+<span class="code-comment">// Request 2 — Test Script:</span>
+<span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"Order status endpoint responds"</span>, () => {
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(<span class="code-fn">pm</span>.response.code).<span class="code-key">to</span>.<span class="code-fn">equal</span>(<span class="code-num">200</span>);
+    <span class="code-key">const</span> status = <span class="code-fn">pm</span>.response.<span class="code-fn">json</span>().status;
+    <span class="code-fn">pm</span>.<span class="code-fn">expect</span>([<span class="code-str">"pending"</span>, <span class="code-str">"processing"</span>, <span class="code-str">"completed"</span>]).<span class="code-key">to</span>.<span class="code-fn">include</span>(status);
+});</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — Adaptive think time based on response time</p>
+  <div class="code-block"><span class="code-comment">// Pre-request Script: adjust think time dynamically
+// Slower responses → shorter think time (simulates impatient user)
+// Faster responses → longer think time (simulates normal reading behavior)
+// This creates more realistic pacing than a fixed delay</span>
+
+<span class="code-key">const</span> lastRT    = <span class="code-fn">parseFloat</span>(<span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"lastResponseTime"</span>)) || <span class="code-num">500</span>;
+<span class="code-key">const</span> BASE_WAIT = <span class="code-num">1000</span>;   <span class="code-comment">// 1s base think time</span>
+<span class="code-key">const</span> MAX_WAIT  = <span class="code-num">3000</span>;   <span class="code-comment">// cap at 3s even for fast responses</span>
+
+<span class="code-comment">// Think time shrinks as response time grows (keeps total journey time stable)
+// Formula: think = BASE - (lastRT / 2), clamped to [100ms, 3000ms]</span>
+<span class="code-key">const</span> thinkTime = <span class="code-fn">Math</span>.<span class="code-fn">max</span>(<span class="code-num">100</span>, <span class="code-fn">Math</span>.<span class="code-fn">min</span>(MAX_WAIT, BASE_WAIT - (lastRT / <span class="code-num">2</span>)));
+
+<span class="code-fn">setTimeout</span>(() => {}, thinkTime);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[PACING] Think time: <span class="code-key">${thinkTime}</span>ms (last RT was <span class="code-key">${lastRT}</span>ms)`</span>);</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Reusable utility function via globals</p>
+  <div class="code-block"><span class="code-comment">// Collection Pre-request Script: define shared utility functions
+// Store as stringified functions in globals, eval() them in any request
+// This is the Postman equivalent of a test utility library</span>
+
+<span class="code-comment">// Define utility in Collection Pre-request Script:</span>
+<span class="code-key">const</span> utils = {
+    <span class="code-comment">// Generate random integer between min and max (inclusive)</span>
+    randomInt: (min, max) => <span class="code-fn">Math</span>.<span class="code-fn">floor</span>(<span class="code-fn">Math</span>.<span class="code-fn">random</span>() * (max - min + <span class="code-num">1</span>)) + min,
+    
+    <span class="code-comment">// Format date as YYYY-MM-DD string</span>
+    formatDate: (d) => d.<span class="code-fn">toISOString</span>().<span class="code-fn">split</span>(<span class="code-str">"T"</span>)[<span class="code-num">0</span>],
+    
+    <span class="code-comment">// Build auth header value from environment token</span>
+    bearerHeader: () => <span class="code-str">`Bearer <span class="code-key">${pm.environment.get("authToken")}</span>`</span>
+};
+
+<span class="code-comment">// Store as JSON string in globals for access from any request</span>
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"utils"</span>, <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(utils));
+
+<span class="code-comment">// Use in any request Pre-request Script:</span>
+<span class="code-comment">// const utils = JSON.parse(pm.globals.get("utils"));</span>
+<span class="code-comment">// const qty = utils.randomInt(1, 10);</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — Polling pattern (wait for async operation)</p>
+  <div class="code-block"><span class="code-comment">// Polling Pattern: check an async job status until complete
+// Use case: POST triggers a long-running job → poll GET until done
+// Critical for testing async payment processing, report generation etc.</span>
+
+<span class="code-key">const</span> jobStatus   = <span class="code-fn">pm</span>.response.<span class="code-fn">json</span>().status; <span class="code-comment">// "pending" | "processing" | "done"</span>
+<span class="code-key">const</span> pollCount   = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.environment.<span class="code-fn">get</span>(<span class="code-str">"pollCount"</span>)) || <span class="code-num">0</span>;
+<span class="code-key">const</span> MAX_POLLS   = <span class="code-num">10</span>;  <span class="code-comment">// max 10 polls (= 10s at 1s intervals)</span>
+
+<span class="code-key">if</span> (jobStatus !== <span class="code-str">"done"</span> && pollCount < MAX_POLLS) {
+    <span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"pollCount"</span>, pollCount + <span class="code-num">1</span>);
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`[POLL <span class="code-key">${pollCount+1}</span>/<span class="code-key">${MAX_POLLS}</span>] Status: <span class="code-key">${jobStatus}</span> — retrying...`</span>);
+    <span class="code-fn">setTimeout</span>(() => {}, <span class="code-num">1000</span>);  <span class="code-comment">// wait 1s before re-polling</span>
+    postman.<span class="code-fn">setNextRequest</span>(<span class="code-str">"Check Job Status"</span>);  <span class="code-comment">// re-run polling request</span>
+} <span class="code-key">else</span> {
+    <span class="code-fn">pm</span>.environment.<span class="code-fn">set</span>(<span class="code-str">"pollCount"</span>, <span class="code-num">0</span>);  <span class="code-comment">// reset for next iteration</span>
+    <span class="code-fn">pm</span>.<span class="code-fn">test</span>(<span class="code-str">"Async job completed within timeout"</span>, () => {
+        <span class="code-fn">pm</span>.<span class="code-fn">expect</span>(jobStatus).<span class="code-key">to</span>.<span class="code-fn">equal</span>(<span class="code-str">"done"</span>);
+    });
+}</div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Always cap retry and polling loops with a maximum count — infinite loops will hang your test run silently.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Reset all counters (retryCount, pollCount) at the end of each iteration to prevent state leakage between runs.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Use correlation for every dynamic ID — never hardcode order IDs, session IDs, or resource keys in scripts.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Log the test mode, iteration number, and timestamp at the start of each iteration — vital for triage.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Keep script logic testable — write the complex logic in a Node.js unit test first, then port to the Postman sandbox.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: What is postman.setNextRequest() and what are its valid values? <span class="arrow">›</span></div><div class="qa-a">postman.setNextRequest() controls the execution flow of a collection run. Valid values: a string matching a request name in the collection (jumps to that request), null (stops the collection run), or undefined (next request in default order). It only works inside a collection run (not single request execution) and takes effect after the current request's scripts finish. Used for retry logic, conditional skipping, and polling loops.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What is "correlation" in performance testing? <span class="arrow">›</span></div><div class="qa-a">Correlation is the technique of extracting dynamic values from server responses and injecting them into subsequent requests. Example: a login response contains an sessionId that must be sent in every subsequent request header. Without correlation, all virtual users would use the same hardcoded sessionId, causing incorrect test results (cache hits, auth conflicts) and invalid load distribution. Correlation makes each VU's session independent and realistic.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: How do you avoid test data conflicts when 100 VUs all POST the same order? <span class="arrow">›</span></div><div class="qa-a">Three strategies: (1) Use {{$guid}} for unique identifiers in request bodies so each request creates a unique resource. (2) Use a data file with 100+ unique user accounts/IDs so each VU operates on different data. (3) Add iteration number to identifiers: const uniqueId = `order_${pm.info.iteration}_${Date.now()}`. This ensures no two VUs conflict over the same resource.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: How do you test pagination performance? <span class="arrow">›</span></div><div class="qa-a">Create a collection that loops through pages: extract the nextPageToken from the response, set it as an environment variable, use it in the next request's query parameter, and use setNextRequest() to loop until nextPageToken is null or a max page count is reached. Measure: does response time degrade on later pages? Does the cursor-based approach scale better than offset-based? This pattern reveals N+1 query problems and missing database indexes.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: What is the limitation of Postman's setTimeout() in performance testing? <span class="arrow">›</span></div><div class="qa-a">Postman's setTimeout() is synchronous-blocking in the sandbox — it pauses the script thread but doesn't do true async work. For think times up to a few seconds this works fine. However, very long waits (30+ seconds for polling) can cause the Postman sandbox to timeout. For long polling scenarios, prefer re-running the request via setNextRequest() with a shorter delay on each iteration rather than one giant setTimeout.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(7)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="next-btn" onclick="goTab(8)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ========== SESSION 9 ========== -->
+<div class="session" id="s8">
+  <div class="session-header">
+    <div class="session-num" style="background:#FAEEDA;color:#633806">09</div>
+    <div class="session-meta">
+      <h2>CI/CD Integration — Performance as a Quality Gate</h2>
+      <p>GitHub Actions, Jenkins pipelines, Docker, and automated performance gates</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Integrating Newman into CI/CD pipelines transforms performance testing from a periodic manual activity into an automated quality gate that runs on every code change. A failing performance test blocks a merge — catching regressions before they reach production.</p>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"CI/CD performance gates block merges if P95 response time or error rate breaches thresholds — preventing regressions at source."</div>
+  <div class="oneliner">"Newman's non-zero exit code on assertion failure is the CI/CD pipeline's pass/fail hook — no custom tooling needed."</div>
+  <div class="oneliner">"Docker containerized Newman runs ensure consistent execution environment across local, CI, and cloud agents."</div>
+  <div class="oneliner">"JUnit XML reporter output from Newman integrates directly with Jenkins test result dashboards and GitHub Actions checks."</div>
+  <div class="oneliner">"Performance baseline comparison in CI detects regression: if current P95 is more than 20% above the previous run, the build fails."</div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — GitHub Actions workflow: Newman performance gate</p>
+  <div class="code-block"><span class="code-comment"># .github/workflows/perf-test.yml
+# Triggered on every PR to main — blocks merge if tests fail</span>
+
+name: Performance Gate
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  performance-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Newman + htmlextra reporter
+        run: |
+          npm install -g newman                  <span class="code-comment"># core runner</span>
+          npm install -g newman-reporter-htmlextra  <span class="code-comment"># HTML report</span>
+
+      - name: Run performance smoke test
+        run: |
+          newman run collections/api_tests.json \
+            --environment environments/staging.json \
+            --env-var "baseUrl=${{ vars.STAGING_URL }}" \
+            --env-var "apiKey=${{ secrets.API_KEY }}" \
+            --iteration-count 20 \
+            --delay-request 300 \
+            --timeout-request 5000 \
+            --reporters cli,junit,htmlextra \
+            --reporter-junit-export reports/results.xml \
+            --reporter-htmlextra-export reports/results.html
+
+      - name: Upload HTML report as artifact
+        if: always()     <span class="code-comment"># upload even if tests fail</span>
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-report
+          path: reports/results.html</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Jenkins pipeline (Declarative)</p>
+  <div class="code-block"><span class="code-comment">// Jenkinsfile — Declarative Pipeline
+// Runs after unit + integration tests pass</span>
+
+pipeline {
+    agent { docker { image <span class="code-str">'node:20-alpine'</span> } }  <span class="code-comment">// containerized agent</span>
+    
+    stages {
+        stage(<span class="code-str">'Install Newman'</span>) {
+            steps {
+                sh <span class="code-str">'npm install -g newman newman-reporter-htmlextra'</span>
+            }
+        }
+        stage(<span class="code-str">'Performance Gate'</span>) {
+            steps {
+                sh <span class="code-str">"""
+                  newman run collections/api.json \\
+                    --environment environments/staging.json \\
+                    --iteration-count 50 \\
+                    --delay-request 500 \\
+                    --reporters junit,htmlextra \\
+                    --reporter-junit-export reports/results.xml \\
+                    --reporter-htmlextra-export reports/perf.html
+                """</span>
+            }
+            post {
+                always {
+                    <span class="code-comment">// Publish JUnit results to Jenkins dashboard</span>
+                    junit <span class="code-str">'reports/results.xml'</span>
+                    publishHTML(target: [reportDir: <span class="code-str">'reports'</span>, reportFiles: <span class="code-str">'perf.html'</span>])
+                }
+            }
+        }
+    }
+}</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — Docker containerized Newman run</p>
+  <div class="code-block"><span class="code-comment"># Run Newman inside Docker — no local Node.js install needed
+# postman/newman is the official Docker image</span>
+
+docker run --rm \
+  -v $(pwd)/collections:/etc/newman/collections \   <span class="code-comment"># mount collections folder</span>
+  -v $(pwd)/environments:/etc/newman/environments \ <span class="code-comment"># mount environments folder</span>
+  -v $(pwd)/reports:/etc/newman/reports \           <span class="code-comment"># mount output reports folder</span>
+  postman/newman:latest \
+  run /etc/newman/collections/api.json \
+  --environment /etc/newman/environments/staging.json \
+  --reporters cli,htmlextra \
+  --reporter-htmlextra-export /etc/newman/reports/report.html
+
+<span class="code-comment"># Docker exit code mirrors Newman: 0 = pass, 1 = failures
+# Use this in shell scripts: $? to check pass/fail</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Baseline comparison script (regression detection)</p>
+  <div class="code-block"><span class="code-comment">// compare_baseline.js — detect performance regression in CI
+// Compares current run's P95 against stored baseline
+// Fails the build if regression > 20%</span>
+
+<span class="code-key">const</span> fs      = <span class="code-fn">require</span>(<span class="code-str">"fs"</span>);
+<span class="code-key">const</span> current = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(<span class="code-fn">fs</span>.<span class="code-fn">readFileSync</span>(<span class="code-str">"reports/current.json"</span>));
+<span class="code-key">const</span> baseline= <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(<span class="code-fn">fs</span>.<span class="code-fn">readFileSync</span>(<span class="code-str">"baseline/baseline.json"</span>));
+
+<span class="code-comment">// Extract response times from both runs</span>
+<span class="code-key">const</span> getP95 = (results) => {
+    <span class="code-key">const</span> times = results.run.executions
+        .<span class="code-fn">map</span>(e => e.response?.responseTime || <span class="code-num">0</span>)
+        .<span class="code-fn">sort</span>((a, b) => a - b);
+    <span class="code-key">return</span> times[<span class="code-fn">Math</span>.<span class="code-fn">floor</span>(times.length * <span class="code-num">0.95</span>)];
+};
+
+<span class="code-key">const</span> currentP95  = <span class="code-fn">getP95</span>(current);
+<span class="code-key">const</span> baselineP95 = <span class="code-fn">getP95</span>(baseline);
+<span class="code-key">const</span> regression  = ((currentP95 - baselineP95) / baselineP95 * <span class="code-num">100</span>).<span class="code-fn">toFixed</span>(<span class="code-num">1</span>);
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Baseline P95: <span class="code-key">${baselineP95}</span>ms | Current P95: <span class="code-key">${currentP95}</span>ms | Δ: <span class="code-key">${regression}</span>%`</span>);
+
+<span class="code-key">if</span> (<span class="code-fn">parseFloat</span>(regression) > <span class="code-num">20</span>) {
+    <span class="code-fn">console</span>.<span class="code-fn">error</span>(<span class="code-str">`❌ REGRESSION DETECTED: <span class="code-key">${regression}</span>% above baseline`</span>);
+    process.<span class="code-fn">exit</span>(<span class="code-num">1</span>);  <span class="code-comment">// non-zero exit = CI build failure</span>
+} <span class="code-key">else</span> {
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`✅ Performance within acceptable range (<span class="code-key">${regression}</span>% vs 20% threshold)`</span>);
+}</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — Parallel Newman in CI with result aggregation</p>
+  <div class="code-block"><span class="code-comment">#!/bin/bash
+# ci_parallel_load.sh — run 10 Newman VUs in CI, aggregate results</span>
+
+VU_COUNT=10
+PASS_THRESHOLD=<span class="code-num">95</span>  <span class="code-comment"># 95% of assertions must pass</span>
+PIDS=()
+
+<span class="code-comment"># Launch all VUs in background</span>
+<span class="code-key">for</span> i in $(seq 1 $VU_COUNT); <span class="code-key">do</span>
+    newman run collections/api.json \
+      --environment environments/ci.json \
+      --iteration-count 50 \
+      --reporters json \
+      --reporter-json-export reports/vu_${i}.json &
+    PIDS+=($!)  <span class="code-comment"># capture PID for each background process</span>
+<span class="code-key">done</span>
+
+<span class="code-comment"># Wait for all VUs to complete</span>
+<span class="code-key">for</span> PID in ${PIDS[@]}; <span class="code-key">do</span>
+    wait $PID
+<span class="code-key">done</span>
+
+<span class="code-comment"># Aggregate: sum assertions across all VU result files</span>
+node aggregate_results.js reports/vu_*.json --threshold $PASS_THRESHOLD
+<span class="code-comment"># aggregate_results.js exits 1 if pass rate &lt; threshold</span>
+exit $?</div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Run a lightweight smoke performance test (10–20 iterations) on every PR, full load test only on merge to main.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Store baseline results in a dedicated artifact storage (S3, Azure Blob) and compare on every CI run.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Always use --timeout-request in CI runs — hung requests will block a CI agent indefinitely without it.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Archive HTML reports as CI artifacts — keep last 30 runs for trend visualization.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Notify on Slack/Teams when performance tests fail in main branch — team visibility is critical for fast remediation.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: How do you prevent performance tests from slowing down the CI pipeline? <span class="arrow">›</span></div><div class="qa-a">Tiered execution strategy: (1) PR trigger = smoke test only (20 iterations, ~30s). (2) Merge to main = moderate load test (50 VUs, 5 min). (3) Nightly scheduled = full stress + soak test. This way every PR gets a quick sanity check without blocking developers, while thorough load tests run on a schedule. Parallelize Newman VUs to cut wall-clock time without reducing test coverage.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: How do you manage Newman in a Dockerized CI environment? <span class="arrow">›</span></div><div class="qa-a">Use the official postman/newman Docker image as your CI agent's container. Mount collection and environment files as Docker volumes. This eliminates Node.js version conflicts across CI agents. Pin the Newman image tag (e.g., postman/newman:6.1.0) for reproducible runs — never use :latest in CI as a new version could change behavior.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: How do you handle Newman secrets (API keys) in CI/CD securely? <span class="arrow">›</span></div><div class="qa-a">Store secrets in the CI/CD platform's secret vault (GitHub Actions Secrets, Jenkins Credentials, AWS Secrets Manager). Inject them at runtime via --env-var "apiKey=${{ secrets.API_KEY }}". Never write secrets to environment JSON files that get committed to Git. Use environment variable scanning tools (GitGuardian, truffleHog) to prevent accidental secret commits.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What CI/CD platforms does Newman integrate with? <span class="arrow">›</span></div><div class="qa-a">Newman integrates with any CI/CD platform that can run shell commands or Node.js: GitHub Actions (via run: newman run...), Jenkins (shell step or pipeline sh), GitLab CI (script: newman run), CircleCI, Azure DevOps (npm task), TeamCity, Bamboo. The JUnit reporter output is universally compatible — all major CI platforms parse JUnit XML for test result visualization and trend tracking.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How do you implement a performance regression gate in a PR? <span class="arrow">›</span></div><div class="qa-a">Three steps: (1) Run Newman on every PR with JSON reporter, extract P95 from results. (2) Compare P95 against stored baseline (fetched from S3 or artifact storage). (3) If current P95 &gt; baseline × 1.2 (20% regression), exit with code 1 — the CI job fails, blocking the PR merge. The branch protection rule in GitHub/GitLab marks the required CI check as failed and prevents merge until the regression is fixed or the baseline is intentionally updated.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(8)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button class="next-btn" onclick="goTab(9)">Next Session →</button>
+  </div>
+</div>
+
+<!-- ========== SESSION 10 ========== -->
+<div class="session" id="s9">
+  <div class="session-header">
+    <div class="session-num" style="background:#FAEEDA;color:#633806">10</div>
+    <div class="session-meta">
+      <h2>Reporting, Analysis & Bottleneck Diagnosis</h2>
+      <p>Interpreting results, identifying root causes, and communicating findings to stakeholders</p>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> Overview</div>
+  <div class="card">
+    <p>Generating test results is only half the job. The value of performance testing is in accurate analysis, root-cause identification, and clear communication to developers, architects, and business stakeholders. This final session covers the full reporting lifecycle.</p>
+  </div>
+
+  <div class="section-title"><i class="ti ti-message-circle" aria-hidden="true"></i> Interview one-liners</div>
+  <div class="oneliner">"A performance test report without root-cause analysis is just a data dump — it must explain what is slow and why."</div>
+  <div class="oneliner">"Response time trend charts are more valuable than single-point metrics — they reveal degradation patterns over time."</div>
+  <div class="oneliner">"Correlating client-side response time spikes with server-side CPU/memory events pinpoints the bottleneck tier."</div>
+  <div class="oneliner">"Newman htmlextra reporter produces a self-contained HTML dashboard with pass/fail breakdown, response time histogram, and failure details."</div>
+  <div class="oneliner">"A performance defect report must include: observed vs expected values, reproduction steps, environment details, and business impact."</div>
+
+  <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 1 — Structured console summary at end of run</p>
+  <div class="code-block"><span class="code-comment">// Final request Test Script: print a formatted performance summary
+// Run this as the LAST request in your collection (e.g. "Summary")
+// This appears in Newman CLI output and is easy to parse in CI logs</span>
+
+<span class="code-key">const</span> total    = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"reqTotal"</span>))   || <span class="code-num">0</span>;
+<span class="code-key">const</span> errors   = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"errCount"</span>))   || <span class="code-num">0</span>;
+<span class="code-key">const</span> rtArray  = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"rtArray"</span>)   || <span class="code-str">"[]"</span>);
+<span class="code-key">const</span> startMs  = <span class="code-fn">parseInt</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"testStartTime"</span>)) || <span class="code-fn">Date</span>.<span class="code-fn">now</span>();
+
+<span class="code-key">const</span> sorted   = [...rtArray].<span class="code-fn">sort</span>((a, b) => a - b);
+<span class="code-key">const</span> avg      = (rtArray.<span class="code-fn">reduce</span>((s, v) => s + v, <span class="code-num">0</span>) / rtArray.length).<span class="code-fn">toFixed</span>(<span class="code-num">0</span>);
+<span class="code-key">const</span> p50      = sorted[<span class="code-fn">Math</span>.<span class="code-fn">floor</span>(sorted.length * <span class="code-num">0.50</span>)];
+<span class="code-key">const</span> p95      = sorted[<span class="code-fn">Math</span>.<span class="code-fn">floor</span>(sorted.length * <span class="code-num">0.95</span>)];
+<span class="code-key">const</span> p99      = sorted[<span class="code-fn">Math</span>.<span class="code-fn">floor</span>(sorted.length * <span class="code-num">0.99</span>)];
+<span class="code-key">const</span> errorRate= (errors / total * <span class="code-num">100</span>).<span class="code-fn">toFixed</span>(<span class="code-num">2</span>);
+<span class="code-key">const</span> durationS= ((<span class="code-fn">Date</span>.<span class="code-fn">now</span>() - startMs) / <span class="code-num">1000</span>).<span class="code-fn">toFixed</span>(<span class="code-num">1</span>);
+<span class="code-key">const</span> tps      = (total / durationS).<span class="code-fn">toFixed</span>(<span class="code-num">2</span>);
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"╔══════════════════════════════╗"</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"║   PERFORMANCE TEST SUMMARY   ║"</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"╚══════════════════════════════╝"</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Total Requests : <span class="code-key">${total}</span>`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Duration       : <span class="code-key">${durationS}</span>s`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Throughput     : <span class="code-key">${tps}</span> req/s`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Avg RT         : <span class="code-key">${avg}</span>ms`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`P50 RT         : <span class="code-key">${p50}</span>ms`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`P95 RT         : <span class="code-key">${p95}</span>ms`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`P99 RT         : <span class="code-key">${p99}</span>ms`</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">`Error Rate     : <span class="code-key">${errorRate}</span>%`</span>);</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 2 — Generate CSV metrics log for trend analysis</p>
+  <div class="code-block"><span class="code-comment">// Log each request as a CSV row for importing into Excel/Grafana
+// Append to a "metrics_log" global string, write to file post-run</span>
+
+<span class="code-key">const</span> row = [
+    <span class="code-fn">new</span> <span class="code-fn">Date</span>().<span class="code-fn">toISOString</span>(),         <span class="code-comment">// timestamp</span>
+    <span class="code-fn">pm</span>.request.url.<span class="code-fn">toString</span>(),         <span class="code-comment">// endpoint URL</span>
+    <span class="code-fn">pm</span>.request.method,                  <span class="code-comment">// HTTP method</span>
+    <span class="code-fn">pm</span>.response.code,                   <span class="code-comment">// HTTP status code</span>
+    <span class="code-fn">pm</span>.response.responseTime,           <span class="code-comment">// response time ms</span>
+    <span class="code-fn">pm</span>.response.responseSize,           <span class="code-comment">// body size bytes</span>
+    <span class="code-fn">pm</span>.info.iteration                   <span class="code-comment">// current iteration number</span>
+].<span class="code-fn">join</span>(<span class="code-str">","</span>);
+
+<span class="code-key">let</span> log = <span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"csvLog"</span>) || <span class="code-str">"timestamp,url,method,status,responseTime,size,iteration\n"</span>;
+log += row + <span class="code-str">"\n"</span>;
+<span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"csvLog"</span>, log);
+<span class="code-comment">// After the run, copy pm.globals.get("csvLog") to a .csv file
+// Import into Excel/Google Sheets to create trend charts</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 3 — Detect slow endpoints and flag for investigation</p>
+  <div class="code-block"><span class="code-comment">// Test Script: build a "slow endpoints" list during the run
+// Review after run to identify which specific endpoints need optimization</span>
+
+<span class="code-key">const</span> SLOW_THRESHOLD = <span class="code-num">2000</span>;  <span class="code-comment">// flag anything over 2s</span>
+<span class="code-key">const</span> rt  = <span class="code-fn">pm</span>.response.responseTime;
+<span class="code-key">const</span> url = <span class="code-fn">pm</span>.request.url.<span class="code-fn">toString</span>();
+
+<span class="code-key">if</span> (rt > SLOW_THRESHOLD) {
+    <span class="code-key">let</span> slowList = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(<span class="code-fn">pm</span>.globals.<span class="code-fn">get</span>(<span class="code-str">"slowEndpoints"</span>) || <span class="code-str">"[]"</span>);
+    
+    <span class="code-comment">// Add if not already logged (avoid duplicate entries)</span>
+    <span class="code-key">const</span> exists = slowList.<span class="code-fn">some</span>(e => e.url === url);
+    <span class="code-key">if</span> (!exists) {
+        slowList.<span class="code-fn">push</span>({ url, maxRT: rt, method: <span class="code-fn">pm</span>.request.method });
+        <span class="code-fn">pm</span>.globals.<span class="code-fn">set</span>(<span class="code-str">"slowEndpoints"</span>, <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(slowList));
+    }
+    <span class="code-fn">console</span>.<span class="code-fn">warn</span>(<span class="code-str">`[SLOW] <span class="code-key">${pm.request.method}</span> <span class="code-key">${url}</span> = <span class="code-key">${rt}</span>ms`</span>);
+}</div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 4 — Newman htmlextra custom report title and branding</p>
+  <div class="code-block"><span class="code-comment"># Newman htmlextra reporter options
+# Produces a rich, interactive HTML report with timeline, charts, and failures</span>
+
+newman run collections/api.json \
+  --environment environments/staging.json \
+  --iteration-count 100 \
+  --reporters htmlextra \
+  --reporter-htmlextra-export reports/sprint_45_load_report.html \
+  --reporter-htmlextra-title "Sprint 45 — Load Test Report" \
+  --reporter-htmlextra-browserTitle "S45 Load Test" \
+  --reporter-htmlextra-showEnvironmentData \  <span class="code-comment"># show env vars in report</span>
+  --reporter-htmlextra-showMarkdownLinks \    <span class="code-comment"># render markdown in test names</span>
+  --reporter-htmlextra-skipSensitiveData      <span class="code-comment"># hide auth tokens in report</span>
+
+<span class="code-comment"># The report includes:
+# - Pie chart of pass/fail assertions
+# - Response time histogram per endpoint
+# - Expandable request/response details for every failure
+# - Timeline view showing requests over time</span></div>
+
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Example 5 — Defect report template as Postman test description</p>
+  <div class="code-block"><span class="code-comment">// Performance Defect Report Template
+// File this in your bug tracker (Jira, Azure DevOps) when a test fails
+// Attach the Newman HTML report as evidence
+
+// ====================================================
+// DEFECT TITLE: POST /orders/checkout — P95 response time exceeds SLA
+//
+// ENVIRONMENT:  Staging (2-node cluster, 8 vCPU, 16GB RAM)
+// TEST TYPE:    Load Test
+// DATE:         2024-01-15
+// SEVERITY:     High (business-critical endpoint)
+//
+// OBSERVED:     P95 = 7,823ms under 50 concurrent users
+// EXPECTED:     P95 &lt; 2,000ms (per NFR-API-002)
+// SLA BREACH:   3.9× above threshold
+//
+// REPRODUCTION:
+//   newman run collections/api.json
+//     --environment environments/staging.json
+//     --iteration-count 200 --delay-request 300
+//
+// SERVER OBSERVATIONS DURING TEST:
+//   - DB connection pool: 98% utilized (max 100 connections)
+//   - CPU: 45% (not the bottleneck)
+//   - DB query "SELECT * FROM orders JOIN..." avg 6.2s under load
+//
+// ROOT CAUSE HYPOTHESIS:
+//   Missing index on orders.customer_id — full table scan under load
+//
+// RECOMMENDED FIX:
+//   CREATE INDEX idx_orders_customer ON orders(customer_id);
+//   Consider connection pool increase to 200
+// ==================================================== </span></div>
+
+  <div class="section-title"><i class="ti ti-star" aria-hidden="true"></i> Best Practices</div>
+  <div class="card">
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Always correlate client-side response time spikes with server-side metrics — CPU, memory, DB query time — to identify the bottleneck tier.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Archive every test run's report — trend analysis over 10+ runs reveals whether performance is improving or degrading sprint over sprint.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Write defects with evidence: include the exact Newman command, environment config, and htmlextra report link.</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Present results in business language to stakeholders: "Checkout takes 8 seconds under 50 users — that is a 40% cart abandonment risk" lands harder than "P95 = 8,000ms".</span></div>
+    <div class="checklist-item"><span class="check-icon"><i class="ti ti-circle-check"></i></span><span>Retest after every fix and compare against the original failing run — verify the fix resolves the issue without introducing new regressions.</span></div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-help" aria-hidden="true"></i> Interview Q&A</div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q1: How do you identify a database bottleneck from Postman test results? <span class="arrow">›</span></div><div class="qa-a">Signs in Postman results: response time increases steeply with load (non-linear scaling), write endpoints (POST/PUT) degrade faster than reads (GET), and specific endpoints that share a database table all slow simultaneously. Cross-reference with DB metrics: connection pool utilization approaching 100%, slow query log showing table scans, lock wait time increasing. The combination of client-side and server-side evidence confirms the DB as the bottleneck.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q2: What does the Newman htmlextra reporter show? <span class="arrow">›</span></div><div class="qa-a">Newman htmlextra generates a self-contained HTML file with: summary cards (total requests, failures, duration, average response time), a pie chart of assertion pass/fail ratio, response time histogram for each endpoint, expandable accordion for every failed request showing the full request/response, environment variable values (with option to mask sensitive data), and a timeline view. It is the standard stakeholder-facing report format for Postman-based performance testing.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q3: How do you triage a performance issue found during load testing? <span class="arrow">›</span></div><div class="qa-a">Triage process: (1) Reproduce in isolation — run the single slow endpoint with 1 VU to establish baseline. (2) Instrument the server — add APM tracing to the endpoint to see breakdown: auth time, DB time, external API time, serialization time. (3) Identify the largest contributor. (4) Check infrastructure: DB connection pool, thread pool, cache hit rate. (5) Form hypothesis, apply fix, rerun load test, compare P95 before and after. Document all steps and attach evidence to the defect ticket.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q4: What is a performance regression and how do you prevent it? <span class="arrow">›</span></div><div class="qa-a">A performance regression is a measurable degradation in response time, throughput, or error rate introduced by a code change. Prevention: (1) CI/CD performance gate that runs Newman on every PR and blocks merge if P95 degrades more than 20% from baseline. (2) Store baseline per endpoint, not just overall. (3) Require performance review for changes to database queries, external service calls, or caching layers. (4) Code review checklist includes performance impact assessment.</div></div>
+  <div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">Q5: How would you explain a failed load test result to a non-technical manager? <span class="arrow">›</span></div><div class="qa-a">Translate technical metrics into business impact: "During our load test simulating your expected Black Friday traffic (500 simultaneous shoppers), the checkout process took an average of 12 seconds — research shows 53% of users abandon purchases after 3 seconds of waiting. This means we risk losing roughly half of our peak revenue if we launch as-is. The root cause is a database query that needs a 2-hour engineering fix. I recommend delaying launch by one day to apply and verify the fix." Always frame it as risk, impact, and solution — not just numbers.</div></div>
+
+  <div class="clearfix">
+    <button class="mark-done" onclick="markDone(9)"><i class="ti ti-check" aria-hidden="true"></i> Mark Complete</button>
+    <button style="margin-top:20px;padding:8px 20px;border:0.5px solid #5DCAA5;border-radius:var(--border-radius-md);background:#E1F5EE;color:#085041;cursor:pointer;font-size:13px;float:right" onclick="alert('🎉 Congratulations! You have completed all 10 sessions. You are now ready for SDET-level performance testing interviews and real-world testing with Postman + Newman!')">🎉 Course Complete!</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+let current = 0;
+const done = new Array(10).fill(false);
+
+function goTab(idx) {
+  document.querySelectorAll('.session').forEach((s,i) => s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', i===idx);
+  });
+  current = idx;
+  updateProgress();
+  window.scrollTo(0,0);
+}
+
+function markDone(idx) {
+  done[idx] = true;
+  const btn = document.querySelectorAll('.tab-btn')[idx];
+  btn.classList.add('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const doneCount = done.filter(Boolean).length;
+  const pct = Math.round((current + 1) / 10 * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-txt').textContent = `Session ${current+1} / 10`;
+}
+
+function toggleQA(el) {
+  el.closest('.qa-item').classList.toggle('open');
+}
+
+updateProgress();
+</script>
+</body>
+</html>

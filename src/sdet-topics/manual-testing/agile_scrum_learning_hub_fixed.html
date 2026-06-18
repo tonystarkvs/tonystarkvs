@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agile Scrum Learning Hub — SDET Edition</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --border-radius-lg:12px;
+  --border-radius-md:8px;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f4f8;
+  --color-border-primary:#534AB7;
+  --color-border-secondary:#d1d1db;
+  --color-border-tertiary:#e4e4eb;
+  --color-text-primary:#1a1a2e;
+  --color-text-secondary:#555770;
+  --color-text-tertiary:#8e90a6;
+  --font-sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+
+body{font-family:var(--font-sans);color:var(--color-text-primary);background:transparent}
+.hub{padding:1.5rem 0}
+.phase-strip{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.phase-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;border:0.5px solid}
+.phase-f{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.phase-i{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.phase-a{background:#FAECE7;color:#4A1B0C;border-color:#F0997B}
+.tab-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:1.5rem}
+.tab-btn{font-size:12px;padding:6px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab-btn:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.tab-btn.active{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.tab-btn.done::after{content:" ✓";color:#1D9E75}
+.progress-bar{height:4px;background:var(--color-background-secondary);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#7F77DD,#1D9E75);border-radius:2px;transition:width .4s}
+.session{display:none}
+.session.active{display:block}
+.s-header{margin-bottom:1.25rem}
+.s-tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;margin-bottom:6px;display:inline-block}
+.tag-f{background:#EEEDFE;color:#3C3489}
+.tag-i{background:#E1F5EE;color:#085041}
+.tag-a{background:#FAECE7;color:#993C1D}
+.s-title{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.s-sub{font-size:14px;color:var(--color-text-secondary)}
+.section{margin-bottom:1.5rem}
+.section-hdr{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem;padding-bottom:4px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.def-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem}
+.def-card p{font-size:14px;line-height:1.7;color:var(--color-text-primary)}
+.def-card .kw{color:#534AB7;font-weight:500}
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:.75rem}
+.pillar{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.75rem 1rem;text-align:center}
+.pillar .icon{font-size:20px;margin-bottom:4px}
+.pillar .pl-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.pillar .pl-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.interview-grid{display:grid;gap:8px}
+.i-line{display:flex;gap:8px;align-items:flex-start;padding:.6rem .75rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:13px;line-height:1.5}
+.i-bullet{width:18px;height:18px;border-radius:50%;background:#EEEDFE;color:#534AB7;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.qa-stack{display:grid;gap:8px}
+.qa-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.qa-q{padding:.6rem .9rem;background:var(--color-background-secondary);font-size:13px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.qa-q:hover{background:var(--color-background-primary)}
+.qa-a{display:none;padding:.6rem .9rem;font-size:13px;line-height:1.7;color:var(--color-text-secondary);border-top:0.5px solid var(--color-border-tertiary)}
+.qa-a.open{display:block}
+.chk-list{display:grid;gap:6px}
+.chk-item{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5}
+.chk-box{width:16px;height:16px;border:0.5px solid var(--color-border-primary);border-radius:3px;flex-shrink:0;cursor:pointer;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .15s}
+.chk-box.checked{background:#1D9E75;border-color:#1D9E75;color:#fff}
+.flow-wrap{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem;overflow-x:auto}
+.flow-wrap svg{display:block;min-width:560px}
+.nav-row{display:flex;justify-content:space-between;margin-top:1.5rem;gap:8px}
+.nav-btn{padding:8px 18px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);cursor:pointer}
+.nav-btn:hover{background:var(--color-background-primary)}
+.nav-btn.primary{background:#534AB7;color:#fff;border-color:#534AB7}
+.nav-btn.primary:hover{background:#3C3489}
+
+.c-amber rect{fill:#FAEEDA;stroke:#EF9F27;stroke-width:1.5}
+.c-blue rect{fill:#E6F1FB;stroke:#85B7EB;stroke-width:1.5}
+.c-coral rect{fill:#FAECE7;stroke:#F0997B;stroke-width:1.5}
+.c-gray rect{fill:#f4f4f8;stroke:#d1d1db;stroke-width:1.5}
+.c-green rect{fill:#EAF3DE;stroke:#97C459;stroke-width:1.5}
+.c-purple rect{fill:#EEEDFE;stroke:#AFA9EC;stroke-width:1.5}
+.c-teal rect{fill:#E1F5EE;stroke:#5DCAA5;stroke-width:1.5}
+svg .th{font-weight:600;fill:var(--color-text-primary);font-family:var(--font-sans);font-size:13px}
+svg .ts{font-size:11px;fill:var(--color-text-secondary);font-family:var(--font-sans)}
+</style>
+
+<div class="hub">
+<h2 class="sr-only">Agile, Scrum & Sprint Ceremonies — 10-Session Learning Hub for Beginners</h2>
+
+<div class="phase-strip">
+  <span class="phase-badge phase-f">Phase 1: Fundamentals (Sessions 1–3)</span>
+  <span class="phase-badge phase-i">Phase 2: Intermediate (Sessions 4–7)</span>
+  <span class="phase-badge phase-a">Phase 3: Advanced (Sessions 8–10)</span>
+</div>
+
+<div class="tab-bar" id="tabBar"></div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+
+<div id="sessions"></div>
+</div>
+
+<script>
+const sessions=[
+{id:1,phase:"f",phaseLabel:"Fundamentals",title:"What is Agile? The Mindset",sub:"Why Agile exists, its values, and the shift from Waterfall",
+def:`<span class='kw'>Agile</span> is a <span class='kw'>mindset</span> (not a tool!) for building software in small, fast cycles called <span class='kw'>iterations</span>, so teams can <span class='kw'>adapt</span> to change instead of following a rigid plan. Think of it like cooking a dish by tasting as you go — not following a recipe blindly.`,
+keywords:[
+{t:"Agile",d:"A philosophy of building software iteratively, embracing change, and delivering value fast."},
+{t:"Waterfall",d:"Old-school method: all requirements → design → code → test → release in one long sequence."},
+{t:"Iteration",d:"A short, fixed time-box where a working piece of software is built and reviewed."},
+{t:"Mindset",d:"A way of thinking — Agile is not a set of rules but a set of values and principles."},
+{t:"Stakeholder",d:"Anyone who has interest in the product — clients, users, managers."},
+{t:"Adaptive",d:"Ability to change direction based on feedback rather than sticking to an original plan."}
+],
+svgTitle:"agile_vs_waterfall",
+svgDesc:"Comparison diagram of Waterfall (linear, sequential phases) vs Agile (iterative loops delivering value repeatedly)",
+svgCode:`<svg width="100%" viewBox="0 0 680 370" role="img"><title>Waterfall vs Agile</title><desc>Left side shows Waterfall as a sequential downward staircase. Right side shows Agile as repeating iteration loops.</desc><defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="th" x="160" y="30" text-anchor="middle">Waterfall</text>
+<text class="th" x="490" y="30" text-anchor="middle">Agile</text>
+<g class="c-gray"><rect x="60" y="48" width="200" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="160" y="70" text-anchor="middle" dominant-baseline="central">Requirements</text></g>
+<line x1="160" y1="84" x2="160" y2="100" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a1)" fill="none"/>
+<g class="c-gray"><rect x="60" y="100" width="200" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="160" y="122" text-anchor="middle" dominant-baseline="central">Design</text></g>
+<line x1="160" y1="136" x2="160" y2="152" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a1)" fill="none"/>
+<g class="c-gray"><rect x="60" y="152" width="200" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="160" y="174" text-anchor="middle" dominant-baseline="central">Development</text></g>
+<line x1="160" y1="188" x2="160" y2="204" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a1)" fill="none"/>
+<g class="c-gray"><rect x="60" y="204" width="200" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="160" y="226" text-anchor="middle" dominant-baseline="central">Testing</text></g>
+<line x1="160" y1="240" x2="160" y2="256" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a1)" fill="none"/>
+<g class="c-coral"><rect x="60" y="256" width="200" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="160" y="278" text-anchor="middle" dominant-baseline="central">Release (after months!)</text></g>
+<text class="ts" x="160" y="320" text-anchor="middle" fill="#993C1D">❌ Feedback only at the end</text>
+
+<g class="c-teal"><rect x="360" y="48" width="120" height="44" rx="10" stroke-width="0.5"/><text class="th" x="420" y="70" text-anchor="middle" dominant-baseline="central">Sprint 1</text><text class="ts" x="420" y="84" text-anchor="middle" dominant-baseline="central">Plan→Build→Test</text></g>
+<g class="c-purple"><rect x="360" y="116" width="120" height="44" rx="10" stroke-width="0.5"/><text class="th" x="420" y="138" text-anchor="middle" dominant-baseline="central">Sprint 2</text><text class="ts" x="420" y="152" text-anchor="middle" dominant-baseline="central">Plan→Build→Test</text></g>
+<g class="c-teal"><rect x="360" y="184" width="120" height="44" rx="10" stroke-width="0.5"/><text class="th" x="420" y="206" text-anchor="middle" dominant-baseline="central">Sprint 3</text><text class="ts" x="420" y="220" text-anchor="middle" dominant-baseline="central">Plan→Build→Test</text></g>
+<g class="c-green"><rect x="340" y="256" width="160" height="36" rx="8" stroke-width="0.5"/><text class="ts" x="420" y="278" text-anchor="middle" dominant-baseline="central">✓ Value delivered every 2 weeks!</text></g>
+<line x1="420" y1="92" x2="420" y2="116" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#a1)" fill="none"/>
+<line x1="420" y1="160" x2="420" y2="184" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#a1)" fill="none"/>
+<line x1="420" y1="228" x2="420" y2="256" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#a1)" fill="none"/>
+<path d="M480 138 Q560 138 560 70 Q560 26 500 26 Q440 26 420 48" stroke="#7F77DD" stroke-width="1" stroke-dasharray="4 3" fill="none" marker-end="url(#a1)"/>
+<text class="ts" x="570" y="100" text-anchor="middle">Feedback</text><text class="ts" x="570" y="114" text-anchor="middle">loop</text>
+<line x1="320" y1="40" x2="320" y2="340" stroke="var(--color-text-tertiary)" stroke-width="0.5" stroke-dasharray="4 3" fill="none"/>
+</svg>`,
+pillars:[
+{icon:"💡",t:"Individuals & Interactions",s:"Over processes & tools"},
+{icon:"📦",t:"Working Software",s:"Over documentation"},
+{icon:"🤝",t:"Customer Collaboration",s:"Over contract negotiation"},
+{icon:"🔄",t:"Responding to Change",s:"Over following a plan"}
+],
+lines:[
+"Agile is a mindset, not a methodology — it is a way of thinking about software delivery.",
+"Agile was born in 2001 when 17 software experts signed the Agile Manifesto.",
+"The core idea of Agile is to deliver small, working pieces of software frequently.",
+"Agile replaces the 'build everything at once' Waterfall model with iterative delivery.",
+"In Agile, customer feedback is collected continuously, not just at the end.",
+"Agile teams are self-organizing, cross-functional, and empowered to make decisions.",
+"The four values of the Agile Manifesto guide every Agile practice in the industry."
+],
+bp:[
+"Always involve the customer or product owner from day one.",
+"Prefer face-to-face or video communication over lengthy email threads.",
+"Deliver a small working increment every 1–2 weeks.",
+"Embrace change in requirements even late in the project.",
+"Reflect and improve after every iteration via retrospectives.",
+"Keep the team small (5–9 people) and cross-functional.",
+"Value working software over voluminous documentation."
+],
+qa:[
+{q:"What is Agile and why was it created?",a:"Agile is an iterative software delivery mindset created in 2001 to solve problems of Waterfall — slow delivery, late feedback, and inability to change. The 17 authors of the Agile Manifesto defined 4 values and 12 principles that guide Agile teams."},
+{q:"What are the 4 values of the Agile Manifesto?",a:"(1) Individuals & Interactions over processes & tools, (2) Working Software over comprehensive documentation, (3) Customer Collaboration over contract negotiation, (4) Responding to Change over following a plan."},
+{q:"How is Agile different from Waterfall?",a:"Waterfall is sequential — all phases (Req → Design → Dev → Test → Release) happen one after another, so feedback comes at the very end. Agile is iterative — small working pieces are delivered every 2 weeks, so feedback is continuous."},
+{q:"Can Agile be used in non-software teams?",a:"Yes! Agile principles (iterative delivery, collaboration, adaptability) are now used in marketing, HR, finance, and even construction. The mindset is universal."},
+{q:"What is an Agile Manifesto principle related to testing?",a:"'Continuous attention to technical excellence and good design enhances agility' — this principle directly supports SDET/QA roles, emphasizing quality is not an afterthought but built throughout."}
+]},
+
+{id:2,phase:"f",phaseLabel:"Fundamentals",title:"Scrum Framework — The Big Picture",sub:"Roles, Artifacts, and Events at a glance",
+def:`<span class='kw'>Scrum</span> is the most popular <span class='kw'>Agile framework</span>. It organizes work into fixed-length <span class='kw'>Sprints</span> (1–4 weeks) with defined <span class='kw'>Roles</span> (who does what), <span class='kw'>Artifacts</span> (what we track), and <span class='kw'>Events</span> (when we meet). Scrum is like a sports team — everyone has a position, there's a game plan, and you play match by match.`,
+keywords:[
+{t:"Scrum",d:"A lightweight Agile framework with 3 roles, 3 artifacts, and 5 events."},
+{t:"Sprint",d:"A fixed time-box (usually 2 weeks) in which a done, usable product increment is created."},
+{t:"Framework",d:"A structured set of rules/guidelines — not a full process, leaves room for team decisions."},
+{t:"Empiricism",d:"Scrum's foundation: make decisions based on observation (transparency, inspection, adaptation)."},
+{t:"Artifact",d:"A Scrum work product that provides key information — Product Backlog, Sprint Backlog, Increment."},
+{t:"Event",d:"Scrum's formal meetings: Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective."},
+{t:"Increment",d:"The sum of all completed Product Backlog Items in a Sprint — must be potentially shippable."}
+],
+svgTitle:"scrum_framework_overview",
+svgDesc:"Scrum framework: 3 roles at top, 3 artifacts in middle, 5 events in a sprint cycle at bottom",
+svgCode:`<svg width="100%" viewBox="0 0 680 420" role="img"><title>Scrum Framework Overview</title><desc>Shows the three Scrum roles, three artifacts, and five events arranged in a structured layout.</desc><defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="th" x="340" y="24" text-anchor="middle">The Scrum Framework</text>
+<text class="ts" x="60" y="52" text-anchor="middle">Roles</text>
+<g class="c-purple"><rect x="20" y="60" width="100" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="70" y="82" text-anchor="middle" dominant-baseline="central">Product Owner</text></g>
+<g class="c-purple"><rect x="130" y="60" width="100" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="180" y="82" text-anchor="middle" dominant-baseline="central">Scrum Master</text></g>
+<g class="c-purple"><rect x="240" y="60" width="110" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="295" y="82" text-anchor="middle" dominant-baseline="central">Dev Team</text></g>
+<text class="ts" x="500" y="52" text-anchor="middle">Artifacts</text>
+<g class="c-teal"><rect x="400" y="60" width="120" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="460" y="82" text-anchor="middle" dominant-baseline="central">Product Backlog</text></g>
+<g class="c-teal"><rect x="532" y="60" width="120" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="592" y="82" text-anchor="middle" dominant-baseline="central">Sprint Backlog</text></g>
+<line x1="340" y1="112" x2="340" y2="140" stroke="var(--color-text-tertiary)" stroke-width="0.5" stroke-dasharray="4 3" fill="none"/>
+<rect x="20" y="140" width="640" height="200" rx="14" fill="none" stroke="var(--color-text-tertiary)" stroke-width="0.5" stroke-dasharray="5 4"/>
+<text class="ts" x="340" y="132" text-anchor="middle">Sprint (1–4 weeks)</text>
+<g class="c-amber"><rect x="36" y="156" width="115" height="56" rx="8" stroke-width="0.5"/><text class="th" x="94" y="178" text-anchor="middle">Sprint Planning</text><text class="ts" x="94" y="196" text-anchor="middle">Day 1</text></g>
+<line x1="151" y1="184" x2="168" y2="184" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a2)" fill="none"/>
+<g class="c-coral"><rect x="168" y="156" width="115" height="56" rx="8" stroke-width="0.5"/><text class="th" x="226" y="178" text-anchor="middle">Daily Scrum</text><text class="ts" x="226" y="196" text-anchor="middle">Each morning</text></g>
+<line x1="283" y1="184" x2="300" y2="184" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a2)" fill="none"/>
+<g class="c-blue"><rect x="300" y="156" width="115" height="56" rx="8" stroke-width="0.5"/><text class="th" x="358" y="178" text-anchor="middle">Development</text><text class="ts" x="358" y="196" text-anchor="middle">Daily work</text></g>
+<line x1="415" y1="184" x2="432" y2="184" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a2)" fill="none"/>
+<g class="c-green"><rect x="432" y="156" width="115" height="56" rx="8" stroke-width="0.5"/><text class="th" x="490" y="178" text-anchor="middle">Sprint Review</text><text class="ts" x="490" y="196" text-anchor="middle">End of sprint</text></g>
+<line x1="547" y1="184" x2="564" y2="184" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a2)" fill="none"/>
+<g class="c-pink"><rect x="564" y="156" width="80" height="56" rx="8" stroke-width="0.5"/><text class="th" x="604" y="178" text-anchor="middle">Retro</text><text class="ts" x="604" y="196" text-anchor="middle">End of sprint</text></g>
+<g class="c-green"><rect x="220" y="250" width="240" height="44" rx="10" stroke-width="0.5"/><text class="th" x="340" y="272" text-anchor="middle" dominant-baseline="central">✓ Increment (Potentially Shippable)</text></g>
+<line x1="340" y1="294" x2="340" y2="360" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#a2)" fill="none"/>
+<text class="ts" x="340" y="380" text-anchor="middle">→ Next Sprint begins</text>
+<path d="M656 294 Q670 294 670 184 Q670 74 648 74" stroke="#7F77DD" stroke-width="1" stroke-dasharray="4 3" fill="none" marker-end="url(#a2)"/>
+<text class="ts" x="672" y="200" text-anchor="start"> </text>
+</svg>`,
+pillars:[
+{icon:"👁️",t:"Transparency",s:"Everyone sees the real state"},
+{icon:"🔍",t:"Inspection",s:"Frequently inspect work"},
+{icon:"🔧",t:"Adaptation",s:"Adjust when needed"}
+],
+lines:[
+"Scrum is a lightweight framework — it gives you the minimal structure to deliver value fast.",
+"Scrum has exactly 3 roles: Product Owner, Scrum Master, and Developers.",
+"Scrum has exactly 3 artifacts: Product Backlog, Sprint Backlog, and Increment.",
+"Scrum has exactly 5 events: Sprint itself, Sprint Planning, Daily Scrum, Sprint Review, and Retrospective.",
+"Scrum is built on 3 pillars: Transparency, Inspection, and Adaptation (TIA).",
+"The Scrum Guide (by Schwaber & Sutherland) is the official, free reference for Scrum.",
+"Scrum teams are self-managing — no one tells them how to do their work."
+],
+bp:[
+"Always work from a prioritized Product Backlog — never start a sprint with unclear priorities.",
+"Keep the team size between 3 and 9 people for optimal communication.",
+"Protect the sprint goal — avoid mid-sprint scope changes.",
+"Use Definition of Done (DoD) to ensure every increment is truly shippable.",
+"Scrum Master is a servant-leader, not a project manager.",
+"Never skip the Retrospective — it is how the team continuously improves.",
+"Product Owner must be available to the team for quick clarifications."
+],
+qa:[
+{q:"What are the 3 pillars of Scrum?",a:"Transparency (everyone sees the true state of work), Inspection (frequent check of artifacts and progress), and Adaptation (adjusting when deviations are found). These are known as TIA."},
+{q:"What is the difference between a Scrum Master and a Project Manager?",a:"A Project Manager assigns tasks, tracks timelines, and has authority. A Scrum Master is a servant-leader who coaches the team on Scrum, removes impediments, and facilitates events — they do NOT manage people or assign work."},
+{q:"What is the Definition of Done (DoD)?",a:"A shared understanding of what 'done' means for a Product Backlog Item — typically includes: coded, code reviewed, unit tested, integration tested, documentation updated, and deployed to staging. If it's not done per DoD, it cannot be part of the Increment."},
+{q:"How does Scrum relate to Agile?",a:"Agile is the mindset/philosophy. Scrum is one of many frameworks that implement Agile values. All Scrum is Agile, but not all Agile is Scrum (Kanban, XP, SAFe are also Agile)."},
+{q:"What is a Sprint Goal?",a:"A Sprint Goal is a single, concise objective set during Sprint Planning that gives the team a shared purpose for the Sprint. It provides focus and flexibility — the team may adjust their plan as long as the Sprint Goal is met."}
+]},
+
+{id:3,phase:"f",phaseLabel:"Fundamentals",title:"Scrum Roles in Detail",sub:"Product Owner, Scrum Master & Developers — who does what",
+def:`The <span class='kw'>Scrum Team</span> has three distinct roles, each with clear accountability. The <span class='kw'>Product Owner</span> decides <em>what</em> to build, the <span class='kw'>Scrum Master</span> ensures Scrum is followed <em>correctly</em>, and the <span class='kw'>Developers</span> decide <em>how</em> to build it. No role has authority over the other — they are peers.`,
+keywords:[
+{t:"Product Owner (PO)",d:"Accountable for maximizing product value. Manages and orders the Product Backlog."},
+{t:"Scrum Master (SM)",d:"Accountable for Scrum adoption. Coaches team, removes impediments, facilitates events."},
+{t:"Developers",d:"Everyone who does the work in a Sprint — engineers, testers, designers. Cross-functional."},
+{t:"Servant Leader",d:"Scrum Master's leadership style — serving the team's needs rather than directing them."},
+{t:"Impediment",d:"Anything blocking the team from progressing — the Scrum Master removes these."},
+{t:"Cross-functional",d:"The Developer team collectively has all skills needed to deliver a sprint Increment."},
+{t:"Accountability",d:"Scrum uses 'accountability' not 'responsibility' — it means owning the outcome, not micromanaging."}
+],
+svgTitle:"scrum_roles_detail",
+svgDesc:"Three Scrum roles shown as three columns with their key responsibilities listed under each",
+svgCode:`<svg width="100%" viewBox="0 0 680 360" role="img"><title>Scrum Roles Detail</title><desc>Three columns showing Product Owner, Scrum Master, and Developers with their key duties.</desc>
+<g class="c-purple"><rect x="20" y="20" width="196" height="44" rx="10" stroke-width="0.5"/><text class="th" x="118" y="42" text-anchor="middle" dominant-baseline="central">Product Owner</text></g>
+<g class="c-amber"><rect x="242" y="20" width="196" height="44" rx="10" stroke-width="0.5"/><text class="th" x="340" y="42" text-anchor="middle" dominant-baseline="central">Scrum Master</text></g>
+<g class="c-teal"><rect x="464" y="20" width="196" height="44" rx="10" stroke-width="0.5"/><text class="th" x="562" y="42" text-anchor="middle" dominant-baseline="central">Developers</text></g>
+<text class="ts" x="118" y="85" text-anchor="middle">→ Owns the Product Backlog</text>
+<text class="ts" x="118" y="105" text-anchor="middle">→ Prioritizes user stories</text>
+<text class="ts" x="118" y="125" text-anchor="middle">→ Defines acceptance criteria</text>
+<text class="ts" x="118" y="145" text-anchor="middle">→ Talks to stakeholders</text>
+<text class="ts" x="118" y="165" text-anchor="middle">→ Says NO to scope creep</text>
+<text class="ts" x="118" y="185" text-anchor="middle">→ Accepts/rejects work</text>
+<text class="ts" x="340" y="85" text-anchor="middle">→ Coaches team on Scrum</text>
+<text class="ts" x="340" y="105" text-anchor="middle">→ Removes impediments</text>
+<text class="ts" x="340" y="125" text-anchor="middle">→ Facilitates all 5 events</text>
+<text class="ts" x="340" y="145" text-anchor="middle">→ Shields team from distraction</text>
+<text class="ts" x="340" y="165" text-anchor="middle">→ Servant-leader mindset</text>
+<text class="ts" x="340" y="185" text-anchor="middle">→ Drives continuous improvement</text>
+<text class="ts" x="562" y="85" text-anchor="middle">→ Builds the product</text>
+<text class="ts" x="562" y="105" text-anchor="middle">→ Estimates stories</text>
+<text class="ts" x="562" y="125" text-anchor="middle">→ Self-organizes daily work</text>
+<text class="ts" x="562" y="145" text-anchor="middle">→ Owns technical quality</text>
+<text class="ts" x="562" y="165" text-anchor="middle">→ Attends Daily Scrum</text>
+<text class="ts" x="562" y="185" text-anchor="middle">→ Upholds Definition of Done</text>
+<line x1="20" y1="200" x2="216" y2="200" stroke="var(--color-text-tertiary)" stroke-width="0.5"/>
+<line x1="242" y1="200" x2="438" y2="200" stroke="var(--color-text-tertiary)" stroke-width="0.5"/>
+<line x1="464" y1="200" x2="660" y2="200" stroke="var(--color-text-tertiary)" stroke-width="0.5"/>
+<g class="c-purple"><rect x="40" y="210" width="156" height="34" rx="6" stroke-width="0.5"/><text class="ts" x="118" y="231" text-anchor="middle" dominant-baseline="central">One person only</text></g>
+<g class="c-amber"><rect x="262" y="210" width="156" height="34" rx="6" stroke-width="0.5"/><text class="ts" x="340" y="231" text-anchor="middle" dominant-baseline="central">Can be a team member</text></g>
+<g class="c-teal"><rect x="484" y="210" width="156" height="34" rx="6" stroke-width="0.5"/><text class="ts" x="562" y="231" text-anchor="middle" dominant-baseline="central">3–9 people max</text></g>
+<text class="ts" x="340" y="290" text-anchor="middle">All three roles = one Scrum Team. No hierarchy. No boss.</text>
+<rect x="80" y="308" width="520" height="30" rx="8" fill="none" stroke="var(--color-text-tertiary)" stroke-width="0.5" stroke-dasharray="4 3"/>
+<text class="ts" x="340" y="327" text-anchor="middle">💡 SDET/QA fits under Developers — testing is a developer responsibility in Scrum</text>
+</svg>`,
+pillars:[
+{icon:"🎯",t:"Product Owner",s:"Maximizes product value"},
+{icon:"🛡️",t:"Scrum Master",s:"Enables team effectiveness"},
+{icon:"⚙️",t:"Developers",s:"Delivers the Increment"}
+],
+lines:[
+"A Scrum Team has no sub-teams — Developers, PO, and SM are all peers.",
+"The Product Owner is accountable for the Product Backlog — not a secretary who takes orders.",
+"The Scrum Master is a servant-leader — they serve both the team and the organization.",
+"Developers in Scrum include all people who build the product — coders, testers, designers.",
+"No one can tell Developers how to do their technical work — they are self-organizing.",
+"A Scrum Master can be a Developer too — part-time SM is allowed in smaller teams.",
+"The Product Owner is one person — a committee cannot act as PO."
+],
+bp:[
+"PO must have a prioritized, refined backlog ready at least one sprint ahead.",
+"Scrum Master should hold regular 1:1s with team members to surface hidden impediments.",
+"Developers should estimate together (Planning Poker) — no single person estimates alone.",
+"PO must attend Sprint Reviews — they are accountable for accepting the Increment.",
+"Scrum Master must never assign tasks — doing so violates self-organization.",
+"Developers should all be present in Daily Scrum — no proxies or stand-ins.",
+"Cross-skilling within the Dev team reduces bottlenecks (T-shaped skills model)."
+],
+qa:[
+{q:"Can a Scrum Master also be a Developer in the same team?",a:"Yes, but it is discouraged for large teams. In small teams (≤4 people), one person may wear both hats. The risk is conflict of interest — a SM-Developer may prioritize their own tasks over removing team impediments."},
+{q:"What happens if the Product Owner is unavailable during a Sprint?",a:"This is an impediment that the Scrum Master must escalate. An unavailable PO leads to unanswered questions, incorrect assumptions, and wasted sprint effort. A proxy PO may be designated temporarily."},
+{q:"Who is responsible for quality in a Scrum team?",a:"All Developers are collectively responsible for quality. Testing is not a separate phase — it is embedded in the sprint. SDETs/QA engineers are part of the Developer role and own test automation, CI pipelines, and quality gates."},
+{q:"What is the role of a manager in Scrum?",a:"Scrum does not define a Manager role. Organizational managers should work with the Scrum Master to remove organizational impediments and support team development. They should not attend Daily Scrums or direct sprint work."},
+{q:"How does an SDET fit into a Scrum team?",a:"An SDET (Software Development Engineer in Test) is a Developer in Scrum. They participate in Sprint Planning (estimating test effort), Daily Scrum (sharing testing blockers), Sprint Review (demonstrating tested features), and Retrospectives (improving quality processes)."}
+]},
+
+{id:4,phase:"i",phaseLabel:"Intermediate",title:"Sprint Planning — Session Deep Dive",sub:"How a Sprint starts: What, Why, and How",
+def:`<span class='kw'>Sprint Planning</span> is the first event in every Sprint. The whole Scrum Team attends. In this meeting, the team decides: <span class='kw'>Why</span> this Sprint matters (Sprint Goal), <span class='kw'>What</span> to build (selected backlog items), and <span class='kw'>How</span> they'll build it (tasks). Timebox: max 8 hours for a 4-week sprint (proportionally less for shorter sprints).`,
+keywords:[
+{t:"Sprint Planning",d:"Timeboxed ceremony to define what will be done in the Sprint and how."},
+{t:"Sprint Goal",d:"A single objective that gives the Sprint purpose and provides team focus."},
+{t:"Sprint Backlog",d:"Selected Product Backlog Items + plan for delivering them (tasks)."},
+{t:"Story Points",d:"A unit for estimating relative effort/complexity — not hours! (e.g. 1=trivial, 8=complex)."},
+{t:"Planning Poker",d:"Estimation technique: each person reveals their estimate simultaneously to avoid anchoring."},
+{t:"Velocity",d:"Average story points a team completes per sprint — used to forecast how much fits in a sprint."},
+{t:"Acceptance Criteria",d:"Conditions that must be met for a User Story to be accepted by the Product Owner."}
+],
+svgTitle:"sprint_planning_flow",
+svgDesc:"Sprint Planning meeting flow: inputs, the three topics discussed, and outputs",
+svgCode:`<svg width="100%" viewBox="0 0 680 380" role="img"><title>Sprint Planning Flow</title><desc>Shows inputs to Sprint Planning, the three planning topics (Why/What/How), and outputs including Sprint Backlog and Sprint Goal.</desc><defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="th" x="340" y="24" text-anchor="middle">Sprint Planning — Inputs → Process → Outputs</text>
+<g class="c-gray"><rect x="20" y="40" width="140" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="90" y="62" text-anchor="middle" dominant-baseline="central">Product Backlog</text></g>
+<g class="c-gray"><rect x="20" y="86" width="140" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="90" y="108" text-anchor="middle" dominant-baseline="central">Team Velocity</text></g>
+<g class="c-gray"><rect x="20" y="132" width="140" height="36" rx="6" stroke-width="0.5"/><text class="ts" x="90" y="154" text-anchor="middle" dominant-baseline="central">Team Capacity</text></g>
+<line x1="160" y1="110" x2="190" y2="160" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a3)" fill="none"/>
+<rect x="190" y="60" width="300" height="260" rx="14" fill="none" stroke="#534AB7" stroke-width="0.5"/>
+<text class="ts" x="340" y="52" text-anchor="middle" fill="#534AB7">Sprint Planning Meeting</text>
+<g class="c-purple"><rect x="210" y="76" width="260" height="56" rx="8" stroke-width="0.5"/><text class="th" x="340" y="98" text-anchor="middle">Topic 1: WHY?</text><text class="ts" x="340" y="116" text-anchor="middle">Define the Sprint Goal</text></g>
+<line x1="340" y1="132" x2="340" y2="150" stroke="#534AB7" stroke-width="1" marker-end="url(#a3)" fill="none"/>
+<g class="c-amber"><rect x="210" y="150" width="260" height="56" rx="8" stroke-width="0.5"/><text class="th" x="340" y="172" text-anchor="middle">Topic 2: WHAT?</text><text class="ts" x="340" y="190" text-anchor="middle">Select backlog items (by velocity)</text></g>
+<line x1="340" y1="206" x2="340" y2="224" stroke="#534AB7" stroke-width="1" marker-end="url(#a3)" fill="none"/>
+<g class="c-teal"><rect x="210" y="224" width="260" height="56" rx="8" stroke-width="0.5"/><text class="th" x="340" y="246" text-anchor="middle">Topic 3: HOW?</text><text class="ts" x="340" y="264" text-anchor="middle">Break stories into tasks (&lt;1 day)</text></g>
+<line x1="490" y1="200" x2="520" y2="200" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a3)" fill="none"/>
+<g class="c-green"><rect x="520" y="80" width="140" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="590" y="102" text-anchor="middle" dominant-baseline="central">Sprint Goal</text></g>
+<g class="c-green"><rect x="520" y="140" width="140" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="590" y="162" text-anchor="middle" dominant-baseline="central">Sprint Backlog</text></g>
+<g class="c-green"><rect x="520" y="200" width="140" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="590" y="222" text-anchor="middle" dominant-baseline="central">Task Breakdown</text></g>
+<text class="ts" x="80" y="340" text-anchor="middle">Inputs</text>
+<text class="ts" x="340" y="350" text-anchor="middle">Timebox: 2h per week of sprint (max 8h for 4-week sprint)</text>
+<text class="ts" x="590" y="340" text-anchor="middle">Outputs</text>
+</svg>`,
+pillars:[
+{icon:"🎯",t:"Sprint Goal",s:"The WHY of the sprint"},
+{icon:"📋",t:"Sprint Backlog",s:"What + How combined"},
+{icon:"⏱️",t:"Timebox",s:"2h per week of sprint"},
+{icon:"🃏",t:"Planning Poker",s:"Fair estimation method"}
+],
+lines:[
+"Sprint Planning answers three questions: Why are we doing this? What can we do? How will we do it?",
+"The Sprint Goal is committed by the whole team — it is not imposed by the PO or manager.",
+"Story Points measure relative complexity, not time — a 5-point story is roughly 5× harder than a 1-point story.",
+"Teams use historical velocity (past sprint averages) to decide how much they can commit to.",
+"Planning Poker prevents anchoring bias — all estimates are revealed simultaneously.",
+"Sprint Backlog is owned by the Developers — PO does not control it after planning.",
+"Tasks in Sprint Backlog should each be completable within one day — they're implementation steps."
+],
+bp:[
+"Refine backlog items before Sprint Planning so stories are 'Ready' (INVEST criteria).",
+"Set a Sprint Goal before selecting items — it gives purpose to your selection.",
+"Don't commit to more than 80% of velocity — leave buffer for unplanned work.",
+"Break every selected story into tasks during planning — don't leave implementation ambiguous.",
+"Use Planning Poker for estimation — avoid manager-imposed estimates.",
+"Sprint Planning should not exceed its timebox — good refinement prevents overruns.",
+"PO must attend Sprint Planning and be ready to answer clarifying questions."
+],
+qa:[
+{q:"What is the timebox for Sprint Planning?",a:"For a 4-week Sprint, Sprint Planning is timeboxed at 8 hours maximum. For shorter sprints, it is proportionally less (e.g., 4 hours for a 2-week sprint, 2 hours for a 1-week sprint)."},
+{q:"What is the INVEST criteria for a good User Story?",a:"INVEST = Independent (can be built alone), Negotiable (not a fixed contract), Valuable (delivers user value), Estimable (team can size it), Small (fits in one sprint), Testable (has clear acceptance criteria)."},
+{q:"How does an SDET contribute to Sprint Planning?",a:"An SDET estimates the test effort for each story (story points include test time), identifies testability risks, flags stories with missing acceptance criteria, and may suggest breaking complex stories into smaller testable slices."},
+{q:"What happens if the team can't finish all Sprint Backlog items?",a:"Unfinished items return to the Product Backlog (they are NOT automatically included in the next sprint). The Retrospective should address why — was it over-commitment, hidden complexity, or impediments?"},
+{q:"What is velocity and how is it calculated?",a:"Velocity is the average number of story points completed per Sprint, calculated over the last 3–5 sprints. Example: if a team completed 20, 22, and 18 points in the last three sprints, velocity = (20+22+18)/3 = 20 points per sprint."}
+]},
+
+{id:5,phase:"i",phaseLabel:"Intermediate",title:"Daily Scrum — The 15-Minute Sync",sub:"The daily inspection ceremony that keeps the team aligned",
+def:`The <span class='kw'>Daily Scrum</span> (also called <span class='kw'>Daily Standup</span>) is a 15-minute timeboxed event for the Developers to inspect progress toward the Sprint Goal and adapt their plan. It happens <span class='kw'>every day, same time, same place</span>. It is NOT a status report to management — it's a peer-to-peer sync for the team.`,
+keywords:[
+{t:"Daily Scrum",d:"A 15-min daily event where Developers sync on Sprint progress and plan the next 24 hours."},
+{t:"Standup",d:"Informal name for Daily Scrum — called standup because people traditionally stand (to keep it short)."},
+{t:"Three Questions",d:"Classic format: What did I do yesterday? What will I do today? Any impediments?"},
+{t:"Impediment",d:"A blocker that prevents a developer from completing their work. SM helps remove it."},
+{t:"Parking Lot",d:"A way to defer detailed discussions that arise in Daily Scrum to after the meeting ends."},
+{t:"Walking the Board",d:"Alternative to 3 questions: team walks through each active story on the board instead."},
+{t:"Timeboxed",d:"Hard stop at 15 minutes — not a suggestion. Prevents it from becoming a long meeting."}
+],
+svgTitle:"daily_scrum_format",
+svgDesc:"Daily Scrum format: three questions per team member, then parking lot for detailed discussions",
+svgCode:`<svg width="100%" viewBox="0 0 680 360" role="img"><title>Daily Scrum Format</title><desc>Shows the daily scrum meeting structure: three questions, timebox, and parking lot process.</desc><defs><marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="th" x="340" y="24" text-anchor="middle">Daily Scrum — 15 Minutes, Every Day</text>
+<g class="c-amber"><rect x="260" y="38" width="160" height="36" rx="20" stroke-width="0.5"/><text class="ts" x="340" y="60" text-anchor="middle" dominant-baseline="central">⏰ 9:00 AM — Start</text></g>
+<line x1="340" y1="74" x2="340" y2="94" stroke="#BA7517" stroke-width="1.5" marker-end="url(#a4)" fill="none"/>
+<g class="c-purple"><rect x="100" y="94" width="480" height="130" rx="12" stroke-width="0.5"/>
+<text class="th" x="340" y="118" text-anchor="middle">Each Developer answers (2–3 min each)</text>
+<text class="ts" x="340" y="142" text-anchor="middle">1. What did I complete yesterday toward the Sprint Goal?</text>
+<text class="ts" x="340" y="164" text-anchor="middle">2. What will I do today toward the Sprint Goal?</text>
+<text class="ts" x="340" y="186" text-anchor="middle">3. Is anything blocking my progress?</text>
+<text class="ts" x="340" y="208" text-anchor="middle">↓</text>
+</g>
+<line x1="340" y1="224" x2="340" y2="244" stroke="#534AB7" stroke-width="1.5" marker-end="url(#a4)" fill="none"/>
+<g class="c-green"><rect x="200" y="244" width="140" height="36" rx="8" stroke-width="0.5"/><text class="ts" x="270" y="266" text-anchor="middle" dominant-baseline="central">No impediments?</text></g>
+<g class="c-coral"><rect x="360" y="244" width="140" height="36" rx="8" stroke-width="0.5"/><text class="ts" x="430" y="266" text-anchor="middle" dominant-baseline="central">Impediment raised</text></g>
+<line x1="270" y1="280" x2="270" y2="310" stroke="#1D9E75" stroke-width="1" marker-end="url(#a4)" fill="none"/>
+<line x1="430" y1="280" x2="430" y2="310" stroke="#D85A30" stroke-width="1" marker-end="url(#a4)" fill="none"/>
+<text class="ts" x="270" y="330" text-anchor="middle">✓ Done — back to work!</text>
+<text class="ts" x="430" y="324" text-anchor="middle">Parking Lot: SM + blocker</text>
+<text class="ts" x="430" y="338" text-anchor="middle">person meet after standup</text>
+</svg>`,
+pillars:[
+{icon:"⏰",t:"15 Minutes",s:"Hard timebox, no exceptions"},
+{icon:"👥",t:"For Developers",s:"Not a management report"},
+{icon:"🎯",t:"Sprint Goal focus",s:"Not individual status"},
+{icon:"🚧",t:"Surface blockers",s:"SM removes impediments"}
+],
+lines:[
+"The Daily Scrum is for the Developers — the Scrum Master and PO may attend but do not present.",
+"It is timeboxed at exactly 15 minutes — if it runs over, the SM should cut it short.",
+"The 3 classic questions are a suggested format — teams may walk the board instead.",
+"Detailed problem-solving goes to a Parking Lot after the standup, not in the standup itself.",
+"Daily Scrum should happen even if some team members are absent.",
+"Standing up during the Daily Scrum helps keep it short — people want to sit down!",
+"The goal is to inspect progress toward the Sprint Goal, not individual task completion."
+],
+bp:[
+"Fix the Daily Scrum to the same time and place every day — make it a habit.",
+"Developers should update their task board the night before so the standup is efficient.",
+"Scrum Master should timebox ruthlessly — use a visible timer.",
+"Walk the board (story by story) for mature teams — it focuses on flow, not individuals.",
+"Never use Daily Scrum for problem-solving — move to Parking Lot immediately.",
+"Developers should direct their updates to each other, not to the Scrum Master or PO.",
+"SDETs should highlight testing blockers and automation failures in Daily Scrum."
+],
+qa:[
+{q:"Who runs the Daily Scrum?",a:"The Developers own and run the Daily Scrum — it is their event. The Scrum Master facilitates only if needed, ensuring it stays within the timebox. The PO does not run it."},
+{q:"What if a developer misses the Daily Scrum?",a:"The team proceeds without them. The absent developer catches up asynchronously (e.g., written update in the team channel). Scrum does not mandate 100% attendance, but consistent absence is an impediment the SM should address."},
+{q:"What is the difference between a Daily Scrum and a status meeting?",a:"A status meeting reports individual progress to a manager for tracking. A Daily Scrum is peer-to-peer collaboration to inspect Sprint Goal progress and coordinate the next 24 hours. There is no manager receiving reports."},
+{q:"How should an SDET update in a Daily Scrum?",a:"An SDET says: 'Yesterday I completed regression tests for Story X and found 2 defects (logged). Today I'll automate the acceptance tests for Story Y. Blocker: I need API documentation for Story Z from Dev.' This is specific, relevant, and actionable."},
+{q:"Can the Product Owner cancel the Daily Scrum?",a:"No. The Daily Scrum is owned by Developers. A PO has no authority to cancel it. Only the development team can decide to skip it (though this is poor practice and should be raised in Retrospective)."}
+]},
+
+{id:6,phase:"i",phaseLabel:"Intermediate",title:"Sprint Review — Inspect the Increment",sub:"Demonstrating working software and collecting stakeholder feedback",
+def:`The <span class='kw'>Sprint Review</span> happens at the end of every Sprint. The Scrum Team demonstrates the <span class='kw'>Increment</span> (working software!) to <span class='kw'>stakeholders</span>. It is an informal <span class='kw'>working session</span>, NOT a presentation. The Product Backlog is updated based on feedback. Timebox: max 4 hours for a 4-week sprint.`,
+keywords:[
+{t:"Sprint Review",d:"End-of-sprint event to inspect the Increment and adapt the Product Backlog based on feedback."},
+{t:"Increment",d:"The sum of all completed, usable PBIs in the sprint — must meet the Definition of Done."},
+{t:"Stakeholders",d:"Customers, users, sponsors, managers — anyone invited by the PO to give feedback."},
+{t:"Demo",d:"Live demonstration of working software — not slides, not screenshots, not videos ideally."},
+{t:"Product Backlog Update",d:"After feedback, PO adjusts priorities, adds new items, or removes obsolete ones."},
+{t:"Done vs Undone",d:"Only Done items (meeting DoD) are demoed. Undone items return to Product Backlog."},
+{t:"Empirical",d:"Sprint Review is an empirical event — real working software drives decisions, not plans or promises."}
+],
+svgTitle:"sprint_review_flow",
+svgDesc:"Sprint Review flow showing who attends, what is demonstrated, and how feedback updates the product backlog",
+svgCode:`<svg width="100%" viewBox="0 0 680 360" role="img"><title>Sprint Review Flow</title><desc>Shows the Sprint Review agenda: attendees, demo of increment, feedback collection, and product backlog update.</desc><defs><marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="th" x="340" y="24" text-anchor="middle">Sprint Review — End of Sprint (Timebox: 4h max)</text>
+<g class="c-gray"><rect x="20" y="44" width="148" height="106" rx="10" stroke-width="0.5"/>
+<text class="th" x="94" y="68" text-anchor="middle">Who attends?</text>
+<text class="ts" x="94" y="90" text-anchor="middle">• Scrum Team</text>
+<text class="ts" x="94" y="110" text-anchor="middle">• Stakeholders</text>
+<text class="ts" x="94" y="130" text-anchor="middle">• Customers</text>
+</g>
+<line x1="168" y1="97" x2="188" y2="97" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a5)" fill="none"/>
+<g class="c-blue"><rect x="188" y="44" width="148" height="106" rx="10" stroke-width="0.5"/>
+<text class="th" x="262" y="68" text-anchor="middle">Demo Increment</text>
+<text class="ts" x="262" y="90" text-anchor="middle">Live working</text>
+<text class="ts" x="262" y="108" text-anchor="middle">software only.</text>
+<text class="ts" x="262" y="126" text-anchor="middle">No slides!</text>
+</g>
+<line x1="336" y1="97" x2="356" y2="97" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a5)" fill="none"/>
+<g class="c-amber"><rect x="356" y="44" width="148" height="106" rx="10" stroke-width="0.5"/>
+<text class="th" x="430" y="68" text-anchor="middle">Collect Feedback</text>
+<text class="ts" x="430" y="90" text-anchor="middle">Open discussion.</text>
+<text class="ts" x="430" y="108" text-anchor="middle">Questions.</text>
+<text class="ts" x="430" y="126" text-anchor="middle">New ideas noted.</text>
+</g>
+<line x1="504" y1="97" x2="524" y2="97" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a5)" fill="none"/>
+<g class="c-green"><rect x="524" y="44" width="136" height="106" rx="10" stroke-width="0.5"/>
+<text class="th" x="592" y="68" text-anchor="middle">Update Backlog</text>
+<text class="ts" x="592" y="90" text-anchor="middle">PO re-prioritizes</text>
+<text class="ts" x="592" y="108" text-anchor="middle">based on what</text>
+<text class="ts" x="592" y="126" text-anchor="middle">team learned.</text>
+</g>
+<line x1="340" y1="150" x2="340" y2="175" stroke="var(--color-text-tertiary)" stroke-width="0.5" stroke-dasharray="4 3" fill="none"/>
+<rect x="80" y="175" width="520" height="100" rx="12" fill="none" stroke="var(--color-text-tertiary)" stroke-width="0.5"/>
+<text class="th" x="340" y="200" text-anchor="middle">What gets demoed vs. what doesn't</text>
+<g class="c-green"><rect x="100" y="215" width="220" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="210" y="237" text-anchor="middle" dominant-baseline="central">✓ Done items (meet DoD) → Demo!</text></g>
+<g class="c-coral"><rect x="340" y="215" width="240" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="460" y="237" text-anchor="middle" dominant-baseline="central">✗ Undone items → back to backlog</text></g>
+<text class="ts" x="340" y="310" text-anchor="middle">Sprint Review is a collaboration, not a sign-off ceremony</text>
+<text class="ts" x="340" y="330" text-anchor="middle">PO accepts or rejects work based on Acceptance Criteria</text>
+</svg>`,
+pillars:[
+{icon:"🖥️",t:"Live Demo",s:"Working software, not slides"},
+{icon:"💬",t:"Feedback",s:"Stakeholders shape next sprint"},
+{icon:"📋",t:"Backlog Update",s:"PO adjusts priorities"},
+{icon:"✅",t:"Accept/Reject",s:"PO validates against AC"}
+],
+lines:[
+"Sprint Review is an inspection of the Increment — it is not a sign-off meeting.",
+"Only items that meet the Definition of Done can be demonstrated.",
+"Undone items return to the Product Backlog — they are never auto-carried to the next sprint.",
+"The Sprint Review is the only time external stakeholders formally see the product.",
+"The Product Owner has final authority to accept or reject completed work.",
+"A Sprint Review is informal and conversational — not a formal PowerPoint presentation.",
+"Feedback from the Sprint Review directly shapes the Product Backlog for the next sprint."
+],
+bp:[
+"Demo on a production-like environment — never demo from a developer's local machine.",
+"PO should invite real users and customers, not just internal stakeholders.",
+"Prepare a demo script — know what you'll show, in what order, for each story.",
+"SDETs should highlight test coverage and quality metrics during the review.",
+"Capture all stakeholder feedback in writing — feed it into the backlog immediately.",
+"PO should publicly confirm which items are accepted and which are not.",
+"Keep the Sprint Review focused on the Increment, not on team performance."
+],
+qa:[
+{q:"What is the difference between Sprint Review and Sprint Retrospective?",a:"Sprint Review inspects the Product (what was built) with stakeholders present. Sprint Retrospective inspects the Process (how the team worked) — stakeholders are NOT invited. Review = product feedback. Retro = team improvement."},
+{q:"Can stakeholders add new requirements during Sprint Review?",a:"Yes, but they go into the Product Backlog — they cannot change the current or just-completed sprint. PO prioritizes these new items for future sprints based on business value."},
+{q:"What if the Sprint Goal was not met?",a:"The team transparently communicates this in the Sprint Review. Incomplete items return to the Product Backlog. The root cause is explored in the Retrospective. The Scrum Master ensures no blame is assigned."},
+{q:"What should an SDET demo in a Sprint Review?",a:"An SDET may demo: automated test dashboards showing coverage, a CI/CD pipeline running green, or specific test scenarios for new features. Quality evidence (no critical bugs, full regression pass) adds credibility to the Increment."},
+{q:"Can the Sprint Review be skipped?",a:"No — skipping Sprint Review means losing stakeholder feedback, making the PO's backlog decisions less informed. It violates Scrum. The Scrum Master must ensure all five events occur every Sprint."}
+]},
+
+{id:7,phase:"i",phaseLabel:"Intermediate",title:"Sprint Retrospective — Continuous Improvement",sub:"The team's engine for getting better, sprint after sprint",
+def:`The <span class='kw'>Sprint Retrospective</span> (Retro) is the final event in a Sprint. It's a private team meeting where Developers, Scrum Master, and PO reflect on <em>how they worked together</em> and identify improvements. Timebox: 3h max for 4-week sprint. The output is an <span class='kw'>Actionable Improvement Plan</span> — not just a feelings session.`,
+keywords:[
+{t:"Retrospective",d:"End-of-sprint team meeting to inspect team process and create improvement actions."},
+{t:"Start/Stop/Continue",d:"Classic retro format: what to start doing, stop doing, and continue doing."},
+{t:"Action Item",d:"A specific, owned, time-bound improvement to implement in the NEXT sprint."},
+{t:"Psychological Safety",d:"Team members must feel safe to speak honestly without fear of blame or retaliation."},
+{t:"Kaizen",d:"Japanese concept of continuous improvement — the spirit behind Retrospectives."},
+{t:"Prime Directive",d:"'Regardless of what we discover, we understand that everyone did the best job they could' — prevents blame."},
+{t:"Facilitator",d:"Scrum Master facilitates the Retro — may use games/techniques to make it engaging."}
+],
+svgTitle:"retrospective_format",
+svgDesc:"Sprint Retrospective using Start Stop Continue format with action items flowing into next sprint",
+svgCode:`<svg width="100%" viewBox="0 0 680 380" role="img"><title>Sprint Retrospective Flow</title><desc>Shows the Retrospective format with gather data, generate insights, decide actions phases, leading to Sprint improvement.</desc><defs><marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="th" x="340" y="24" text-anchor="middle">Sprint Retrospective — Inspect Process, Improve Team</text>
+<g class="c-green"><rect x="20" y="44" width="190" height="100" rx="10" stroke-width="0.5"/>
+<text class="th" x="115" y="70" text-anchor="middle">▶ START doing</text>
+<text class="ts" x="115" y="92" text-anchor="middle">New practices that</text>
+<text class="ts" x="115" y="110" text-anchor="middle">could help the team</text>
+<text class="ts" x="115" y="126" text-anchor="middle">(e.g. code reviews)</text>
+</g>
+<g class="c-coral"><rect x="245" y="44" width="190" height="100" rx="10" stroke-width="0.5"/>
+<text class="th" x="340" y="70" text-anchor="middle">⛔ STOP doing</text>
+<text class="ts" x="340" y="92" text-anchor="middle">Things hurting the</text>
+<text class="ts" x="340" y="110" text-anchor="middle">team right now</text>
+<text class="ts" x="340" y="126" text-anchor="middle">(e.g. skipping tests)</text>
+</g>
+<g class="c-teal"><rect x="470" y="44" width="190" height="100" rx="10" stroke-width="0.5"/>
+<text class="th" x="565" y="70" text-anchor="middle">✓ CONTINUE doing</text>
+<text class="ts" x="565" y="92" text-anchor="middle">Practices working</text>
+<text class="ts" x="565" y="110" text-anchor="middle">well — double down</text>
+<text class="ts" x="565" y="126" text-anchor="middle">(e.g. pair programming)</text>
+</g>
+<line x1="340" y1="144" x2="340" y2="170" stroke="var(--color-text-tertiary)" stroke-width="1.5" marker-end="url(#a6)" fill="none"/>
+<g class="c-purple"><rect x="120" y="170" width="440" height="70" rx="10" stroke-width="0.5"/>
+<text class="th" x="340" y="196" text-anchor="middle">Action Items (must be SMART)</text>
+<text class="ts" x="340" y="218" text-anchor="middle">Each item: Specific action + Owner + Done by next sprint</text>
+</g>
+<line x1="340" y1="240" x2="340" y2="265" stroke="#534AB7" stroke-width="1.5" marker-end="url(#a6)" fill="none"/>
+<g class="c-green"><rect x="200" y="265" width="280" height="44" rx="10" stroke-width="0.5"/><text class="th" x="340" y="287" text-anchor="middle" dominant-baseline="central">→ Added to Next Sprint Backlog</text></g>
+<text class="ts" x="340" y="340" text-anchor="middle">Retrospective is private — no external stakeholders invited</text>
+<text class="ts" x="340" y="358" text-anchor="middle">Prime Directive: "Everyone did the best they could with what they had"</text>
+</svg>`,
+pillars:[
+{icon:"🛡️",t:"Psychological Safety",s:"Honest, blame-free space"},
+{icon:"📊",t:"Data-Driven",s:"Reflect on actual metrics"},
+{icon:"🎯",t:"Action Items",s:"Specific, owned improvements"},
+{icon:"🔄",t:"Kaizen",s:"Continuous improvement"}
+],
+lines:[
+"The Retrospective is only for the Scrum Team — no external stakeholders or managers.",
+"A Retrospective without action items is just a venting session — it must produce change.",
+"The Start/Stop/Continue format is the most common, but many other formats exist.",
+"The Scrum Master creates psychological safety — team members must feel safe to speak.",
+"Action items from the Retro must be added to the next Sprint Backlog as formal tasks.",
+"The Prime Directive prevents blame — it assumes everyone acted in good faith.",
+"Retrospectives should become shorter and more focused as the team matures."
+],
+bp:[
+"Use a different retro format every few sprints to prevent staleness (4Ls, Mad Sad Glad, Sailboat).",
+"Start with data: sprint metrics, velocity, defect counts — fact before feeling.",
+"Allow anonymous input collection (sticky notes, Miro boards) to surface sensitive topics.",
+"Limit action items to 2–3 per sprint — too many leads to none being completed.",
+"Begin each Retro by reviewing last sprint's action items — were they done?",
+"Rotate the SM facilitation role among Developers for team empowerment.",
+"SDETs should bring test metrics (coverage %, escaped defects) as data points."
+],
+qa:[
+{q:"What is the Sprint Retrospective's primary output?",a:"A concrete, prioritized list of improvement actions (2–3 max) that are specific, owned by named team members, and added to the next Sprint Backlog for implementation. Not just observations — actionable changes."},
+{q:"What is psychological safety and why does it matter in Retros?",a:"Psychological safety is the belief that you won't be punished for speaking up. Without it, team members hide real problems, the Retrospective becomes shallow, and nothing improves. The Scrum Master's #1 job in a Retro is to create this safety."},
+{q:"How is the Retrospective different from the Review?",a:"Review = inspect the Product (done with stakeholders). Retrospective = inspect the Process (done privately with the Scrum Team only). Different purpose, different audience."},
+{q:"What metrics should an SDET bring to a Retrospective?",a:"(1) Test automation coverage % for the sprint, (2) Number of defects found vs. escaped to production, (3) CI/CD pipeline failure rate, (4) Average time to fix a failed automated test. These turn quality conversations from opinions into data."},
+{q:"What is the 'Prime Directive' in Retrospectives?",a:"'Regardless of what we discover, we understand and truly believe that everyone did the best job they could, given what they knew at the time, their skills and abilities, the resources available, and the situation at hand.' It prevents blame and sets a safe tone."}
+]},
+
+{id:8,phase:"a",phaseLabel:"Advanced",title:"Product Backlog & Refinement",sub:"Managing the ordered list of everything the product might need",
+def:`The <span class='kw'>Product Backlog</span> is an ordered, living list of everything needed in the product. It is never complete — it evolves as the product and market evolve. <span class='kw'>Backlog Refinement</span> (or Grooming) is the ongoing activity of adding detail, estimates, and order to items — keeping the top items 'Ready' for the next sprint.`,
+keywords:[
+{t:"Product Backlog",d:"An ordered list of all features, fixes, improvements, and technical work for the product. Owned by PO."},
+{t:"Product Backlog Item (PBI)",d:"A single entry in the Product Backlog — could be a User Story, bug, spike, or task."},
+{t:"User Story",d:"A brief description of a feature from a user's perspective: 'As a [user], I want [goal] so that [benefit].'"},
+{t:"Refinement",d:"Ongoing activity (not a formal Scrum event) to detail, estimate, and re-order backlog items."},
+{t:"DEEP",d:"Backlog should be: Detailed appropriately, Estimated, Emergent (evolves), Prioritized."},
+{t:"Epic",d:"A large User Story that spans multiple sprints — must be broken into smaller stories before being planned."},
+{t:"Spike",d:"A time-boxed research or technical investigation PBI to reduce uncertainty before estimating."}
+],
+svgTitle:"product_backlog_structure",
+svgDesc:"Product Backlog pyramid showing Epics at top, refined stories in middle, sprint-ready items at bottom",
+svgCode:`<svg width="100%" viewBox="0 0 680 380" role="img"><title>Product Backlog Structure and Refinement</title><desc>Shows the Product Backlog as a pyramid: large Epics at top, refined User Stories in middle, sprint-ready items at bottom, with the refinement funnel on the right.</desc><defs><marker id="a7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="th" x="220" y="24" text-anchor="middle">Product Backlog (DEEP)</text>
+<g class="c-gray"><rect x="60" y="40" width="320" height="52" rx="8" stroke-width="0.5"/>
+<text class="th" x="220" y="62" text-anchor="middle">Epics (large, vague, far future)</text>
+<text class="ts" x="220" y="80" text-anchor="middle">e.g. "User Authentication System" — months away</text>
+</g>
+<g class="c-amber"><rect x="80" y="108" width="280" height="52" rx="8" stroke-width="0.5"/>
+<text class="th" x="220" y="130" text-anchor="middle">Features / Stories (medium detail)</text>
+<text class="ts" x="220" y="148" text-anchor="middle">e.g. "As a user, I can log in with email" — weeks away</text>
+</g>
+<g class="c-purple"><rect x="100" y="176" width="240" height="52" rx="8" stroke-width="0.5"/>
+<text class="th" x="220" y="198" text-anchor="middle">Refined Stories (full INVEST criteria)</text>
+<text class="ts" x="220" y="216" text-anchor="middle">Has AC, estimate, testability — 1–2 sprints away</text>
+</g>
+<g class="c-green"><rect x="120" y="244" width="200" height="52" rx="8" stroke-width="0.5"/>
+<text class="th" x="220" y="266" text-anchor="middle">✓ Sprint-Ready Items</text>
+<text class="ts" x="220" y="284" text-anchor="middle">Sized &lt;half sprint, INVEST-compliant</text>
+</g>
+<line x1="220" y1="296" x2="220" y2="330" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#a7)" fill="none"/>
+<g class="c-green"><rect x="120" y="330" width="200" height="36" rx="8" stroke-width="0.5"/><text class="ts" x="220" y="352" text-anchor="middle" dominant-baseline="central">→ Into Sprint Planning!</text></g>
+<text class="th" x="520" y="40" text-anchor="middle">Refinement cycle</text>
+<text class="ts" x="520" y="68" text-anchor="middle">Break Epics → Stories</text>
+<line x1="520" y1="78" x2="520" y2="100" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a7)" fill="none"/>
+<text class="ts" x="520" y="120" text-anchor="middle">Add Acceptance Criteria</text>
+<line x1="520" y1="130" x2="520" y2="152" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a7)" fill="none"/>
+<text class="ts" x="520" y="172" text-anchor="middle">Estimate (Planning Poker)</text>
+<line x1="520" y1="182" x2="520" y2="204" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a7)" fill="none"/>
+<text class="ts" x="520" y="224" text-anchor="middle">Re-order by priority</text>
+<line x1="520" y1="234" x2="520" y2="256" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a7)" fill="none"/>
+<text class="ts" x="520" y="276" text-anchor="middle">Confirm testability</text>
+<rect x="420" y="44" width="200" height="248" rx="8" fill="none" stroke="var(--color-text-tertiary)" stroke-width="0.5" stroke-dasharray="4 3"/>
+</svg>`,
+pillars:[
+{icon:"📦",t:"D — Detailed",s:"Items have enough info"},
+{icon:"📏",t:"E — Estimated",s:"Team has sized items"},
+{icon:"🌱",t:"E — Emergent",s:"Evolves with learning"},
+{icon:"🔝",t:"P — Prioritized",s:"Ordered by business value"}
+],
+lines:[
+"The Product Backlog is the single source of truth for what the team will build.",
+"Backlog Refinement is not a formal Scrum event — it is an ongoing activity consuming up to 10% of sprint capacity.",
+"User Stories follow the format: As a [user], I want [goal], so that [benefit].",
+"A good User Story must pass the INVEST test before it enters Sprint Planning.",
+"Acceptance Criteria define exactly when a story is done — they are written by the PO with Dev input.",
+"Epics must be broken into sprint-sized stories before they can be planned.",
+"The Product Backlog is NEVER frozen — it is always changing based on new information."
+],
+bp:[
+"Run Refinement sessions mid-sprint (Wednesday/Thursday) to keep the next sprint's stories ready.",
+"Keep 2 sprints' worth of 'Ready' stories at the top of the backlog at all times.",
+"Write Acceptance Criteria in Given/When/Then (Gherkin) format for clarity.",
+"PO should involve SDETs in Refinement to identify testability issues early.",
+"Use MoSCoW prioritization (Must/Should/Could/Won't) to order the backlog.",
+"Never estimate items in hours — use story points or T-shirt sizes.",
+"Add a 'Definition of Ready' checklist to prevent under-refined items from entering Sprint Planning."
+],
+qa:[
+{q:"What is the difference between a Product Backlog and a Sprint Backlog?",a:"Product Backlog is the full ordered list of everything the product needs — owned by the PO, spans the entire product lifecycle. Sprint Backlog is the subset selected for one Sprint plus the implementation plan — owned by Developers, exists for one sprint only."},
+{q:"What makes a User Story 'Ready' for Sprint Planning?",a:"A story is Ready when it meets INVEST: Independent, Negotiable, Valuable, Estimable, Small (fits in one sprint), Testable (has clear acceptance criteria). The team should have a 'Definition of Ready' that formalizes these criteria."},
+{q:"What is a Spike story and when should it be used?",a:"A Spike is a research or investigation story used to reduce uncertainty. Example: 'Investigate OAuth2 library options for mobile login — 4 hours'. Spikes are timeboxed and produce knowledge (a decision, a proof of concept) not working software."},
+{q:"How should an SDET contribute to Backlog Refinement?",a:"SDETs identify: (1) Missing acceptance criteria, (2) Stories that can't be automated, (3) Test data requirements, (4) Dependencies on other stories for integration testing, (5) Performance/security test scenarios. This prevents undone stories from entering sprints."},
+{q:"What is the MoSCoW prioritization method?",a:"MoSCoW = Must Have (critical for release), Should Have (important but not vital), Could Have (nice-to-have if time permits), Won't Have (explicitly excluded from this release). PO uses this to order the Product Backlog."}
+]},
+
+{id:9,phase:"a",phaseLabel:"Advanced",title:"Definition of Done & Acceptance Criteria",sub:"Quality gates that define when work is truly finished",
+def:`<span class='kw'>Definition of Done (DoD)</span> is a shared team agreement on the quality standards every <span class='kw'>Increment</span> must meet. <span class='kw'>Acceptance Criteria (AC)</span> are story-specific conditions written by the PO that define what a specific feature must do. DoD applies to ALL stories; AC applies to ONE story. Both together ensure quality.`,
+keywords:[
+{t:"Definition of Done",d:"Team-wide quality checklist that every PBI must pass before being 'done'."},
+{t:"Acceptance Criteria",d:"Story-specific conditions from the PO that define functional correctness for that story."},
+{t:"Gherkin / BDD",d:"Acceptance Criteria format: Given [context] When [action] Then [expected result]."},
+{t:"Quality Gate",d:"A checkpoint in CI/CD that blocks deployment if quality standards aren't met."},
+{t:"Technical Debt",d:"Shortcuts taken that will need fixing later — a weak DoD accumulates tech debt fast."},
+{t:"Done Done",d:"Informal term meaning truly finished per DoD — not just coded but also tested, reviewed, documented."},
+{t:"Non-functional Requirements",d:"Quality attributes: performance, security, accessibility — often forgotten in AC but critical."}
+],
+svgTitle:"dod_vs_ac",
+svgDesc:"Two-column diagram showing Definition of Done on the left applied to all stories and Acceptance Criteria on the right applied per story",
+svgCode:`<svg width="100%" viewBox="0 0 680 380" role="img"><title>Definition of Done vs Acceptance Criteria</title><desc>Left column shows Definition of Done as a team-wide checklist. Right column shows Acceptance Criteria as story-specific conditions. Arrow shows both must pass for increment to be done.</desc><defs><marker id="a8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="th" x="340" y="24" text-anchor="middle">DoD + AC = True Definition of Done</text>
+<g class="c-purple"><rect x="20" y="40" width="300" height="40" rx="8" stroke-width="0.5"/><text class="th" x="170" y="64" text-anchor="middle" dominant-baseline="central">Definition of Done (applies to ALL stories)</text></g>
+<text class="ts" x="38" y="102" text-anchor="start">☐ Code written and committed</text>
+<text class="ts" x="38" y="122" text-anchor="start">☐ Code reviewed (pull request approved)</text>
+<text class="ts" x="38" y="142" text-anchor="start">☐ Unit tests written and passing (80%+ coverage)</text>
+<text class="ts" x="38" y="162" text-anchor="start">☐ Integration tests passing</text>
+<text class="ts" x="38" y="182" text-anchor="start">☐ No critical/major defects open</text>
+<text class="ts" x="38" y="202" text-anchor="start">☐ Deployed to Staging environment</text>
+<text class="ts" x="38" y="222" text-anchor="start">☐ Regression suite passed</text>
+<text class="ts" x="38" y="242" text-anchor="start">☐ Documentation updated</text>
+<text class="ts" x="38" y="262" text-anchor="start">☐ Performance benchmarks met</text>
+<text class="ts" x="38" y="282" text-anchor="start">☐ Security scan passed</text>
+<g class="c-teal"><rect x="360" y="40" width="300" height="40" rx="8" stroke-width="0.5"/><text class="th" x="510" y="64" text-anchor="middle" dominant-baseline="central">Acceptance Criteria (per story, in BDD)</text></g>
+<text class="ts" x="372" y="104" text-anchor="start">Story: "User can log in with email + password"</text>
+<rect x="368" y="116" width="284" height="150" rx="6" fill="none" stroke="var(--color-text-tertiary)" stroke-width="0.5" stroke-dasharray="3 3"/>
+<text class="ts" x="380" y="136" text-anchor="start">GIVEN user is on the login page</text>
+<text class="ts" x="380" y="154" text-anchor="start">WHEN they enter valid credentials</text>
+<text class="ts" x="380" y="172" text-anchor="start">THEN they are redirected to dashboard</text>
+<text class="ts" x="380" y="196" text-anchor="start">GIVEN user enters wrong password</text>
+<text class="ts" x="380" y="214" text-anchor="start">WHEN they submit the form</text>
+<text class="ts" x="380" y="232" text-anchor="start">THEN an error message is displayed</text>
+<text class="ts" x="380" y="252" text-anchor="start">AND the account locks after 5 attempts</text>
+<line x1="170" y1="310" x2="340" y2="340" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a8)" fill="none"/>
+<line x1="510" y1="310" x2="340" y2="340" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a8)" fill="none"/>
+<g class="c-green"><rect x="200" y="340" width="280" height="32" rx="8" stroke-width="0.5"/><text class="ts" x="340" y="360" text-anchor="middle" dominant-baseline="central">✓ Increment accepted — Truly Done!</text></g>
+</svg>`,
+pillars:[
+{icon:"✅",t:"DoD",s:"Team-wide quality bar"},
+{icon:"📝",t:"AC",s:"Story-specific correctness"},
+{icon:"🧪",t:"BDD/Gherkin",s:"Given/When/Then format"},
+{icon:"⚡",t:"Quality Gate",s:"CI/CD enforcement"}
+],
+lines:[
+"The Definition of Done is a non-negotiable quality bar — no story is done without meeting it.",
+"Acceptance Criteria are story-specific and functional; DoD is team-wide and technical.",
+"A weak DoD accumulates technical debt rapidly — quality shortcuts compound into failures.",
+"BDD (Behaviour Driven Development) uses Gherkin Given/When/Then for testable AC.",
+"An SDET automates Acceptance Criteria — each AC becomes an automated test case.",
+"The DoD should be created by the team, not imposed by management.",
+"DoD evolves over time — teams should strengthen it each sprint as their maturity grows."
+],
+bp:[
+"Write DoD on a physical or digital wall — everyone must see it every day.",
+"Include non-functional requirements in DoD: performance, security, accessibility.",
+"SDETs should automate every AC as a BDD scenario (Cucumber/SpecFlow/Behave).",
+"Add 'no unresolved blockers' to DoD — prevent carrying open issues across sprints.",
+"Review and update DoD in every Retrospective — strengthen it incrementally.",
+"PO writes AC; SDETs review AC for testability before the story enters Sprint Planning.",
+"CI/CD pipeline should enforce DoD automatically — failing tests block the build."
+],
+qa:[
+{q:"What is the difference between Definition of Done and Acceptance Criteria?",a:"DoD is a team-wide checklist applied to every story (code review, tests, deployment, etc.). Acceptance Criteria are story-specific conditions that define what the feature must do functionally. A story must pass BOTH to be complete."},
+{q:"Who owns the Definition of Done?",a:"The Developers collectively own and define the DoD, with input from the Scrum Master and PO. The organization may set a minimum DoD (e.g., security scans mandatory), and the team strengthens it further."},
+{q:"How does BDD relate to Acceptance Criteria?",a:"BDD (Behaviour Driven Development) uses Gherkin syntax (Given/When/Then) to write AC in a structured, testable format. This allows SDETs to directly automate AC as executable test scenarios using tools like Cucumber, SpecFlow, or Behave."},
+{q:"What happens when a story meets AC but not DoD?",a:"It is NOT done. Example: a story meets all functional AC but the code review wasn't done. The DoD takes precedence — all conditions must pass. It returns to the Sprint Backlog or Product Backlog."},
+{q:"How should an SDET use Acceptance Criteria?",a:"An SDET should: (1) Review AC in Refinement for testability, (2) Map each AC to a test case (happy path + edge cases), (3) Automate AC as BDD scenarios, (4) Use AC as the baseline for regression suite, (5) Flag missing AC before Sprint Planning."}
+]},
+
+{id:10,phase:"a",phaseLabel:"Advanced",title:"Scrum at Scale & Agile Metrics",sub:"Scaling Scrum to multiple teams + measuring what matters",
+def:`When one Scrum team isn't enough, organizations use <span class='kw'>Scaling Frameworks</span> like <span class='kw'>SAFe</span>, <span class='kw'>LeSS</span>, and <span class='kw'>Nexus</span> to coordinate multiple Scrum teams. Alongside scaling, <span class='kw'>Agile Metrics</span> (Velocity, Burndown, Lead Time, Cycle Time) help teams understand their flow and improve predictability.`,
+keywords:[
+{t:"SAFe",d:"Scaled Agile Framework — enterprise framework with Program Increments (PI) spanning 5 sprints."},
+{t:"LeSS",d:"Large-Scale Scrum — minimal scaling with multiple teams on one Product Backlog."},
+{t:"Nexus",d:"Scrum.org's scaling framework — 3–9 Scrum teams with a Nexus Integration Team."},
+{t:"Burndown Chart",d:"Sprint chart showing remaining work vs. time — ideal line vs. actual line."},
+{t:"Velocity",d:"Story points completed per sprint — used for forecasting future sprints."},
+{t:"Cycle Time",d:"Time from 'In Progress' to 'Done' for a work item — lower is better."},
+{t:"Lead Time",d:"Time from 'Requested' to 'Done' — includes waiting time. Longer than Cycle Time."}
+],
+svgTitle:"agile_metrics_and_scaling",
+svgDesc:"Left side shows Agile metrics: burndown chart and velocity graph. Right side shows scaling frameworks SAFe LeSS Nexus.",
+svgCode:`<svg width="100%" viewBox="0 0 680 380" role="img"><title>Agile Metrics and Scaling Frameworks</title><desc>Shows a burndown chart, velocity bars, and the three main scaling frameworks side by side.</desc><defs><marker id="a9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="th" x="160" y="24" text-anchor="middle">Agile Metrics</text>
+<text class="th" x="530" y="24" text-anchor="middle">Scaling Frameworks</text>
+<text class="ts" x="30" y="52" text-anchor="start">Sprint Burndown</text>
+<rect x="24" y="60" width="270" height="140" rx="6" fill="none" stroke="var(--color-text-tertiary)" stroke-width="0.5"/>
+<text class="ts" x="30" y="76" text-anchor="start">Remaining points</text>
+<line x1="44" y1="188" x2="44" y2="80" stroke="var(--color-text-tertiary)" stroke-width="1" fill="none"/>
+<line x1="44" y1="188" x2="280" y2="188" stroke="var(--color-text-tertiary)" stroke-width="1" fill="none"/>
+<path d="M44 92 L280 188" stroke="#B4B2A9" stroke-width="1.5" stroke-dasharray="5 3" fill="none"/>
+<path d="M44 92 L100 104 L140 130 L180 140 L210 155 L240 168 L280 175" stroke="#D85A30" stroke-width="2" fill="none"/>
+<text class="ts" x="285" y="112" text-anchor="start">Ideal</text>
+<text class="ts" x="285" y="130" text-anchor="start">Actual</text>
+<line x1="282" y1="106" x2="290" y2="110" stroke="#B4B2A9" stroke-width="1" fill="none"/>
+<line x1="282" y1="124" x2="290" y2="128" stroke="#D85A30" stroke-width="1" fill="none"/>
+<text class="ts" x="160" y="208" text-anchor="middle">Days →</text>
+<text class="ts" x="30" y="232" text-anchor="start">Team Velocity (Sprint-by-sprint)</text>
+<g class="c-purple"><rect x="44" y="268" width="24" height="50" rx="3" stroke-width="0.5"/></g>
+<g class="c-purple"><rect x="78" y="258" width="24" height="60" rx="3" stroke-width="0.5"/></g>
+<g class="c-purple"><rect x="112" y="246" width="24" height="72" rx="3" stroke-width="0.5"/></g>
+<g class="c-purple"><rect x="146" y="252" width="24" height="66" rx="3" stroke-width="0.5"/></g>
+<g class="c-purple"><rect x="180" y="244" width="24" height="74" rx="3" stroke-width="0.5"/></g>
+<text class="ts" x="56" y="326" text-anchor="middle">S1</text><text class="ts" x="90" y="326" text-anchor="middle">S2</text>
+<text class="ts" x="124" y="326" text-anchor="middle">S3</text><text class="ts" x="158" y="326" text-anchor="middle">S4</text>
+<text class="ts" x="192" y="326" text-anchor="middle">S5</text>
+<text class="ts" x="30" y="346" text-anchor="start">↑ Velocity improving = team maturing</text>
+<line x1="320" y1="30" x2="320" y2="370" stroke="var(--color-text-tertiary)" stroke-width="0.5" stroke-dasharray="4 3" fill="none"/>
+<g class="c-blue"><rect x="336" y="44" width="204" height="80" rx="10" stroke-width="0.5"/>
+<text class="th" x="438" y="70" text-anchor="middle">SAFe</text>
+<text class="ts" x="438" y="90" text-anchor="middle">Enterprise scale. PI Planning</text>
+<text class="ts" x="438" y="108" text-anchor="middle">every 5 sprints. Agile Release Train.</text>
+</g>
+<g class="c-teal"><rect x="336" y="144" width="204" height="80" rx="10" stroke-width="0.5"/>
+<text class="th" x="438" y="170" text-anchor="middle">LeSS</text>
+<text class="ts" x="438" y="190" text-anchor="middle">Minimal overhead. Multiple teams</text>
+<text class="ts" x="438" y="208" text-anchor="middle">share ONE Product Backlog &amp; PO.</text>
+</g>
+<g class="c-amber"><rect x="336" y="244" width="204" height="80" rx="10" stroke-width="0.5"/>
+<text class="th" x="438" y="270" text-anchor="middle">Nexus</text>
+<text class="ts" x="438" y="290" text-anchor="middle">3–9 Scrum teams. Nexus Integration</text>
+<text class="ts" x="438" y="308" text-anchor="middle">Team coordinates dependencies.</text>
+</g>
+<g class="c-gray"><rect x="554" y="44" width="106" height="280" rx="10" stroke-width="0.5"/>
+<text class="th" x="607" y="72" text-anchor="middle">Team size</text>
+<text class="ts" x="607" y="94" text-anchor="middle">50–125</text>
+<text class="ts" x="607" y="112" text-anchor="middle">people</text>
+<line x1="570" y1="138" x2="644" y2="138" stroke="var(--color-text-tertiary)" stroke-width="0.5" fill="none"/>
+<text class="ts" x="607" y="158" text-anchor="middle">8–50</text>
+<text class="ts" x="607" y="176" text-anchor="middle">people</text>
+<line x1="570" y1="204" x2="644" y2="204" stroke="var(--color-text-tertiary)" stroke-width="0.5" fill="none"/>
+<text class="ts" x="607" y="224" text-anchor="middle">3–9</text>
+<text class="ts" x="607" y="242" text-anchor="middle">teams</text>
+</g>
+</svg>`,
+pillars:[
+{icon:"📉",t:"Burndown",s:"Track remaining sprint work"},
+{icon:"📈",t:"Velocity",s:"Sprint capacity predictor"},
+{icon:"⏱️",t:"Cycle Time",s:"Flow efficiency metric"},
+{icon:"🏢",t:"SAFe/LeSS/Nexus",s:"Multi-team coordination"}
+],
+lines:[
+"Velocity is a planning tool — it should never be used as a performance metric to compare teams.",
+"A Sprint Burndown chart that goes up (not down) signals scope creep or poor estimation.",
+"Cycle Time and Lead Time are flow metrics — shorter cycle time means faster value delivery.",
+"SAFe is the most widely adopted scaling framework in large enterprises.",
+"LeSS is the simplest scaling approach — it extends Scrum with minimal additional roles.",
+"Nexus adds a Nexus Integration Team to coordinate dependency resolution between Scrum teams.",
+"The best metric is customer satisfaction and business outcome — not velocity alone."
+],
+bp:[
+"Never use velocity to compare two different teams — context is always different.",
+"Use cumulative flow diagrams (CFD) to identify WIP bottlenecks across the sprint.",
+"Track cycle time per story size category — large stories often hide estimation errors.",
+"Introduce scaling frameworks gradually — don't jump to SAFe day one.",
+"In scaled Scrum, run a joint 'Scrum of Scrums' daily: one rep per team syncs dependencies.",
+"SDETs in scaled environments should own a shared test platform team or Center of Excellence.",
+"Use OKRs (Objectives and Key Results) at the program level to align multiple Scrum teams."
+],
+qa:[
+{q:"What is the difference between SAFe, LeSS, and Nexus?",a:"SAFe = most structured, for large enterprises (100+ people), adds Program Increments, Agile Release Trains, and many roles. LeSS = minimal rules, multiple teams share one PO and one Product Backlog. Nexus = from Scrum.org, 3–9 teams with a Nexus Integration Team focusing on dependency management."},
+{q:"What is a Burndown Chart and how do you read it?",a:"A Burndown Chart shows remaining story points (Y-axis) vs. sprint days (X-axis). The ideal line goes from total sprint points on Day 1 to zero on the last day. If the actual line is above the ideal, the team is behind. If below, they're ahead."},
+{q:"Why should velocity NOT be used as a performance metric?",a:"Velocity measures story points completed — teams can inflate velocity by overestimating. Using velocity to compare teams or evaluate performance creates gaming behavior. It's only useful as a self-calibration tool for forecasting a team's own future capacity."},
+{q:"What is the Scrum of Scrums?",a:"An optional coordination meeting where one representative from each Scrum team meets daily or weekly to synchronize across teams. They answer: What did my team do that might affect others? What will we do? Any cross-team blockers? It is not in the Scrum Guide but is a widely used practice."},
+{q:"What SDET-specific metrics matter in scaled Agile?",a:"(1) Cross-team defect escape rate — bugs found after integration, (2) Shared test environment uptime %, (3) Shared automation framework adoption rate, (4) End-to-end regression suite duration, (5) Integration test failure rate before release. These metrics are unique to scaled environments where multiple teams' code merges."}
+]}
+];
+
+const phaseMap={f:"Fundamentals",i:"Intermediate",a:"Advanced"};
+const tagClass={f:"tag-f",i:"tag-i",a:"tag-a"};
+let current=0;
+const visited=new Set([0]);
+
+function renderTabBar(){
+  const bar=document.getElementById('tabBar');
+  bar.innerHTML='';
+  sessions.forEach((s,i)=>{
+    const b=document.createElement('button');
+    b.className='tab-btn'+(i===current?' active':'')+(visited.has(i)&&i!==current?' done':'');
+    b.textContent=`${s.id}. ${s.title.split('—')[0].trim().substring(0,18)}`;
+    b.onclick=()=>goTo(i);
+    bar.appendChild(b);
+  });
+  document.getElementById('progressFill').style.width=((visited.size/sessions.length)*100)+'%';
+}
+
+function renderSession(i){
+  const s=sessions[i];
+  const container=document.getElementById('sessions');
+  if(document.getElementById('sess-'+s.id)) return;
+  const div=document.createElement('div');
+  div.className='session';
+  div.id='sess-'+s.id;
+  div.innerHTML=`
+<div class="s-header">
+  <span class="s-tag ${tagClass[s.phase]}">Phase: ${phaseMap[s.phase]} · Session ${s.id} of 10</span>
+  <div class="s-title">${s.title}</div>
+  <div class="s-sub">${s.sub}</div>
+</div>
+
+<div class="section">
+  <div class="section-hdr">Overview — Definition</div>
+  <div class="def-card"><p>${s.def}</p></div>
+</div>
+
+<div class="section">
+  <div class="section-hdr">Keywords explained</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
+    ${s.keywords.map(k=>`<div class="def-card" style="padding:.6rem .9rem"><p style="font-size:13px"><span class="kw">${k.t}</span><br>${k.d}</p></div>`).join('')}
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-hdr">Concept diagram</div>
+  <div class="flow-wrap">${s.svgCode}</div>
+</div>
+
+<div class="section">
+  <div class="section-hdr">Core pillars at a glance</div>
+  <div class="pillars">${s.pillars.map(p=>`<div class="pillar"><div class="icon">${p.icon}</div><div class="pl-title">${p.t}</div><div class="pl-sub">${p.s}</div></div>`).join('')}</div>
+</div>
+
+<div class="section">
+  <div class="section-hdr">Interview one-liners (say these out loud!)</div>
+  <div class="interview-grid">${s.lines.map((l,j)=>`<div class="i-line"><span class="i-bullet">${j+1}</span><span>${l}</span></div>`).join('')}</div>
+</div>
+
+<div class="section">
+  <div class="section-hdr">Best practices — industry checklist</div>
+  <div class="chk-list">${s.bp.map((b,j)=>`<div class="chk-item"><div class="chk-box" id="chk-${s.id}-${j}" onclick="toggleChk('chk-${s.id}-${j}')"></div><span>${b}</span></div>`).join('')}</div>
+</div>
+
+<div class="section">
+  <div class="section-hdr">Interview Q&amp;A — click to reveal answers</div>
+  <div class="qa-stack">${s.qa.map((q,j)=>`<div class="qa-card"><div class="qa-q" onclick="toggleQA(this)"><span>Q${j+1}: ${q.q}</span><i class="ti ti-chevron-down" aria-hidden="true"></i></div><div class="qa-a">${q.a}</div></div>`).join('')}</div>
+</div>
+
+<div class="nav-row">
+  ${i>0?`<button class="nav-btn" onclick="goTo(${i-1})">← Session ${i}</button>`:'<span></span>'}
+  ${i<sessions.length-1?`<button class="nav-btn primary" onclick="goTo(${i+1})">Session ${i+2} →</button>`:'<button class="nav-btn primary" onclick="sendPrompt(\'I have completed all 10 sessions. Please quiz me with a comprehensive Agile + Scrum mock interview!\')">🎓 Take Final Quiz ↗</button>'}
+</div>`;
+  container.appendChild(div);
+}
+
+function goTo(i){
+  document.querySelectorAll('.session').forEach(s=>s.classList.remove('active'));
+  current=i;
+  visited.add(i);
+  renderSession(i);
+  document.getElementById('sess-'+sessions[i].id).classList.add('active');
+  renderTabBar();
+}
+
+function toggleQA(el){
+  const ans=el.nextElementSibling;
+  ans.classList.toggle('open');
+}
+
+function toggleChk(id){
+  document.getElementById(id).classList.toggle('checked');
+  const el=document.getElementById(id);
+  el.textContent=el.classList.contains('checked')?"✓":"";
+}
+
+renderSession(0);
+document.getElementById('sess-'+sessions[0].id).classList.add('active');
+renderTabBar();
+</script>
+
+</body>
+</html>

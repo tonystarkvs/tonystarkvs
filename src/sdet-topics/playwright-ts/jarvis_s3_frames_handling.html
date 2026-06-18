@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jarvis s3 frames handling</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+/* ===== VIKRANT VISUAL ENHANCEMENT LAYER v2.0 ===== */
+h1,h2{font-weight:700 !important;border-left:4px solid #6C5CE7 !important;padding-left:12px !important;background:rgba(108,92,231,0.07) !important;border-radius:0 8px 8px 0 !important;margin-top:1.2em !important;margin-bottom:0.6em !important;padding-top:6px !important;padding-bottom:6px !important}
+h3,h4{font-weight:700 !important;border-left:3px solid #00b894 !important;padding-left:10px !important;background:rgba(0,184,148,0.06) !important;border-radius:0 6px 6px 0 !important;margin-top:1em !important;margin-bottom:0.5em !important;padding-top:4px !important;padding-bottom:4px !important}
+h5,h6{font-weight:600 !important;border-left:2px solid #fdcb6e !important;padding-left:8px !important;background:rgba(253,203,110,0.08) !important;border-radius:0 4px 4px 0 !important}
+.section-title,.card-title,.topic-title,[class*="title"],[class*="heading"],.card h3,.card h4,summary,.panel-title,.accordion-header{font-weight:700 !important}
+pre,.code-block,.code-example,.code-container,[class*="code-block"],[class*="codeblock"]{background:#1e1e2e !important;color:#cdd6f4 !important;border-radius:10px !important;padding:16px 18px !important;overflow-x:auto !important;font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace !important;font-size:0.82rem !important;border-left:4px solid #6C5CE7 !important;line-height:1.7 !important;white-space:pre-wrap !important;word-wrap:break-word !important;margin:12px 0 !important;box-shadow:0 2px 12px rgba(0,0,0,0.15) !important;position:relative !important}
+pre code,.code-block code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border:none !important;font-size:inherit !important;border-left:none !important}
+code{background:rgba(108,92,231,0.12) !important;color:#6C5CE7 !important;padding:2px 6px !important;border-radius:4px !important;font-family:'JetBrains Mono','Fira Code',monospace !important;font-size:0.85em !important}
+pre code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border-left:none !important}
+.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{display:flex !important;flex-wrap:wrap !important;gap:8px !important;padding:8px !important}
+.tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"],.tab-button{padding:8px 18px !important;border-radius:20px !important;border:1.5px solid #ddd !important;background:#f8f9fa !important;color:#2d3436 !important;font-weight:600 !important;font-size:0.85rem !important;cursor:pointer !important;transition:all 0.25s ease !important;min-width:fit-content !important;text-align:center !important}
+.tab-btn:hover,.session-tab:hover,[class*="tab-btn"]:hover,button[class*="tab"]:hover{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;transform:translateY(-1px) !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.tab-btn.active,.session-tab.active,[class*="tab-btn"].active,button[class*="tab"].active{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.card,.section,.panel,[class*="card"]{border-radius:12px !important;box-shadow:0 2px 8px rgba(0,0,0,0.06) !important;border-top:3px solid #6C5CE7 !important;margin-bottom:16px !important;padding:16px !important}
+details{border-left:3px solid #00b894 !important;border-radius:8px !important;margin-bottom:12px !important;padding:8px 12px !important;box-shadow:0 1px 4px rgba(0,0,0,0.05) !important}
+details summary{font-weight:700 !important;cursor:pointer !important;padding:10px 12px !important;background:rgba(0,184,148,0.06) !important;border-radius:8px !important;transition:background 0.2s !important}
+details summary:hover{background:rgba(0,184,148,0.12) !important}
+table{width:100% !important;border-collapse:collapse !important;margin:12px 0 !important;border-radius:8px !important;overflow:hidden !important;box-shadow:0 1px 6px rgba(0,0,0,0.08) !important}
+thead th,table thead td{background:#6C5CE7 !important;color:#fff !important;font-weight:700 !important;padding:10px 14px !important;text-align:left !important}
+tbody td{padding:10px 14px !important;border-bottom:1px solid #eee !important}
+tbody tr:hover{background:rgba(108,92,231,0.04) !important}
+.toggle-btn,.accordion-btn,[class*="toggle"],[class*="collapsible"]{cursor:pointer !important;transition:all 0.3s ease !important}
+.toggle-content,.accordion-content,.collapsible-content{overflow:hidden !important;transition:max-height 0.4s ease,opacity 0.3s ease !important}
+@media(max-width:768px){
+  .tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{flex-wrap:wrap !important;justify-content:center !important}
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{font-size:0.78rem !important;padding:6px 14px !important;flex:1 1 auto !important;min-width:80px !important}
+  pre,.code-block,[class*="code-block"]{font-size:0.75rem !important;padding:12px !important}
+  h1{font-size:1.4rem !important}h2{font-size:1.2rem !important}h3{font-size:1.05rem !important}
+  .card,.section,.panel,[class*="card"]{padding:12px !important}
+  body{padding:8px !important}
+}
+@media(max-width:480px){
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{flex:1 1 100% !important;font-size:0.75rem !important;padding:8px 10px !important;border-radius:8px !important}
+  pre,.code-block{font-size:0.7rem !important;padding:10px !important;overflow-x:scroll !important}
+  h1{font-size:1.2rem !important}h2{font-size:1.05rem !important}h3{font-size:0.95rem !important}
+  table{font-size:0.8rem !important;display:block !important;overflow-x:auto !important}
+  body{padding:4px !important}
+}
+pre::-webkit-scrollbar{height:6px}pre::-webkit-scrollbar-track{background:#2a2a3e;border-radius:3px}pre::-webkit-scrollbar-thumb{background:#6C5CE7;border-radius:3px}
+/* ===== END ENHANCEMENT LAYER v2.0 ===== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;--border:#30363d;--border2:#484f58;--text:#e6edf3;--muted:#8b949e;--dim:#6e7681;--green:#3fb950;--blue:#79c0ff;--purple:#d2a8ff;--orange:#ffa657;--red:#ff7b72;--yellow:#e3b341;--cyan:#56d364}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh}
+.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:18px 24px 14px;position:relative}
+.hero::after{content:'S3';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:60px;font-weight:800;color:rgba(86,211,100,0.06);pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(86,211,100,.1);border:1px solid rgba(86,211,100,.25);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hero h1{font-size:21px;font-weight:800;margin-bottom:4px}.hero h1 span{color:var(--cyan)}
+.hero p{font-size:13px;color:var(--muted)}
+.phase-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.ph-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace;background:rgba(210,168,255,.1);color:var(--purple);border:1px solid rgba(210,168,255,.2)}
+
+.stabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.stabs::-webkit-scrollbar{display:none}
+.stab{padding:10px 16px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.stab:hover{color:var(--text)}.stab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.panel{display:none;padding:18px 20px}.panel.active{display:block}
+.def-box{background:var(--bg3);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:16px}
+.def-box .lbl{font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.def-box p{font-size:14px;color:var(--text);line-height:1.7}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px}
+.card h4{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card h4::before{content:'';width:3px;height:12px;border-radius:2px;background:var(--cyan);display:inline-block}
+.card p{font-size:13px;color:var(--text);line-height:1.6}
+.full{grid-column:1/-1}
+.gitem{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.gitem:last-child{border-bottom:none}
+.gkw{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(227,179,65,.08);border:1px solid rgba(227,179,65,.18);padding:2px 8px;border-radius:4px;white-space:nowrap;height:fit-content;margin-top:2px;flex-shrink:0}
+.gdesc{font-size:13px;color:var(--muted);line-height:1.5}
+.oneliners{display:flex;flex-direction:column;gap:8px}
+.ol{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:var(--text);line-height:1.5;font-style:italic}
+.ol span{color:var(--cyan);font-weight:700;font-style:normal;font-size:10px;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.cb{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden}
+.cb h4{background:var(--bg3);padding:10px 14px;font-size:12px;font-weight:700;color:var(--cyan);border-bottom:1px solid var(--border)}
+.cb-body{padding:14px}
+.cb-body p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px}
+.cb-body p:last-child{margin-bottom:0}
+.flow{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.fr{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+.fb{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;white-space:nowrap}
+.fb.b{color:var(--blue)}.fb.g{color:var(--green);border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.05)}
+.fb.p{color:var(--purple);border-color:rgba(210,168,255,.3);background:rgba(210,168,255,.05)}
+.fb.o{color:var(--orange);border-color:rgba(255,166,87,.3);background:rgba(255,166,87,.05)}
+.fb.c{color:var(--cyan);border-color:rgba(86,211,100,.3);background:rgba(86,211,100,.05)}
+.fb.r{color:var(--red);border-color:rgba(255,123,114,.3);background:rgba(255,123,114,.05)}
+.arr{color:var(--dim);font-size:13px}
+.bplist{list-style:none}
+.bpitem{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
+.bpitem:last-child{border-bottom:none}
+.bpicon{width:18px;height:18px;border-radius:50%;background:rgba(86,211,100,.1);border:1px solid rgba(86,211,100,.25);color:var(--cyan);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.qablock{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden}
+.qaq{background:var(--bg3);padding:10px 14px;font-size:13px;font-weight:600;color:var(--cyan);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.qaa{background:var(--bg2);padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.6;display:none;border-top:1px solid var(--border)}
+.qaa.open{display:block}
+.qt{color:var(--dim);font-size:15px;transition:transform .2s;flex-shrink:0}
+.qablock.open .qt{transform:rotate(90deg)}
+.ctabs{display:flex;background:var(--bg);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;padding:0 16px}
+.ctabs::-webkit-scrollbar{display:none}
+.ctab{padding:8px 13px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:5px}
+.ctab:hover{color:var(--muted)}.ctab.active{color:var(--orange);border-bottom-color:var(--orange)}
+.fi{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--bg3);color:var(--dim);font-weight:700}
+.cpanel{display:none}.cpanel.active{display:block}
+.cwrap{background:#0d1117}
+.cheader{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.cfname{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.cfname::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--cyan);display:inline-block}
+.copybtn{font-size:11px;padding:3px 10px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif}
+.copybtn:hover{color:var(--text)}
+pre{margin:0;padding:16px;overflow-x:auto;font-size:12.5px;line-height:1.75;font-family:'JetBrains Mono',monospace;background:#0d1117}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#6e7681;font-style:italic}
+.num{color:#79c0ff}.cls{color:#ffa657}.prop{color:#79c0ff}.val{color:#3fb950}.type{color:#ffa657}
+.tsec{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;margin-top:16px;display:flex;align-items:center;gap:8px}
+.tsec::after{content:'';flex:1;height:1px;background:var(--border)}
+</style>
+</head>
+<body>
+  <div class="hero">
+  <div class="badge"><div class="dot"></div>JARVIS · SESSION 3 · PHASE 1</div>
+  <h1>All <span>Frames</span> Handling</h1>
+  <p>iframes, frameLocator(), nested frames, cross-origin frames, frame switching</p>
+  <div class="phase-row"><span class="ph-badge">⬡ Phase 1 — Fundamentals</span><span class="ph-badge" style="background:rgba(86,211,100,.1);color:var(--cyan);border-color:rgba(86,211,100,.2)">S3 of 10</span></div>
+</div>
+
+<div class="stabs" id="stabs3">
+  <div class="stab active" data-p="overview">Overview</div>
+  <div class="stab" data-p="glossary">Glossary</div>
+  <div class="stab" data-p="oneliners">Interview 1-Liners</div>
+  <div class="stab" data-p="concepts">Concepts</div>
+  <div class="stab" data-p="bp">Best Practices</div>
+  <div class="stab" data-p="interview">Interview Prep</div>
+  <div class="stab" data-p="code">Code Examples</div>
+</div>
+
+<div class="panel active" id="p3-overview">
+  <div class="def-box">
+    <div class="lbl">Session 3 · Core Definition</div>
+    <p>An <strong style="color:var(--cyan)">iframe (inline frame)</strong> is an HTML element that embeds another HTML document inside the current page. Playwright provides <code style="color:var(--orange)">frameLocator()</code> to locate elements inside iframes using a CSS/XPath selector for the frame itself, then chaining locators for elements inside it.</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h4>WHAT is it?</h4><p>An iframe creates a nested browsing context — a separate DOM inside the parent page. Playwright's frameLocator() returns a FrameLocator that scopes all subsequent locators to inside that iframe's document.</p></div>
+    <div class="card"><h4>WHY handle it?</h4><p>Many apps embed third-party widgets in iframes: payment forms (Stripe, PayPal), CAPTCHA, video players, map embeds, rich text editors (TinyMCE, CKEditor), chat widgets. Automating them requires frame handling.</p></div>
+    <div class="card"><h4>WHEN to use it?</h4><p>Any time the element you need to interact with is inside an iframe. You can tell by inspecting the DOM — if an element is inside an &lt;iframe&gt; tag, you need frameLocator() to reach it.</p></div>
+    <div class="card"><h4>HOW to use it?</h4><p>Use <code style="color:var(--orange)">page.frameLocator('iframe selector')</code> to get a FrameLocator, then chain .locator(), .getByRole(), .getByText() etc. on it exactly like a regular page. All actions (fill, click, check) work the same way inside frames.</p></div>
+    <div class="card full"><h4>WHERE does it fit in architecture?</h4><p>Page → frameLocator('#payment-iframe') → locator('input[name="card"]'). Playwright handles the cross-frame boundary automatically. For nested iframes: page.frameLocator('outer') → .frameLocator('inner') → .locator('element').</p></div>
+  </div>
+</div>
+
+<div class="panel" id="p3-glossary">
+  <div class="tsec">Keyword Glossary — Session 3</div>
+  <div class="gitem"><span class="gkw">frameLocator()</span><span class="gdesc">Returns a FrameLocator object scoped to the iframe matching the selector. All locators chained on it resolve inside the frame's document. This is the modern Playwright API for frames.</span></div>
+  <div class="gitem"><span class="gkw">FrameLocator</span><span class="gdesc">A lazily-evaluated reference to an iframe. Supports all locator methods: .locator(), .getByRole(), .getByText(), .getByLabel(), .first(), .nth(). Does not make a network request itself.</span></div>
+  <div class="gitem"><span class="gkw">page.frames()</span><span class="gdesc">Returns an array of all Frame objects on the page (including the main frame). Useful for finding a frame by name or URL using the legacy Frame API.</span></div>
+  <div class="gitem"><span class="gkw">page.frame()</span><span class="gdesc">Returns a Frame object by name attribute or URL. e.g. page.frame({name: 'payment'}) or page.frame({url: /stripe/}). Legacy API — prefer frameLocator() for new code.</span></div>
+  <div class="gitem"><span class="gkw">Frame</span><span class="gdesc">The underlying Frame object representing an iframe or the main page frame. Has its own navigate(), fill(), click(), evaluate() etc. methods. Accessible via page.mainFrame() or page.frames().</span></div>
+  <div class="gitem"><span class="gkw">mainFrame()</span><span class="gdesc">Returns the Frame object for the main page document. All actions on `page` delegate to page.mainFrame() internally.</span></div>
+  <div class="gitem"><span class="gkw">frame.childFrames()</span><span class="gdesc">Returns an array of child frames (nested iframes) inside the current frame. Used to traverse a tree of nested iframes programmatically.</span></div>
+  <div class="gitem"><span class="gkw">frame.url()</span><span class="gdesc">Returns the URL currently loaded in this frame. Useful for identifying cross-origin frames by their domain.</span></div>
+  <div class="gitem"><span class="gkw">frame.name()</span><span class="gdesc">Returns the name attribute of the iframe element. e.g. &lt;iframe name="payment"&gt; → frame.name() returns 'payment'.</span></div>
+  <div class="gitem"><span class="gkw">cross-origin frame</span><span class="gdesc">An iframe whose src is a different domain than the parent page. Playwright can interact with cross-origin iframes using frameLocator() — the same API works regardless of origin policy.</span></div>
+  <div class="gitem"><span class="gkw">frameLocator.nth()</span><span class="gdesc">When multiple iframes match the selector, use .nth(0), .nth(1) to target a specific one. Zero-indexed.</span></div>
+</div>
+
+<div class="panel" id="p3-oneliners">
+  <div class="tsec">Interview One-Liners — Session 3</div>
+  <div class="oneliners">
+    <div class="ol"><span>Modern API</span>"In modern Playwright, frameLocator() is the preferred way to handle iframes — you chain locators on it exactly like a regular page, so there's no context switching, no frame reference management, and auto-waiting works exactly the same."</div>
+    <div class="ol"><span>vs Selenium</span>"In Selenium you call driver.switchTo().frame() to change the global driver context to inside the iframe, do your action, then must call driver.switchTo().defaultContent() to get back — Playwright has no such global state; frameLocator() is always scoped."</div>
+    <div class="ol"><span>Nested Frames</span>"For nested iframes, I chain frameLocator() calls: page.frameLocator('outer-iframe').frameLocator('inner-iframe').locator('button') — each frameLocator() drills one level deeper into the frame tree."</div>
+    <div class="ol"><span>Cross-Origin</span>"Playwright handles cross-origin iframes natively — frameLocator() works the same way regardless of whether the iframe is same-origin or cross-origin, unlike browser security policies that block JavaScript access."</div>
+    <div class="ol"><span>Payment Forms</span>"The most common real-world frame handling is payment forms — Stripe's card input is inside a cross-origin iframe. I use page.frameLocator('iframe[name=\"__privateStripeFrame\"]').locator('[placeholder=\"Card number\"]') to fill it."</div>
+    <div class="ol"><span>Detection</span>"I identify iframe elements in DevTools by looking for &lt;iframe&gt; tags in the DOM — once I find the frame's selector (by id, name, src, or title attribute), I can immediately use frameLocator() to scope my locators to it."</div>
+    <div class="ol"><span>Rich Text Editors</span>"TinyMCE and CKEditor render their editable area inside an iframe with designMode enabled. I use frameLocator('iframe.tox-edit-area__iframe').locator('body') and then .fill() or .type() to enter content into these rich text editors."</div>
+  </div>
+</div>
+
+<div class="panel" id="p3-concepts">
+  <div class="tsec">Core Concepts — Session 3</div>
+  <div class="cb">
+    <h4>⬡ Frame Tree Architecture</h4>
+    <div class="cb-body">
+      <p>Every page has a main frame. Iframes create child frames. Each child can have its own children — forming a tree. Playwright's frameLocator() lets you navigate this tree with chained calls.</p>
+      <div class="flow">
+        <div class="fr"><span class="fb c">Page (main frame)</span><span class="arr">url: myapp.com</span></div>
+        <div class="fr" style="margin-left:20px"><span class="fb b">iframe#payment</span><span class="arr">url: stripe.com/v3/elements</span></div>
+        <div class="fr" style="margin-left:40px"><span class="fb g">input[placeholder="Card number"]</span></div>
+        <div class="fr" style="margin-left:20px"><span class="fb p">iframe#recaptcha</span><span class="arr">url: google.com/recaptcha</span></div>
+        <div class="fr" style="margin-left:20px"><span class="fb o">iframe#chat-widget</span><span class="arr">url: intercom.io</span></div>
+        <div class="fr" style="margin-left:40px"><span class="fb o">iframe#chat-inner</span><span class="arr">nested iframe!</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb">
+    <h4>⬡ frameLocator() vs Legacy frame() API</h4>
+    <div class="cb-body">
+      <p>Playwright has two frame APIs. Always prefer frameLocator() for new code — it supports auto-waiting and works with all modern locator methods.</p>
+      <div class="flow">
+        <div class="fr"><span class="fb r">❌ LEGACY: page.frame({name:'payment'})</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb" style="color:var(--muted)">Returns Frame object synchronously — no auto-waiting</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb" style="color:var(--muted)">Must use await frame.fill(), frame.click() directly</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb" style="color:var(--muted)">Frame might not exist yet → throws immediately</span></div>
+        <div class="fr" style="margin-top:8px"><span class="fb g">✅ MODERN: page.frameLocator('iframe[name="payment"]')</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb g">Returns FrameLocator — lazy, supports auto-waiting</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb g">Chain .locator(), .getByRole() etc. — same as page</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb g">Waits for iframe to appear in DOM automatically</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb">
+    <h4>⬡ How to Identify Iframes in DevTools</h4>
+    <div class="cb-body">
+      <p>Open DevTools → Elements tab. Look for &lt;iframe&gt; tags. Common selectors to identify them:</p>
+      <div class="flow">
+        <div class="fr"><span class="fb b">by id</span><span class="arr">→</span><span class="fb c">iframe#payment-frame</span></div>
+        <div class="fr"><span class="fb b">by name attr</span><span class="arr">→</span><span class="fb c">iframe[name="stripe"]</span></div>
+        <div class="fr"><span class="fb b">by src</span><span class="arr">→</span><span class="fb c">iframe[src*="stripe.com"]</span></div>
+        <div class="fr"><span class="fb b">by title</span><span class="arr">→</span><span class="fb c">iframe[title="Payment Form"]</span></div>
+        <div class="fr"><span class="fb b">by class</span><span class="arr">→</span><span class="fb c">iframe.payment-widget</span></div>
+        <div class="fr"><span class="fb b">nth of type</span><span class="arr">→</span><span class="fb c">page.frameLocator('iframe').nth(0)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="p3-bp">
+  <div class="tsec">Best Practices — Session 3</div>
+  <ul class="bplist">
+    <li class="bpitem"><div class="bpicon">✓</div><div>Always use <strong style="color:var(--cyan)">frameLocator()</strong> over the legacy frame() API — it supports auto-waiting, works with all modern locator methods, and eliminates frame-not-found errors on slow-loading iframes.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>Identify frames by <strong style="color:var(--cyan)">stable attributes</strong> like id, name, or title — never by array index from page.frames() alone, as iframe order can change when the page renders differently.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>For <strong style="color:var(--cyan)">rich text editors</strong> (TinyMCE, CKEditor): use frameLocator to get the iframe, then locator('body') to target the editable content area — the body element itself receives the text input.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>For <strong style="color:var(--cyan)">Stripe payment iframes</strong>: each card field (number, expiry, CVC) is a separate iframe. Use frameLocator with the specific field's iframe selector for each one — don't assume one iframe contains all fields.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>Use <strong style="color:var(--cyan)">frame.waitForLoadState()</strong> on the Frame object if you need to ensure the iframe's content has fully loaded before proceeding with assertions inside it.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>For <strong style="color:var(--cyan)">CAPTCHA iframes</strong>: in test environments, configure your app to disable CAPTCHA rather than trying to automate it. If you must test the UI, verify the iframe is present without solving it.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>Use <strong style="color:var(--cyan)">page.frames()</strong> to debug — log all frame URLs and names to understand the frame tree before writing selectors.</div></li>
+  </ul>
+</div>
+
+<div class="panel" id="p3-interview">
+  <div class="tsec">Interview Prep — 5 SDET Q&A</div>
+  <div class="qablock" id="q3-1"><div class="qaq" onclick="tq3('q3-1')">Q1: What is the difference between frameLocator() and page.frame() in Playwright? <span class="qt">▶</span></div><div class="qaa">page.frame({name, url}) is the legacy API — it returns a Frame object synchronously without waiting. If the iframe hasn't loaded yet, it returns null immediately. You then call methods directly on the Frame (frame.fill(), frame.click()). frameLocator() is the modern API — it returns a FrameLocator which is lazy and supports auto-waiting. It integrates with Playwright's locator system: you can chain getByRole(), getByLabel(), filter(), nth() etc. on it. The FrameLocator waits for the iframe to appear in the DOM before acting. For new tests, always use frameLocator().</div></div>
+  <div class="qablock" id="q3-2"><div class="qaq" onclick="tq3('q3-2')">Q2: How do you handle Stripe's payment iframe in Playwright? <span class="qt">▶</span></div><div class="qaa">Stripe renders each field (card number, expiry, CVC) in a separate iframe. I inspect the DOM to find each iframe's selector. Then: const cardFrame = page.frameLocator('iframe[name="__privateStripeFrame__cardNumber"]'). await cardFrame.locator('[placeholder="Card number"]').fill('4242424242424242'). For expiry: const expiryFrame = page.frameLocator('iframe[name="__privateStripeFrame__cardExpiry"]'). await expiryFrame.locator('[placeholder="MM / YY"]').fill('12/28'). The exact iframe name attributes depend on the Stripe Elements version — always inspect the live DOM. Playwright handles cross-origin frames transparently.</div></div>
+  <div class="qablock" id="q3-3"><div class="qaq" onclick="tq3('q3-3')">Q3: How do you interact with a TinyMCE rich text editor inside an iframe? <span class="qt">▶</span></div><div class="qaa">TinyMCE renders an iframe with a body element that has contenteditable or designMode enabled. First find the iframe: const editorFrame = page.frameLocator('iframe.tox-edit-area__iframe') — the class name varies by TinyMCE version, check DevTools. Then target the body: await editorFrame.locator('body').fill('My test content'). If fill() doesn't work (some editors intercept it), use .click() first then page.keyboard.type('My test content'). For formatted input (bold, lists), I click the toolbar buttons in the main page, not inside the iframe — toolbar buttons are in the parent DOM.</div></div>
+  <div class="qablock" id="q3-4"><div class="qaq" onclick="tq3('q3-4')">Q4: How do you handle nested iframes in Playwright? <span class="qt">▶</span></div><div class="qaa">I chain frameLocator() calls. If there's an outer iframe containing an inner iframe: const outerFrame = page.frameLocator('iframe#outer'). const innerFrame = outerFrame.frameLocator('iframe#inner'). await innerFrame.locator('button#submit').click(). Each frameLocator() call descends one level. Alternatively with the legacy API: const outerFrameObj = page.frame({name: 'outer'}). const innerFrameObj = outerFrameObj.childFrames()[0]. I prefer the chained frameLocator() approach as it's cleaner and supports auto-waiting at each level.</div></div>
+  <div class="qablock" id="q3-5"><div class="qaq" onclick="tq3('q3-5')">Q5: How do you debug an unknown frame structure you've never seen before? <span class="qt">▶</span></div><div class="qaa">My debugging workflow: First, console.log all frames: console.log(page.frames().map(f => ({name: f.name(), url: f.url()})). This reveals every iframe's name and URL. Second, I use DevTools to inspect the element I want — if it's inside an iframe, I look at the parent iframe's id, name, src, and title attributes. Third, I try frameLocator with different selectors until one resolves. Fourth, I log the frame tree with frame.childFrames() recursively to understand nesting. Finally I use page.pause() in headed mode and the Playwright Inspector to visually inspect and generate locators interactively.</div></div>
+</div>
+
+<div class="panel" id="p3-code">
+  <div class="ctabs" id="ctabs3">
+    <div class="ctab active" data-c="c3-1"><span class="fi">.ts</span> basic-frame.ts</div>
+    <div class="ctab" data-c="c3-2"><span class="fi">.ts</span> stripe-payment.ts</div>
+    <div class="ctab" data-c="c3-3"><span class="fi">.ts</span> nested-frames.ts</div>
+    <div class="ctab" data-c="c3-4"><span class="fi">.ts</span> rich-text-editor.ts</div>
+    <div class="ctab" data-c="c3-5"><span class="fi">.ts</span> debug-frames.ts</div>
+    <div class="ctab" data-c="c3-6"><span class="fi">.ts</span> legacy-frame-api.ts</div>
+  </div>
+  <div class="cwrap">
+    <div class="cpanel active" id="c3-1">
+      <div class="cheader"><span class="cfname">basic-frame.ts</span><button class="copybtn" onclick="cp3('c3-1')">Copy</button></div>
+      <pre><span class="cm">// basic-frame.ts</span>
+<span class="cm">// PURPOSE: Interact with elements inside an iframe using frameLocator()</span>
+<span class="cm">// USE CASE: Any embedded widget, embedded form, or embedded content</span>
+
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'interact with elements inside iframe'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/checkout'</span>);
+
+  <span class="cm">// ── Locate the iframe first ──────────────────────────────────────</span>
+  <span class="cm">// frameLocator() accepts any CSS selector that points to the &lt;iframe&gt; element</span>
+  <span class="kw">const</span> <span class="prop">paymentFrame</span> = <span class="prop">page</span>.<span class="fn">frameLocator</span>(<span class="str">'iframe#payment-widget'</span>);
+
+  <span class="cm">// ── All locator methods work inside the frame ────────────────────</span>
+  <span class="cm">// Fill card number input inside the iframe</span>
+  <span class="kw">await</span> <span class="prop">paymentFrame</span>.<span class="fn">locator</span>(<span class="str">'input[name="cardNumber"]'</span>).<span class="fn">fill</span>(<span class="str">'4111111111111111'</span>);
+
+  <span class="cm">// Use getByLabel (Playwright auto-waits for the frame to load)</span>
+  <span class="kw">await</span> <span class="prop">paymentFrame</span>.<span class="fn">getByLabel</span>(<span class="str">'Expiry Date'</span>).<span class="fn">fill</span>(<span class="str">'12/28'</span>);
+  <span class="kw">await</span> <span class="prop">paymentFrame</span>.<span class="fn">getByLabel</span>(<span class="str">'CVV'</span>).<span class="fn">fill</span>(<span class="str">'123'</span>);
+
+  <span class="cm">// Use getByRole inside frame</span>
+  <span class="kw">await</span> <span class="prop">paymentFrame</span>.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { <span class="prop">name</span>: <span class="str">'Pay Now'</span> }).<span class="fn">click</span>();
+
+  <span class="cm">// Assert success message inside the frame</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(
+    <span class="prop">paymentFrame</span>.<span class="fn">locator</span>(<span class="str">'.success-message'</span>)
+  ).<span class="fn">toContainText</span>(<span class="str">'Payment successful'</span>);
+
+  <span class="cm">// You can also assert on the parent page simultaneously</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'h1'</span>)).<span class="fn">toContainText</span>(<span class="str">'Checkout'</span>);
+});</pre>
+    </div>
+    <div class="cpanel" id="c3-2">
+      <div class="cheader"><span class="cfname">stripe-payment.ts</span><button class="copybtn" onclick="cp3('c3-2')">Copy</button></div>
+      <pre><span class="cm">// stripe-payment.ts</span>
+<span class="cm">// PURPOSE: Fill Stripe Elements payment form (multiple iframes)</span>
+<span class="cm">// INSIGHT: Each Stripe field is a SEPARATE iframe</span>
+
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'complete Stripe payment with card details'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myshop.com/checkout'</span>);
+
+  <span class="cm">// Debug: Log all iframes to find their selectors</span>
+  <span class="kw">const</span> <span class="prop">allFrames</span> = <span class="prop">page</span>.<span class="fn">frames</span>();
+  <span class="prop">allFrames</span>.<span class="fn">forEach</span>(<span class="prop">f</span> => <span class="cls">console</span>.<span class="fn">log</span>(<span class="prop">f</span>.<span class="fn">name</span>(), <span class="prop">f</span>.<span class="fn">url</span>()));
+
+  <span class="cm">// ── Stripe card number field (separate iframe) ───────────────────</span>
+  <span class="kw">const</span> <span class="prop">cardNumberFrame</span> = <span class="prop">page</span>.<span class="fn">frameLocator</span>(
+    <span class="str">'iframe[name*="__privateStripeFrame"][name*="cardNumber"]'</span>
+  );
+  <span class="kw">await</span> <span class="prop">cardNumberFrame</span>
+    .<span class="fn">locator</span>(<span class="str">'[placeholder="Card number"]'</span>)
+    .<span class="fn">fill</span>(<span class="str">'4242 4242 4242 4242'</span>); <span class="cm">// Stripe test card</span>
+
+  <span class="cm">// ── Stripe expiry field (a different iframe!) ────────────────────</span>
+  <span class="kw">const</span> <span class="prop">expiryFrame</span> = <span class="prop">page</span>.<span class="fn">frameLocator</span>(
+    <span class="str">'iframe[name*="__privateStripeFrame"][name*="cardExpiry"]'</span>
+  );
+  <span class="kw">await</span> <span class="prop">expiryFrame</span>
+    .<span class="fn">locator</span>(<span class="str">'[placeholder="MM / YY"]'</span>)
+    .<span class="fn">fill</span>(<span class="str">'12 / 28'</span>);
+
+  <span class="cm">// ── Stripe CVC field (yet another iframe!) ───────────────────────</span>
+  <span class="kw">const</span> <span class="prop">cvcFrame</span> = <span class="prop">page</span>.<span class="fn">frameLocator</span>(
+    <span class="str">'iframe[name*="__privateStripeFrame"][name*="cardCvc"]'</span>
+  );
+  <span class="kw">await</span> <span class="prop">cvcFrame</span>
+    .<span class="fn">locator</span>(<span class="str">'[placeholder="CVC"]'</span>)
+    .<span class="fn">fill</span>(<span class="str">'424'</span>);
+
+  <span class="cm">// Submit button is on PARENT page, not inside iframe</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'button#pay-button'</span>);
+
+  <span class="cm">// Assert success on parent page</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForURL</span>(<span class="str">'**/order-success'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.order-confirmed'</span>)).<span class="fn">toBeVisible</span>();
+});</pre>
+    </div>
+    <div class="cpanel" id="c3-3">
+      <div class="cheader"><span class="cfname">nested-frames.ts</span><button class="copybtn" onclick="cp3('c3-3')">Copy</button></div>
+      <pre><span class="cm">// nested-frames.ts</span>
+<span class="cm">// PURPOSE: Navigate nested iframes (iframe inside an iframe)</span>
+<span class="cm">// USE CASE: Complex embeds like analytics dashboards or ad tech</span>
+
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'interact with deeply nested iframe'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/dashboard'</span>);
+
+  <span class="cm">// Level 1: Outer iframe (e.g. analytics widget container)</span>
+  <span class="kw">const</span> <span class="prop">outerFrame</span> = <span class="prop">page</span>.<span class="fn">frameLocator</span>(<span class="str">'iframe#analytics-widget'</span>);
+
+  <span class="cm">// Level 2: Inner iframe (e.g. chart embedded inside analytics widget)</span>
+  <span class="kw">const</span> <span class="prop">innerFrame</span> = <span class="prop">outerFrame</span>.<span class="fn">frameLocator</span>(<span class="str">'iframe.chart-container'</span>);
+
+  <span class="cm">// Interact with element deep inside nested iframes</span>
+  <span class="kw">await</span> <span class="prop">innerFrame</span>.<span class="fn">locator</span>(<span class="str">'.chart-legend-item'</span>).<span class="fn">first</span>().<span class="fn">click</span>();
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">innerFrame</span>.<span class="fn">locator</span>(<span class="str">'.tooltip'</span>)).<span class="fn">toBeVisible</span>();
+
+  <span class="cm">// ── Using Legacy API for nested frames ────────────────────────────</span>
+  <span class="kw">const</span> <span class="prop">mainFrame</span> = <span class="prop">page</span>.<span class="fn">mainFrame</span>();
+  <span class="kw">const</span> <span class="prop">outerFrameObj</span> = <span class="prop">mainFrame</span>.<span class="fn">childFrames</span>()
+    .<span class="fn">find</span>(<span class="prop">f</span> => <span class="prop">f</span>.<span class="fn">name</span>() === <span class="str">'analytics-widget'</span>);
+
+  <span class="kw">if</span> (<span class="prop">outerFrameObj</span>) {
+    <span class="kw">const</span> <span class="prop">childFrames</span> = <span class="prop">outerFrameObj</span>.<span class="fn">childFrames</span>();
+    <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`Child frames inside analytics: <span class="kw">${</span><span class="prop">childFrames</span>.<span class="prop">length</span><span class="kw">}</span>`</span>);
+    <span class="prop">childFrames</span>.<span class="fn">forEach</span>(<span class="prop">cf</span> =>
+      <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`  ↳ <span class="kw">${</span><span class="prop">cf</span>.<span class="fn">name</span>()<span class="kw">}</span> — <span class="kw">${</span><span class="prop">cf</span>.<span class="fn">url</span>()<span class="kw">}</span>`</span>)
+    );
+  }
+});</pre>
+    </div>
+    <div class="cpanel" id="c3-4">
+      <div class="cheader"><span class="cfname">rich-text-editor.ts</span><button class="copybtn" onclick="cp3('c3-4')">Copy</button></div>
+      <pre><span class="cm">// rich-text-editor.ts</span>
+<span class="cm">// PURPOSE: Type into TinyMCE / CKEditor rich text editors</span>
+<span class="cm">// INSIGHT: These editors use iframe with a contenteditable body</span>
+
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'type into TinyMCE rich text editor'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/create-post'</span>);
+
+  <span class="cm">// TinyMCE renders an &lt;iframe class="tox-edit-area__iframe"&gt;</span>
+  <span class="cm">// The body inside has contenteditable="true"</span>
+  <span class="kw">const</span> <span class="prop">editorFrame</span> = <span class="prop">page</span>.<span class="fn">frameLocator</span>(<span class="str">'iframe.tox-edit-area__iframe'</span>);
+
+  <span class="cm">// Wait for editor body to be ready</span>
+  <span class="kw">const</span> <span class="prop">editorBody</span> = <span class="prop">editorFrame</span>.<span class="fn">locator</span>(<span class="str">'body'</span>);
+  <span class="kw">await</span> <span class="prop">editorBody</span>.<span class="fn">click</span>(); <span class="cm">// focus the editor first</span>
+
+  <span class="cm">// Fill text content into the editor</span>
+  <span class="kw">await</span> <span class="prop">editorBody</span>.<span class="fn">fill</span>(<span class="str">'This is my blog post content.'</span>);
+
+  <span class="cm">// OR: Type character by character (for editors that intercept fill)</span>
+  <span class="cm">// await editorBody.click();</span>
+  <span class="cm">// await page.keyboard.type('This is my blog post content.');</span>
+
+  <span class="cm">// Verify the text appears in the editor</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">editorBody</span>).<span class="fn">toContainText</span>(<span class="str">'This is my blog post content.'</span>);
+
+  <span class="cm">// Toolbar buttons are in PARENT page — click bold in main DOM</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'button[title="Bold"]'</span>); <span class="cm">// TinyMCE toolbar</span>
+  <span class="kw">await</span> <span class="prop">editorBody</span>.<span class="fn">type</span>(<span class="str">'BOLD TEXT'</span>);
+
+  <span class="cm">// CKEditor 5 variant (different iframe class)</span>
+  <span class="cm">// const ckFrame = page.frameLocator('.ck-editor__editable iframe');</span>
+
+  <span class="cm">// Submit the form containing the editor</span>
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">click</span>(<span class="str">'button#publish-post'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(<span class="prop">page</span>.<span class="fn">locator</span>(<span class="str">'.post-published'</span>)).<span class="fn">toBeVisible</span>();
+});</pre>
+    </div>
+    <div class="cpanel" id="c3-5">
+      <div class="cheader"><span class="cfname">debug-frames.ts</span><button class="copybtn" onclick="cp3('c3-5')">Copy</button></div>
+      <pre><span class="cm">// debug-frames.ts</span>
+<span class="cm">// PURPOSE: Debug utilities to discover all frames on a page</span>
+<span class="cm">// USE CASE: When you first encounter an unfamiliar page with unknown iframes</span>
+
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span>, <span class="cls">Frame</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cm">// Recursive function to print the entire frame tree</span>
+<span class="kw">function</span> <span class="fn">printFrameTree</span>(<span class="prop">frame</span>: <span class="type">Frame</span>, <span class="prop">indent</span> = <span class="num">0</span>): <span class="type">void</span> {
+  <span class="kw">const</span> <span class="prop">prefix</span> = <span class="str">'  '</span>.<span class="fn">repeat</span>(<span class="prop">indent</span>);
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`<span class="kw">${</span><span class="prop">prefix</span><span class="kw">}</span>📄 name="<span class="kw">${</span><span class="prop">frame</span>.<span class="fn">name</span>()<span class="kw">}</span>" url=<span class="kw">${</span><span class="prop">frame</span>.<span class="fn">url</span>()<span class="kw">}</span>`</span>);
+  <span class="prop">frame</span>.<span class="fn">childFrames</span>().<span class="fn">forEach</span>(<span class="prop">child</span> => <span class="fn">printFrameTree</span>(<span class="prop">child</span>, <span class="prop">indent</span> + <span class="num">1</span>));
+}
+
+<span class="cls">test</span>(<span class="str">'discover all iframes on a page'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/checkout'</span>);
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">waitForLoadState</span>(<span class="str">'networkidle'</span>);
+
+  <span class="cm">// Method 1: Print flat list of all frames</span>
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">'\n── All Frames (flat) ──'</span>);
+  <span class="prop">page</span>.<span class="fn">frames</span>().<span class="fn">forEach</span>((<span class="prop">f</span>, <span class="prop">i</span>) => {
+    <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`[<span class="kw">${</span><span class="prop">i</span><span class="kw">}</span>] name="<span class="kw">${</span><span class="prop">f</span>.<span class="fn">name</span>()<span class="kw">}</span>" url="<span class="kw">${</span><span class="prop">f</span>.<span class="fn">url</span>()<span class="kw">}</span>"`</span>);
+  });
+
+  <span class="cm">// Method 2: Print full tree with nesting</span>
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">'\n── Frame Tree ──'</span>);
+  <span class="fn">printFrameTree</span>(<span class="prop">page</span>.<span class="fn">mainFrame</span>());
+
+  <span class="cm">// Method 3: Find frame by URL substring</span>
+  <span class="kw">const</span> <span class="prop">stripeFrame</span> = <span class="prop">page</span>.<span class="fn">frames</span>().<span class="fn">find</span>(<span class="prop">f</span> => <span class="prop">f</span>.<span class="fn">url</span>().<span class="fn">includes</span>(<span class="str">'stripe.com'</span>));
+  <span class="kw">if</span> (<span class="prop">stripeFrame</span>) <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">'Found Stripe frame!'</span>, <span class="prop">stripeFrame</span>.<span class="fn">name</span>());
+
+  <span class="cm">// Method 4: Count total iframes</span>
+  <span class="kw">const</span> <span class="prop">iframeCount</span> = <span class="prop">page</span>.<span class="fn">frames</span>().<span class="prop">length</span> - <span class="num">1</span>; <span class="cm">// -1 for main frame</span>
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`Total iframes: <span class="kw">${</span><span class="prop">iframeCount</span><span class="kw">}</span>`</span>);
+});</pre>
+    </div>
+    <div class="cpanel" id="c3-6">
+      <div class="cheader"><span class="cfname">legacy-frame-api.ts</span><button class="copybtn" onclick="cp3('c3-6')">Copy</button></div>
+      <pre><span class="cm">// legacy-frame-api.ts</span>
+<span class="cm">// PURPOSE: Legacy Frame API usage (page.frame() / page.mainFrame())</span>
+<span class="cm">// NOTE: Prefer frameLocator() for new code — this shows legacy for reference</span>
+
+<span class="kw">import</span> { <span class="cls">test</span>, <span class="cls">expect</span>, <span class="cls">Frame</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="cls">test</span>(<span class="str">'using legacy Frame API'</span>, <span class="kw">async</span> ({ <span class="prop">page</span> }) => {
+
+  <span class="kw">await</span> <span class="prop">page</span>.<span class="fn">goto</span>(<span class="str">'https://myapp.com/embed'</span>);
+
+  <span class="cm">// Get frame by name attribute: &lt;iframe name="myFrame"&gt;</span>
+  <span class="kw">const</span> <span class="prop">frameByName</span>: <span class="type">Frame</span> | <span class="type">null</span> = <span class="prop">page</span>.<span class="fn">frame</span>({ <span class="prop">name</span>: <span class="str">'myFrame'</span> });
+
+  <span class="cm">// Get frame by URL pattern</span>
+  <span class="kw">const</span> <span class="prop">frameByURL</span>: <span class="type">Frame</span> | <span class="type">null</span> = <span class="prop">page</span>.<span class="fn">frame</span>({ <span class="prop">url</span>: <span class="str">/embed\.myservice\.com/</span> });
+
+  <span class="cm">// Always null-check — frame() returns null if not found</span>
+  <span class="kw">if</span> (!<span class="prop">frameByName</span>) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">'Frame "myFrame" not found!'</span>);
+
+  <span class="cm">// Use Frame methods directly (note: these don't auto-wait like frameLocator)</span>
+  <span class="kw">await</span> <span class="prop">frameByName</span>.<span class="fn">fill</span>(<span class="str">'input#search'</span>, <span class="str">'playwright testing'</span>);
+  <span class="kw">await</span> <span class="prop">frameByName</span>.<span class="fn">click</span>(<span class="str">'button[type="submit"]'</span>);
+
+  <span class="cm">// Frame.locator() → returns a standard Locator (supports auto-waiting)</span>
+  <span class="kw">await</span> <span class="fn">expect</span>(
+    <span class="prop">frameByName</span>.<span class="fn">locator</span>(<span class="str">'.results-count'</span>)
+  ).<span class="fn">toContainText</span>(<span class="str">'results'</span>);
+
+  <span class="cm">// Frame evaluate: run JS inside the frame's context</span>
+  <span class="kw">const</span> <span class="prop">frameTitle</span> = <span class="kw">await</span> <span class="prop">frameByName</span>.<span class="fn">evaluate</span>(() => <span class="prop">document</span>.<span class="prop">title</span>);
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`Frame document title: <span class="kw">${</span><span class="prop">frameTitle</span><span class="kw">}</span>`</span>);
+
+  <span class="cm">// Access frame's URL and name</span>
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`Frame URL: <span class="kw">${</span><span class="prop">frameByName</span>.<span class="fn">url</span>()<span class="kw">}</span>`</span>);
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`Frame name: <span class="kw">${</span><span class="prop">frameByName</span>.<span class="fn">name</span>()<span class="kw">}</span>`</span>);
+
+  <span class="cm">// Parent frame access</span>
+  <span class="kw">const</span> <span class="prop">parent</span> = <span class="prop">frameByName</span>.<span class="fn">parentFrame</span>();
+  <span class="cls">console</span>.<span class="fn">log</span>(<span class="str">`Parent frame: <span class="kw">${</span><span class="prop">parent</span>?.<span class="fn">url</span>()<span class="kw">}</span>`</span>);
+});</pre>
+    </div>
+  </div>
+</div>
+
+<script>
+function tq3(id){const b=document.getElementById(id);const a=b.querySelector('.qaa');b.classList.toggle('open');a.classList.toggle('open')}
+function cp3(id){const p=document.getElementById(id);const c=p.querySelector('pre').innerText;navigator.clipboard.writeText(c).then(()=>{const b=p.querySelector('.copybtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000)})}
+document.getElementById('stabs3').addEventListener('click',e=>{
+  const t=e.target.closest('.stab');if(!t)return;
+  document.querySelectorAll('#stabs3 .stab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const pid='p3-'+t.dataset.p;
+  document.querySelectorAll('[id^="p3-"]').forEach(x=>x.classList.remove('active'));
+  document.getElementById(pid).classList.add('active');
+});
+document.getElementById('ctabs3').addEventListener('click',e=>{
+  const t=e.target.closest('.ctab');if(!t)return;
+  document.querySelectorAll('#ctabs3 .ctab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.querySelectorAll('[id^="c3-"]').forEach(x=>x.classList.remove('active'));
+  document.getElementById(t.dataset.c).classList.add('active');
+});
+</script>
+
+<script>
+/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
+(function(){try{
+  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
+    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
+      btn.addEventListener('click',function(){
+        var t=this.nextElementSibling;
+        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
+      });
+    }
+  });
+  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
+    if(!tab.dataset.vTab){tab.dataset.vTab='1';
+      tab.addEventListener('click',function(){
+        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
+        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
+      });
+    }
+  });
+}catch(e){console.log('VE:',e)}})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Sessions 1–10</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #0f0f0f; color: #e8e6df; min-height: 100vh; }
+.app { max-width: 960px; margin: 0 auto; padding: 1rem; }
+h1 { font-size: 18px; font-weight: 600; color: #AFA9EC; margin-bottom: 1rem; }
+
+/* SESSION TABS */
+.session-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+.session-tabs button {
+  padding: 6px 14px; border-radius: 20px; border: 1px solid #333;
+  background: #1a1a1a; color: #888; font-size: 12px; cursor: pointer;
+  transition: all 0.15s;
+}
+.session-tabs button:hover { background: #252525; color: #ccc; }
+.session-tabs button.active { background: #534AB7; color: #eeedfe; border-color: #534AB7; font-weight: 600; }
+
+/* SESSION PANELS */
+.session-panel { display: none; }
+.session-panel.active { display: block; }
+
+/* SECTION TABS */
+.section-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 1rem; border-bottom: 1px solid #222; padding-bottom: 8px; }
+.section-tabs button {
+  padding: 5px 14px; border-radius: 6px; border: none;
+  background: transparent; color: #666; font-size: 12px; cursor: pointer;
+}
+.section-tabs button:hover { background: #1e1e1e; color: #aaa; }
+.section-tabs button.active { background: #1e1e1e; color: #e8e6df; font-weight: 600; }
+
+/* SECTION PANELS */
+.section-panel { display: none; }
+.section-panel.active { display: block; }
+
+/* CARDS */
+.card { background: #161616; border: 1px solid #222; border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+.card h3 { font-size: 14px; font-weight: 600; margin-bottom: .8rem; color: #AFA9EC; }
+
+/* OVERVIEW GRID */
+.ov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ov-box { background: #1c1c1c; border-radius: 8px; padding: 10px; }
+.ov-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #555; margin-bottom: 4px; }
+.ov-text { font-size: 12px; color: #bbb; line-height: 1.55; }
+
+/* GLOSSARY TABLE */
+.kw-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.kw-table th { text-align: left; padding: 6px 8px; border-bottom: 1px solid #222; color: #555; font-size: 11px; }
+.kw-table td { padding: 7px 8px; border-bottom: 1px solid #1a1a1a; vertical-align: top; line-height: 1.5; color: #bbb; }
+.kw-table tr:last-child td { border-bottom: none; }
+.kw { display: inline-block; font-family: monospace; background: #1e1e2e; color: #AFA9EC; padding: 2px 7px; border-radius: 4px; font-size: 11px; }
+
+/* ONE-LINERS */
+.ol-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1e1e1e; align-items: flex-start; }
+.ol-item:last-child { border-bottom: none; }
+.ol-num { min-width: 22px; height: 22px; background: #2a2250; color: #AFA9EC; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.ol-text { font-size: 12px; color: #ccc; line-height: 1.6; }
+
+/* FLOW */
+.flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; padding: 1rem; background: #1a1a1a; border-radius: 8px; margin-bottom: 1rem; }
+.flow-node { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.fn-purple { background: #2a2250; color: #AFA9EC; }
+.fn-teal   { background: #0d2e26; color: #5DCAA5; }
+.fn-amber  { background: #2e2010; color: #FAC775; }
+.fn-coral  { background: #2e1010; color: #F0997B; }
+.fn-blue   { background: #0d1f2e; color: #85B7EB; }
+.flow-arrow { color: #444; font-size: 14px; }
+
+/* BEST PRACTICES */
+.bp-item { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid #1a1a1a; font-size: 12px; color: #bbb; line-height: 1.5; }
+.bp-item:last-child { border-bottom: none; }
+.bp-check { color: #5DCAA5; font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+/* QA */
+.qa-item { margin-bottom: 1rem; }
+.qa-q { font-size: 12px; font-weight: 600; color: #e8e6df; margin-bottom: 5px; }
+.qa-a { font-size: 12px; color: #999; line-height: 1.6; padding-left: 10px; border-left: 2px solid #534AB7; }
+
+/* CODE TABS */
+.code-tabs { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 0; }
+.code-tabs button {
+  padding: 4px 10px; border-radius: 5px 5px 0 0; border: 1px solid #2a2a2a;
+  border-bottom: none; background: #181818; color: #555; font-size: 11px;
+  cursor: pointer; font-family: monospace;
+}
+.code-tabs button:hover { color: #aaa; }
+.code-tabs button.active { background: #1e1e2e; color: #e8e6df; border-color: #333; }
+
+.code-block { display: none; background: #1e1e2e; border: 1px solid #2a2a2a; border-radius: 0 6px 6px 6px; }
+.code-block.active { display: block; }
+.code-filename { display: block; padding: 5px 1rem; background: #161620; border-bottom: 1px solid #2a2a2a; font-size: 10px; color: #555; font-family: monospace; }
+.code-block pre { padding: 1rem; font-size: 12px; line-height: 1.8; font-family: 'Courier New', monospace; overflow-x: auto; max-height: 320px; overflow-y: auto; }
+
+/* SYNTAX COLORS */
+.kw2  { color: #AFA9EC; }
+.type2{ color: #5DCAA5; }
+.str2 { color: #FAC775; }
+.cmt2 { color: #444; font-style: italic; }
+.fn2  { color: #F0997B; }
+.num2 { color: #ED93B1; }
+.bool2{ color: #85B7EB; }
+
+p { font-size: 12px; color: #999; line-height: 1.6; margin-bottom: .5rem; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>🔷 TypeScript Learning — Sessions 1 to 10</h1>
+  <div class="session-tabs" id="sessionTabs"></div>
+  <div id="sessionPanels"></div>
+</div>
+
+<script>
+const DATA = [
+// ─── SESSION 1 ───────────────────────────────────────────────────────────────
+{
+  label: "S1: Intro to TS",
+  title: "Session 1 — Introduction to TypeScript",
+  overview: {
+    what: "TypeScript is a typed superset of JavaScript compiled to plain JS. Every valid JS file is also valid TypeScript.",
+    why:  "Catches errors at compile time, not runtime. Better IDE support, self-documenting code, safer refactoring.",
+    when: "Any project with a team > 1, long-lived codebase, or when building APIs, SDKs, and libraries.",
+    how:  "Write .ts → tsc compiles → type checks → emits .js → Node/Browser runs JS"
+  },
+  flow: [
+    {t:"Scanner",c:"fn-purple"},{a:"→"},{t:"Parser",c:"fn-purple"},{a:"→"},
+    {t:"Binder",c:"fn-amber"},{a:"→"},{t:"Type Checker",c:"fn-teal"},{a:"→"},{t:"Emitter .js",c:"fn-blue"}
+  ],
+  glossary: [
+    ["TypeScript","Microsoft's open-source language — JavaScript + optional static typing"],
+    ["tsc","TypeScript Compiler — CLI tool that converts .ts → .js"],
+    ["tsconfig.json","Project config file controlling compiler options, target JS version, strictness"],
+    ["static typing","Types known at compile time — enables early error detection"],
+    ["type inference","TS automatically deduces a variable's type from its assigned value"],
+    ["compile-time check","Error detection before code runs — unlike JS runtime errors"],
+    ["superset","TS extends JS — all JS is valid TS, but not vice versa"],
+    ["transpile","Compile TS source to equivalent JS output (same level, different syntax)"]
+  ],
+  oneliners: [
+    "TypeScript is a strongly-typed superset of JavaScript compiled to plain JavaScript by the tsc compiler.",
+    "TypeScript catches type errors at compile time so they never reach your users at runtime.",
+    "Every valid JavaScript file is also a valid TypeScript file — migration is incremental.",
+    "TypeScript's type system is structural — if shapes match, types are compatible.",
+    "Type annotations are erased during compilation — zero runtime overhead from TypeScript.",
+    "TypeScript enables self-documenting code — function signatures tell you what goes in and out."
+  ],
+  bestpractices: [
+    'Always enable "strict": true in tsconfig.json — catches null issues, implicit any, and more',
+    'Never use any unless absolutely necessary — defeats the purpose of TypeScript entirely',
+    'Set "target": "ES6" or higher in tsconfig to get modern JS output features',
+    'Use .ts for logic files and .d.ts for type-only declaration files',
+    'Commit your tsconfig.json — ensures all team members compile with identical settings',
+    'Prefer type inference where obvious; add explicit annotations for function signatures'
+  ],
+  qa: [
+    ["What is the difference between TypeScript and JavaScript?",
+     "TypeScript is a statically typed superset of JavaScript. JS is dynamically typed and catches type errors at runtime; TS adds optional type annotations and catches errors at compile time. TS must be compiled to JS before execution."],
+    ["What does the TypeScript compiler (tsc) actually do?",
+     "tsc parses .ts files into an AST, performs type-checking, then emits plain .js output stripping all type annotations. It does NOT include TS at runtime — the output is pure JavaScript."],
+    ["What is tsconfig.json and why is it important?",
+     "tsconfig.json configures the TypeScript compiler — setting target ECMAScript version, strictness flags, module system, include/exclude paths, and output directory. Without it, each developer might compile differently."],
+    ["What is the benefit of static typing in test automation?",
+     "In SDET work, static typing ensures POM properties, API response interfaces, and selector maps have correct types — IDE autocomplete works perfectly, and type mismatches in test utilities are caught before test runs."],
+    ["Is TypeScript slower than JavaScript at runtime?",
+     "No. TypeScript annotations are completely erased at compile time. The output .js file runs at identical speed. Any perceived overhead is compile-time only, not runtime."]
+  ],
+  code: [
+    {name:"01_hello_ts.ts", body:`<span class="kw2">let</span> <span class="type2">message</span>: <span class="type2">string</span> = <span class="str2">"Hello, TypeScript!"</span>;
+console.<span class="fn2">log</span>(message); <span class="cmt2">// Hello, TypeScript!</span>
+
+<span class="kw2">let</span> <span class="type2">year</span>: <span class="type2">number</span> = <span class="num2">2025</span>;
+console.<span class="fn2">log</span>(<span class="str2">\`Year: \${year}\`</span>); <span class="cmt2">// Year: 2025</span>
+
+<span class="kw2">let</span> <span class="type2">isTyped</span>: <span class="type2">boolean</span> = <span class="bool2">true</span>;
+console.<span class="fn2">log</span>(isTyped); <span class="cmt2">// true</span>
+
+<span class="cmt2">// ❌ Compile-time error (uncomment to see):</span>
+<span class="cmt2">// message = 42; // Type 'number' not assignable to 'string'</span>`},
+    {name:"02_tsconfig.json", body:`{
+  <span class="str2">"compilerOptions"</span>: {
+    <span class="str2">"target"</span>:    <span class="str2">"ES6"</span>,       <span class="cmt2">// JS version to emit</span>
+    <span class="str2">"module"</span>:    <span class="str2">"commonjs"</span>, <span class="cmt2">// module system for Node</span>
+    <span class="str2">"strict"</span>:    <span class="bool2">true</span>,       <span class="cmt2">// ALL strict checks on</span>
+    <span class="str2">"outDir"</span>:    <span class="str2">"./dist"</span>,   <span class="cmt2">// compiled output folder</span>
+    <span class="str2">"rootDir"</span>:   <span class="str2">"./src"</span>,    <span class="cmt2">// source .ts folder</span>
+    <span class="str2">"sourceMap"</span>: <span class="bool2">true</span>        <span class="cmt2">// debug source maps</span>
+  },
+  <span class="str2">"include"</span>: [<span class="str2">"src/**/*.ts"</span>],
+  <span class="str2">"exclude"</span>: [<span class="str2">"node_modules"</span>]
+}`},
+    {name:"03_inference.ts", body:`<span class="cmt2">// TS figures out types automatically</span>
+<span class="kw2">let</span> count = <span class="num2">10</span>;       <span class="cmt2">// inferred: number</span>
+<span class="kw2">let</span> name  = <span class="str2">"Priya"</span>; <span class="cmt2">// inferred: string</span>
+<span class="kw2">let</span> flag  = <span class="bool2">true</span>;   <span class="cmt2">// inferred: boolean</span>
+
+<span class="cmt2">// ❌ These fail at compile time:</span>
+<span class="cmt2">// count = "ten";  // string not assignable to number</span>
+<span class="cmt2">// name  = 99;     // number not assignable to string</span>
+
+<span class="kw2">function</span> <span class="fn2">add</span>(a: <span class="type2">number</span>, b: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> a + b;
+}
+console.<span class="fn2">log</span>(<span class="fn2">add</span>(<span class="num2">5</span>, <span class="num2">3</span>)); <span class="cmt2">// 8</span>`},
+    {name:"04_any_vs_unknown.ts", body:`<span class="cmt2">// any — disables ALL type checking (AVOID!)</span>
+<span class="kw2">let</span> <span class="type2">wild</span>: <span class="type2">any</span> = <span class="num2">42</span>;
+wild = <span class="str2">"string now"</span>;   <span class="cmt2">// OK</span>
+wild.<span class="fn2">nonExistent</span>();   <span class="cmt2">// NO error → runtime crash!</span>
+
+<span class="cmt2">// unknown — safe escape hatch (use this instead)</span>
+<span class="kw2">let</span> <span class="type2">safe</span>: <span class="type2">unknown</span> = <span class="str2">"hello"</span>;
+<span class="kw2">if</span> (<span class="kw2">typeof</span> safe === <span class="str2">"string"</span>) {
+  console.<span class="fn2">log</span>(safe.<span class="fn2">toUpperCase</span>()); <span class="cmt2">// ✅ Safe!</span>
+}
+<span class="cmt2">// any   → opts OUT of type system (dangerous)</span>
+<span class="cmt2">// unknown → forces narrowing before use (safe)</span>`},
+    {name:"05_strict_mode.ts", body:`<span class="cmt2">// Strict mode flags — what "strict: true" enables</span>
+
+<span class="cmt2">// strictNullChecks</span>
+<span class="kw2">let</span> name: <span class="type2">string</span> = <span class="str2">"Ravi"</span>;
+<span class="cmt2">// name = null; // ❌ with strictNullChecks</span>
+
+<span class="cmt2">// noImplicitAny</span>
+<span class="cmt2">// function greet(name) {} // ❌ implicit any</span>
+<span class="kw2">function</span> <span class="fn2">greet</span>(name: <span class="type2">string</span>) { } <span class="cmt2">// ✅</span>
+
+<span class="cmt2">// Recommended SDET tsconfig extras:</span>
+<span class="cmt2">// "noUnusedLocals": true</span>
+<span class="cmt2">// "noUnusedParameters": true</span>
+<span class="cmt2">// "noImplicitReturns": true</span>`},
+    {name:"06_js_vs_ts.ts", body:`<span class="cmt2">// JavaScript — no types, silent bugs</span>
+<span class="cmt2">// function addJS(a, b) { return a + b; }</span>
+<span class="cmt2">// addJS("5", 3)  // "53" 😱 string concat!</span>
+<span class="cmt2">// addJS([], {})  // "[object Object]" 😱</span>
+
+<span class="cmt2">// TypeScript — types enforced</span>
+<span class="kw2">function</span> <span class="fn2">addTS</span>(a: <span class="type2">number</span>, b: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> a + b;
+}
+console.<span class="fn2">log</span>(<span class="fn2">addTS</span>(<span class="num2">5</span>, <span class="num2">3</span>));    <span class="cmt2">// 8 ✅</span>
+<span class="cmt2">// addTS("5", 3); // ❌ Compile error — caught!</span>`},
+    {name:"07_compile_errors.ts", body:`<span class="kw2">let</span> score: <span class="type2">number</span> = <span class="num2">100</span>;
+<span class="cmt2">// score = "hundred"; // ❌ Type 'string'</span>
+
+<span class="kw2">function</span> <span class="fn2">greet</span>(name: <span class="type2">string</span>): <span class="type2">string</span> {
+  <span class="kw2">return</span> <span class="str2">\`Hello, \${name}!\`</span>;
+}
+<span class="cmt2">// greet(123); // ❌ Argument type 'number'</span>
+<span class="cmt2">// function bad(): string { } // ❌ lacks return</span>
+
+<span class="kw2">let</span> user: { name: <span class="type2">string</span> } | <span class="type2">null</span> = <span class="bool2">null</span>;
+<span class="cmt2">// user.name; // ❌ Object is possibly null</span>
+console.<span class="fn2">log</span>(user?.name); <span class="cmt2">// ✅ optional chaining</span>`},
+    {name:"08_first_program.ts", body:`<span class="kw2">interface</span> <span class="type2">Student</span> {
+  name:   <span class="type2">string</span>;
+  score:  <span class="type2">number</span>;
+  passed: <span class="type2">boolean</span>;
+}
+
+<span class="kw2">function</span> <span class="fn2">evaluate</span>(name: <span class="type2">string</span>, score: <span class="type2">number</span>): <span class="type2">Student</span> {
+  <span class="kw2">return</span> { name, score, passed: score >= <span class="num2">60</span> };
+}
+
+<span class="kw2">const</span> students: <span class="type2">Student</span>[] = [
+  <span class="fn2">evaluate</span>(<span class="str2">"Arjun"</span>, <span class="num2">85</span>),
+  <span class="fn2">evaluate</span>(<span class="str2">"Priya"</span>, <span class="num2">72</span>),
+  <span class="fn2">evaluate</span>(<span class="str2">"Ravi"</span>,  <span class="num2">45</span>),
+];
+
+students.<span class="fn2">forEach</span>(s => {
+  <span class="kw2">const</span> st = s.passed ? <span class="str2">"✅ PASS"</span> : <span class="str2">"❌ FAIL"</span>;
+  console.<span class="fn2">log</span>(<span class="str2">\`\${s.name}: \${s.score} → \${st}\`</span>);
+});
+<span class="cmt2">// Arjun: 85 → ✅ PASS</span>
+<span class="cmt2">// Priya: 72 → ✅ PASS</span>
+<span class="cmt2">// Ravi:  45 → ❌ FAIL</span>`}
+  ]
+},
+// ─── SESSION 2 ───────────────────────────────────────────────────────────────
+{
+  label: "S2: Variables & Types",
+  title: "Session 2 — Variables & Data Types",
+  overview: {
+    what: "TypeScript's type system covers primitives (number, string, boolean), special types (any, unknown, void), null/undefined, and composite types (Arrays, Objects).",
+    why:  "Choosing the right type prevents runtime surprises, makes APIs self-documenting, and enables full IDE tooling.",
+    when: "Every variable declaration is a chance to express intent. Use annotations on function boundaries.",
+    how:  "Declare with let/const, append : type, assign value. TS infers type from right-hand side if omitted."
+  },
+  flow: [
+    {t:"number",c:"fn-purple"},{t:"string",c:"fn-purple"},{t:"boolean",c:"fn-purple"},
+    {t:"any",c:"fn-amber"},{t:"unknown",c:"fn-amber"},{t:"void",c:"fn-teal"},
+    {t:"null/undefined",c:"fn-coral"},{t:"Array",c:"fn-blue"},{t:"Object",c:"fn-blue"}
+  ],
+  glossary: [
+    ["number","All numeric values — integers, floats, hex, binary. No separate int/float."],
+    ["string","Text values — single-quote, double-quote, or backtick template literals"],
+    ["boolean","Logical true or false only — not 0/1 or truthy/falsy values"],
+    ["any","Disables type checking — the variable can be anything. Avoid in strict code"],
+    ["unknown","Like any, but you must narrow the type before using it. Safer escape hatch"],
+    ["void","Return type for functions that return nothing meaningful"],
+    ["null","Intentional absence of value. Separate type in strict mode"],
+    ["undefined","Variable declared but not yet assigned a value"],
+    ["let","Block-scoped mutable variable declaration (prefer over var)"],
+    ["const","Block-scoped immutable binding — value cannot be reassigned"]
+  ],
+  oneliners: [
+    "In TypeScript, number covers both integers and floats — there is no separate int type like in Java.",
+    "unknown is a type-safe alternative to any — you must narrow it with a type guard before using it.",
+    "void is used as a return type for functions that perform side effects but return nothing meaningful.",
+    "With strict: true, null and undefined are NOT assignable to other types — handle them explicitly.",
+    "TypeScript arrays can be typed as number[] or Array<number> — both are equivalent.",
+    "const prevents reassignment of the binding but not mutation of object contents."
+  ],
+  bestpractices: [
+    "Prefer const over let by default — use let only when reassignment is necessary",
+    "Never use var — it has function scope and hoisting behavior that leads to bugs",
+    "Never use any in production — use unknown when the type is genuinely not known",
+    "Use null for intentional absence, undefined for uninitialized — be consistent",
+    "Prefer typed arrays (string[]) over untyped arrays (any[]) for test data",
+    "Use interfaces or type aliases for object shapes — not inline annotation everywhere"
+  ],
+  qa: [
+    ["What is the difference between null and undefined in TypeScript?",
+     "undefined means a variable has been declared but not assigned; null is an intentional empty value assigned by the programmer. With strict mode, both are separate types and not interchangeable."],
+    ["When would you use unknown over any in test automation?",
+     "When parsing API responses whose exact shape is not guaranteed at compile time. Using unknown forces you to validate the type before calling methods — preventing runtime crashes in assertions."],
+    ["What is the difference between let and const?",
+     "let allows reassignment; const does not. Both are block-scoped unlike var. const objects can still have their properties mutated."],
+    ["How do you type an array of test data objects?",
+     "Define an interface for the shape, then declare const users: TestUser[] = [...]. All test data rows are validated at compile time."],
+    ["What does void mean as a return type?",
+     "void signals a function does not return a meaningful value. Functions with side effects (console.log, navigation) use void."]
+  ],
+  code: [
+    {name:"01_number.ts", body:`<span class="kw2">let</span> integer: <span class="type2">number</span> = <span class="num2">42</span>;
+<span class="kw2">let</span> float:   <span class="type2">number</span> = <span class="num2">3.14</span>;
+<span class="kw2">let</span> hex:     <span class="type2">number</span> = <span class="num2">0xFF</span>;    <span class="cmt2">// 255</span>
+<span class="kw2">let</span> binary:  <span class="type2">number</span> = <span class="num2">0b1010</span>; <span class="cmt2">// 10</span>
+<span class="kw2">let</span> notNum:  <span class="type2">number</span> = NaN;     <span class="cmt2">// NaN is type 'number'!</span>
+
+<span class="kw2">let</span> sum       = integer + float;  <span class="cmt2">// 45.14</span>
+<span class="kw2">let</span> remainder = integer % <span class="num2">5</span>;    <span class="cmt2">// 2</span>
+<span class="kw2">let</span> power     = <span class="num2">2</span> ** <span class="num2">10</span>;        <span class="cmt2">// 1024</span>
+console.<span class="fn2">log</span>(sum, remainder, power);`},
+    {name:"02_string.ts", body:`<span class="kw2">let</span> first: <span class="type2">string</span> = <span class="str2">'Arjun'</span>;
+<span class="kw2">let</span> last:  <span class="type2">string</span> = <span class="str2">"Sharma"</span>;
+<span class="kw2">let</span> city:  <span class="type2">string</span> = <span class="str2">\`Mumbai\`</span>;
+<span class="kw2">let</span> full:  <span class="type2">string</span> = <span class="str2">\`\${first} \${last}\`</span>;
+
+console.<span class="fn2">log</span>(full.<span class="fn2">toUpperCase</span>()); <span class="cmt2">// ARJUN SHARMA</span>
+console.<span class="fn2">log</span>(full.length);         <span class="cmt2">// 11</span>
+console.<span class="fn2">log</span>(first.<span class="fn2">startsWith</span>(<span class="str2">'A'</span>)); <span class="cmt2">// true</span>`},
+    {name:"03_boolean.ts", body:`<span class="kw2">let</span> isLoggedIn: <span class="type2">boolean</span> = <span class="bool2">false</span>;
+<span class="kw2">let</span> hasPremium: <span class="type2">boolean</span> = <span class="bool2">true</span>;
+
+<span class="kw2">let</span> canAccess = isLoggedIn && hasPremium; <span class="cmt2">// false</span>
+<span class="kw2">let</span> anyAccess = isLoggedIn || hasPremium; <span class="cmt2">// true</span>
+<span class="kw2">let</span> age: <span class="type2">number</span> = <span class="num2">25</span>;
+<span class="kw2">let</span> isAdult = age >= <span class="num2">18</span>; <span class="cmt2">// true</span>
+
+<span class="cmt2">// SDET: feature flags in test config</span>
+<span class="kw2">const</span> config = { headless: <span class="bool2">true</span>, retryOnFail: <span class="bool2">false</span> };
+console.<span class="fn2">log</span>(config.headless); <span class="cmt2">// true</span>`},
+    {name:"04_any_unknown.ts", body:`<span class="cmt2">// any — no type checking at all</span>
+<span class="kw2">let</span> data: <span class="type2">any</span> = <span class="str2">"hello"</span>;
+data = <span class="num2">42</span>;             <span class="cmt2">// OK</span>
+data.<span class="fn2">nonExistent</span>();   <span class="cmt2">// NO error → runtime crash!</span>
+
+<span class="cmt2">// unknown — must narrow before use</span>
+<span class="kw2">let</span> api: <span class="type2">unknown</span> = <span class="str2">"response"</span>;
+<span class="kw2">if</span> (<span class="kw2">typeof</span> api === <span class="str2">"string"</span>) {
+  console.<span class="fn2">log</span>(api.<span class="fn2">toUpperCase</span>()); <span class="cmt2">// ✅ Narrowed</span>
+}
+<span class="cmt2">// Rule: always prefer unknown over any</span>`},
+    {name:"05_null_undefined.ts", body:`<span class="kw2">let</span> selected: <span class="type2">string</span> | <span class="type2">null</span> = <span class="bool2">null</span>;
+selected = <span class="str2">"Priya"</span>; <span class="cmt2">// now assigned</span>
+
+<span class="kw2">let</span> opt: <span class="type2">string</span> | <span class="type2">undefined</span>;
+<span class="cmt2">// opt is undefined here</span>
+
+<span class="cmt2">// Nullish coalescing — fallback when null/undefined</span>
+<span class="kw2">let</span> display = selected ?? <span class="str2">"Guest"</span>;
+console.<span class="fn2">log</span>(display); <span class="cmt2">// Priya</span>
+
+<span class="cmt2">// Optional chaining — safe property access</span>
+<span class="kw2">let</span> user: { name?: <span class="type2">string</span> } = {};
+console.<span class="fn2">log</span>(user?.name); <span class="cmt2">// undefined (no crash)</span>`},
+    {name:"06_arrays.ts", body:`<span class="kw2">let</span> scores: <span class="type2">number</span>[] = [<span class="num2">95</span>, <span class="num2">87</span>, <span class="num2">76</span>, <span class="num2">90</span>];
+<span class="kw2">let</span> names:  <span class="type2">string</span>[] = [<span class="str2">"Ravi"</span>, <span class="str2">"Priya"</span>, <span class="str2">"Ankit"</span>];
+<span class="kw2">let</span> ids: Array&lt;<span class="type2">number</span>&gt; = [<span class="num2">101</span>, <span class="num2">102</span>]; <span class="cmt2">// generic form</span>
+
+scores.<span class="fn2">push</span>(<span class="num2">100</span>);
+<span class="kw2">let</span> top = scores.<span class="fn2">filter</span>(s =&gt; s &gt; <span class="num2">90</span>); <span class="cmt2">// [95, 100]</span>
+console.<span class="fn2">log</span>(top);`},
+    {name:"07_objects.ts", body:`<span class="kw2">interface</span> <span class="type2">UserProfile</span> {
+  id:    <span class="type2">number</span>;
+  name:  <span class="type2">string</span>;
+  email: <span class="type2">string</span>;
+  role?: <span class="type2">string</span>; <span class="cmt2">// optional</span>
+}
+
+<span class="kw2">const</span> admin: <span class="type2">UserProfile</span> = {
+  id: <span class="num2">1</span>, name: <span class="str2">"Priya"</span>,
+  email: <span class="str2">"priya@example.com"</span>, role: <span class="str2">"admin"</span>
+};
+
+console.<span class="fn2">log</span>(admin.name);   <span class="cmt2">// Priya</span>
+console.<span class="fn2">log</span>(admin?.role);  <span class="cmt2">// admin</span>`},
+    {name:"08_void_fn.ts", body:`<span class="kw2">function</span> <span class="fn2">logMessage</span>(msg: <span class="type2">string</span>): <span class="type2">void</span> {
+  console.<span class="fn2">log</span>(<span class="str2">\`[LOG] \${msg}\`</span>);
+  <span class="cmt2">// No return statement needed</span>
+}
+
+<span class="kw2">function</span> <span class="fn2">earlyExit</span>(flag: <span class="type2">boolean</span>): <span class="type2">void</span> {
+  <span class="kw2">if</span> (!flag) <span class="kw2">return</span>; <span class="cmt2">// empty return is fine in void</span>
+  console.<span class="fn2">log</span>(<span class="str2">"Flag was true"</span>);
+}
+
+<span class="fn2">logMessage</span>(<span class="str2">"TypeScript loaded"</span>);
+<span class="fn2">earlyExit</span>(<span class="bool2">true</span>); <span class="cmt2">// Flag was true</span>`}
+  ]
+},
+// ─── SESSION 3 ───────────────────────────────────────────────────────────────
+{
+  label: "S3: Named Functions",
+  title: "Session 3 — Named Functions",
+  overview: {
+    what: "A named function is declared with the function keyword followed by an identifier. It is hoisted — callable before or after its declaration.",
+    why:  "Functions encapsulate reusable logic, accept typed inputs (parameters), and return typed outputs — the core building block of any TypeScript program.",
+    when: "Use named functions for reusable utility logic, recursion, and when hoisting is intentionally needed.",
+    how:  "function name(param: type): returnType { body } — params get type annotations, return type declared after parens."
+  },
+  flow: [
+    {t:"function keyword",c:"fn-purple"},{a:"→"},{t:"function name",c:"fn-coral"},
+    {a:"→"},{t:"typed params",c:"fn-teal"},{a:"→"},{t:"return type",c:"fn-amber"},{a:"→"},{t:"body",c:"fn-blue"}
+  ],
+  glossary: [
+    ["function","Keyword that declares a named function block"],
+    ["parameter","Variable in the function definition that receives input — has a type annotation"],
+    ["argument","Actual value passed to the function when calling it"],
+    ["return","Exits the function and optionally sends a value back to the caller"],
+    ["return type","Type annotation after the parentheses — declares what the function sends back"],
+    ["void","Return type for functions that perform work but return no value"],
+    ["hoisting","Named function declarations move to top of scope — callable before definition"],
+    ["invocation","Calling a function — using its name followed by () and arguments"]
+  ],
+  oneliners: [
+    "A parameter is the variable in the function signature; an argument is the actual value passed when calling.",
+    "Named function declarations are hoisted — you can call them before they appear in the source file.",
+    "TypeScript enforces the correct number and types of arguments at compile time.",
+    "A void return type function performs a side effect and returns nothing meaningful to the caller.",
+    "The return type annotation is part of the function's contract — changing it is a breaking API change.",
+    "TypeScript functions are first-class values — stored in variables, passed as arguments, returned from functions."
+  ],
+  bestpractices: [
+    "Always annotate function parameters — never rely on implicit any for parameters",
+    "Always declare return types explicitly for exported/public functions — this is your API contract",
+    "Keep functions small and focused — one function, one responsibility (SRP)",
+    "Name functions with verbs: getUser, validateEmail, calculateTotal",
+    "Avoid side effects in functions that return values — pure functions are predictable and testable"
+  ],
+  qa: [
+    ["What is the difference between a parameter and an argument?",
+     "A parameter is the variable name in the function definition (name: string). An argument is the actual value passed when calling (greet('Ravi')). Parameters define the contract; arguments fulfill it."],
+    ["What happens if you call a TypeScript function with the wrong argument type?",
+     "The TypeScript compiler throws a compile-time error — the code won't compile to JavaScript."],
+    ["How do you declare a function that returns nothing?",
+     "Use void as the return type: function log(msg: string): void { console.log(msg); }"],
+    ["What is function hoisting in TypeScript?",
+     "Named function declarations are hoisted — the function moves to the top of its scope, so it can be called before its definition in the source file."],
+    ["Why are typed functions important for Page Object Models in SDET?",
+     "Typed function signatures in POM methods ensure callers pass the right locator format and the return type ensures proper async handling — catching mistakes at compile time instead of test runtime."]
+  ],
+  code: [
+    {name:"01_zero_param.ts", body:`<span class="kw2">function</span> <span class="fn2">showWelcome</span>(): <span class="type2">void</span> {
+  console.<span class="fn2">log</span>(<span class="str2">"=========================="</span>);
+  console.<span class="fn2">log</span>(<span class="str2">"Welcome to TypeScript!"</span>);
+  console.<span class="fn2">log</span>(<span class="str2">"=========================="</span>);
+}
+
+<span class="kw2">function</span> <span class="fn2">getTime</span>(): <span class="type2">string</span> {
+  <span class="kw2">return</span> <span class="kw2">new</span> <span class="fn2">Date</span>().<span class="fn2">toLocaleTimeString</span>();
+}
+
+<span class="fn2">showWelcome</span>();
+console.<span class="fn2">log</span>(<span class="fn2">getTime</span>()); <span class="cmt2">// 10:45:30 AM</span>`},
+    {name:"02_single_param.ts", body:`<span class="kw2">function</span> <span class="fn2">greetUser</span>(name: <span class="type2">string</span>): <span class="type2">void</span> {
+  console.<span class="fn2">log</span>(<span class="str2">\`Hello, \${name}!\`</span>);
+}
+
+<span class="kw2">function</span> <span class="fn2">squareNumber</span>(n: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> n * n;
+}
+
+<span class="kw2">function</span> <span class="fn2">isEven</span>(n: <span class="type2">number</span>): <span class="type2">boolean</span> {
+  <span class="kw2">return</span> n % <span class="num2">2</span> === <span class="num2">0</span>;
+}
+
+<span class="fn2">greetUser</span>(<span class="str2">"Arjun"</span>);             <span class="cmt2">// Hello, Arjun!</span>
+console.<span class="fn2">log</span>(<span class="fn2">squareNumber</span>(<span class="num2">5</span>));  <span class="cmt2">// 25</span>
+console.<span class="fn2">log</span>(<span class="fn2">isEven</span>(<span class="num2">8</span>));         <span class="cmt2">// true</span>`},
+    {name:"03_multi_param.ts", body:`<span class="kw2">function</span> <span class="fn2">createUser</span>(
+  name:  <span class="type2">string</span>,
+  age:   <span class="type2">number</span>,
+  email: <span class="type2">string</span>
+): <span class="type2">string</span> {
+  <span class="kw2">return</span> <span class="str2">\`\${name} | \${age} | \${email}\`</span>;
+}
+
+console.<span class="fn2">log</span>(<span class="fn2">createUser</span>(<span class="str2">"Priya"</span>, <span class="num2">26</span>, <span class="str2">"p@test.com"</span>));
+<span class="cmt2">// Priya | 26 | p@test.com</span>`},
+    {name:"04_return_number.ts", body:`<span class="kw2">function</span> <span class="fn2">add</span>(a: <span class="type2">number</span>, b: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> a + b;
+}
+
+<span class="kw2">function</span> <span class="fn2">factorial</span>(n: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">if</span> (n &lt;= <span class="num2">1</span>) <span class="kw2">return</span> <span class="num2">1</span>;
+  <span class="kw2">return</span> n * <span class="fn2">factorial</span>(n - <span class="num2">1</span>); <span class="cmt2">// recursion!</span>
+}
+
+console.<span class="fn2">log</span>(<span class="fn2">add</span>(<span class="num2">15</span>, <span class="num2">27</span>));    <span class="cmt2">// 42</span>
+console.<span class="fn2">log</span>(<span class="fn2">factorial</span>(<span class="num2">5</span>)); <span class="cmt2">// 120</span>`},
+    {name:"05_return_string.ts", body:`<span class="kw2">function</span> <span class="fn2">formatName</span>(first: <span class="type2">string</span>, last: <span class="type2">string</span>): <span class="type2">string</span> {
+  <span class="kw2">return</span> <span class="str2">\`\${last}, \${first}\`</span>;
+}
+
+<span class="kw2">function</span> <span class="fn2">maskEmail</span>(email: <span class="type2">string</span>): <span class="type2">string</span> {
+  <span class="kw2">const</span> [local, domain] = email.<span class="fn2">split</span>(<span class="str2">"@"</span>);
+  <span class="kw2">return</span> <span class="str2">\`\${local.slice(0,3)}***@\${domain}\`</span>;
+}
+
+console.<span class="fn2">log</span>(<span class="fn2">formatName</span>(<span class="str2">"Arjun"</span>, <span class="str2">"Sharma"</span>));
+<span class="cmt2">// Sharma, Arjun</span>
+console.<span class="fn2">log</span>(<span class="fn2">maskEmail</span>(<span class="str2">"arjun@example.com"</span>));
+<span class="cmt2">// arj***@example.com</span>`},
+    {name:"06_return_bool.ts", body:`<span class="kw2">function</span> <span class="fn2">isValidEmail</span>(email: <span class="type2">string</span>): <span class="type2">boolean</span> {
+  <span class="kw2">return</span> email.<span class="fn2">includes</span>(<span class="str2">"@"</span>) &amp;&amp; email.<span class="fn2">includes</span>(<span class="str2">"."</span>);
+}
+
+<span class="kw2">function</span> <span class="fn2">isAdult</span>(age: <span class="type2">number</span>): <span class="type2">boolean</span> {
+  <span class="kw2">return</span> age &gt;= <span class="num2">18</span>;
+}
+
+<span class="kw2">if</span> (<span class="fn2">isValidEmail</span>(<span class="str2">"user@example.com"</span>)) {
+  console.<span class="fn2">log</span>(<span class="str2">"✅ Email valid"</span>);
+}
+console.<span class="fn2">log</span>(<span class="fn2">isAdult</span>(<span class="num2">21</span>)); <span class="cmt2">// true</span>`},
+    {name:"07_void_fn.ts", body:`<span class="kw2">function</span> <span class="fn2">logTestResult</span>(
+  testName: <span class="type2">string</span>,
+  passed:   <span class="type2">boolean</span>
+): <span class="type2">void</span> {
+  <span class="kw2">const</span> status = passed ? <span class="str2">"✅ PASS"</span> : <span class="str2">"❌ FAIL"</span>;
+  console.<span class="fn2">log</span>(<span class="str2">\`[TEST] \${testName} → \${status}\`</span>);
+}
+
+<span class="fn2">logTestResult</span>(<span class="str2">"Login Flow"</span>,   <span class="bool2">true</span>);
+<span class="fn2">logTestResult</span>(<span class="str2">"Payment API"</span>, <span class="bool2">false</span>);
+<span class="cmt2">// [TEST] Login Flow → ✅ PASS</span>
+<span class="cmt2">// [TEST] Payment API → ❌ FAIL</span>`},
+    {name:"08_param_vs_arg.ts", body:`<span class="cmt2">// PARAMETERS (in definition) ↓       ↓     ↓</span>
+<span class="kw2">function</span> <span class="fn2">createOrder</span>(product: <span class="type2">string</span>, qty: <span class="type2">number</span>, price: <span class="type2">number</span>): <span class="type2">string</span> {
+  <span class="kw2">return</span> <span class="str2">\`\${product} x \${qty} = ₹\${qty * price}\`</span>;
+}
+
+<span class="cmt2">// ARGUMENTS (at call site) ↓         ↓   ↓</span>
+<span class="kw2">let</span> o = <span class="fn2">createOrder</span>(<span class="str2">"Laptop"</span>, <span class="num2">2</span>, <span class="num2">60000</span>);
+console.<span class="fn2">log</span>(o); <span class="cmt2">// Laptop x 2 = ₹120000</span>
+
+<span class="cmt2">// Parameters = definition contract</span>
+<span class="cmt2">// Arguments  = fulfilling the contract</span>`}
+  ]
+},
+// ─── SESSION 4 ───────────────────────────────────────────────────────────────
+{
+  label: "S4: Params & Return",
+  title: "Session 4 — Return Types, Void & Boolean Functions",
+  overview: {
+    what: "Annotate what comes back: number, string, boolean, or void. TS verifies every code path returns the correct type.",
+    why:  "Return type annotations are your compile-time contract — TS verifies every branch returns the declared type.",
+    when: "Always annotate return types for exported/public functions; let inference handle private internal helpers.",
+    how:  "Append : type after the closing ). void for no return. TS checks ALL branches return correctly."
+  },
+  flow: [{t:"number return",c:"fn-teal"},{t:"string return",c:"fn-blue"},{t:"boolean return",c:"fn-purple"},{t:"void (no return)",c:"fn-coral"}],
+  glossary: [
+    [": number",  "Return type — function must return a number value"],
+    [": string",  "Return type — function must return a string value"],
+    [": boolean", "Return type — function returns true or false"],
+    [": void",    "Function returns nothing meaningful — side-effect-only function"],
+    ["return",    "Exits the function and optionally provides the return value"],
+    ["type inference", "TS auto-deduces return type from the return statement if not annotated"],
+    ["noImplicitReturns", "tsconfig flag — all branches must explicitly return a value"]
+  ],
+  oneliners: [
+    "A function returning boolean is ideal for validation utilities — plugs directly into if conditions.",
+    "void is NOT the same as returning undefined — void expresses intent that the return should not be used.",
+    "TypeScript enforces that ALL code paths return the declared type — no missing returns in branches.",
+    "Boolean-returning functions should be pure — same input always produces same output, no side effects.",
+    "Explicit return type annotation acts as a compile-time test — you cannot accidentally return the wrong type."
+  ],
+  bestpractices: [
+    "Always annotate return types for public/exported functions — this is your API contract",
+    "Enable noImplicitReturns in tsconfig — all branches must return the correct type",
+    "Boolean-returning functions should be named with is, has, can, should prefixes",
+    "Never mix void and value returns in the same function — confusing for callers",
+    "For complex return objects, define an interface instead of an inline type annotation"
+  ],
+  qa: [
+    ["What is the difference between void and undefined as return types?",
+     "void means the caller should not use the return value. A void function can return undefined at runtime, but void communicates the return value is meaningless. undefined as return type forces the function to explicitly return undefined."],
+    ["How does TypeScript check that all code paths return the correct type?",
+     "The type checker analyzes all branches (if/else, switch, early returns). With noImplicitReturns: true, any branch that doesn't return the declared type causes a compile error."],
+    ["Why are boolean-returning functions preferred for validation in test automation?",
+     "They are composable — you can chain them with && and || in assertions. They read naturally and types are enforced at every step."],
+    ["Can TypeScript infer return types?",
+     "Yes — TypeScript infers from the return statement. But for exported functions, explicit annotations are a best practice — they document intent and catch unintended type changes during refactoring."],
+    ["What happens if a function has an explicit return type but one branch doesn't return?",
+     "TypeScript reports a compile error: 'Not all code paths return a value.' This catches logic gaps before they hit production."]
+  ],
+  code: [
+    {name:"01_return_number.ts", body:`<span class="kw2">function</span> <span class="fn2">calculateTax</span>(income: <span class="type2">number</span>, rate: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> (income * rate) / <span class="num2">100</span>;
+}
+<span class="kw2">function</span> <span class="fn2">circleArea</span>(r: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> parseFloat((Math.PI * r ** <span class="num2">2</span>).<span class="fn2">toFixed</span>(<span class="num2">2</span>));
+}
+console.<span class="fn2">log</span>(<span class="fn2">calculateTax</span>(<span class="num2">50000</span>, <span class="num2">20</span>)); <span class="cmt2">// 10000</span>
+console.<span class="fn2">log</span>(<span class="fn2">circleArea</span>(<span class="num2">5</span>));          <span class="cmt2">// 78.54</span>`},
+    {name:"02_return_string.ts", body:`<span class="kw2">function</span> <span class="fn2">getStatusLabel</span>(code: <span class="type2">number</span>): <span class="type2">string</span> {
+  <span class="kw2">if</span> (code === <span class="num2">200</span>) <span class="kw2">return</span> <span class="str2">"OK"</span>;
+  <span class="kw2">if</span> (code === <span class="num2">404</span>) <span class="kw2">return</span> <span class="str2">"Not Found"</span>;
+  <span class="kw2">if</span> (code === <span class="num2">500</span>) <span class="kw2">return</span> <span class="str2">"Server Error"</span>;
+  <span class="kw2">return</span> <span class="str2">"Unknown"</span>; <span class="cmt2">// all paths return ✅</span>
+}
+console.<span class="fn2">log</span>(<span class="fn2">getStatusLabel</span>(<span class="num2">404</span>)); <span class="cmt2">// Not Found</span>
+console.<span class="fn2">log</span>(<span class="fn2">getStatusLabel</span>(<span class="num2">200</span>)); <span class="cmt2">// OK</span>`},
+    {name:"03_return_bool.ts", body:`<span class="kw2">function</span> <span class="fn2">isValidAge</span>(age: <span class="type2">number</span>): <span class="type2">boolean</span> {
+  <span class="kw2">return</span> age &gt; <span class="num2">0</span> &amp;&amp; age &lt; <span class="num2">150</span>;
+}
+<span class="kw2">function</span> <span class="fn2">isPrime</span>(n: <span class="type2">number</span>): <span class="type2">boolean</span> {
+  <span class="kw2">if</span> (n &lt; <span class="num2">2</span>) <span class="kw2">return</span> <span class="bool2">false</span>;
+  <span class="kw2">for</span> (<span class="kw2">let</span> i = <span class="num2">2</span>; i &lt;= Math.<span class="fn2">sqrt</span>(n); i++) {
+    <span class="kw2">if</span> (n % i === <span class="num2">0</span>) <span class="kw2">return</span> <span class="bool2">false</span>;
+  }
+  <span class="kw2">return</span> <span class="bool2">true</span>;
+}
+console.<span class="fn2">log</span>(<span class="fn2">isValidAge</span>(<span class="num2">25</span>)); <span class="cmt2">// true</span>
+console.<span class="fn2">log</span>(<span class="fn2">isPrime</span>(<span class="num2">7</span>));     <span class="cmt2">// true</span>`},
+    {name:"04_void_fn.ts", body:`<span class="kw2">function</span> <span class="fn2">sendNotification</span>(userId: <span class="type2">number</span>, msg: <span class="type2">string</span>): <span class="type2">void</span> {
+  console.<span class="fn2">log</span>(<span class="str2">\`📧 User \${userId}: \${msg}\`</span>);
+}
+<span class="kw2">function</span> <span class="fn2">clearCart</span>(cart: <span class="type2">string</span>[]): <span class="type2">void</span> {
+  cart.length = <span class="num2">0</span>; <span class="cmt2">// empties array in-place</span>
+}
+<span class="fn2">sendNotification</span>(<span class="num2">101</span>, <span class="str2">"Order shipped!"</span>);
+<span class="kw2">let</span> c: <span class="type2">string</span>[] = [<span class="str2">"Laptop"</span>, <span class="str2">"Mouse"</span>];
+<span class="fn2">clearCart</span>(c);
+console.<span class="fn2">log</span>(c.length); <span class="cmt2">// 0</span>`},
+    {name:"05_login_flag.ts", body:`<span class="kw2">interface</span> <span class="type2">User</span> {
+  isVerified: <span class="type2">boolean</span>;
+  isBanned:   <span class="type2">boolean</span>;
+}
+<span class="kw2">function</span> <span class="fn2">canLogin</span>(user: <span class="type2">User</span>): <span class="type2">boolean</span> {
+  <span class="kw2">return</span> user.isVerified &amp;&amp; !user.isBanned;
+}
+<span class="kw2">const</span> u = { isVerified: <span class="bool2">true</span>, isBanned: <span class="bool2">false</span> };
+<span class="kw2">if</span> (<span class="fn2">canLogin</span>(u)) {
+  console.<span class="fn2">log</span>(<span class="str2">"✅ Login successful"</span>);
+}`},
+    {name:"06_all_paths.ts", body:`<span class="kw2">function</span> <span class="fn2">getDiscount</span>(type: <span class="type2">string</span>): <span class="type2">number</span> {
+  <span class="kw2">if</span> (type === <span class="str2">"student"</span>) <span class="kw2">return</span> <span class="num2">20</span>;
+  <span class="kw2">if</span> (type === <span class="str2">"senior"</span>)  <span class="kw2">return</span> <span class="num2">15</span>;
+  <span class="kw2">if</span> (type === <span class="str2">"premium"</span>) <span class="kw2">return</span> <span class="num2">30</span>;
+  <span class="kw2">return</span> <span class="num2">0</span>; <span class="cmt2">// ← required! all paths must return</span>
+}
+<span class="cmt2">// Without the last return:</span>
+<span class="cmt2">// ❌ Not all code paths return a value</span>
+console.<span class="fn2">log</span>(<span class="fn2">getDiscount</span>(<span class="str2">"student"</span>)); <span class="cmt2">// 20</span>
+console.<span class="fn2">log</span>(<span class="fn2">getDiscount</span>(<span class="str2">"vip"</span>));     <span class="cmt2">// 0</span>`},
+    {name:"07_permissions.ts", body:`<span class="kw2">function</span> <span class="fn2">canAccess</span>(role: <span class="type2">string</span>, feature: <span class="type2">string</span>): <span class="type2">boolean</span> {
+  <span class="kw2">const</span> perms: Record&lt;<span class="type2">string</span>, <span class="type2">string</span>[]&gt; = {
+    admin: [<span class="str2">"reports"</span>, <span class="str2">"users"</span>, <span class="str2">"settings"</span>],
+    user:  [<span class="str2">"profile"</span>, <span class="str2">"orders"</span>]
+  };
+  <span class="kw2">return</span> perms[role]?.<span class="fn2">includes</span>(feature) ?? <span class="bool2">false</span>;
+}
+console.<span class="fn2">log</span>(<span class="fn2">canAccess</span>(<span class="str2">"admin"</span>, <span class="str2">"reports"</span>)); <span class="cmt2">// true</span>
+console.<span class="fn2">log</span>(<span class="fn2">canAccess</span>(<span class="str2">"user"</span>,  <span class="str2">"settings"</span>)); <span class="cmt2">// false</span>`},
+    {name:"08_infer_return.ts", body:`<span class="cmt2">// Inference vs explicit return type</span>
+<span class="kw2">function</span> <span class="fn2">multiply</span>(a: <span class="type2">number</span>, b: <span class="type2">number</span>) {
+  <span class="kw2">return</span> a * b; <span class="cmt2">// inferred: number</span>
+}
+<span class="cmt2">// Explicit — safer for public APIs:</span>
+<span class="kw2">function</span> <span class="fn2">getUser</span>(id: <span class="type2">number</span>): <span class="type2">string</span> | <span class="type2">null</span> {
+  <span class="kw2">if</span> (id === <span class="num2">1</span>) <span class="kw2">return</span> <span class="str2">"Priya"</span>;
+  <span class="kw2">return</span> <span class="bool2">null</span>;
+}
+console.<span class="fn2">log</span>(<span class="fn2">multiply</span>(<span class="num2">6</span>, <span class="num2">7</span>)); <span class="cmt2">// 42</span>
+console.<span class="fn2">log</span>(<span class="fn2">getUser</span>(<span class="num2">1</span>));    <span class="cmt2">// Priya</span>
+console.<span class="fn2">log</span>(<span class="fn2">getUser</span>(<span class="num2">99</span>));   <span class="cmt2">// null</span>`}
+  ]
+},
+// ─── SESSION 5 ───────────────────────────────────────────────────────────────
+{
+  label: "S5: Anonymous Fns",
+  title: "Session 5 — Anonymous Functions",
+  overview: {
+    what: "An anonymous function has no name. It is assigned to a variable or passed inline as a callback. Unlike named functions, it is NOT hoisted.",
+    why:  "Used for callbacks, event handlers, and one-off logic that does not need a reusable name. Common in array methods like map, filter, forEach.",
+    when: "Callback arguments, event listeners, IIFE pattern, and any one-time inline logic.",
+    how:  "let add = function(a: number, b: number): number { return a + b; }"
+  },
+  flow: [{t:"Named (hoisted ✅)",c:"fn-purple"},{a:"vs"},{t:"Anonymous (not hoisted ❌)",c:"fn-teal"},{a:"stored in"},{t:"variable",c:"fn-amber"}],
+  glossary: [
+    ["function expression","Assigning a function to a variable — not hoisted, evaluated at assignment"],
+    ["anonymous","Function without an identifier (name) in its definition"],
+    ["callback","A function passed as an argument to another function, called later"],
+    ["hoisting","Function declarations move to top of scope; function expressions do NOT"],
+    ["IIFE","Immediately Invoked Function Expression — anonymous function called right away"]
+  ],
+  oneliners: [
+    "Anonymous functions are function expressions assigned to variables — they are NOT hoisted unlike declarations.",
+    "Callbacks in array methods like map() and filter() are classic anonymous function use cases.",
+    "An IIFE runs the moment it is defined — used to create isolated scope without polluting the outer scope.",
+    "In TypeScript, you can type the variable holding the anonymous function for full type safety.",
+    "Anonymous functions have their own this context — unlike arrow functions which capture surrounding this."
+  ],
+  bestpractices: [
+    "Use anonymous functions for short callbacks; use named functions for logic that needs testing or reuse",
+    "Type the variable: let calc: (a: number) => number = function(a) { return a * 2; }",
+    "Prefer arrow functions over anonymous function expressions for concise callbacks (Session 6)",
+    "Remember anonymous functions are NOT hoisted — always define before calling"
+  ],
+  qa: [
+    ["What is a function expression in TypeScript?",
+     "A function expression is an anonymous function assigned to a variable. Unlike declarations, expressions are not hoisted — the variable binding exists but is not callable before the assignment line executes."],
+    ["How do anonymous functions work in array methods?",
+     "Methods like map, filter, and forEach accept a callback. TypeScript infers the parameter types of the callback from the array's type, so the anonymous function inside gets full type safety automatically."],
+    ["What is an IIFE and when would you use it?",
+     "An IIFE (Immediately Invoked Function Expression) runs the moment it's defined. Used to create a local scope, initialize modules, or run setup code without polluting the outer scope."],
+    ["How does this behave differently in anonymous vs arrow functions?",
+     "Anonymous functions have their own this — it depends on how the function is called. Arrow functions capture this from the enclosing lexical scope. This is critical in class methods and event handlers."],
+    ["When would you use an anonymous function in test automation?",
+     "In test frameworks like Jest/Mocha, anonymous functions are used as test body callbacks: it('test name', function() { ... }), and in custom matchers or higher-order functions that process test data."]
+  ],
+  code: [
+    {name:"01_basic_anon.ts", body:`<span class="kw2">let</span> greet = <span class="kw2">function</span>(): <span class="type2">void</span> {
+  console.<span class="fn2">log</span>(<span class="str2">"Hello from anonymous function!"</span>);
+};
+<span class="kw2">let</span> getYear = <span class="kw2">function</span>(): <span class="type2">number</span> {
+  <span class="kw2">return</span> <span class="kw2">new</span> <span class="fn2">Date</span>().<span class="fn2">getFullYear</span>();
+};
+<span class="fn2">greet</span>();
+console.<span class="fn2">log</span>(<span class="fn2">getYear</span>()); <span class="cmt2">// 2025</span>
+<span class="kw2">let</span> alias = greet;
+<span class="fn2">alias</span>(); <span class="cmt2">// same function reference</span>`},
+    {name:"02_with_params.ts", body:`<span class="kw2">let</span> add = <span class="kw2">function</span>(a: <span class="type2">number</span>, b: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> a + b;
+};
+<span class="kw2">let</span> fullName = <span class="kw2">function</span>(first: <span class="type2">string</span>, last: <span class="type2">string</span>): <span class="type2">string</span> {
+  <span class="kw2">return</span> <span class="str2">\`\${first} \${last}\`</span>;
+};
+console.<span class="fn2">log</span>(<span class="fn2">add</span>(<span class="num2">10</span>, <span class="num2">20</span>));                <span class="cmt2">// 30</span>
+console.<span class="fn2">log</span>(<span class="fn2">fullName</span>(<span class="str2">"Arjun"</span>, <span class="str2">"Sharma"</span>)); <span class="cmt2">// Arjun Sharma</span>`},
+    {name:"03_callback.ts", body:`<span class="kw2">function</span> <span class="fn2">process</span>(n: <span class="type2">number</span>, cb: (x: <span class="type2">number</span>) =&gt; <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> <span class="fn2">cb</span>(n);
+}
+<span class="kw2">let</span> doubled = <span class="fn2">process</span>(<span class="num2">5</span>, <span class="kw2">function</span>(n) { <span class="kw2">return</span> n * <span class="num2">2</span>; });
+<span class="kw2">let</span> squared = <span class="fn2">process</span>(<span class="num2">5</span>, <span class="kw2">function</span>(n) { <span class="kw2">return</span> n ** <span class="num2">2</span>; });
+console.<span class="fn2">log</span>(doubled); <span class="cmt2">// 10</span>
+console.<span class="fn2">log</span>(squared); <span class="cmt2">// 25</span>`},
+    {name:"04_array_methods.ts", body:`<span class="kw2">const</span> prices: <span class="type2">number</span>[] = [<span class="num2">100</span>, <span class="num2">250</span>, <span class="num2">75</span>, <span class="num2">400</span>, <span class="num2">30</span>];
+
+prices.<span class="fn2">forEach</span>(<span class="kw2">function</span>(p) { console.<span class="fn2">log</span>(<span class="str2">\`₹\${p}\`</span>); });
+
+<span class="kw2">const</span> discounted = prices.<span class="fn2">map</span>(<span class="kw2">function</span>(p) {
+  <span class="kw2">return</span> p * <span class="num2">0.9</span>;
+});
+
+<span class="kw2">const</span> cheap = prices.<span class="fn2">filter</span>(<span class="kw2">function</span>(p) {
+  <span class="kw2">return</span> p &lt; <span class="num2">100</span>;
+});
+console.<span class="fn2">log</span>(cheap); <span class="cmt2">// [75, 30]</span>`},
+    {name:"05_iife.ts", body:`<span class="cmt2">// IIFE — runs immediately!</span>
+(<span class="kw2">function</span>() {
+  console.<span class="fn2">log</span>(<span class="str2">"IIFE executed immediately!"</span>);
+})();
+
+<span class="kw2">const</span> result = (<span class="kw2">function</span>(x: <span class="type2">number</span>, y: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> x + y;
+})(<span class="num2">10</span>, <span class="num2">20</span>);
+console.<span class="fn2">log</span>(result); <span class="cmt2">// 30</span>
+
+<span class="cmt2">// Isolated scope — variables don't leak</span>
+(<span class="kw2">function</span>() {
+  <span class="kw2">let</span> secret = <span class="str2">"only inside IIFE"</span>;
+  console.<span class="fn2">log</span>(secret);
+})();`},
+    {name:"06_typed_var.ts", body:`<span class="cmt2">// Typing the variable holding the function</span>
+<span class="kw2">let</span> calc: (a: <span class="type2">number</span>, b: <span class="type2">number</span>) =&gt; <span class="type2">number</span>;
+calc = <span class="kw2">function</span>(a, b) { <span class="kw2">return</span> a + b; };
+
+<span class="kw2">let</span> multiply = <span class="kw2">function</span>(a: <span class="type2">number</span>, b: <span class="type2">number</span>): <span class="type2">number</span> {
+  <span class="kw2">return</span> a * b;
+};
+
+console.<span class="fn2">log</span>(<span class="fn2">calc</span>(<span class="num2">10</span>, <span class="num2">3</span>));     <span class="cmt2">// 13</span>
+console.<span class="fn2">log</span>(<span class="fn2">multiply</span>(<span class="num2">4</span>, <span class="num2">5</span>)); <span class="cmt2">// 20</span>`},
+    {name:"07_no_hoist.ts", body:`<span class="cmt2">// ✅ Named — hoisted, callable before definition</span>
+console.<span class="fn2">log</span>(<span class="fn2">namedFn</span>()); <span class="cmt2">// Works! "I am hoisted"</span>
+
+<span class="kw2">function</span> <span class="fn2">namedFn</span>(): <span class="type2">string</span> { <span class="kw2">return</span> <span class="str2">"I am hoisted"</span>; }
+
+<span class="cmt2">// ❌ Anonymous — NOT hoisted</span>
+<span class="cmt2">// console.log(anonFn()); // Error: before initialization</span>
+
+<span class="kw2">let</span> anonFn = <span class="kw2">function</span>(): <span class="type2">string</span> {
+  <span class="kw2">return</span> <span class="str2">"I am NOT hoisted"</span>;
+};
+console.<span class="fn2">log</span>(<span class="fn2">anonFn</span>()); <span class="cmt2">// Works after definition</span>`},
+    {name:"08_cart_sum.ts", body:`<span class="kw2">let</span> sumCart = <span class="kw2">function</span>(items: { price: <span class="type2">number</span>; qty: <span class="type2">number</span> }[]): <span class="type2">number</span> {
+  <span class="kw2">return</span> items.<span class="fn2">reduce</span>((total, item) =&gt; {
+    <span class="kw2">return</span> total + (item.price * item.qty);
+  }, <span class="num2">0</span>);
+};
+<span class="kw2">const</span> cart = [
+  { price: <span class="num2">500</span>,  qty: <span class="num2">2</span> },
+  { price: <span class="num2">1200</span>, qty: <span class="num2">1</span> },
+  { price: <span class="num2">75</span>,   qty: <span class="num2">3</span> }
+];
+console.<span class="fn2">log</span>(<span class="str2">\`Total: ₹\${sumCart(cart)}\`</span>); <span class="cmt2">// ₹2425</span>`}
+  ]
+},
+// ─── SESSION 6 ───────────────────────────────────────────────────────────────
+{
+  label: "S6: Arrow Functions",
+  title: "Session 6 — Arrow Functions",
+  overview: {
+    what: "Arrow functions are a concise syntax for anonymous functions using the fat arrow =>. Also called lambda functions.",
+    why:  "Shorter syntax, implicit return for single expressions, and lexical this binding — ideal for class methods and callbacks.",
+    when: "Array callbacks, class field methods, event handlers, any concise transformation.",
+    how:  "const add = (a: number, b: number): number => a + b;"
+  },
+  flow: [
+    {t:"Named function",c:"fn-purple"},{a:"→"},{t:"Anonymous",c:"fn-teal"},{a:"→"},
+    {t:"Arrow (multi-line)",c:"fn-amber"},{a:"→"},{t:"Arrow (implicit return)",c:"fn-coral"}
+  ],
+  glossary: [
+    ["=> (fat arrow)","Separates parameters from function body in arrow functions"],
+    ["implicit return","Single-expression arrow functions return the value without a return keyword"],
+    ["explicit return","Multi-statement arrow functions use { } and require the return keyword"],
+    ["lexical this","Arrow functions capture this from the surrounding context, not their call site"],
+    ["lambda","Another name for arrow functions — equivalent to Java lambda and Python lambda"],
+    ["class field","Arrow function assigned as a class property — binds this permanently to the instance"]
+  ],
+  oneliners: [
+    "Arrow functions use the fat arrow => and do not have their own this — they capture it lexically.",
+    "Single-expression arrow functions implicitly return the result — no return keyword or curly braces needed.",
+    "Arrow functions are TypeScript's equivalent of Java lambdas and Python lambdas.",
+    "Using arrow functions as class fields solves the this binding problem without needing .bind(this).",
+    "Arrow functions cannot be used as constructors — they do not have a prototype property."
+  ],
+  bestpractices: [
+    "Use arrow functions for array callbacks (map, filter, reduce) — shorter and inherits correct this",
+    "Use class field arrow functions when passing methods as callbacks to avoid this binding issues",
+    "Do not use arrow functions as object methods when you need this to refer to the object",
+    "Single-line arrow functions with implicit return are great for pure transformations"
+  ],
+  qa: [
+    ["What is the key difference between arrow and regular functions regarding this?",
+     "Regular functions define their own this based on how they are called. Arrow functions do not have their own this — they inherit it from the enclosing lexical scope. This makes arrow functions predictable in class method callbacks."],
+    ["What is implicit return?",
+     "When an arrow function body is a single expression (no curly braces), the expression value is automatically returned without the return keyword. Example: const double = (n: number) => n * 2;"],
+    ["How do arrow functions compare to Java lambdas?",
+     "Java: (n) -> n * 2. TypeScript: (n: number) => n * 2. Both are concise anonymous function expressions. TypeScript adds optional type annotations."],
+    ["Why use arrow functions as class fields?",
+     "Class field arrow functions bind this permanently to the class instance during construction. You can safely pass the method as a callback without losing this context — no need for .bind(this)."],
+    ["Can arrow functions be used as constructors?",
+     "No. Arrow functions cannot be used with new — they have no prototype property and do not create their own this. TypeScript will throw a compile error if you try."]
+  ],
+  code: [
+    {name:"01_basic_arrow.ts", body:`<span class="kw2">const</span> greet = (): <span class="type2">void</span> =&gt; {
+  console.<span class="fn2">log</span>(<span class="str2">"Hello from arrow function!"</span>);
+};
+<span class="kw2">const</span> double = (n: <span class="type2">number</span>): <span class="type2">number</span> =&gt; { <span class="kw2">return</span> n * <span class="num2">2</span>; };
+<span class="kw2">const</span> triple = (n: <span class="type2">number</span>): <span class="type2">number</span> =&gt; n * <span class="num2">3</span>; <span class="cmt2">// implicit return</span>
+
+<span class="fn2">greet</span>();
+console.<span class="fn2">log</span>(<span class="fn2">double</span>(<span class="num2">7</span>));  <span class="cmt2">// 14</span>
+console.<span class="fn2">log</span>(<span class="fn2">triple</span>(<span class="num2">7</span>));  <span class="cmt2">// 21</span>`},
+    {name:"02_with_params.ts", body:`<span class="kw2">const</span> add = (a: <span class="type2">number</span>, b: <span class="type2">number</span>): <span class="type2">number</span> =&gt; a + b;
+
+<span class="kw2">const</span> greetUser = (name: <span class="type2">string</span>, role: <span class="type2">string</span>): <span class="type2">string</span> =&gt;
+  <span class="str2">\`Hello \${name}, logged in as \${role}\`</span>;
+
+<span class="kw2">const</span> isEligible = (age: <span class="type2">number</span>, score: <span class="type2">number</span>): <span class="type2">boolean</span> =&gt;
+  age &gt;= <span class="num2">18</span> &amp;&amp; score &gt;= <span class="num2">60</span>;
+
+console.<span class="fn2">log</span>(<span class="fn2">add</span>(<span class="num2">15</span>, <span class="num2">25</span>));          <span class="cmt2">// 40</span>
+console.<span class="fn2">log</span>(<span class="fn2">isEligible</span>(<span class="num2">20</span>, <span class="num2">75</span>));   <span class="cmt2">// true</span>`},
+    {name:"03_implicit.ts", body:`<span class="kw2">const</span> square  = (n: <span class="type2">number</span>):  <span class="type2">number</span>  =&gt; n * n;
+<span class="kw2">const</span> toUpper  = (s: <span class="type2">string</span>):  <span class="type2">string</span>  =&gt; s.<span class="fn2">toUpperCase</span>();
+<span class="kw2">const</span> negate   = (b: <span class="type2">boolean</span>): <span class="type2">boolean</span> =&gt; !b;
+
+<span class="cmt2">// Returning an object? Wrap in parentheses!</span>
+<span class="kw2">const</span> makeUser = (name: <span class="type2">string</span>, age: <span class="type2">number</span>) =&gt;
+  ({ name, age }); <span class="cmt2">// ← () needed!</span>
+
+console.<span class="fn2">log</span>(<span class="fn2">square</span>(<span class="num2">9</span>));            <span class="cmt2">// 81</span>
+console.<span class="fn2">log</span>(<span class="fn2">makeUser</span>(<span class="str2">"Ravi"</span>, <span class="num2">30</span>)); <span class="cmt2">// {name:'Ravi',age:30}</span>`},
+    {name:"04_explicit.ts", body:`<span class="kw2">const</span> classify = (score: <span class="type2">number</span>): <span class="type2">string</span> =&gt; {
+  <span class="kw2">if</span> (score &gt;= <span class="num2">90</span>) <span class="kw2">return</span> <span class="str2">"A"</span>;
+  <span class="kw2">if</span> (score &gt;= <span class="num2">75</span>) <span class="kw2">return</span> <span class="str2">"B"</span>;
+  <span class="kw2">if</span> (score &gt;= <span class="num2">60</span>) <span class="kw2">return</span> <span class="str2">"C"</span>;
+  <span class="kw2">return</span> <span class="str2">"F"</span>;
+};
+console.<span class="fn2">log</span>(<span class="fn2">classify</span>(<span class="num2">85</span>)); <span class="cmt2">// B</span>
+console.<span class="fn2">log</span>(<span class="fn2">classify</span>(<span class="num2">55</span>)); <span class="cmt2">// F</span>`},
+    {name:"05_in_class.ts", body:`<span class="kw2">class</span> <span class="type2">Person</span> {
+  name: <span class="type2">string</span>; age: <span class="type2">number</span>;
+  <span class="kw2">constructor</span>(name: <span class="type2">string</span>, age: <span class="type2">number</span>) {
+    <span class="kw2">this</span>.name = name; <span class="kw2">this</span>.age = age;
+  }
+  <span class="cmt2">// Arrow field — this always = instance</span>
+  display = (): <span class="type2">void</span> =&gt; {
+    console.<span class="fn2">log</span>(<span class="str2">\`\${this.name} is \${this.age}\`</span>);
+  };
+}
+<span class="kw2">const</span> p = <span class="kw2">new</span> <span class="fn2">Person</span>(<span class="str2">"Priya"</span>, <span class="num2">28</span>);
+p.<span class="fn2">display</span>(); <span class="cmt2">// Priya is 28</span>
+setTimeout(p.display, <span class="num2">0</span>); <span class="cmt2">// ✅ this stays bound</span>`},
+    {name:"06_this_binding.ts", body:`<span class="kw2">class</span> <span class="type2">Counter</span> {
+  count = <span class="num2">0</span>;
+
+  <span class="fn2">startRegular</span>(): <span class="type2">void</span> {
+    setTimeout(<span class="kw2">function</span>() {
+      <span class="cmt2">// this.count++; // ❌ this is broken!</span>
+    }, <span class="num2">100</span>);
+  }
+
+  <span class="fn2">startArrow</span>(): <span class="type2">void</span> {
+    setTimeout(() =&gt; {
+      <span class="kw2">this</span>.count++;           <span class="cmt2">// ✅ this = Counter</span>
+      console.<span class="fn2">log</span>(<span class="kw2">this</span>.count);
+    }, <span class="num2">100</span>);
+  }
+}
+<span class="kw2">new</span> <span class="fn2">Counter</span>().<span class="fn2">startArrow</span>(); <span class="cmt2">// 1</span>`},
+    {name:"07_array_usage.ts", body:`<span class="kw2">const</span> products = [
+  { name: <span class="str2">"Laptop"</span>, price: <span class="num2">55000</span>, inStock: <span class="bool2">true</span>  },
+  { name: <span class="str2">"Phone"</span>,  price: <span class="num2">25000</span>, inStock: <span class="bool2">false</span> },
+  { name: <span class="str2">"Tablet"</span>, price: <span class="num2">35000</span>, inStock: <span class="bool2">true</span>  },
+];
+<span class="kw2">const</span> available = products.<span class="fn2">filter</span>(p =&gt; p.inStock);
+<span class="kw2">const</span> names     = available.<span class="fn2">map</span>(p =&gt; p.name);
+<span class="kw2">const</span> total     = available.<span class="fn2">reduce</span>((s, p) =&gt; s + p.price, <span class="num2">0</span>);
+console.<span class="fn2">log</span>(names);   <span class="cmt2">// ['Laptop', 'Tablet']</span>
+console.<span class="fn2">log</span>(total);   <span class="cmt2">// 90000</span>`},
+    {name:"08_java_compare.ts", body:`<span class="cmt2">// Arrow vs Java Lambda vs Python Lambda</span>
+
+<span class="cmt2">// TypeScript Arrow:</span>
+<span class="kw2">const</span> addTS = (a: <span class="type2">number</span>, b: <span class="type2">number</span>): <span class="type2">number</span> =&gt; a + b;
+
+<span class="cmt2">// Java Lambda:</span>
+<span class="cmt2">// BiFunction&lt;Integer,Integer,Integer&gt; add = (a,b) -&gt; a + b;</span>
+
+<span class="cmt2">// Python Lambda:</span>
+<span class="cmt2">// add = lambda a, b: a + b</span>
+
+<span class="cmt2">// TS arrow:    (params): type =&gt; body</span>
+<span class="cmt2">// Java lambda: (params) -&gt; body</span>
+<span class="cmt2">// Python:      lambda params: body</span>
+
+console.<span class="fn2">log</span>(<span class="fn2">addTS</span>(<span class="num2">3</span>, <span class="num2">4</span>)); <span class="cmt2">// 7</span>`}
+  ]
+},
+// ─── SESSION 7 ───────────────────────────────────────────────────────────────
+{
+  label: "S7: Classes",
+  title: "Session 7 — Classes in TypeScript",
+  overview: {
+    what: "Classes are blueprints for creating objects. They encapsulate data (properties) and behavior (methods) with strong TypeScript typing.",
+    why:  "Organizes related data and logic, supports OOP principles, and is the foundation for Page Object Models in SDET work.",
+    when: "POM classes, service classes, data model classes, utility wrappers with shared state.",
+    how:  "Declare class → define typed properties → write constructor → add methods → create instances with new."
+  },
+  flow: [
+    {t:"Properties",c:"fn-purple"},{a:"+"},{t:"Constructor",c:"fn-teal"},{a:"+"},{t:"Methods",c:"fn-amber"},{a:"="},{t:"Class Blueprint",c:"fn-blue"},{a:"→"},{t:"new Instance",c:"fn-coral"}
+  ],
+  glossary: [
+    ["class","Declares a class blueprint — the template for creating objects"],
+    ["constructor","Special method that runs when an object is created with new"],
+    ["this","Refers to the current instance of the class inside methods"],
+    ["new","Creates a new instance of the class, calling the constructor"],
+    ["public","Member accessible from outside the class (default in TS)"],
+    ["private","Member only accessible within the class — enforced by TypeScript"],
+    ["protected","Member accessible in the class and its subclasses"],
+    ["readonly","Property can be set in constructor but not changed afterward"]
+  ],
+  oneliners: [
+    "In TypeScript, class properties must be declared at the top of the class body — unlike JavaScript where they can be added dynamically.",
+    "The constructor runs once when new ClassName() is called and is used to initialize property values.",
+    "private members are compile-time enforced — TypeScript prevents access from outside the class.",
+    "Inside a class, DO NOT use let, const, or var for property declarations — just name and type.",
+    "Class field arrow functions (method = () => {}) bind this at instance creation — perfect for callbacks."
+  ],
+  bestpractices: [
+    "Declare ALL properties at the top of the class body with their types",
+    "Use private for internal details and expose a clean public API — encapsulation principle",
+    "Use constructor parameter shorthand: constructor(private name: string) to declare and initialize in one step",
+    "Mark properties that do not change after construction as readonly",
+    "NEVER use let, const, or var inside a class body for property declarations"
+  ],
+  qa: [
+    ["What is the purpose of the constructor in a TypeScript class?",
+     "The constructor is a special method invoked when a new instance is created with new. It initializes class properties, sets up the object's initial state, and can accept arguments to customize each instance."],
+    ["What is the difference between public, private, and protected?",
+     "public: accessible anywhere (default). private: only within the declaring class. protected: within the class and its subclasses. These are compile-time checks only — they don't exist in emitted JavaScript."],
+    ["Why is POM in SDET work typically implemented as TypeScript classes?",
+     "Classes encapsulate page-specific locators (private), provide typed action methods, and support inheritance for shared base page behavior. The constructor accepts a page/driver reference, and this gives all methods access to it."],
+    ["What is the difference between a class method and a class field arrow function?",
+     "A class method (greet() {}) is on the prototype — shared across instances, this depends on caller. A class field arrow (greet = () => {}) is on each instance, this is permanently bound."],
+    ["Can you declare class properties with let/const/var?",
+     "No — this is a common mistake. Class members are declared without let/const/var: name: string; not let name: string;. Using variable keywords inside the class body causes a syntax error."]
+  ],
+  code: [
+    {name:"01_basic_class.ts", body:`<span class="kw2">class</span> <span class="type2">Car</span> {
+  brand: <span class="type2">string</span>;  <span class="cmt2">// NO let/const/var!</span>
+  model: <span class="type2">string</span>;
+  year:  <span class="type2">number</span>;
+
+  <span class="kw2">constructor</span>(brand: <span class="type2">string</span>, model: <span class="type2">string</span>, year: <span class="type2">number</span>) {
+    <span class="kw2">this</span>.brand = brand;
+    <span class="kw2">this</span>.model = model;
+    <span class="kw2">this</span>.year  = year;
+  }
+
+  <span class="fn2">describe</span>(): <span class="type2">string</span> {
+    <span class="kw2">return</span> <span class="str2">\`\${this.year} \${this.brand} \${this.model}\`</span>;
+  }
+}
+<span class="kw2">const</span> car = <span class="kw2">new</span> <span class="fn2">Car</span>(<span class="str2">"Toyota"</span>, <span class="str2">"Camry"</span>, <span class="num2">2024</span>);
+console.<span class="fn2">log</span>(car.<span class="fn2">describe</span>()); <span class="cmt2">// 2024 Toyota Camry</span>`},
+    {name:"02_constructor.ts", body:`<span class="kw2">class</span> <span class="type2">BankAccount</span> {
+  accountNumber: <span class="type2">string</span>;
+  owner:         <span class="type2">string</span>;
+  balance:       <span class="type2">number</span>;
+
+  <span class="kw2">constructor</span>(accNum: <span class="type2">string</span>, owner: <span class="type2">string</span>) {
+    <span class="kw2">this</span>.accountNumber = accNum;
+    <span class="kw2">this</span>.owner   = owner;
+    <span class="kw2">this</span>.balance = <span class="num2">0</span>; <span class="cmt2">// default</span>
+  }
+
+  <span class="fn2">deposit</span>(amount: <span class="type2">number</span>): <span class="type2">void</span> {
+    <span class="kw2">this</span>.balance += amount;
+    console.<span class="fn2">log</span>(<span class="str2">\`Balance: ₹\${this.balance}\`</span>);
+  }
+}
+<span class="kw2">const</span> acc = <span class="kw2">new</span> <span class="fn2">BankAccount</span>(<span class="str2">"ACC001"</span>, <span class="str2">"Priya"</span>);
+acc.<span class="fn2">deposit</span>(<span class="num2">5000</span>); <span class="cmt2">// Balance: ₹5000</span>
+acc.<span class="fn2">deposit</span>(<span class="num2">2500</span>); <span class="cmt2">// Balance: ₹7500</span>`},
+    {name:"03_access_mods.ts", body:`<span class="kw2">class</span> <span class="type2">Employee</span> {
+  <span class="kw2">public</span>    name:   <span class="type2">string</span>; <span class="cmt2">// anywhere</span>
+  <span class="kw2">private</span>   salary: <span class="type2">number</span>; <span class="cmt2">// class only</span>
+  <span class="kw2">protected</span> dept:   <span class="type2">string</span>; <span class="cmt2">// class + subclasses</span>
+
+  <span class="kw2">constructor</span>(n: <span class="type2">string</span>, s: <span class="type2">number</span>, d: <span class="type2">string</span>) {
+    <span class="kw2">this</span>.name = n; <span class="kw2">this</span>.salary = s; <span class="kw2">this</span>.dept = d;
+  }
+
+  <span class="fn2">getSalary</span>(): <span class="type2">number</span> { <span class="kw2">return</span> <span class="kw2">this</span>.salary; }
+}
+<span class="kw2">const</span> e = <span class="kw2">new</span> <span class="fn2">Employee</span>(<span class="str2">"Ravi"</span>, <span class="num2">80000</span>, <span class="str2">"Eng"</span>);
+console.<span class="fn2">log</span>(e.name);          <span class="cmt2">// ✅ Ravi</span>
+console.<span class="fn2">log</span>(e.<span class="fn2">getSalary</span>());  <span class="cmt2">// ✅ 80000</span>
+<span class="cmt2">// e.salary; // ❌ Property is private</span>`},
+    {name:"04_shorthand.ts", body:`<span class="cmt2">// Constructor parameter shorthand</span>
+<span class="kw2">class</span> <span class="type2">Product</span> {
+  <span class="cmt2">// public/private → auto creates property!</span>
+  <span class="kw2">constructor</span>(
+    <span class="kw2">public</span>   name:  <span class="type2">string</span>,
+    <span class="kw2">private</span>  price: <span class="type2">number</span>,
+    <span class="kw2">readonly</span> id:    <span class="type2">number</span>
+  ) {} <span class="cmt2">// no body needed!</span>
+
+  <span class="fn2">getInfo</span>(): <span class="type2">string</span> {
+    <span class="kw2">return</span> <span class="str2">\`#\${this.id} \${this.name} ₹\${this.price}\`</span>;
+  }
+}
+<span class="kw2">const</span> p = <span class="kw2">new</span> <span class="fn2">Product</span>(<span class="str2">"Laptop"</span>, <span class="num2">55000</span>, <span class="num2">101</span>);
+console.<span class="fn2">log</span>(p.<span class="fn2">getInfo</span>()); <span class="cmt2">// #101 Laptop ₹55000</span>`},
+    {name:"05_arrow_method.ts", body:`<span class="kw2">class</span> <span class="type2">Logger</span> {
+  <span class="kw2">constructor</span>(<span class="kw2">private</span> prefix: <span class="type2">string</span>) {}
+
+  <span class="cmt2">// Class field arrow — this always = instance</span>
+  log = (msg: <span class="type2">string</span>): <span class="type2">void</span> =&gt; {
+    console.<span class="fn2">log</span>(<span class="str2">\`[\${this.prefix}] \${msg}\`</span>);
+  };
+}
+<span class="kw2">const</span> logger = <span class="kw2">new</span> <span class="fn2">Logger</span>(<span class="str2">"INFO"</span>);
+<span class="kw2">const</span> { log } = logger;   <span class="cmt2">// destructure</span>
+<span class="fn2">log</span>(<span class="str2">"App started"</span>); <span class="cmt2">// ✅ [INFO] App started</span>`},
+    {name:"06_this_keyword.ts", body:`<span class="kw2">class</span> <span class="type2">ShoppingCart</span> {
+  items: <span class="type2">string</span>[] = [];
+  total: <span class="type2">number</span>   = <span class="num2">0</span>;
+
+  <span class="fn2">addItem</span>(item: <span class="type2">string</span>, price: <span class="type2">number</span>): <span class="type2">void</span> {
+    <span class="kw2">this</span>.items.<span class="fn2">push</span>(item);
+    <span class="kw2">this</span>.total += price;
+  }
+
+  <span class="fn2">summary</span>(): <span class="type2">string</span> {
+    <span class="kw2">return</span> <span class="str2">\`\${this.items.join(", ")} | ₹\${this.total}\`</span>;
+  }
+}
+<span class="kw2">const</span> cart = <span class="kw2">new</span> <span class="fn2">ShoppingCart</span>();
+cart.<span class="fn2">addItem</span>(<span class="str2">"Laptop"</span>, <span class="num2">55000</span>);
+cart.<span class="fn2">addItem</span>(<span class="str2">"Mouse"</span>, <span class="num2">1500</span>);
+console.<span class="fn2">log</span>(cart.<span class="fn2">summary</span>());
+<span class="cmt2">// Laptop, Mouse | ₹56500</span>`},
+    {name:"07_page_object.ts", body:`<span class="cmt2">// SDET: Page Object Model with TypeScript classes</span>
+<span class="kw2">class</span> <span class="type2">LoginPage</span> {
+  <span class="kw2">private</span> <span class="kw2">readonly</span> usernameInput = <span class="str2">"#username"</span>;
+  <span class="kw2">private</span> <span class="kw2">readonly</span> passwordInput = <span class="str2">"#password"</span>;
+  <span class="kw2">private</span> <span class="kw2">readonly</span> submitBtn     = <span class="str2">"button[type='submit']"</span>;
+
+  <span class="fn2">login</span>(user: <span class="type2">string</span>, pass: <span class="type2">string</span>): <span class="type2">void</span> {
+    console.<span class="fn2">log</span>(<span class="str2">\`Type '\${user}' → \${this.usernameInput}\`</span>);
+    console.<span class="fn2">log</span>(<span class="str2">\`Type → \${this.passwordInput}\`</span>);
+    console.<span class="fn2">log</span>(<span class="str2">\`Click → \${this.submitBtn}\`</span>);
+  }
+}
+<span class="kw2">new</span> <span class="fn2">LoginPage</span>().<span class="fn2">login</span>(<span class="str2">"priya"</span>, <span class="str2">"Pass123"</span>);`},
+    {name:"08_readonly.ts", body:`<span class="kw2">class</span> <span class="type2">Config</span> {
+  <span class="kw2">readonly</span> baseUrl:    <span class="type2">string</span>;
+  <span class="kw2">readonly</span> apiVersion: <span class="type2">string</span>;
+  timeout: <span class="type2">number</span>;
+
+  <span class="kw2">constructor</span>(url: <span class="type2">string</span>, ver: <span class="type2">string</span>) {
+    <span class="kw2">this</span>.baseUrl    = url;
+    <span class="kw2">this</span>.apiVersion = ver;
+    <span class="kw2">this</span>.timeout    = <span class="num2">5000</span>;
+  }
+
+  <span class="fn2">getUrl</span>(endpoint: <span class="type2">string</span>): <span class="type2">string</span> {
+    <span class="kw2">return</span> <span class="str2">\`\${this.baseUrl}/\${this.apiVersion}/\${endpoint}\`</span>;
+  }
+}
+<span class="kw2">const</span> cfg = <span class="kw2">new</span> <span class="fn2">Config</span>(<span class="str2">"https://api.test.com"</span>, <span class="str2">"v2"</span>);
+console.<span class="fn2">log</span>(cfg.<span class="fn2">getUrl</span>(<span class="str2">"users"</span>));
+<span class="cmt2">// https://api.test.com/v2/users</span>
+cfg.timeout = <span class="num2">10000</span>;  <span class="cmt2">// ✅ mutable</span>
+<span class="cmt2">// cfg.baseUrl = "x"; // ❌ readonly!</span>`}
+  ]
+},
+// ─── SESSION 8 ───────────────────────────────────────────────────────────────
+{
+  label: "S8: Opt/Default/Rest",
+  title: "Session 8 — Optional, Default & Rest Parameters",
+  overview: {
+    what: "Three powerful parameter features: optional (?), default (= value), and rest (...) — making functions flexible and caller-friendly.",
+    why:  "Makes functions flexible and caller-friendly — callers only pass what they need, functions handle the rest gracefully.",
+    when: "Optional: search filters, profile APIs. Default: email templates, notifications. Rest: cart totals, batch processing.",
+    how:  "Optional: param? — Default: param = value — Rest: ...param: type[]"
+  },
+  flow: [{t:"Optional param?",c:"fn-purple"},{a:"|"},{t:"Default param=value",c:"fn-teal"},{a:"|"},{t:"Rest ...param[]",c:"fn-amber"}],
+  glossary: [
+    ["param?: type","Optional parameter — can be omitted by the caller. Type becomes type | undefined"],
+    ["param = value","Default parameter — used when caller passes undefined or omits the argument"],
+    ["...param: type[]","Rest parameter — collects all remaining arguments into a typed array"],
+    ["undefined","Explicitly passing undefined to a defaulted parameter triggers the default value"],
+    ["spread operator","... at the call site — spreads an array as individual arguments (opposite of rest)"]
+  ],
+  oneliners: [
+    "Optional parameters (age?) must always come AFTER required parameters in the function signature.",
+    "Passing undefined explicitly to a default parameter triggers the default — passing null does NOT.",
+    "Rest parameters (...args) must be the LAST parameter — no parameters can follow a rest.",
+    "Rest and spread both use ... — rest COLLECTS into an array; spread EXPANDS an array. Inverse operations.",
+    "Default parameters make APIs user-friendly — callers only pass values they want to customize."
+  ],
+  bestpractices: [
+    "Put optional and default parameters at the END — required params first",
+    "Use default parameters instead of optional + if-check when a sensible default exists",
+    "Use rest parameters for variadic functions — never use the arguments object",
+    "Always check optional parameters before use: if (age !== undefined) or use ?? fallback"
+  ],
+  qa: [
+    ["What is the difference between optional and default parameters?",
+     "Optional (param?): can be omitted, value is undefined. Default (param = value): if omitted or passed as undefined, the default value is used. Default parameters are more common when a sensible fallback exists."],
+    ["What happens when you pass null vs undefined to a default parameter?",
+     "Passing undefined triggers the default. Passing null does NOT — null is a valid value that overrides the default. This is a common interview trap."],
+    ["How do rest parameters differ from the arguments object?",
+     "Rest parameters (...args: number[]) are a real typed array, work in arrow functions, visible in TS types. The arguments object is array-like but not a real array, not available in arrow functions, and completely untyped."],
+    ["How would you use optional parameters in a test automation framework?",
+     "For search/filter API wrappers: searchUsers(name?: string, role?: string, page?: number). Tests can pass only the params relevant to their scenario — undefined params map to absent query string values."],
+    ["What is the difference between rest parameters and spread operator?",
+     "Both use ... but in opposite directions. Rest: in a function DEFINITION — packs multiple arguments into one array. Spread: at a CALL SITE — unpacks an array into individual arguments."]
+  ],
+  code: [
+    {name:"01_optional.ts", body:`<span class="kw2">function</span> <span class="fn2">getInfo</span>(name: <span class="type2">string</span>, age?: <span class="type2">number</span>): <span class="type2">string</span> {
+  <span class="kw2">if</span> (age !== <span class="bool2">undefined</span>) <span class="kw2">return</span> <span class="str2">\`\${name} is \${age}\`</span>;
+  <span class="kw2">return</span> <span class="str2">\`\${name} (age unknown)\`</span>;
+}
+console.<span class="fn2">log</span>(<span class="fn2">getInfo</span>(<span class="str2">"Priya"</span>, <span class="num2">28</span>)); <span class="cmt2">// Priya is 28</span>
+console.<span class="fn2">log</span>(<span class="fn2">getInfo</span>(<span class="str2">"Ravi"</span>));     <span class="cmt2">// Ravi (age unknown)</span>`},
+    {name:"02_default.ts", body:`<span class="kw2">function</span> <span class="fn2">greet</span>(name: <span class="type2">string</span>, msg: <span class="type2">string</span> = <span class="str2">"Welcome!"</span>): <span class="type2">string</span> {
+  <span class="kw2">return</span> <span class="str2">\`Hello \${name}, \${msg}\`</span>;
+}
+console.<span class="fn2">log</span>(<span class="fn2">greet</span>(<span class="str2">"Priya"</span>));                      <span class="cmt2">// Hello Priya, Welcome!</span>
+console.<span class="fn2">log</span>(<span class="fn2">greet</span>(<span class="str2">"Ravi"</span>, <span class="str2">"Great to see you!"</span>)); <span class="cmt2">// overrides</span>
+console.<span class="fn2">log</span>(<span class="fn2">greet</span>(<span class="str2">"Arjun"</span>, <span class="bool2">undefined</span>));           <span class="cmt2">// uses default</span>`},
+    {name:"03_rest.ts", body:`<span class="kw2">function</span> <span class="fn2">sum</span>(...numbers: <span class="type2">number</span>[]): <span class="type2">number</span> {
+  <span class="kw2">return</span> numbers.<span class="fn2">reduce</span>((acc, n) =&gt; acc + n, <span class="num2">0</span>);
+}
+<span class="kw2">function</span> <span class="fn2">logAll</span>(prefix: <span class="type2">string</span>, ...msgs: <span class="type2">string</span>[]): <span class="type2">void</span> {
+  msgs.<span class="fn2">forEach</span>(m =&gt; console.<span class="fn2">log</span>(<span class="str2">\`[\${prefix}] \${m}\`</span>));
+}
+console.<span class="fn2">log</span>(<span class="fn2">sum</span>(<span class="num2">1</span>, <span class="num2">2</span>, <span class="num2">3</span>));           <span class="cmt2">// 6</span>
+console.<span class="fn2">log</span>(<span class="fn2">sum</span>(<span class="num2">10</span>, <span class="num2">20</span>, <span class="num2">30</span>, <span class="num2">40</span>));  <span class="cmt2">// 100</span>
+<span class="fn2">logAll</span>(<span class="str2">"WARN"</span>, <span class="str2">"Disk full"</span>, <span class="str2">"Low memory"</span>);`},
+    {name:"04_rest_vs_spread.ts", body:`<span class="cmt2">// REST in DEFINITION — collects args into array</span>
+<span class="kw2">function</span> <span class="fn2">collect</span>(...nums: <span class="type2">number</span>[]): <span class="type2">number</span> {
+  console.<span class="fn2">log</span>(<span class="str2">"Received:"</span>, nums); <span class="cmt2">// Array!</span>
+  <span class="kw2">return</span> nums.<span class="fn2">reduce</span>((a, b) =&gt; a + b, <span class="num2">0</span>);
+}
+
+<span class="cmt2">// SPREAD at CALL SITE — expands array into args</span>
+<span class="kw2">const</span> vals: <span class="type2">number</span>[] = [<span class="num2">10</span>, <span class="num2">20</span>, <span class="num2">30</span>];
+console.<span class="fn2">log</span>(<span class="fn2">collect</span>(...vals)); <span class="cmt2">// 60</span>
+
+<span class="cmt2">// REST  → packs  args  INTO array</span>
+<span class="cmt2">// SPREAD → unpacks array INTO args</span>`},
+    {name:"05_null_vs_undefined.ts", body:`<span class="kw2">function</span> <span class="fn2">test</span>(val: <span class="type2">string</span> = <span class="str2">"default"</span>): <span class="type2">void</span> {
+  console.<span class="fn2">log</span>(val);
+}
+<span class="fn2">test</span>();              <span class="cmt2">// "default" (omitted)</span>
+<span class="fn2">test</span>(<span class="bool2">undefined</span>);    <span class="cmt2">// "default" (triggers default)</span>
+<span class="fn2">test</span>(<span class="bool2">null</span> <span class="kw2">as any</span>); <span class="cmt2">// null — does NOT trigger default!</span>
+<span class="fn2">test</span>(<span class="str2">"custom"</span>);     <span class="cmt2">// "custom" (overrides)</span>`},
+    {name:"06_api_filter.ts", body:`<span class="kw2">function</span> <span class="fn2">searchUsers</span>(
+  name:    <span class="type2">string</span>,
+  role?:   <span class="type2">string</span>,
+  active?: <span class="type2">boolean</span>,
+  page?:   <span class="type2">number</span>
+): <span class="type2">void</span> {
+  console.<span class="fn2">log</span>({
+    name,
+    role:   role   ?? <span class="str2">"all"</span>,
+    active: active ?? <span class="bool2">true</span>,
+    page:   page   ?? <span class="num2">1</span>
+  });
+}
+<span class="fn2">searchUsers</span>(<span class="str2">"Priya"</span>);
+<span class="fn2">searchUsers</span>(<span class="str2">"Ravi"</span>, <span class="str2">"admin"</span>, <span class="bool2">true</span>, <span class="num2">2</span>);`},
+    {name:"07_cart_total.ts", body:`<span class="kw2">function</span> <span class="fn2">cartTotal</span>(...prices: <span class="type2">number</span>[]): <span class="type2">string</span> {
+  <span class="kw2">const</span> sub   = prices.<span class="fn2">reduce</span>((s, p) =&gt; s + p, <span class="num2">0</span>);
+  <span class="kw2">const</span> tax   = sub * <span class="num2">0.18</span>;
+  <span class="kw2">const</span> total = sub + tax;
+  <span class="kw2">return</span> <span class="str2">\`Sub:₹\${sub} Tax:₹\${tax.toFixed(2)} Total:₹\${total.toFixed(2)}\`</span>;
+}
+console.<span class="fn2">log</span>(<span class="fn2">cartTotal</span>(<span class="num2">500</span>, <span class="num2">1200</span>, <span class="num2">300</span>));
+<span class="cmt2">// Sub:₹2000 Tax:₹360.00 Total:₹2360.00</span>`},
+    {name:"08_login_defaults.ts", body:`<span class="kw2">function</span> <span class="fn2">sendEmail</span>(
+  to:       <span class="type2">string</span>,
+  subject:  <span class="type2">string</span> = <span class="str2">"Login Notification"</span>,
+  template: <span class="type2">string</span> = <span class="str2">"default"</span>
+): <span class="type2">void</span> {
+  console.<span class="fn2">log</span>(<span class="str2">\`To:\${to} | \${subject} | tmpl:\${template}\`</span>);
+}
+<span class="fn2">sendEmail</span>(<span class="str2">"p@test.com"</span>);
+<span class="cmt2">// To:p@test.com | Login Notification | tmpl:default</span>
+<span class="fn2">sendEmail</span>(<span class="str2">"r@test.com"</span>, <span class="str2">"Security Alert"</span>, <span class="str2">"security"</span>);`}
+  ]
+},
+// ─── SESSION 9 ───────────────────────────────────────────────────────────────
+{
+  label: "S9: Overloading",
+  title: "Session 9 — Function Overloading",
+  overview: {
+    what: "Function overloading allows the same function name to accept different parameter types. In TypeScript, you write multiple overload signatures but only ONE implementation.",
+    why:  "Provides type-safe, self-documenting API where a single function handles multiple input/output type combinations.",
+    when: "Utilities that format, log, or process different types. Calculator utilities, API formatters, generic utility methods.",
+    how:  "1) Write overload signatures. 2) Write one implementation using any. 3) Implement logic with type checking inside."
+  },
+  flow: [
+    {t:"Overload sig 1",c:"fn-purple"},{a:"+"},{t:"Overload sig 2",c:"fn-purple"},{a:"→"},{t:"ONE implementation",c:"fn-teal"},{a:"→"},{t:"Compile resolves",c:"fn-amber"}
+  ],
+  glossary: [
+    ["overload signature","Type-only function signature — no body, declares one valid call pattern"],
+    ["implementation signature","The actual function body using any or union types — never called directly"],
+    ["compatible signatures","Implementation must be a superset of all overload signatures"],
+    ["compile-time resolution","TypeScript selects the matching overload at compile time based on argument types"],
+    ["function add(a:string,b:string):string","Overload 1 — called when both args are strings"],
+    ["function add(a:number,b:number):number","Overload 2 — called when both args are numbers"]
+  ],
+  oneliners: [
+    "TypeScript overloading uses multiple declaration signatures but only ONE implementation body — unlike Java which has multiple implementations.",
+    "The implementation signature is not visible to callers — only the overload signatures are exposed as the API.",
+    "TypeScript resolves which overload to use at compile time based on the argument types passed.",
+    "Overloads must be more specific than the implementation — the implementation uses any or union types.",
+    "Function overloading is the 'same name, different contracts' pattern — one function that adapts to its inputs."
+  ],
+  bestpractices: [
+    "Always put overload signatures BEFORE the implementation signature",
+    "Make overload signatures as specific as possible — avoid using any in signatures",
+    "The implementation body must handle ALL overload scenarios safely with typeof checks",
+    "Use overloading for utility functions that logically do the same thing but accept different types",
+    "Prefer overloads over union type parameters when the return type depends on the input type"
+  ],
+  qa: [
+    ["How does TypeScript function overloading differ from Java?",
+     "In Java, you write multiple function implementations. In TypeScript, you write multiple overload signatures (type-only, no body) and then ONE implementation function that handles all cases using any or union types internally."],
+    ["What is the implementation signature and can callers use it directly?",
+     "The implementation signature is the actual function body. It is NOT visible to callers — TypeScript hides it. Callers can only use the declared overload signatures."],
+    ["When should you use overloading vs union types?",
+     "Use overloading when the return type depends on the input type — overloading is more precise. Use union types when the return type is always the same regardless of input type."],
+    ["How does TypeScript resolve which overload to call?",
+     "TypeScript checks argument types at compile time against each overload signature in order from top to bottom, using the first match. The implementation is never directly matched."],
+    ["What is a practical SDET use case for function overloading?",
+     "An API formatter utility: format(value: string): string for URL-encoding, format(value: number): string for currency formatting. One function name, multiple clean type-safe contracts."]
+  ],
+  code: [
+    {name:"01_basic_overload.ts", body:`<span class="cmt2">// Step 1: Overload signatures (type-only, no body)</span>
+<span class="kw2">function</span> <span class="fn2">add</span>(a: <span class="type2">string</span>, b: <span class="type2">string</span>): <span class="type2">string</span>;
+<span class="kw2">function</span> <span class="fn2">add</span>(a: <span class="type2">number</span>, b: <span class="type2">number</span>): <span class="type2">number</span>;
+
+<span class="cmt2">// Step 2: Implementation (not visible to callers)</span>
+<span class="kw2">function</span> <span class="fn2">add</span>(a: <span class="type2">any</span>, b: <span class="type2">any</span>): <span class="type2">any</span> {
+  <span class="kw2">return</span> a + b;
+}
+
+console.<span class="fn2">log</span>(<span class="fn2">add</span>(<span class="num2">5</span>, <span class="num2">10</span>));             <span class="cmt2">// 15 (number)</span>
+console.<span class="fn2">log</span>(<span class="fn2">add</span>(<span class="str2">"Hello"</span>, <span class="str2">" World"</span>)); <span class="cmt2">// Hello World (string)</span>
+<span class="cmt2">// add(true, false); // ❌ No matching overload!</span>`},
+    {name:"02_type_check.ts", body:`<span class="kw2">function</span> <span class="fn2">format</span>(val: <span class="type2">string</span>): <span class="type2">string</span>;
+<span class="kw2">function</span> <span class="fn2">format</span>(val: <span class="type2">number</span>): <span class="type2">string</span>;
+<span class="kw2">function</span> <span class="fn2">format</span>(val: <span class="type2">any</span>): <span class="type2">string</span> {
+  <span class="kw2">if</span> (<span class="kw2">typeof</span> val === <span class="str2">"string"</span>) {
+    <span class="kw2">return</span> val.<span class="fn2">toUpperCase</span>();
+  }
+  <span class="kw2">if</span> (<span class="kw2">typeof</span> val === <span class="str2">"number"</span>) {
+    <span class="kw2">return</span> <span class="str2">\`₹\${val.toLocaleString()}\`</span>;
+  }
+  <span class="kw2">return</span> <span class="fn2">String</span>(val);
+}
+console.<span class="fn2">log</span>(<span class="fn2">format</span>(<span class="str2">"hello"</span>)); <span class="cmt2">// HELLO</span>
+console.<span class="fn2">log</span>(<span class="fn2">format</span>(<span class="num2">55000</span>));   <span class="cmt2">// ₹55,000</span>`},
+    {name:"03_logger.ts", body:`<span class="kw2">function</span> <span class="fn2">log</span>(msg: <span class="type2">string</span>): <span class="type2">void</span>;
+<span class="kw2">function</span> <span class="fn2">log</span>(code: <span class="type2">number</span>, msg: <span class="type2">string</span>): <span class="type2">void</span>;
+<span class="kw2">function</span> <span class="fn2">log</span>(codeOrMsg: <span class="type2">any</span>, msg?: <span class="type2">string</span>): <span class="type2">void</span> {
+  <span class="kw2">if</span> (<span class="kw2">typeof</span> codeOrMsg === <span class="str2">"string"</span>) {
+    console.<span class="fn2">log</span>(<span class="str2">\`[LOG] \${codeOrMsg}\`</span>);
+  } <span class="kw2">else</span> {
+    console.<span class="fn2">log</span>(<span class="str2">\`[LOG \${codeOrMsg}] \${msg}\`</span>);
+  }
+}
+<span class="fn2">log</span>(<span class="str2">"App started"</span>);        <span class="cmt2">// [LOG] App started</span>
+<span class="fn2">log</span>(<span class="num2">404</span>, <span class="str2">"Not found"</span>);      <span class="cmt2">// [LOG 404] Not found</span>`},
+    {name:"04_calculator.ts", body:`<span class="kw2">function</span> <span class="fn2">calculate</span>(a: <span class="type2">number</span>, b: <span class="type2">number</span>, op: <span class="str2">"add"</span>): <span class="type2">number</span>;
+<span class="kw2">function</span> <span class="fn2">calculate</span>(a: <span class="type2">number</span>, b: <span class="type2">number</span>, op: <span class="str2">"concat"</span>): <span class="type2">string</span>;
+<span class="kw2">function</span> <span class="fn2">calculate</span>(a: <span class="type2">any</span>, b: <span class="type2">any</span>, op: <span class="str2">"add"</span> | <span class="str2">"concat"</span>): <span class="type2">any</span> {
+  <span class="kw2">if</span> (op === <span class="str2">"add"</span>)    <span class="kw2">return</span> a + b;
+  <span class="kw2">if</span> (op === <span class="str2">"concat"</span>) <span class="kw2">return</span> <span class="str2">\`\${a}\${b}\`</span>;
+}
+console.<span class="fn2">log</span>(<span class="fn2">calculate</span>(<span class="num2">5</span>, <span class="num2">3</span>, <span class="str2">"add"</span>));     <span class="cmt2">// 8</span>
+console.<span class="fn2">log</span>(<span class="fn2">calculate</span>(<span class="num2">10</span>, <span class="num2">20</span>, <span class="str2">"concat"</span>)); <span class="cmt2">// "1020"</span>`},
+    {name:"05_vs_java.ts", body:`<span class="cmt2">// TypeScript: ONE implementation</span>
+<span class="kw2">function</span> <span class="fn2">display</span>(value: <span class="type2">string</span>): <span class="type2">void</span>;
+<span class="kw2">function</span> <span class="fn2">display</span>(value: <span class="type2">number</span>): <span class="type2">void</span>;
+<span class="kw2">function</span> <span class="fn2">display</span>(value: <span class="type2">any</span>): <span class="type2">void</span> {
+  console.<span class="fn2">log</span>(<span class="str2">\`Value: \${value} (type: \${typeof value})\`</span>);
+}
+<span class="fn2">display</span>(<span class="str2">"Hello"</span>); <span class="cmt2">// Value: Hello (type: string)</span>
+<span class="fn2">display</span>(<span class="num2">42</span>);      <span class="cmt2">// Value: 42 (type: number)</span>
+
+<span class="cmt2">// Java would have TWO separate method bodies</span>
+<span class="cmt2">// TypeScript has ONE body with internal typeof checks</span>`},
+    {name:"06_api_formatter.ts", body:`<span class="kw2">function</span> <span class="fn2">formatResponse</span>(data: <span class="type2">string</span>):  { type: <span class="str2">"text"</span>,  value: <span class="type2">string</span>  };
+<span class="kw2">function</span> <span class="fn2">formatResponse</span>(data: <span class="type2">number</span>):  { type: <span class="str2">"count"</span>, value: <span class="type2">number</span>  };
+<span class="kw2">function</span> <span class="fn2">formatResponse</span>(data: <span class="type2">boolean</span>): { type: <span class="str2">"flag"</span>,  value: <span class="type2">boolean</span> };
+<span class="kw2">function</span> <span class="fn2">formatResponse</span>(data: <span class="type2">any</span>): <span class="type2">any</span> {
+  <span class="kw2">if</span> (<span class="kw2">typeof</span> data === <span class="str2">"string"</span>)  <span class="kw2">return</span> { type: <span class="str2">"text"</span>,  value: data };
+  <span class="kw2">if</span> (<span class="kw2">typeof</span> data === <span class="str2">"number"</span>)  <span class="kw2">return</span> { type: <span class="str2">"count"</span>, value: data };
+  <span class="kw2">if</span> (<span class="kw2">typeof</span> data === <span class="str2">"boolean"</span>) <span class="kw2">return</span> { type: <span class="str2">"flag"</span>,  value: data };
+}
+console.<span class="fn2">log</span>(<span class="fn2">formatResponse</span>(<span class="str2">"hello"</span>)); <span class="cmt2">// {type:'text', value:'hello'}</span>
+console.<span class="fn2">log</span>(<span class="fn2">formatResponse</span>(<span class="num2">42</span>));      <span class="cmt2">// {type:'count', value:42}</span>`},
+    {name:"07_order_matters.ts", body:`<span class="cmt2">// Overload order matters — most specific FIRST</span>
+<span class="kw2">function</span> <span class="fn2">process</span>(x: <span class="type2">number</span>): <span class="type2">string</span>;  <span class="cmt2">// overload 1</span>
+<span class="kw2">function</span> <span class="fn2">process</span>(x: <span class="type2">string</span>): <span class="type2">number</span>;  <span class="cmt2">// overload 2</span>
+<span class="kw2">function</span> <span class="fn2">process</span>(x: <span class="type2">any</span>):    <span class="type2">any</span> {
+  <span class="kw2">if</span> (<span class="kw2">typeof</span> x === <span class="str2">"number"</span>) <span class="kw2">return</span> x.<span class="fn2">toString</span>();
+  <span class="kw2">if</span> (<span class="kw2">typeof</span> x === <span class="str2">"string"</span>) <span class="kw2">return</span> x.length;
+}
+<span class="kw2">let</span> r1: <span class="type2">string</span> = <span class="fn2">process</span>(<span class="num2">42</span>);     <span class="cmt2">// "42"</span>
+<span class="kw2">let</span> r2: <span class="type2">number</span> = <span class="fn2">process</span>(<span class="str2">"hello"</span>); <span class="cmt2">// 5</span>
+console.<span class="fn2">log</span>(r1, r2);`},
+    {name:"08_class_overload.ts", body:`<span class="kw2">class</span> <span class="type2">Converter</span> {
+  <span class="fn2">convert</span>(val: <span class="type2">number</span>): <span class="type2">string</span>;
+  <span class="fn2">convert</span>(val: <span class="type2">string</span>): <span class="type2">number</span>;
+  <span class="fn2">convert</span>(val: <span class="type2">any</span>): <span class="type2">any</span> {
+    <span class="kw2">if</span> (<span class="kw2">typeof</span> val === <span class="str2">"number"</span>) <span class="kw2">return</span> val.<span class="fn2">toString</span>();
+    <span class="kw2">if</span> (<span class="kw2">typeof</span> val === <span class="str2">"string"</span>) <span class="kw2">return</span> <span class="fn2">Number</span>(val);
+  }
+}
+<span class="kw2">const</span> c = <span class="kw2">new</span> <span class="fn2">Converter</span>();
+console.<span class="fn2">log</span>(c.<span class="fn2">convert</span>(<span class="num2">99</span>));    <span class="cmt2">// "99" (number→string)</span>
+console.<span class="fn2">log</span>(c.<span class="fn2">convert</span>(<span class="str2">"42"</span>)); <span class="cmt2">// 42  (string→number)</span>`}
+  ]
+},
+// ─── SESSION 10 ──────────────────────────────────────────────────────────────
+{
+  label: "S10: Advanced Fns",
+  title: "Session 10 — Advanced Function Concepts",
+  overview: {
+    what: "Bringing it all together: type inference on functions, function signatures as types, higher-order functions, generics intro, and real-world SDET patterns.",
+    why:  "Advanced function patterns are the foundation of reusable utilities, typed frameworks, and maintainable test automation code.",
+    when: "Building shared test utilities, API client wrappers, data transformation pipelines, and typed configuration systems.",
+    how:  "Combine type inference + explicit types + arrow functions + overloads + rest params + classes into professional-grade TypeScript."
+  },
+  flow: [
+    {t:"Type Inference",c:"fn-purple"},{a:"+"},{t:"Explicit Types",c:"fn-teal"},{a:"+"},{t:"HOFs",c:"fn-amber"},{a:"+"},{t:"Generics",c:"fn-blue"},{a:"="},{t:"Pro TypeScript",c:"fn-coral"}
+  ],
+  glossary: [
+    ["higher-order function","A function that accepts another function as argument or returns a function"],
+    ["function type","A type that describes a function signature: (param: type) => returnType"],
+    ["generic <T>","A type placeholder that gets resolved at compile time — functions that work on any type safely"],
+    ["type alias","type MyFn = (x: number) => string — a named alias for a function type"],
+    ["callable type","Interface or type that describes a function shape — used for typed callback parameters"],
+    ["currying","Transforming a multi-argument function into a chain of single-argument functions"]
+  ],
+  oneliners: [
+    "Higher-order functions accept functions as arguments or return functions — the backbone of functional programming in TypeScript.",
+    "Function types can be named with type aliases: type Validator = (input: string) => boolean.",
+    "Generics (<T>) let you write one function that works safely with any type — typed templates.",
+    "TypeScript infers the type of a callback argument from the array it operates on — no annotation needed inside .map().",
+    "Function composition — combining small typed functions into larger ones — is the SDET way to build reusable test utilities."
+  ],
+  bestpractices: [
+    "Use type aliases for function signatures used in multiple places — avoids duplication",
+    "Prefer specific return types over any in higher-order functions — use generics instead",
+    "Keep higher-order functions pure — they should not have side effects",
+    "Use function composition to build complex validators from simple boolean functions",
+    "Type your callbacks explicitly in utility functions — do not rely on any for callback parameters"
+  ],
+  qa: [
+    ["What is a higher-order function in TypeScript?",
+     "A function that accepts another function as a parameter or returns a function. Example: Array.map, Array.filter, and Array.reduce are all higher-order functions. In test automation, HOFs create reusable test wrappers around page actions."],
+    ["How do you define a named function type in TypeScript?",
+     "Use a type alias: type Validator = (input: string) => boolean; or an interface: interface Predicate { (x: number): boolean; }. Both can be used as parameter types, variable types, and return types."],
+    ["What is function composition and how is it used in SDET?",
+     "Combining small pure functions into larger ones: const validateUser = (u) => isNotEmpty(u.name) && isValidEmail(u.email) && isAdult(u.age). Each small function is independently testable."],
+    ["What is a generic function and why is it better than using any?",
+     "Generic functions use a type placeholder T resolved at call time: function identity<T>(val: T): T { return val; }. Unlike any, generics preserve the specific type — full type safety is maintained."],
+    ["How do you type a function that accepts a callback?",
+     "Declare the callback type in the parameter: function retry(fn: () => boolean, times: number): boolean. TypeScript enforces the caller passes a function with that exact signature."]
+  ],
+  code: [
+    {name:"01_hof.ts", body:`<span class="cmt2">// Higher-Order Functions</span>
+<span class="kw2">function</span> <span class="fn2">applyTwice</span>(
+  fn: (x: <span class="type2">number</span>) =&gt; <span class="type2">number</span>,
+  val: <span class="type2">number</span>
+): <span class="type2">number</span> {
+  <span class="kw2">return</span> <span class="fn2">fn</span>(<span class="fn2">fn</span>(val));
+}
+
+<span class="kw2">const</span> double = (x: <span class="type2">number</span>) =&gt; x * <span class="num2">2</span>;
+<span class="kw2">const</span> addTen = (x: <span class="type2">number</span>) =&gt; x + <span class="num2">10</span>;
+
+console.<span class="fn2">log</span>(<span class="fn2">applyTwice</span>(double, <span class="num2">3</span>));  <span class="cmt2">// 12 (3*2=6, 6*2=12)</span>
+console.<span class="fn2">log</span>(<span class="fn2">applyTwice</span>(addTen, <span class="num2">5</span>)); <span class="cmt2">// 25 (5+10=15, 15+10=25)</span>`},
+    {name:"02_fn_type_alias.ts", body:`<span class="cmt2">// Named function types via type aliases</span>
+<span class="kw2">type</span> <span class="type2">Validator</span>    = (input: <span class="type2">string</span>) =&gt; <span class="type2">boolean</span>;
+<span class="kw2">type</span> <span class="type2">Transformer</span>  = (input: <span class="type2">string</span>) =&gt; <span class="type2">string</span>;
+<span class="kw2">type</span> <span class="type2">NumOperation</span> = (a: <span class="type2">number</span>, b: <span class="type2">number</span>) =&gt; <span class="type2">number</span>;
+
+<span class="kw2">const</span> isEmail:   <span class="type2">Validator</span>    = s =&gt; s.<span class="fn2">includes</span>(<span class="str2">"@"</span>);
+<span class="kw2">const</span> toUpper:   <span class="type2">Transformer</span>  = s =&gt; s.<span class="fn2">toUpperCase</span>();
+<span class="kw2">const</span> multiply:  <span class="type2">NumOperation</span> = (a, b) =&gt; a * b;
+
+console.<span class="fn2">log</span>(<span class="fn2">isEmail</span>(<span class="str2">"a@b.com"</span>)); <span class="cmt2">// true</span>
+console.<span class="fn2">log</span>(<span class="fn2">toUpper</span>(<span class="str2">"hello"</span>));   <span class="cmt2">// HELLO</span>
+console.<span class="fn2">log</span>(<span class="fn2">multiply</span>(<span class="num2">4</span>, <span class="num2">5</span>));      <span class="cmt2">// 20</span>`},
+    {name:"03_composition.ts", body:`<span class="kw2">type</span> <span class="type2">Rule</span> = (val: <span class="type2">string</span>) =&gt; <span class="type2">boolean</span>;
+
+<span class="kw2">const</span> notEmpty:  <span class="type2">Rule</span> = s =&gt; s.length &gt; <span class="num2">0</span>;
+<span class="kw2">const</span> hasAt:     <span class="type2">Rule</span> = s =&gt; s.<span class="fn2">includes</span>(<span class="str2">"@"</span>);
+<span class="kw2">const</span> hasDomain: <span class="type2">Rule</span> = s =&gt; s.<span class="fn2">includes</span>(<span class="str2">"."</span>);
+
+<span class="kw2">function</span> <span class="fn2">validate</span>(val: <span class="type2">string</span>, ...rules: <span class="type2">Rule</span>[]): <span class="type2">boolean</span> {
+  <span class="kw2">return</span> rules.<span class="fn2">every</span>(rule =&gt; <span class="fn2">rule</span>(val));
+}
+
+console.<span class="fn2">log</span>(<span class="fn2">validate</span>(<span class="str2">"a@b.com"</span>, notEmpty, hasAt, hasDomain)); <span class="cmt2">// true</span>
+console.<span class="fn2">log</span>(<span class="fn2">validate</span>(<span class="str2">"invalid"</span>, notEmpty, hasAt, hasDomain));  <span class="cmt2">// false</span>`},
+    {name:"04_generics.ts", body:`<span class="cmt2">// Generics — type-safe any</span>
+
+<span class="cmt2">// Without generics — loses type info:</span>
+<span class="kw2">function</span> <span class="fn2">firstAny</span>(arr: <span class="type2">any</span>[]): <span class="type2">any</span> { <span class="kw2">return</span> arr[<span class="num2">0</span>]; }
+
+<span class="cmt2">// With generics — preserves type:</span>
+<span class="kw2">function</span> <span class="fn2">first</span>&lt;T&gt;(arr: T[]): T { <span class="kw2">return</span> arr[<span class="num2">0</span>]; }
+
+<span class="kw2">let</span> n = <span class="fn2">first</span>([<span class="num2">1</span>, <span class="num2">2</span>, <span class="num2">3</span>]);     <span class="cmt2">// inferred: number</span>
+<span class="kw2">let</span> s = <span class="fn2">first</span>([<span class="str2">"a"</span>, <span class="str2">"b"</span>]);   <span class="cmt2">// inferred: string</span>
+
+console.<span class="fn2">log</span>(n.<span class="fn2">toFixed</span>(<span class="num2">2</span>));    <span class="cmt2">// ✅ 1.00</span>
+console.<span class="fn2">log</span>(s.<span class="fn2">toUpperCase</span>()); <span class="cmt2">// ✅ A</span>`},
+    {name:"05_returning_fn.ts", body:`<span class="cmt2">// Functions that RETURN functions</span>
+<span class="kw2">function</span> <span class="fn2">makeMultiplier</span>(factor: <span class="type2">number</span>): (n: <span class="type2">number</span>) =&gt; <span class="type2">number</span> {
+  <span class="kw2">return</span> (n: <span class="type2">number</span>) =&gt; n * factor;
+}
+
+<span class="kw2">const</span> double = <span class="fn2">makeMultiplier</span>(<span class="num2">2</span>);
+<span class="kw2">const</span> triple = <span class="fn2">makeMultiplier</span>(<span class="num2">3</span>);
+
+console.<span class="fn2">log</span>(<span class="fn2">double</span>(<span class="num2">5</span>));  <span class="cmt2">// 10</span>
+console.<span class="fn2">log</span>(<span class="fn2">triple</span>(<span class="num2">5</span>)); <span class="cmt2">// 15</span>
+
+<span class="cmt2">// SDET: URL factory pattern</span>
+<span class="kw2">const</span> makeUrl = (base: <span class="type2">string</span>) =&gt; (path: <span class="type2">string</span>) =&gt; <span class="str2">\`\${base}\${path}\`</span>;
+<span class="kw2">const</span> testUrl  = <span class="fn2">makeUrl</span>(<span class="str2">"https://api.test.com"</span>);
+console.<span class="fn2">log</span>(<span class="fn2">testUrl</span>(<span class="str2">"/users"</span>)); <span class="cmt2">// https://api.test.com/users</span>`},
+    {name:"06_typed_callback.ts", body:`<span class="kw2">type</span> <span class="type2">ClickHandler</span> = (event: { x: <span class="type2">number</span>; y: <span class="type2">number</span> }) =&gt; <span class="type2">void</span>;
+
+<span class="kw2">function</span> <span class="fn2">onClick</span>(handler: <span class="type2">ClickHandler</span>): <span class="type2">void</span> {
+  <span class="fn2">handler</span>({ x: <span class="num2">100</span>, y: <span class="num2">200</span> }); <span class="cmt2">// simulated event</span>
+}
+
+<span class="fn2">onClick</span>(({ x, y }) =&gt; {
+  console.<span class="fn2">log</span>(<span class="str2">\`Clicked at \${x},\${y}\`</span>);
+  <span class="cmt2">// Clicked at 100,200</span>
+});`},
+    {name:"07_pipe_utility.ts", body:`<span class="cmt2">// pipe — run value through multiple functions</span>
+<span class="kw2">function</span> <span class="fn2">pipe</span>&lt;T&gt;(value: T, ...fns: Array&lt;(v: T) =&gt; T&gt;): T {
+  <span class="kw2">return</span> fns.<span class="fn2">reduce</span>((v, fn) =&gt; <span class="fn2">fn</span>(v), value);
+}
+
+<span class="kw2">const</span> result = <span class="fn2">pipe</span>(
+  <span class="str2">"  hello world  "</span>,
+  s =&gt; s.<span class="fn2">trim</span>(),
+  s =&gt; s.<span class="fn2">toUpperCase</span>(),
+  s =&gt; s.<span class="fn2">replace</span>(/ /g, <span class="str2">"-"</span>)
+);
+console.<span class="fn2">log</span>(result); <span class="cmt2">// HELLO-WORLD</span>`},
+    {name:"08_sdet_utility.ts", body:`<span class="cmt2">// Complete SDET utility — all sessions combined</span>
+<span class="kw2">type</span> <span class="type2">TestResult</span> = { name: <span class="type2">string</span>; passed: <span class="type2">boolean</span>; time: <span class="type2">number</span> };
+
+<span class="kw2">function</span> <span class="fn2">runTest</span>(name: <span class="type2">string</span>, fn: () =&gt; <span class="type2">boolean</span>): <span class="type2">TestResult</span> {
+  <span class="kw2">const</span> start  = Date.<span class="fn2">now</span>();
+  <span class="kw2">const</span> passed = <span class="fn2">fn</span>();
+  <span class="kw2">return</span> { name, passed, time: Date.<span class="fn2">now</span>() - start };
+}
+
+<span class="kw2">function</span> <span class="fn2">printReport</span>(...results: <span class="type2">TestResult</span>[]): <span class="type2">void</span> {
+  results.<span class="fn2">forEach</span>(r =&gt; {
+    console.<span class="fn2">log</span>(<span class="str2">\`\${r.passed ? "✅" : "❌"} \${r.name} (\${r.time}ms)\`</span>);
+  });
+}
+
+<span class="fn2">printReport</span>(
+  <span class="fn2">runTest</span>(<span class="str2">"Login Test"</span>,  () =&gt; <span class="bool2">true</span>),
+  <span class="fn2">runTest</span>(<span class="str2">"Search Test"</span>, () =&gt; <span class="bool2">false</span>),
+  <span class="fn2">runTest</span>(<span class="str2">"Cart Test"</span>,   () =&gt; <span class="bool2">true</span>)
+);`}
+  ]
+}
+];
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  const tabBar   = document.getElementById('sessionTabs');
+  const panels   = document.getElementById('sessionPanels');
+  const SECS     = ['Overview','Glossary','One-liners','Concepts','Best Practices','Interview Prep','Code'];
+
+  DATA.forEach((sess, si) => {
+    // Session tab
+    const tb = document.createElement('button');
+    tb.textContent = sess.label;
+    tb.className = si === 0 ? 'active' : '';
+    tb.setAttribute('data-si', si);
+    tabBar.appendChild(tb);
+
+    // Session panel
+    const panel = document.createElement('div');
+    panel.className = 'session-panel' + (si === 0 ? ' active' : '');
+    panel.id = 'sp_' + si;
+
+    // Section tab bar
+    const secBar = document.createElement('div');
+    secBar.className = 'section-tabs';
+    SECS.forEach((s, idx) => {
+      const b = document.createElement('button');
+      b.textContent = s;
+      b.className = idx === 0 ? 'active' : '';
+      b.setAttribute('data-si', si);
+      b.setAttribute('data-idx', idx);
+      secBar.appendChild(b);
+    });
+    panel.appendChild(secBar);
+
+    // Section panels
+    const sections = [
+      buildOverview(sess),
+      buildGlossary(sess),
+      buildOneliners(sess),
+      buildConcepts(sess),
+      buildBP(sess),
+      buildQA(sess),
+      buildCode(sess, si)
+    ];
+    sections.forEach((html, idx) => {
+      const div = document.createElement('div');
+      div.className = 'section-panel' + (idx === 0 ? ' active' : '');
+      div.id = 'sec_' + si + '_' + idx;
+      div.innerHTML = html;
+      panel.appendChild(div);
+    });
+
+    panels.appendChild(panel);
+  });
+
+  // Event delegation for all buttons
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+
+    // Session tab
+    if (btn.parentElement.id === 'sessionTabs') {
+      const si = parseInt(btn.getAttribute('data-si'));
+      document.querySelectorAll('.session-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('#sessionTabs button').forEach(b => b.classList.remove('active'));
+      document.getElementById('sp_' + si).classList.add('active');
+      btn.classList.add('active');
+      return;
+    }
+
+    // Section tab
+    if (btn.parentElement.classList.contains('section-tabs')) {
+      const si  = parseInt(btn.getAttribute('data-si'));
+      const idx = parseInt(btn.getAttribute('data-idx'));
+      document.querySelectorAll('#sp_' + si + ' .section-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('#sp_' + si + ' .section-tabs button').forEach(b => b.classList.remove('active'));
+      document.getElementById('sec_' + si + '_' + idx).classList.add('active');
+      btn.classList.add('active');
+      return;
+    }
+
+    // Code tab
+    if (btn.parentElement.classList.contains('code-tabs')) {
+      const ci = parseInt(btn.getAttribute('data-ci'));
+      const si = parseInt(btn.getAttribute('data-si'));
+      const container = btn.closest('.section-panel');
+      container.querySelectorAll('.code-block').forEach(b => b.classList.remove('active'));
+      container.querySelectorAll('.code-tabs button').forEach(b => b.classList.remove('active'));
+      container.querySelector('#cb_' + si + '_' + ci).classList.add('active');
+      btn.classList.add('active');
+    }
+  });
+}
+
+function buildOverview(sess) {
+  return `<div class="card"><h3>${sess.title}</h3>
+  <div class="ov-grid">
+    <div class="ov-box"><div class="ov-label">What</div><div class="ov-text">${sess.overview.what}</div></div>
+    <div class="ov-box"><div class="ov-label">Why</div><div class="ov-text">${sess.overview.why}</div></div>
+    <div class="ov-box"><div class="ov-label">When</div><div class="ov-text">${sess.overview.when}</div></div>
+    <div class="ov-box"><div class="ov-label">How</div><div class="ov-text">${sess.overview.how}</div></div>
+  </div></div>
+  <div class="flow">${sess.flow.map(f => f.a ? `<span class="flow-arrow">${f.a}</span>` : `<span class="flow-node ${f.c}">${f.t}</span>`).join('')}</div>`;
+}
+
+function buildGlossary(sess) {
+  return `<div class="card"><h3>Keyword Glossary</h3>
+  <table class="kw-table">
+    <tr><th>Keyword / Term</th><th>Explanation</th></tr>
+    ${sess.glossary.map(([k,v]) => `<tr><td><span class="kw">${k}</span></td><td>${v}</td></tr>`).join('')}
+  </table></div>`;
+}
+
+function buildOneliners(sess) {
+  return `<div class="card"><h3>Interview One-liners</h3>
+  ${sess.oneliners.map((l,i) => `<div class="ol-item"><div class="ol-num">${i+1}</div><div class="ol-text">${l}</div></div>`).join('')}
+  </div>`;
+}
+
+function buildConcepts(sess) {
+  return `<div class="card"><h3>Concepts</h3>
+  <div class="flow">${sess.flow.map(f => f.a ? `<span class="flow-arrow" style="font-size:16px">${f.a}</span>` : `<span class="flow-node ${f.c}">${f.t}</span>`).join('')}</div>
+  <p style="margin-top:.8rem">Each concept in this session builds on the previous — master the fundamentals before moving to advanced patterns.</p>
+  </div>`;
+}
+
+function buildBP(sess) {
+  return `<div class="card"><h3>Best Practices</h3>
+  ${sess.bestpractices.map(b => `<div class="bp-item"><span class="bp-check">✓</span><div>${b}</div></div>`).join('')}
+  </div>`;
+}
+
+function buildQA(sess) {
+  return `<div class="card"><h3>Interview Prep — SDET Style</h3>
+  ${sess.qa.map(([q,a],i) => `<div class="qa-item"><div class="qa-q">Q${i+1}. ${q}</div><div class="qa-a">${a}</div></div>`).join('')}
+  </div>`;
+}
+
+function buildCode(sess, si) {
+  const tabs = sess.code.map((c,ci) =>
+    `<button data-si="${si}" data-ci="${ci}" class="${ci===0?'active':''}">${c.name}</button>`
+  ).join('');
+  const blocks = sess.code.map((c,ci) =>
+    `<div class="code-block ${ci===0?'active':''}" id="cb_${si}_${ci}">
+      <span class="code-filename">${c.name}</span>
+      <pre>${c.body}</pre>
+    </div>`
+  ).join('');
+  return `<div class="card" style="padding-bottom:0"><h3 style="margin-bottom:.75rem">Code Examples — 8 Files</h3>
+    <div class="code-tabs">${tabs}</div>
+  </div>${blocks}`;
+}
+
+render();
+</script>
+</body>
+</html>
