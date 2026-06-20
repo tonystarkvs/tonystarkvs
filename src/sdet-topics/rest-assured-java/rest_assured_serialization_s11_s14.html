@@ -1,0 +1,1789 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REST Assured: Serialization Concepts (Sessions 11 to 14)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Courier New',monospace;background:transparent;font-size:13px}
+.wrap{background:#0d1117;border-radius:10px;overflow:hidden;border:2px solid #21262d}
+.topbar{background:#0d1117;padding:10px 14px 0;border-bottom:2px solid #21262d}
+.badges{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px;font-family:sans-serif}
+.b1{background:#1f6feb33;color:#58a6ff;border:1px solid #1f6feb}
+.b2{background:#3fb95033;color:#56d364;border:1px solid #3fb950}
+.stab-row{display:flex;overflow-x:auto;scrollbar-width:none;gap:2px}
+.stab-row::-webkit-scrollbar{display:none}
+.stab{flex-shrink:0;padding:8px 18px;font-size:11px;font-family:sans-serif;font-weight:700;cursor:pointer;border-radius:6px 6px 0 0;border:1px solid #30363d;border-bottom:none;color:#8b949e;background:#0d1117;white-space:nowrap;user-select:none;transition:color .15s,background .15s}
+.stab:hover{color:#e6edf3;background:#161b22}
+.stab.active{background:#161b22;color:#fff;border-color:#58a6ff;border-bottom:2px solid #161b22}
+.session{display:none;background:#161b22}
+.session.active{display:block}
+.sp{padding:18px}
+.sec{font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#58a6ff;text-transform:uppercase;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:#30363d}
+.ovg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:4px}
+.ovc{background:#0d1117;border:1px solid #30363d;border-radius:7px;padding:10px}
+.ov-ic{font-size:14px;margin-bottom:3px}
+.ov-t{font-family:sans-serif;font-size:10px;font-weight:700;color:#58a6ff;margin-bottom:3px}
+.ov-tx{font-family:sans-serif;font-size:11px;color:#8b949e;line-height:1.45}
+.ol-list{display:flex;flex-direction:column;gap:5px}
+.ol{background:#0d1117;border-left:3px solid #1f6feb;border-radius:0 5px 5px 0;padding:7px 12px;font-family:sans-serif;font-size:11px;color:#e6edf3;line-height:1.5}
+.ol b{color:#ffa657}
+.cb{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:12px;margin-bottom:8px}
+.cb-t{font-family:sans-serif;font-size:12px;font-weight:700;color:#ffa657;margin-bottom:8px}
+.arch{font-family:'Courier New',monospace;font-size:11px;color:#8b949e;line-height:1.75;white-space:pre;overflow-x:auto}
+.arch .hl{color:#56d364}.arch .ar{color:#ffa657}.arch .bx{color:#a5d6ff}.arch .lb{color:#d2a8ff}
+.mcard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.mcard{background:#0d1117;border:1px solid #30363d;border-radius:7px;padding:10px}
+.mc-t{font-family:sans-serif;font-size:11px;font-weight:700;margin-bottom:5px}
+.mc-p{font-family:sans-serif;font-size:11px;color:#56d364;line-height:1.55}
+.mc-c{font-family:sans-serif;font-size:11px;color:#ff7b72;line-height:1.55}
+.fl{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:8px 0}
+.fb{background:#0d1117;border:1px solid #30363d;border-radius:5px;padding:5px 9px;font-family:sans-serif;font-size:11px;color:#e6edf3;text-align:center}
+.fb.g{border-color:#3fb950;color:#56d364}.fb.b{border-color:#1f6feb;color:#58a6ff}.fb.o{border-color:#db6d28;color:#ffa657}
+.fa{color:#8b949e;font-size:13px}
+/* CODE AREA */
+.code-area{background:#0d1117}
+.ctbar{display:flex;gap:2px;padding:8px 8px 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #21262d}
+.ctbar::-webkit-scrollbar{display:none}
+.ct{flex-shrink:0;padding:5px 13px;font-size:11px;cursor:pointer;border-radius:5px 5px 0 0;border:1px solid #30363d;border-bottom:none;color:#8b949e;background:#161b22;white-space:nowrap;font-family:sans-serif;font-weight:600;user-select:none;transition:color .15s,background .15s}
+.ct:hover{color:#e6edf3;background:#21262d}
+.ct.active{background:#0d1117;color:#e6edf3;border-color:#58a6ff;border-bottom:2px solid #0d1117}
+.cblk{display:none;padding:16px 18px;font-size:11.5px;line-height:1.75;color:#e6edf3;white-space:pre;overflow-x:auto;font-family:'Courier New',monospace}
+.cblk.active{display:block}
+/* SYNTAX */
+.kw{color:#ff7b72}.cls{color:#ffa657}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#6e7681;font-style:italic}.num{color:#79c0ff}.ann{color:#56d364}.vr{color:#e6edf3}
+/* CHECKLIST */
+.cl{display:flex;flex-direction:column;gap:5px}
+.ci{display:flex;align-items:flex-start;gap:8px;background:#0d1117;border-radius:6px;padding:8px 10px;font-family:sans-serif;font-size:11px;color:#c9d1d9;line-height:1.5}
+.ck{color:#56d364;font-size:13px;flex-shrink:0;margin-top:1px}
+/* Q&A */
+.qa{display:flex;flex-direction:column;gap:8px}
+.qi{background:#0d1117;border-radius:8px;overflow:hidden;border:1px solid #30363d}
+.qq{background:#161b22;padding:9px 14px;font-family:sans-serif;font-size:11px;font-weight:700;color:#58a6ff;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qq:hover{background:#21262d}
+.qtg{color:#8b949e;font-size:15px;transition:transform .2s;flex-shrink:0}
+.qa-ans{padding:0 14px;max-height:0;overflow:hidden;font-family:sans-serif;font-size:11px;color:#8b949e;line-height:1.65;transition:max-height .3s ease,padding .3s}
+.qa-ans.open{padding:10px 14px;max-height:400px}
+/* PROGRESS */
+.pbar{background:#0d1117;border-top:1px solid #21262d;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.pw{flex:1;background:#21262d;height:6px;border-radius:3px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,#1f6feb,#56d364);border-radius:3px;transition:width .4s}
+.pt{font-family:sans-serif;font-size:11px;color:#8b949e;white-space:nowrap}
+.nvb{display:flex;gap:6px}
+.nb{background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:5px 14px;border-radius:6px;font-size:11px;cursor:pointer;font-family:sans-serif;font-weight:600;user-select:none}
+.nb:hover{background:#30363d}
+</style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+  <div class="wrap">
+<div class="topbar">
+  <div class="badges">
+    <div class="badge b1">📤 Serialization: Simple to Complex Nested</div>
+    <div class="badge b2">🏆 Master Reference S11–S14</div>
+  </div>
+  <div class="stab-row" id="stabRow">
+    <div class="stab active"  data-si="0">S11: Intro &amp; HashMap</div>
+    <div class="stab"         data-si="1">S12: JSONObject &amp; Gson</div>
+    <div class="stab"         data-si="2">S13: POJO + Jackson</div>
+    <div class="stab"         data-si="3">S14: Deep Nested + Arrays</div>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 11 ═══════════════ -->
+<div class="session active" id="session-0">
+<div class="sp">
+
+<div class="sec">🌐 Overview — What / Why / When / Where / How</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">❓</div><div class="ov-t">WHAT</div><div class="ov-tx">Serialization = converting a Java object (Map/POJO) into JSON string. Deserialization = JSON string → Java object. Both are needed for every POST/PUT test.</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">WHY</div><div class="ov-tx">Avoids error-prone string concatenation. Type-safe, IDE-friendly, maintainable for any nesting depth. Jackson auto-handles serialization.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">WHEN</div><div class="ov-tx">Every POST/PUT/PATCH request needing a JSON body. From a 3-field flat object up to 4-level deep nested order payloads.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">WHERE</div><div class="ov-tx">Inside REST Assured's <code>given().body()</code>. Jackson sits between your Java code and the HTTP request, converting silently.</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">HOW</div><div class="ov-tx">5 approaches: raw String, HashMap, JSONObject, POJO+Jackson, POJO+Gson. Each shown simple → complex in this module.</div></div>
+</div>
+
+<div class="sec">🔄 Serialization Flow Diagram</div>
+<div class="fl">
+  <div class="fb b">Java Object<br><small style="color:#8b949e;font-size:9px">Map / POJO</small></div><div class="fa">→</div>
+  <div class="fb o">Jackson / Gson<br><small style="color:#8b949e;font-size:9px">Serializer</small></div><div class="fa">→</div>
+  <div class="fb g">JSON String<br><small style="color:#8b949e;font-size:9px">{"key":"val"}</small></div><div class="fa">→</div>
+  <div class="fb b">given().body()<br><small style="color:#8b949e;font-size:9px">REST Assured</small></div><div class="fa">→</div>
+  <div class="fb g">HTTP POST<br><small style="color:#8b949e;font-size:9px">to server</small></div>
+</div>
+<div class="fl">
+  <div class="fb g">JSON Response<br><small style="color:#8b949e;font-size:9px">{"id":1,...}</small></div><div class="fa">→</div>
+  <div class="fb o">Deserializer<br><small style="color:#8b949e;font-size:9px">Jackson/Gson</small></div><div class="fa">→</div>
+  <div class="fb b">POJO / Map<br><small style="color:#8b949e;font-size:9px">Java Object</small></div><div class="fa">→</div>
+  <div class="fb g">Assertions<br><small style="color:#8b949e;font-size:9px">user.getName()</small></div>
+</div>
+
+<div class="sec">📊 5 Methods Compared</div>
+<div class="mcard-grid">
+  <div class="mcard"><div class="mc-t" style="color:#a5d6ff">1. Raw String</div><div class="mc-p">✔ No dependency<br>✔ Tiny payloads</div><div class="mc-c">✘ \" escaping mess<br>✘ Not maintainable</div></div>
+  <div class="mcard"><div class="mc-t" style="color:#ffa657">2. HashMap</div><div class="mc-p">✔ Built-in Java<br>✔ Dynamic keys</div><div class="mc-c">✘ No type safety<br>✘ Verbose nested</div></div>
+  <div class="mcard"><div class="mc-t" style="color:#d2a8ff">3. JSONObject</div><div class="mc-p">✔ Readable put() API<br>✔ Chainable</div><div class="mc-c">✘ Extra org.json dep<br>✘ toString() needed</div></div>
+  <div class="mcard"><div class="mc-t" style="color:#56d364">4. POJO+Jackson</div><div class="mc-p">✔ Industry standard<br>✔ Full type safety<br>✔ IDE autocomplete</div><div class="mc-c">✘ Extra POJO classes</div></div>
+  <div class="mcard"><div class="mc-t" style="color:#f0883e">5. POJO+Gson</div><div class="mc-p">✔ Simple, Google lib<br>✔ No getters needed</div><div class="mc-c">✘ Manual toJson()<br>✘ Less RA integration</div></div>
+  <div class="mcard"><div class="mc-t" style="color:#58a6ff">6. ObjectMapper</div><div class="mc-p">✔ Full Jackson control<br>✔ Debug with prettyPrint</div><div class="mc-c">✘ Verbose<br>✘ throws Exception</div></div>
+</div>
+
+<div class="sec">🎤 Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>Serialization</b> = converting a Java object (Map/POJO) into a JSON string to send as an HTTP request body via REST Assured's body().</div>
+  <div class="ol"><b>Deserialization</b> = converting a JSON response string back into a typed Java object using Jackson's readValue() or REST Assured's as(Class).</div>
+  <div class="ol"><b>HashMap approach</b> = using Map&lt;String,Object&gt; as the body — REST Assured + Jackson auto-converts it to JSON when contentType is application/json.</div>
+  <div class="ol"><b>contentType("application/json")</b> = MANDATORY trigger — without it REST Assured won't serialize a Map/POJO; it sends raw form-encoded params instead.</div>
+  <div class="ol"><b>Nested JSON in HashMap</b> = put another Map as the value of a key — Jackson serializes inner Map as a nested JSON object automatically.</div>
+  <div class="ol"><b>Array in HashMap</b> = put a List&lt;String&gt; or List&lt;Map&gt; as the value — Jackson serializes it as a JSON array of strings or array of objects.</div>
+</div>
+
+<div class="sec">💻 Code Examples — HashMap Serialization</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s11">
+    <div class="ct active" data-ci="0" data-cs="s11">🗺️ Flat HashMap</div>
+    <div class="ct" data-ci="1" data-cs="s11">📦 Nested HashMap</div>
+    <div class="ct" data-ci="2" data-cs="s11">📋 HashMap + Array</div>
+    <div class="ct" data-ci="3" data-cs="s11">🔢 List of Maps</div>
+    <div class="ct" data-ci="4" data-cs="s11">🛠️ pom.xml Setup</div>
+    <div class="ct" data-ci="5" data-cs="s11">⚡ Raw String</div>
+  </div>
+  <div id="s11-c0" class="cblk active"><span class="cm">// FlatHashMapTest.java — Level 1: flat JSON using HashMap
+// HashMap = java.util.HashMap, Java's built-in key-value store
+// Map&lt;String,Object&gt; = key always String, value any Java type
+// REST Assured + Jackson auto-converts Map to JSON string
+// REQUIRED: contentType("application/json") must be set</span>
+<span class="kw">import</span> <span class="cls">java.util.HashMap</span>;
+<span class="kw">import</span> <span class="cls">java.util.Map</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">FlatHashMapTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postFlatHashMap</span>() {
+
+        <span class="cm">// Build flat body map — each put() = one JSON field</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"name"</span>,     <span class="str">"Chitti"</span>);      <span class="cm">// String → "name":"Chitti"</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"username"</span>, <span class="str">"chitti_sdet"</span>); <span class="cm">// String</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"email"</span>,    <span class="str">"c@test.com"</span>);  <span class="cm">// String</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"age"</span>,      <span class="num">25</span>);             <span class="cm">// int → "age":25</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"active"</span>,   <span class="kw">true</span>);           <span class="cm">// boolean → "active":true</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"score"</span>,    <span class="num">9.5</span>);            <span class="cm">// double → "score":9.5</span>
+
+        <span class="cm">// Resulting JSON:
+        // { "name":"Chitti","username":"chitti_sdet","email":"c@test.com",
+        //   "age":25,"active":true,"score":9.5 }</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>) <span class="cm">// REQUIRED for auto-serialization</span>
+            .<span class="fn">body</span>(<span class="vr">body</span>)              <span class="cm">// Jackson converts Map → JSON</span>
+            .<span class="fn">log</span>().<span class="fn">body</span>()           <span class="cm">// print request body to console</span>
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>);      <span class="cm">// 201 = Created</span>
+    }
+}</div>
+  <div id="s11-c1" class="cblk"><span class="cm">// NestedHashMapTest.java — Level 2: nested object inside HashMap
+// Nested object = put a Map as the VALUE of an outer Map key
+// Jackson sees inner Map → serializes as JSON nested object {}</span>
+<span class="kw">import</span> <span class="cls">java.util.HashMap</span>;
+<span class="kw">import</span> <span class="cls">java.util.Map</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">NestedHashMapTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postNestedHashMap</span>() {
+
+        <span class="cm">// ── INNER MAP: address object ──────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; <span class="vr">address</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">address</span>.<span class="fn">put</span>(<span class="str">"street"</span>,  <span class="str">"123 MG Road"</span>);
+        <span class="vr">address</span>.<span class="fn">put</span>(<span class="str">"city"</span>,    <span class="str">"Delhi"</span>);
+        <span class="vr">address</span>.<span class="fn">put</span>(<span class="str">"zip"</span>,     <span class="str">"110001"</span>);
+        <span class="vr">address</span>.<span class="fn">put</span>(<span class="str">"country"</span>, <span class="str">"India"</span>);
+        <span class="cm">// This Map → "address":{"street":"123 MG Road","city":"Delhi",...}</span>
+
+        <span class="cm">// ── INNER MAP: company object ──────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; <span class="vr">company</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">company</span>.<span class="fn">put</span>(<span class="str">"name"</span>,  <span class="str">"Chitti Corp"</span>);
+        <span class="vr">company</span>.<span class="fn">put</span>(<span class="str">"size"</span>,  <span class="num">500</span>);
+        <span class="vr">company</span>.<span class="fn">put</span>(<span class="str">"listed"</span>,<span class="kw">true</span>);
+
+        <span class="cm">// ── OUTER MAP: root user object ────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; <span class="vr">user</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">user</span>.<span class="fn">put</span>(<span class="str">"name"</span>,    <span class="str">"Chitti"</span>);
+        <span class="vr">user</span>.<span class="fn">put</span>(<span class="str">"email"</span>,   <span class="str">"c@test.com"</span>);
+        <span class="vr">user</span>.<span class="fn">put</span>(<span class="str">"address"</span>, <span class="vr">address</span>);
+        <span class="cm">// KEY STEP: put inner Map as value → nested JSON object
+        // Result: "address": { "street":"...", "city":"Delhi",...}</span>
+        <span class="vr">user</span>.<span class="fn">put</span>(<span class="str">"company"</span>, <span class="vr">company</span>);
+
+        <span class="cm">// Final JSON:
+        // {
+        //   "name":"Chitti", "email":"c@test.com",
+        //   "address": {"street":"123 MG Road","city":"Delhi",...},
+        //   "company": {"name":"Chitti Corp","size":500,"listed":true}
+        // }</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">user</span>)
+            .<span class="fn">log</span>().<span class="fn">body</span>()
+        .<span class="fn">when</span>()
+            .<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>)
+            .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">equalTo</span>(<span class="str">"Chitti"</span>));
+    }
+}</div>
+  <div id="s11-c2" class="cblk"><span class="cm">// HashMapWithArrayTest.java — Level 3: arrays inside HashMap
+// Array in JSON → List in Java
+// List&lt;String&gt;  → ["a","b","c"]   (string array)
+// List&lt;Integer&gt; → [1,2,3]         (number array)
+// List&lt;Map&gt;     → [{},{}]         (object array)</span>
+<span class="kw">import</span> <span class="cls">java.util.*</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">HashMapWithArrayTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postWithArrayField</span>() {
+
+        <span class="cm">// String array field ───────────────────────────────</span>
+        <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="vr">roles</span> = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        <span class="vr">roles</span>.<span class="fn">add</span>(<span class="str">"admin"</span>);
+        <span class="vr">roles</span>.<span class="fn">add</span>(<span class="str">"editor"</span>);
+        <span class="vr">roles</span>.<span class="fn">add</span>(<span class="str">"viewer"</span>);
+        <span class="cm">// → "roles": ["admin","editor","viewer"]</span>
+
+        <span class="cm">// Integer array field ──────────────────────────────</span>
+        <span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt; <span class="vr">perms</span> = <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>);
+        <span class="cm">// Arrays.asList() = quick immutable list</span>
+        <span class="cm">// → "permissions": [1,2,3,4]</span>
+
+        <span class="cm">// Nested object field ──────────────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; <span class="vr">settings</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">settings</span>.<span class="fn">put</span>(<span class="str">"theme"</span>,        <span class="str">"dark"</span>);
+        <span class="vr">settings</span>.<span class="fn">put</span>(<span class="str">"notifications"</span>, <span class="kw">true</span>);
+
+        <span class="cm">// Root body combining all ──────────────────────────</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"name"</span>,        <span class="str">"Chitti"</span>);
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"roles"</span>,       <span class="vr">roles</span>);      <span class="cm">// List → array</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"permissions"</span>, <span class="vr">perms</span>);      <span class="cm">// List → array</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"settings"</span>,    <span class="vr">settings</span>);   <span class="cm">// Map → object</span>
+
+        <span class="cm">// Resulting JSON:
+        // { "name":"Chitti",
+        //   "roles":["admin","editor","viewer"],
+        //   "permissions":[1,2,3,4],
+        //   "settings":{"theme":"dark","notifications":true} }</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">body</span>)
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s11-c3" class="cblk"><span class="cm">// HashMapListOfMapsTest.java — Level 4: List of Maps = array of objects
+// JSON: "items": [ {"id":1,"qty":2}, {"id":3,"qty":1} ]
+// Java: List&lt;Map&lt;String,Object&gt;&gt;</span>
+<span class="kw">import</span> <span class="cls">java.util.*</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">HashMapListOfMapsTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postOrderWithItems</span>() {
+
+        <span class="cm">// Item 1 — a Map representing one product in the order</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">item1</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"productId"</span>, <span class="num">101</span>);
+        <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"name"</span>,      <span class="str">"REST Assured Book"</span>);
+        <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"qty"</span>,       <span class="num">2</span>);
+        <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"price"</span>,     <span class="num">599.00</span>);
+
+        <span class="cm">// Item 2</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">item2</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"productId"</span>, <span class="num">202</span>);
+        <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"name"</span>,      <span class="str">"Java Testing Guide"</span>);
+        <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"qty"</span>,       <span class="num">1</span>);
+        <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"price"</span>,     <span class="num">299.00</span>);
+
+        <span class="cm">// List of item Maps → JSON array of objects</span>
+        <span class="cls">List</span>&lt;<span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt;&gt; <span class="vr">items</span> = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        <span class="vr">items</span>.<span class="fn">add</span>(<span class="vr">item1</span>);
+        <span class="vr">items</span>.<span class="fn">add</span>(<span class="vr">item2</span>);
+        <span class="cm">// → "items": [{"productId":101,...}, {"productId":202,...}]</span>
+
+        <span class="cm">// Customer nested object</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">customer</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"name"</span>,  <span class="str">"Chitti"</span>);
+        <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"email"</span>, <span class="str">"c@test.com"</span>);
+
+        <span class="cm">// Root order body</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">order</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"orderId"</span>,  <span class="str">"ORD-2024-001"</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"customer"</span>, <span class="vr">customer</span>);  <span class="cm">// nested object</span>
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"items"</span>,    <span class="vr">items</span>);      <span class="cm">// array of objects</span>
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"total"</span>,    <span class="num">1497.00</span>);
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">order</span>).<span class="fn">log</span>().<span class="fn">body</span>()
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s11-c4" class="cblk"><span class="cm">&lt;!-- pom.xml — all dependencies for Serialization sessions S11-S14 --&gt;</span>
+&lt;<span class="cls">dependencies</span>&gt;
+
+  <span class="cm">&lt;!-- REST Assured: main API testing library --&gt;</span>
+  &lt;<span class="cls">dependency</span>&gt;
+    &lt;<span class="cls">groupId</span>&gt;io.rest-assured&lt;/<span class="cls">groupId</span>&gt;
+    &lt;<span class="cls">artifactId</span>&gt;rest-assured&lt;/<span class="cls">artifactId</span>&gt;
+    &lt;<span class="cls">version</span>&gt;5.3.2&lt;/<span class="cls">version</span>&gt;
+    &lt;<span class="cls">scope</span>&gt;test&lt;/<span class="cls">scope</span>&gt;
+  &lt;/<span class="cls">dependency</span>&gt;
+
+  <span class="cm">&lt;!-- Jackson: Java &lt;-&gt; JSON serialization (industry standard) --&gt;</span>
+  &lt;<span class="cls">dependency</span>&gt;
+    &lt;<span class="cls">groupId</span>&gt;com.fasterxml.jackson.core&lt;/<span class="cls">groupId</span>&gt;
+    &lt;<span class="cls">artifactId</span>&gt;jackson-databind&lt;/<span class="cls">artifactId</span>&gt;
+    &lt;<span class="cls">version</span>&gt;2.15.3&lt;/<span class="cls">version</span>&gt;
+  &lt;/<span class="cls">dependency</span>&gt;
+
+  <span class="cm">&lt;!-- Gson: Google's JSON library (alternative to Jackson) --&gt;</span>
+  &lt;<span class="cls">dependency</span>&gt;
+    &lt;<span class="cls">groupId</span>&gt;com.google.code.gson&lt;/<span class="cls">groupId</span>&gt;
+    &lt;<span class="cls">artifactId</span>&gt;gson&lt;/<span class="cls">artifactId</span>&gt;
+    &lt;<span class="cls">version</span>&gt;2.10.1&lt;/<span class="cls">version</span>&gt;
+  &lt;/<span class="cls">dependency</span>&gt;
+
+  <span class="cm">&lt;!-- org.json: lightweight JSON builder (JSONObject/JSONArray) --&gt;</span>
+  &lt;<span class="cls">dependency</span>&gt;
+    &lt;<span class="cls">groupId</span>&gt;org.json&lt;/<span class="cls">groupId</span>&gt;
+    &lt;<span class="cls">artifactId</span>&gt;json&lt;/<span class="cls">artifactId</span>&gt;
+    &lt;<span class="cls">version</span>&gt;20231013&lt;/<span class="cls">version</span>&gt;
+  &lt;/<span class="cls">dependency</span>&gt;
+
+  <span class="cm">&lt;!-- TestNG: test framework --&gt;</span>
+  &lt;<span class="cls">dependency</span>&gt;
+    &lt;<span class="cls">groupId</span>&gt;org.testng&lt;/<span class="cls">groupId</span>&gt;
+    &lt;<span class="cls">artifactId</span>&gt;testng&lt;/<span class="cls">artifactId</span>&gt;
+    &lt;<span class="cls">version</span>&gt;7.9.0&lt;/<span class="cls">version</span>&gt;
+    &lt;<span class="cls">scope</span>&gt;test&lt;/<span class="cls">scope</span>&gt;
+  &lt;/<span class="cls">dependency</span>&gt;
+
+&lt;/<span class="cls">dependencies</span>&gt;</div>
+  <div id="s11-c5" class="cblk"><span class="cm">// RawStringApproach.java — shown to understand WHY we avoid it
+// Problems: \" escaping, no validation, hard to maintain</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">RawStringApproach</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">rawString_BAD_PRACTICE</span>() {
+        <span class="cm">// BAD: manual escaping is ugly and error-prone</span>
+        <span class="cls">String</span> <span class="vr">json</span> = <span class="str">"{"</span>
+            + <span class="str">"\"name\":\"Chitti\","</span>
+            + <span class="str">"\"address\":{\"city\":\"Delhi\"}"</span>
+            + <span class="str">"}"</span>;
+        <span class="cm">// Imagine 4 levels deep — absolute nightmare!</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">json</span>)
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">textBlock_JAVA15_BETTER</span>() {
+        <span class="cm">// BETTER: Java 15+ text blocks, no escaping needed
+        // Still no type safety but at least readable</span>
+        <span class="cls">String</span> <span class="vr">json</span> = <span class="str">"""
+            {
+                "name": "Chitti",
+                "address": {
+                    "city": "Delhi"
+                }
+            }
+            """</span>;
+        <span class="cm">// Triple-quoted string — no \" escaping
+        // But still: no compile-time JSON validation</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">json</span>)
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+</div>
+
+<div class="sec">✅ Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Always set <code>contentType("application/json")</code> — without it, REST Assured won't trigger Jackson serialization for Map/POJO bodies.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>Map&lt;String,Object&gt;</code> with type parameters — not raw Map — to avoid ClassCastException at runtime.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>log().body()</code> in the given() phase during development to print exact JSON being sent and verify structure.</div>
+  <div class="ci"><span class="ck">✔</span> For lists in HashMap: use <code>Arrays.asList()</code> for fixed immutable lists, <code>new ArrayList&lt;&gt;()</code> when you need to add items dynamically.</div>
+  <div class="ci"><span class="ck">✔</span> Never use raw String JSON for complex bodies — switch to HashMap or POJO beyond 3 fields.</div>
+</div>
+
+<div class="sec">🎯 SDET Interview Q&A</div>
+<div class="qa" id="qa-s11">
+  <div class="qi"><div class="qq">Q1: Why does contentType("application/json") matter for HashMap serialization? <span class="qtg">+</span></div><div class="qa-ans">Without it, REST Assured doesn't know you want JSON — it may send the Map as URL-encoded form parameters (key=value&key2=value2). Setting contentType("application/json") signals REST Assured to delegate to Jackson's ObjectMapper, which converts the Map into a proper JSON string for the request body.</div></div>
+  <div class="qi"><div class="qq">Q2: How do you represent a JSON array of objects using HashMap? <span class="qtg">+</span></div><div class="qa-ans">Create each object as Map&lt;String,Object&gt;. Add all objects to a List&lt;Map&lt;String,Object&gt;&gt;. Put the list as a value in the parent map: parentMap.put("items", listOfMaps). Jackson serializes List&lt;Map&gt; as a JSON array of objects: "items":[{...},{...}].</div></div>
+  <div class="qi"><div class="qq">Q3: What serialization library does REST Assured use by default? <span class="qtg">+</span></div><div class="qa-ans">REST Assured auto-detects the library on classpath in priority order: Jackson (jackson-databind) first, then Gson, then JAXB for XML. If Jackson is present, all Map/POJO body serialization uses Jackson's ObjectMapper automatically. Configure explicitly with RestAssured.config().objectMapperConfig().</div></div>
+  <div class="qi"><div class="qq">Q4: Difference between Arrays.asList() and new ArrayList()? <span class="qtg">+</span></div><div class="qa-ans">Arrays.asList() returns a fixed-size List — you cannot add/remove elements (throws UnsupportedOperationException). Use it for complete, hardcoded lists. new ArrayList&lt;&gt;() is mutable — you can add, remove, sort. For JSON array building in tests, use ArrayList when items are added dynamically.</div></div>
+  <div class="qi"><div class="qq">Q5: How do you verify the exact JSON being sent in a REST Assured request? <span class="qtg">+</span></div><div class="qa-ans">Add .log().body() in the given() phase — it prints the serialized request body to console before sending. For full request including headers: .log().all(). For CI pipelines: .log().ifValidationFails() prints only when assertions fail, keeping build output clean.</div></div>
+</div>
+
+</div></div>
+
+<!-- ═══════════════ SESSION 12 ═══════════════ -->
+<div class="session" id="session-1">
+<div class="sp">
+
+<div class="sec">🌐 Overview — JSONObject &amp; Gson</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">❓</div><div class="ov-t">WHAT</div><div class="ov-tx">org.json's JSONObject/JSONArray = explicit JSON builders with chainable put(). Gson = Google's library that converts Java POJOs to JSON via toJson().</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">WHY</div><div class="ov-tx">JSONObject gives explicit JSON construction with preserved key order. Gson is lighter than Jackson and handles nested POJOs without many annotations.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">WHEN</div><div class="ov-tx">Use JSONObject for explicit JSON building. Use Gson when your team uses it as standard or Jackson is unavailable.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">WHERE</div><div class="ov-tx">JSONObject → body(obj.toString()). Gson → gson.toJson(pojo) → body(jsonString). Both pass String to body().</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">HOW</div><div class="ov-tx">org.json: new JSONObject().put(k,v). Gson: new Gson().toJson(obj). GsonBuilder for custom options.</div></div>
+</div>
+
+<div class="sec">🎤 Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>JSONObject</b> = class from org.json library that builds JSON objects via put(key,value) — call toString() to get the final JSON string for body().</div>
+  <div class="ol"><b>JSONArray</b> = org.json class for building JSON arrays — put(value) appends elements, toString() gives the array string.</div>
+  <div class="ol"><b>Gson</b> = Google's open-source Java serialization library — simpler than Jackson, fewer annotations needed for basic POJO mapping.</div>
+  <div class="ol"><b>toJson()</b> = Gson method converting Java object → JSON string (serialization). Equivalent to Jackson's writeValueAsString().</div>
+  <div class="ol"><b>fromJson()</b> = Gson method converting JSON string → Java object (deserialization). Equivalent to Jackson's readValue().</div>
+  <div class="ol"><b>@SerializedName</b> = Gson annotation mapping a Java field name to a different JSON key — equivalent to Jackson's @JsonProperty.</div>
+</div>
+
+<div class="sec">💻 Code Examples — JSONObject &amp; Gson</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s12">
+    <div class="ct active" data-ci="0" data-cs="s12">📦 Flat JSONObject</div>
+    <div class="ct" data-ci="1" data-cs="s12">🔗 Nested JSONObject</div>
+    <div class="ct" data-ci="2" data-cs="s12">📋 JSONArray Objects</div>
+    <div class="ct" data-ci="3" data-cs="s12">☕ Gson Basic</div>
+    <div class="ct" data-ci="4" data-cs="s12">🔧 GsonBuilder</div>
+    <div class="ct" data-ci="5" data-cs="s12">🧪 Gson Deep Nested</div>
+  </div>
+  <div id="s12-c0" class="cblk active"><span class="cm">// FlatJSONObjectTest.java — Level 1: flat body using org.json
+// JSONObject = explicit JSON object builder from org.json library
+// Unlike HashMap, JSONObject preserves insertion order
+// Call .toString() to get final JSON string for body()</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONObject</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="kw">public class</span> <span class="cls">FlatJSONObjectTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postFlatJSONObject</span>() {
+
+        <span class="cls">JSONObject</span> <span class="vr">body</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>();
+        <span class="cm">// new JSONObject() = creates empty JSON object {}</span>
+
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"name"</span>,     <span class="str">"Chitti"</span>);
+        <span class="cm">// put(key, value) = adds "name":"Chitti"</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"email"</span>,    <span class="str">"c@test.com"</span>);
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"age"</span>,      <span class="num">25</span>);         <span class="cm">// int → number</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"verified"</span>, <span class="kw">true</span>);       <span class="cm">// boolean → boolean</span>
+        <span class="vr">body</span>.<span class="fn">put</span>(<span class="str">"score"</span>,    <span class="num">9.75</span>);       <span class="cm">// double → number</span>
+
+        <span class="cm">// toString(2) = pretty-print with 2-space indent</span>
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="vr">body</span>.<span class="fn">toString</span>(<span class="num">2</span>));
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">body</span>.<span class="fn">toString</span>())
+            <span class="cm">// IMPORTANT: must call .toString() to get JSON string</span>
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>)
+               .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">equalTo</span>(<span class="str">"Chitti"</span>));
+    }
+}</div>
+  <div id="s12-c1" class="cblk"><span class="cm">// NestedJSONObjectTest.java — Level 2+3: nested objects with org.json
+// Embed one JSONObject inside another using put(key, JSONObject)
+// Embed JSONArray inside JSONObject using put(key, JSONArray)</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONObject</span>;
+<span class="kw">import</span> <span class="cls">org.json.JSONArray</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">NestedJSONObjectTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postNestedJSONObject</span>() {
+
+        <span class="cm">// Geo sub-object (level 3)</span>
+        <span class="cls">JSONObject</span> <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"lat"</span>, <span class="str">"28.6139"</span>)
+            .<span class="fn">put</span>(<span class="str">"lng"</span>, <span class="str">"77.2090"</span>);
+        <span class="cm">// put() returns 'this' → chainable!</span>
+
+        <span class="cm">// Address (level 2) containing geo (level 3)</span>
+        <span class="cls">JSONObject</span> <span class="vr">address</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"street"</span>, <span class="str">"Connaught Place"</span>)
+            .<span class="fn">put</span>(<span class="str">"city"</span>,   <span class="str">"New Delhi"</span>)
+            .<span class="fn">put</span>(<span class="str">"zip"</span>,    <span class="str">"110001"</span>)
+            .<span class="fn">put</span>(<span class="str">"geo"</span>,    <span class="vr">geo</span>);
+        <span class="cm">// put("geo", geo) = embeds JSONObject inside JSONObject</span>
+
+        <span class="cm">// Roles array</span>
+        <span class="cls">JSONArray</span> <span class="vr">roles</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>();
+        <span class="vr">roles</span>.<span class="fn">put</span>(<span class="str">"SDET"</span>);
+        <span class="vr">roles</span>.<span class="fn">put</span>(<span class="str">"API_TESTER"</span>);
+        <span class="cm">// JSONArray.put() appends element to array</span>
+
+        <span class="cm">// Root user object</span>
+        <span class="cls">JSONObject</span> <span class="vr">user</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"name"</span>,    <span class="str">"Chitti"</span>)
+            .<span class="fn">put</span>(<span class="str">"email"</span>,   <span class="str">"c@test.com"</span>)
+            .<span class="fn">put</span>(<span class="str">"address"</span>, <span class="vr">address</span>)  <span class="cm">// nested 2 levels</span>
+            .<span class="fn">put</span>(<span class="str">"roles"</span>,   <span class="vr">roles</span>);    <span class="cm">// array</span>
+
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="vr">user</span>.<span class="fn">toString</span>(<span class="num">2</span>));
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">user</span>.<span class="fn">toString</span>())
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s12-c2" class="cblk"><span class="cm">// JSONArrayOfObjectsTest.java — Level 4: array of nested objects
+// Order with multiple items — each item is a JSONObject
+// All items collected in JSONArray, embedded in order JSONObject</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONObject</span>;
+<span class="kw">import</span> <span class="cls">org.json.JSONArray</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">JSONArrayOfObjectsTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postOrderWithItems</span>() {
+
+        <span class="cm">// Item 1</span>
+        <span class="cls">JSONObject</span> <span class="vr">item1</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"productId"</span>, <span class="num">101</span>)
+            .<span class="fn">put</span>(<span class="str">"name"</span>,      <span class="str">"REST Assured Pro"</span>)
+            .<span class="fn">put</span>(<span class="str">"qty"</span>,       <span class="num">2</span>)
+            .<span class="fn">put</span>(<span class="str">"price"</span>,     <span class="num">599.00</span>);
+
+        <span class="cm">// Item 2</span>
+        <span class="cls">JSONObject</span> <span class="vr">item2</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"productId"</span>, <span class="num">202</span>)
+            .<span class="fn">put</span>(<span class="str">"name"</span>,      <span class="str">"TestNG Bible"</span>)
+            .<span class="fn">put</span>(<span class="str">"qty"</span>,       <span class="num">1</span>)
+            .<span class="fn">put</span>(<span class="str">"price"</span>,     <span class="num">349.00</span>);
+
+        <span class="cm">// Items array — put each JSONObject into JSONArray</span>
+        <span class="cls">JSONArray</span> <span class="vr">items</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>();
+        <span class="vr">items</span>.<span class="fn">put</span>(<span class="vr">item1</span>);  <span class="cm">// put(JSONObject) = add object to array</span>
+        <span class="vr">items</span>.<span class="fn">put</span>(<span class="vr">item2</span>);
+        <span class="cm">// → [{"productId":101,...}, {"productId":202,...}]</span>
+
+        <span class="cm">// Shipping address</span>
+        <span class="cls">JSONObject</span> <span class="vr">shipping</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"name"</span>,    <span class="str">"Chitti"</span>)
+            .<span class="fn">put</span>(<span class="str">"address"</span>, <span class="str">"123 Delhi NCR"</span>)
+            .<span class="fn">put</span>(<span class="str">"pincode"</span>, <span class="str">"110001"</span>);
+
+        <span class="cm">// Root order</span>
+        <span class="cls">JSONObject</span> <span class="vr">order</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"orderId"</span>,  <span class="str">"ORD-2024-001"</span>)
+            .<span class="fn">put</span>(<span class="str">"items"</span>,    <span class="vr">items</span>)      <span class="cm">// JSONArray embedded</span>
+            .<span class="fn">put</span>(<span class="str">"shipping"</span>, <span class="vr">shipping</span>)  <span class="cm">// nested JSONObject</span>
+            .<span class="fn">put</span>(<span class="str">"total"</span>,    <span class="num">948.00</span>)
+            .<span class="fn">put</span>(<span class="str">"currency"</span>, <span class="str">"INR"</span>);
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">order</span>.<span class="fn">toString</span>())
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s12-c3" class="cblk"><span class="cm">// GsonBasicTest.java — Gson serialization with REST Assured
+// Gson = Google's JSON library, simpler than Jackson
+// toJson(obj) = POJO → JSON string
+// fromJson(json, Class) = JSON string → POJO
+// Key: Gson does NOT need getters — uses field access directly</span>
+<span class="kw">import</span> <span class="cls">com.google.gson.Gson</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+
+<span class="cm">// Simple POJO for Gson — no annotations needed for basic mapping</span>
+<span class="kw">class</span> <span class="cls">UserPayload</span> {
+    <span class="cls">String</span>  <span class="vr">name</span>;
+    <span class="cls">String</span>  <span class="vr">email</span>;
+    <span class="kw">int</span>     <span class="vr">age</span>;
+    <span class="kw">boolean</span> <span class="vr">active</span>;
+    <span class="cm">// Gson accesses fields directly (no getters required!)</span>
+
+    <span class="cls">UserPayload</span>(<span class="cls">String</span> <span class="vr">n</span>, <span class="cls">String</span> <span class="vr">e</span>, <span class="kw">int</span> <span class="vr">a</span>, <span class="kw">boolean</span> <span class="vr">ac</span>) {
+        <span class="vr">name</span>=<span class="vr">n</span>; <span class="vr">email</span>=<span class="vr">e</span>; <span class="vr">age</span>=<span class="vr">a</span>; <span class="vr">active</span>=<span class="vr">ac</span>;
+    }
+}
+
+<span class="kw">public class</span> <span class="cls">GsonBasicTest</span> {
+
+    <span class="kw">private final</span> <span class="cls">Gson</span> <span class="vr">gson</span> = <span class="kw">new</span> <span class="cls">Gson</span>();
+    <span class="cm">// Gson is thread-safe — create once, reuse</span>
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postWithGsonSerialization</span>() {
+
+        <span class="cls">UserPayload</span> <span class="vr">user</span> = <span class="kw">new</span> <span class="cls">UserPayload</span>(<span class="str">"Chitti"</span>,<span class="str">"c@t.com"</span>,<span class="num">25</span>,<span class="kw">true</span>);
+
+        <span class="cm">// toJson() = POJO → JSON string
+        // {"name":"Chitti","email":"c@t.com","age":25,"active":true}</span>
+        <span class="cls">String</span> <span class="vr">json</span> = <span class="vr">gson</span>.<span class="fn">toJson</span>(<span class="vr">user</span>);
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="str">"Gson JSON: "</span> + <span class="vr">json</span>);
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">json</span>)
+            <span class="cm">// IMPORTANT: Gson requires manual toJson() then pass string
+            // REST Assured does NOT auto-detect Gson by default</span>
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>)
+               .<span class="fn">body</span>(<span class="str">"name"</span>, <span class="fn">equalTo</span>(<span class="str">"Chitti"</span>));
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">deserializeWithGson</span>() {
+        <span class="cls">String</span> <span class="vr">body</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>().<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>().<span class="fn">extract</span>().<span class="fn">asString</span>();
+
+        <span class="cm">// fromJson = JSON string → POJO object</span>
+        <span class="cls">UserPayload</span> <span class="vr">user</span> = <span class="vr">gson</span>.<span class="fn">fromJson</span>(<span class="vr">body</span>, <span class="cls">UserPayload</span>.<span class="kw">class</span>);
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="str">"Name: "</span> + <span class="vr">user</span>.<span class="vr">name</span>);
+    }
+}</div>
+  <div id="s12-c4" class="cblk"><span class="cm">// GsonBuilderTest.java — configure Gson with GsonBuilder
+// GsonBuilder = factory for customized Gson instances
+// serializeNulls() = include null fields in JSON output
+// setPrettyPrinting() = formatted indented output
+// @SerializedName = map Java field → different JSON key</span>
+<span class="kw">import</span> <span class="cls">com.google.gson.Gson</span>;
+<span class="kw">import</span> <span class="cls">com.google.gson.GsonBuilder</span>;
+<span class="kw">import</span> <span class="cls">com.google.gson.annotations.SerializedName</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">class</span> <span class="cls">ProductPayload</span> {
+    <span class="ann">@SerializedName</span>(<span class="str">"product_name"</span>)
+    <span class="cm">// Java: productName  ←→  JSON: "product_name"</span>
+    <span class="cls">String</span> <span class="vr">productName</span>;
+
+    <span class="ann">@SerializedName</span>(<span class="str">"base_price"</span>)
+    <span class="kw">double</span> <span class="vr">basePrice</span>;
+
+    <span class="kw">boolean</span> <span class="vr">inStock</span>;
+    <span class="cls">String</span>  <span class="vr">category</span>;
+    <span class="cls">String</span>  <span class="vr">nullField</span> = <span class="kw">null</span>;
+    <span class="cm">// null field — default Gson EXCLUDES null fields</span>
+
+    <span class="cls">ProductPayload</span>(<span class="cls">String</span> <span class="vr">n</span>, <span class="kw">double</span> <span class="vr">p</span>, <span class="kw">boolean</span> <span class="vr">s</span>, <span class="cls">String</span> <span class="vr">c</span>)
+        { <span class="vr">productName</span>=<span class="vr">n</span>; <span class="vr">basePrice</span>=<span class="vr">p</span>; <span class="vr">inStock</span>=<span class="vr">s</span>; <span class="vr">category</span>=<span class="vr">c</span>; }
+}
+
+<span class="kw">public class</span> <span class="cls">GsonBuilderTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">gsonNullHandlingDemo</span>() {
+
+        <span class="cm">// Default Gson: null fields EXCLUDED</span>
+        <span class="cls">Gson</span> <span class="vr">defaultGson</span> = <span class="kw">new</span> <span class="cls">Gson</span>();
+
+        <span class="cm">// Custom Gson: null fields INCLUDED, pretty printed</span>
+        <span class="cls">Gson</span> <span class="vr">nullGson</span> = <span class="kw">new</span> <span class="cls">GsonBuilder</span>()
+            .<span class="fn">serializeNulls</span>()
+            <span class="cm">// serializeNulls() = include "nullField": null in JSON</span>
+            .<span class="fn">setPrettyPrinting</span>()
+            <span class="cm">// setPrettyPrinting() = formatted 2-space indent output</span>
+            .<span class="fn">create</span>();
+            <span class="cm">// create() = builds the configured Gson instance</span>
+
+        <span class="cls">ProductPayload</span> <span class="vr">p</span> = <span class="kw">new</span> <span class="cls">ProductPayload</span>(<span class="str">"Guide"</span>,<span class="num">499.99</span>,<span class="kw">true</span>,<span class="str">"Books"</span>);
+
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="str">"Default: "</span> + <span class="vr">defaultGson</span>.<span class="fn">toJson</span>(<span class="vr">p</span>));
+        <span class="cm">// → {"product_name":"Guide","base_price":499.99,...} nullField excluded</span>
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="str">"With nulls:\n"</span> + <span class="vr">nullGson</span>.<span class="fn">toJson</span>(<span class="vr">p</span>));
+        <span class="cm">// → includes "nullField": null</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">defaultGson</span>.<span class="fn">toJson</span>(<span class="vr">p</span>))
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s12-c5" class="cblk"><span class="cm">// GsonDeepNestedTest.java — 3-level nested POJO with Gson
+// Nested POJO field → Gson serializes recursively automatically
+// No special config needed for nesting — just build the object graph</span>
+<span class="kw">import</span> <span class="cls">com.google.gson.GsonBuilder</span>;
+<span class="kw">import</span> <span class="cls">java.util.*</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="cm">// Inner POJOs ─────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="cls">GeoLoc</span>  { <span class="kw">double</span> <span class="vr">lat</span>,<span class="vr">lng</span>; <span class="cls">GeoLoc</span>(<span class="kw">double</span> <span class="vr">l</span>,<span class="kw">double</span> <span class="vr">g</span>){<span class="vr">lat</span>=<span class="vr">l</span>;<span class="vr">lng</span>=<span class="vr">g</span>;} }
+
+<span class="kw">class</span> <span class="cls">AddrG</span> {
+    <span class="cls">String</span>  <span class="vr">street</span>,<span class="vr">city</span>,<span class="vr">zip</span>;
+    <span class="cls">GeoLoc</span>  <span class="vr">geo</span>;
+    <span class="cm">// GeoLoc field → Gson serializes as nested object</span>
+    <span class="cls">AddrG</span>(<span class="cls">String</span> <span class="vr">s</span>,<span class="cls">String</span> <span class="vr">c</span>,<span class="cls">String</span> <span class="vr">z</span>,<span class="cls">GeoLoc</span> <span class="vr">g</span>){<span class="vr">street</span>=<span class="vr">s</span>;<span class="vr">city</span>=<span class="vr">c</span>;<span class="vr">zip</span>=<span class="vr">z</span>;<span class="vr">geo</span>=<span class="vr">g</span>;}
+}
+
+<span class="kw">class</span> <span class="cls">UserG</span> {
+    <span class="cls">String</span>       <span class="vr">name</span>,<span class="vr">email</span>;
+    <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="vr">roles</span>;   <span class="cm">// List → JSON array</span>
+    <span class="cls">AddrG</span>        <span class="vr">address</span>; <span class="cm">// POJO → JSON nested object</span>
+    <span class="cls">UserG</span>(<span class="cls">String</span> <span class="vr">n</span>,<span class="cls">String</span> <span class="vr">e</span>,<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="vr">r</span>,<span class="cls">AddrG</span> <span class="vr">a</span>)
+        {<span class="vr">name</span>=<span class="vr">n</span>;<span class="vr">email</span>=<span class="vr">e</span>;<span class="vr">roles</span>=<span class="vr">r</span>;<span class="vr">address</span>=<span class="vr">a</span>;}
+}
+
+<span class="kw">public class</span> <span class="cls">GsonDeepNestedTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postDeepNestedGson</span>() {
+
+        <span class="cm">// Bottom-up: deepest first</span>
+        <span class="cls">GeoLoc</span> <span class="vr">geo</span>  = <span class="kw">new</span> <span class="cls">GeoLoc</span>(<span class="num">28.6139</span>, <span class="num">77.2090</span>);
+        <span class="cls">AddrG</span>  <span class="vr">addr</span> = <span class="kw">new</span> <span class="cls">AddrG</span>(<span class="str">"123 CP"</span>,<span class="str">"Delhi"</span>,<span class="str">"110001"</span>,<span class="vr">geo</span>);
+        <span class="cm">// addr.geo = GeoLoc → becomes 3-level deep in JSON</span>
+
+        <span class="cls">UserG</span> <span class="vr">user</span> = <span class="kw">new</span> <span class="cls">UserG</span>(
+            <span class="str">"Chitti"</span>, <span class="str">"c@test.com"</span>,
+            <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"ADMIN"</span>,<span class="str">"SDET"</span>), <span class="vr">addr</span>);
+
+        <span class="cls">String</span> <span class="vr">json</span> = <span class="kw">new</span> <span class="cls">GsonBuilder</span>().<span class="fn">setPrettyPrinting</span>().<span class="fn">create</span>().<span class="fn">toJson</span>(<span class="vr">user</span>);
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="vr">json</span>);
+        <span class="cm">// Output:
+        // { "name":"Chitti","email":"c@test.com",
+        //   "roles":["ADMIN","SDET"],
+        //   "address":{"street":"123 CP","city":"Delhi",
+        //     "geo":{"lat":28.6139,"lng":77.2090} } }  ← 3 levels!</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">json</span>)
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+</div>
+
+<div class="sec">✅ Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Always call <code>body(jsonObj.toString())</code> for JSONObject — be explicit about converting to String before passing to body().</div>
+  <div class="ci"><span class="ck">✔</span> Create one <code>Gson</code> instance per test class — Gson is thread-safe after construction, reuse saves memory.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>@SerializedName("json_key")</code> when Java camelCase fields map to JSON snake_case keys (e.g. productName → "product_name").</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>GsonBuilder().serializeNulls()</code> when the API requires null fields to be present in the request body.</div>
+  <div class="ci"><span class="ck">✔</span> Prefer Jackson over Gson for REST Assured — Jackson is auto-detected; Gson requires manual toJson() calls in every test.</div>
+</div>
+
+<div class="sec">🎯 SDET Interview Q&A</div>
+<div class="qa" id="qa-s12">
+  <div class="qi"><div class="qq">Q1: Difference between JSONObject (org.json) and HashMap for request body? <span class="qtg">+</span></div><div class="qa-ans">HashMap is Java's built-in map — REST Assured+Jackson auto-serializes it. JSONObject is org.json's explicit builder — you call toString() to get JSON. JSONObject preserves insertion order; HashMap does not. JSONObject provides getInt/getString helpers. If you have Jackson on classpath, use HashMap — fewer dependencies.</div></div>
+  <div class="qi"><div class="qq">Q2: How do you configure REST Assured to use Gson instead of Jackson? <span class="qtg">+</span></div><div class="qa-ans">Configure globally: RestAssured.config = RestAssuredConfig.config().objectMapperConfig(new ObjectMapperConfig(GSON)). Or simply call gson.toJson(pojo) manually and pass the String to body() — this always works regardless of REST Assured config, and is the most reliable approach.</div></div>
+  <div class="qi"><div class="qq">Q3: How does @SerializedName work in Gson? <span class="qtg">+</span></div><div class="qa-ans">@SerializedName("json_key") on a POJO field tells Gson to use that name when serializing to JSON and when deserializing from JSON. Example: @SerializedName("first_name") String firstName — Gson serializes as "first_name":"value" and maps "first_name" from JSON to firstName. Equivalent to Jackson's @JsonProperty.</div></div>
+  <div class="qi"><div class="qq">Q4: What does serializeNulls() do in GsonBuilder? <span class="qtg">+</span></div><div class="qa-ans">By default, Gson omits null fields from JSON. GsonBuilder().serializeNulls() overrides this and includes them as "field": null. Use when the API's schema validation requires all fields to be present even if null — without it those fields simply don't appear in the request body.</div></div>
+  <div class="qi"><div class="qq">Q5: When would you choose Gson over Jackson? <span class="qtg">+</span></div><div class="qa-ans">Gson when: existing project already uses Gson, need simpler code with fewer annotations, Android project (Gson is lighter). Jackson when: new REST Assured project, need @JsonIgnore/@JsonInclude/@JsonCreator annotations, need REST Assured auto-detection, or need advanced polymorphic deserialization.</div></div>
+</div>
+
+</div></div>
+
+<!-- ═══════════════ SESSION 13 ═══════════════ -->
+<div class="session" id="session-2">
+<div class="sp">
+
+<div class="sec">🌐 Overview — POJO + Jackson Full Mastery</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">❓</div><div class="ov-t">WHAT</div><div class="ov-tx">POJO + Jackson = industry standard. Design Java classes mirroring JSON structure. Jackson auto-serializes via REST Assured body() and deserializes via as(Class).</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">WHY</div><div class="ov-tx">Type safety, IDE autocomplete, refactoring support. Jackson annotations give fine-grained control over every field's JSON behavior.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">WHEN</div><div class="ov-tx">Use POJO for any recurring request structure, data-driven tests, and complex nested APIs. Essential for enterprise test frameworks.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">WHERE</div><div class="ov-tx">POJO classes in src/test/java/model/. In tests: given().body(pojo). Response: extract().as(MyClass.class) or TypeRef for lists.</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">HOW</div><div class="ov-tx">Create POJO mirroring JSON. Add Jackson annotations. Pass to body() or extract with as(). Jackson's ObjectMapper handles all conversion.</div></div>
+</div>
+
+<div class="sec">🎤 Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>@JsonProperty("key")</b> = maps Java field name to a different JSON key — e.g. Java field <code>firstName</code> ↔ JSON key <code>"first_name"</code>.</div>
+  <div class="ol"><b>@JsonIgnore</b> = Jackson annotation to completely exclude a field from both serialization (request) and deserialization (response).</div>
+  <div class="ol"><b>@JsonIgnoreProperties(ignoreUnknown=true)</b> = class-level annotation to silently ignore extra JSON fields not present in the POJO.</div>
+  <div class="ol"><b>@JsonInclude(NON_NULL)</b> = exclude null fields from JSON output during serialization — keeps request body clean.</div>
+  <div class="ol"><b>@JsonAlias</b> = accepts multiple JSON key names for deserialization — useful when API migrates field names.</div>
+  <div class="ol"><b>TypeRef</b> = REST Assured generic type token for deserializing List&lt;User&gt; — solves Java type erasure problem.</div>
+</div>
+
+<div class="sec">💻 Code Examples — POJO + Jackson</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s13">
+    <div class="ct active" data-ci="0" data-cs="s13">🏗️ POJO Classes</div>
+    <div class="ct" data-ci="1" data-cs="s13">📤 Serialize POJO</div>
+    <div class="ct" data-ci="2" data-cs="s13">📥 Deserialize POJO</div>
+    <div class="ct" data-ci="3" data-cs="s13">🏷️ All Annotations</div>
+    <div class="ct" data-ci="4" data-cs="s13">📋 List&lt;POJO&gt;</div>
+    <div class="ct" data-ci="5" data-cs="s13">⚡ ObjectMapper</div>
+  </div>
+  <div id="s13-c0" class="cblk active"><span class="cm">// UserModel.java + AddressModel.java — POJO design for nested JSON
+// Rule: create one POJO class per JSON object level
+// Bottom-up design: innermost first</span>
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.annotation.*</span>;
+<span class="kw">import</span> <span class="cls">java.util.List</span>;
+
+<span class="cm">// ── AddressModel (inner object) ────────────────────────</span>
+<span class="ann">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="cm">// ignoreUnknown=true → don't fail if API adds new fields</span>
+<span class="kw">public class</span> <span class="cls">AddressModel</span> {
+    <span class="kw">private</span> <span class="cls">String</span> <span class="vr">street</span>, <span class="vr">city</span>, <span class="vr">state</span>;
+
+    <span class="ann">@JsonProperty</span>(<span class="str">"zip_code"</span>)
+    <span class="cm">// zipCode Java field ←→ "zip_code" JSON key</span>
+    <span class="kw">private</span> <span class="cls">String</span> <span class="vr">zipCode</span>;
+
+    <span class="kw">public</span> <span class="cls">AddressModel</span>() {}  <span class="cm">// REQUIRED by Jackson for deserialization</span>
+    <span class="kw">public</span> <span class="cls">AddressModel</span>(<span class="cls">String</span> <span class="vr">st</span>,<span class="cls">String</span> <span class="vr">ct</span>,<span class="cls">String</span> <span class="vr">s</span>,<span class="cls">String</span> <span class="vr">z</span>)
+        {<span class="vr">street</span>=<span class="vr">st</span>;<span class="vr">city</span>=<span class="vr">ct</span>;<span class="vr">state</span>=<span class="vr">s</span>;<span class="vr">zipCode</span>=<span class="vr">z</span>;}
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getStreet</span>() {<span class="kw">return</span> <span class="vr">street</span>;}
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getCity</span>()   {<span class="kw">return</span> <span class="vr">city</span>;}
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getState</span>()  {<span class="kw">return</span> <span class="vr">state</span>;}
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getZipCode</span>(){<span class="kw">return</span> <span class="vr">zipCode</span>;}
+    <span class="kw">public void</span> <span class="fn">setStreet</span>(<span class="cls">String</span> <span class="vr">v</span>) {<span class="vr">street</span> =<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setCity</span>  (<span class="cls">String</span> <span class="vr">v</span>) {<span class="vr">city</span>   =<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setState</span> (<span class="cls">String</span> <span class="vr">v</span>) {<span class="vr">state</span>  =<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setZipCode</span>(<span class="cls">String</span> <span class="vr">v</span>){<span class="vr">zipCode</span>=<span class="vr">v</span>;}
+}
+
+<span class="cm">// ── UserModel (root object) ────────────────────────────</span>
+<span class="ann">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="ann">@JsonInclude</span>(<span class="cls">JsonInclude.Include</span>.NON_NULL)
+<span class="cm">// NON_NULL = null fields excluded from JSON output</span>
+<span class="kw">public class</span> <span class="cls">UserModel</span> {
+    <span class="ann">@JsonProperty</span>(<span class="str">"user_id"</span>)  <span class="kw">private int</span> <span class="vr">id</span>;
+    <span class="kw">private</span> <span class="cls">String</span> <span class="vr">name</span>, <span class="vr">email</span>, <span class="vr">username</span>;
+    <span class="ann">@JsonIgnore</span>
+    <span class="kw">private</span> <span class="cls">String</span> <span class="vr">passwordHash</span>;
+    <span class="cm">// @JsonIgnore = never include in JSON, never read from JSON</span>
+    <span class="kw">private</span> <span class="cls">List</span>&lt;<span class="cls">String</span>&gt;  <span class="vr">roles</span>;    <span class="cm">// List → JSON array</span>
+    <span class="kw">private</span> <span class="cls">AddressModel</span>  <span class="vr">address</span>; <span class="cm">// POJO → nested JSON object</span>
+
+    <span class="kw">public</span> <span class="cls">UserModel</span>() {}
+    <span class="kw">public</span> <span class="cls">UserModel</span>(<span class="cls">String</span> <span class="vr">n</span>,<span class="cls">String</span> <span class="vr">e</span>){<span class="vr">name</span>=<span class="vr">n</span>;<span class="vr">email</span>=<span class="vr">e</span>;}
+    <span class="kw">public</span> <span class="cls">UserModel</span> <span class="fn">withAddress</span>(<span class="cls">AddressModel</span> <span class="vr">a</span>){<span class="vr">address</span>=<span class="vr">a</span>;<span class="kw">return this</span>;}
+    <span class="kw">public</span> <span class="cls">UserModel</span> <span class="fn">withRoles</span>(<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="vr">r</span>)   {<span class="vr">roles</span>=<span class="vr">r</span>;   <span class="kw">return this</span>;}
+    <span class="kw">public int</span>    <span class="fn">getId</span>()      {<span class="kw">return</span> <span class="vr">id</span>;}
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getName</span>()    {<span class="kw">return</span> <span class="vr">name</span>;}
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getEmail</span>()   {<span class="kw">return</span> <span class="vr">email</span>;}
+    <span class="kw">public</span> <span class="cls">AddressModel</span> <span class="fn">getAddress</span>(){<span class="kw">return</span> <span class="vr">address</span>;}
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">String</span>&gt;  <span class="fn">getRoles</span>()   {<span class="kw">return</span> <span class="vr">roles</span>;}
+    <span class="kw">public void</span> <span class="fn">setId</span>(<span class="kw">int</span> <span class="vr">v</span>)           {<span class="vr">id</span>     =<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setName</span>(<span class="cls">String</span> <span class="vr">v</span>)       {<span class="vr">name</span>   =<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setEmail</span>(<span class="cls">String</span> <span class="vr">v</span>)      {<span class="vr">email</span>  =<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setAddress</span>(<span class="cls">AddressModel</span> <span class="vr">v</span>){<span class="vr">address</span>=<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setRoles</span>(<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="vr">v</span>)  {<span class="vr">roles</span>  =<span class="vr">v</span>;}
+}</div>
+  <div id="s13-c1" class="cblk"><span class="cm">// POJOSerializationTest.java — POJO → JSON via REST Assured
+// REST Assured auto-detects Jackson and serializes POJO to JSON
+// when contentType("application/json") + jackson-databind on classpath</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.Arrays</span>;
+
+<span class="kw">public class</span> <span class="cls">POJOSerializationTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postNestedPOJO</span>() {
+
+        <span class="cm">// Build inner POJO first</span>
+        <span class="cls">AddressModel</span> <span class="vr">address</span> = <span class="kw">new</span> <span class="cls">AddressModel</span>(
+            <span class="str">"Connaught Place"</span>, <span class="str">"Delhi"</span>, <span class="str">"Delhi"</span>, <span class="str">"110001"</span>);
+
+        <span class="cm">// Build root POJO with fluent builder methods</span>
+        <span class="cls">UserModel</span> <span class="vr">user</span> = <span class="kw">new</span> <span class="cls">UserModel</span>(<span class="str">"Chitti"</span>, <span class="str">"c@test.com"</span>)
+            .<span class="fn">withAddress</span>(<span class="vr">address</span>)
+            .<span class="fn">withRoles</span>(<span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"ADMIN"</span>, <span class="str">"SDET"</span>));
+
+        <span class="cm">// Jackson auto-serializes UserModel → JSON:
+        // {
+        //   "name": "Chitti",
+        //   "email": "c@test.com",
+        //   "roles": ["ADMIN","SDET"],
+        //   "address": {
+        //     "street": "Connaught Place",
+        //     "city": "Delhi",
+        //     "state": "Delhi",
+        //     "zip_code": "110001"   ← @JsonProperty("zip_code")
+        //   }
+        //   NOTE: passwordHash EXCLUDED   ← @JsonIgnore
+        //   NOTE: user_id EXCLUDED (null) ← @JsonInclude(NON_NULL)
+        // }</span>
+
+        <span class="kw">int</span> <span class="vr">id</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">user</span>)  <span class="cm">// Jackson auto-serializes POJO</span>
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>()
+            .<span class="fn">statusCode</span>(<span class="num">201</span>)
+            .<span class="fn">body</span>(<span class="str">"name"</span>,  <span class="fn">equalTo</span>(<span class="str">"Chitti"</span>))
+            .<span class="fn">body</span>(<span class="str">"email"</span>, <span class="fn">equalTo</span>(<span class="str">"c@test.com"</span>))
+            .<span class="fn">extract</span>().<span class="fn">path</span>(<span class="str">"id"</span>);
+
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="str">"Created ID: "</span> + <span class="vr">id</span>);
+    }
+}</div>
+  <div id="s13-c2" class="cblk"><span class="cm">// POJODeserializationTest.java — JSON response → POJO
+// extract().as(Class) = Jackson maps JSON fields → POJO fields
+// TypeRef for generic types like List&lt;UserModel&gt;</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import</span> <span class="cls">io.restassured.common.mapper.TypeRef</span>;
+<span class="cm">// TypeRef = preserves generic type info at runtime</span>
+<span class="kw">import</span> <span class="cls">java.util.List</span>;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+
+<span class="kw">public class</span> <span class="cls">POJODeserializationTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">deserializeSingleUser</span>() {
+
+        <span class="cls">UserModel</span> <span class="vr">user</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>().<span class="fn">get</span>(<span class="str">"/users/1"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">extract</span>().<span class="fn">as</span>(<span class="cls">UserModel</span>.<span class="kw">class</span>);
+        <span class="cm">// as(UserModel.class) = Jackson deserializes JSON → UserModel</span>
+
+        <span class="cm">// Type-safe assertions using POJO methods</span>
+        <span class="cls">Assert</span>.<span class="fn">assertEquals</span>(<span class="vr">user</span>.<span class="fn">getId</span>(), <span class="num">1</span>);
+        <span class="cls">Assert</span>.<span class="fn">assertNotNull</span>(<span class="vr">user</span>.<span class="fn">getName</span>());
+        <span class="cls">Assert</span>.<span class="fn">assertNotNull</span>(<span class="vr">user</span>.<span class="fn">getAddress</span>());
+        <span class="cls">Assert</span>.<span class="fn">assertNotNull</span>(<span class="vr">user</span>.<span class="fn">getAddress</span>().<span class="fn">getCity</span>());
+        <span class="cm">// Chain: user → address → city (navigate nested POJO)</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">deserializeUserList</span>() {
+
+        <span class="cm">// TypeRef handles List&lt;UserModel&gt; — Java type erasure workaround
+        // Cannot use List&lt;UserModel&gt;.class — doesn't exist at runtime</span>
+        <span class="cls">List</span>&lt;<span class="cls">UserModel</span>&gt; <span class="vr">users</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .<span class="fn">when</span>().<span class="fn">get</span>(<span class="str">"/users"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">200</span>)
+            .<span class="fn">extract</span>().<span class="fn">as</span>(<span class="kw">new</span> <span class="cls">TypeRef</span>&lt;<span class="cls">List</span>&lt;<span class="cls">UserModel</span>&gt;&gt;(){});
+        <span class="cm">// new TypeRef&lt;...&gt;(){} = anonymous subclass preserving generic type</span>
+
+        <span class="cls">Assert</span>.<span class="fn">assertEquals</span>(<span class="vr">users</span>.<span class="fn">size</span>(), <span class="num">10</span>);
+        <span class="vr">users</span>.<span class="fn">forEach</span>(<span class="vr">u</span> ->
+            <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="vr">u</span>.<span class="fn">getName</span>() + <span class="str">" - "</span> + <span class="vr">u</span>.<span class="fn">getEmail</span>()));
+    }
+}</div>
+  <div id="s13-c3" class="cblk"><span class="cm">// AllAnnotationsShowcase.java — every Jackson annotation demonstrated
+// One POJO showing all annotations with explanations</span>
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.annotation.*</span>;
+
+<span class="ann">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="cm">// CLASS LEVEL: ignore any JSON field not in this POJO
+// Prevents UnrecognizedPropertyException when API evolves</span>
+
+<span class="ann">@JsonInclude</span>(<span class="cls">JsonInclude.Include</span>.NON_NULL)
+<span class="cm">// CLASS LEVEL: skip null fields during serialization</span>
+
+<span class="kw">public class</span> <span class="cls">ProductAnnotated</span> {
+
+    <span class="ann">@JsonProperty</span>(<span class="str">"product_id"</span>)
+    <span class="cm">// FIELD: Java "productId" ←→ JSON "product_id"</span>
+    <span class="kw">private int</span> <span class="vr">productId</span>;
+
+    <span class="ann">@JsonAlias</span>({<span class="str">"title"</span>, <span class="str">"product_title"</span>})
+    <span class="cm">// FIELD: accepts "name" OR "title" OR "product_title" on deserialize
+    // Serialize: always outputs "name"</span>
+    <span class="kw">private</span> <span class="cls">String</span> <span class="vr">name</span>;
+
+    <span class="ann">@JsonIgnore</span>
+    <span class="cm">// FIELD: completely excluded from JSON — never serialize/deserialize</span>
+    <span class="kw">private double</span> <span class="vr">internalCost</span>;
+
+    <span class="kw">private double</span>  <span class="vr">price</span>;      <span class="cm">// no annotation: field name = JSON key</span>
+    <span class="kw">private boolean</span> <span class="vr">available</span>;
+    <span class="kw">private</span> <span class="cls">String</span>  <span class="vr">description</span>; <span class="cm">// null → excluded (NON_NULL)</span>
+
+    <span class="ann">@JsonCreator</span>
+    <span class="cm">// Use THIS constructor for deserialization when no default constructor
+    // Each param annotated with @JsonProperty to map JSON keys</span>
+    <span class="kw">public</span> <span class="cls">ProductAnnotated</span>(
+        <span class="ann">@JsonProperty</span>(<span class="str">"product_id"</span>) <span class="kw">int</span>     <span class="vr">id</span>,
+        <span class="ann">@JsonProperty</span>(<span class="str">"name"</span>)        <span class="cls">String</span>  <span class="vr">n</span>,
+        <span class="ann">@JsonProperty</span>(<span class="str">"price"</span>)       <span class="kw">double</span>  <span class="vr">p</span>,
+        <span class="ann">@JsonProperty</span>(<span class="str">"available"</span>)   <span class="kw">boolean</span> <span class="vr">a</span>
+    ) {
+        <span class="vr">productId</span>=<span class="vr">id</span>; <span class="vr">name</span>=<span class="vr">n</span>; <span class="vr">price</span>=<span class="vr">p</span>; <span class="vr">available</span>=<span class="vr">a</span>;
+    }
+
+    <span class="kw">public int</span>    <span class="fn">getProductId</span>(){<span class="kw">return</span> <span class="vr">productId</span>;}
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getName</span>()    {<span class="kw">return</span> <span class="vr">name</span>;}
+    <span class="kw">public double</span> <span class="fn">getPrice</span>()   {<span class="kw">return</span> <span class="vr">price</span>;}
+    <span class="kw">public boolean</span> <span class="fn">isAvailable</span>(){<span class="kw">return</span> <span class="vr">available</span>;}
+}</div>
+  <div id="s13-c4" class="cblk"><span class="cm">// ListPOJOTest.java — List&lt;POJO&gt; serialize + deserialize
+// List&lt;OrderItem&gt; → JSON array of objects
+// JSON array → List&lt;OrderItem&gt; via TypeRef</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import</span> <span class="cls">io.restassured.common.mapper.TypeRef</span>;
+<span class="kw">import</span> <span class="cls">java.util.*</span>;
+
+<span class="kw">class</span> <span class="cls">OrderItem</span> {
+    <span class="kw">private int</span>    <span class="vr">productId</span>;
+    <span class="kw">private</span> <span class="cls">String</span> <span class="vr">productName</span>;
+    <span class="kw">private int</span>    <span class="vr">quantity</span>;
+    <span class="kw">private double</span> <span class="vr">price</span>;
+
+    <span class="kw">public</span> <span class="cls">OrderItem</span>(){}
+    <span class="kw">public</span> <span class="cls">OrderItem</span>(<span class="kw">int</span> <span class="vr">pid</span>,<span class="cls">String</span> <span class="vr">pn</span>,<span class="kw">int</span> <span class="vr">q</span>,<span class="kw">double</span> <span class="vr">p</span>)
+        {<span class="vr">productId</span>=<span class="vr">pid</span>;<span class="vr">productName</span>=<span class="vr">pn</span>;<span class="vr">quantity</span>=<span class="vr">q</span>;<span class="vr">price</span>=<span class="vr">p</span>;}
+    <span class="kw">public int</span>    <span class="fn">getProductId</span>()  {<span class="kw">return</span> <span class="vr">productId</span>;}
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getProductName</span>(){<span class="kw">return</span> <span class="vr">productName</span>;}
+    <span class="kw">public int</span>    <span class="fn">getQuantity</span>()   {<span class="kw">return</span> <span class="vr">quantity</span>;}
+    <span class="kw">public double</span> <span class="fn">getPrice</span>()      {<span class="kw">return</span> <span class="vr">price</span>;}
+    <span class="kw">public void</span> <span class="fn">setProductId</span>(<span class="kw">int</span> <span class="vr">v</span>)   {<span class="vr">productId</span>=<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setProductName</span>(<span class="cls">String</span> <span class="vr">v</span>){<span class="vr">productName</span>=<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setQuantity</span>(<span class="kw">int</span> <span class="vr">v</span>)    {<span class="vr">quantity</span>=<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setPrice</span>(<span class="kw">double</span> <span class="vr">v</span>)    {<span class="vr">price</span>=<span class="vr">v</span>;}
+}
+
+<span class="kw">public class</span> <span class="cls">ListPOJOTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">serializeListOfPOJOs</span>() {
+
+        <span class="cls">List</span>&lt;<span class="cls">OrderItem</span>&gt; <span class="vr">items</span> = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        <span class="vr">items</span>.<span class="fn">add</span>(<span class="kw">new</span> <span class="cls">OrderItem</span>(<span class="num">101</span>,<span class="str">"REST Assured"</span>,<span class="num">2</span>,<span class="num">599.0</span>));
+        <span class="vr">items</span>.<span class="fn">add</span>(<span class="kw">new</span> <span class="cls">OrderItem</span>(<span class="num">202</span>,<span class="str">"Java Mastery"</span>, <span class="num">1</span>,<span class="num">349.0</span>));
+        <span class="cm">// List&lt;OrderItem&gt; → [{"productId":101,...},{"productId":202,...}]</span>
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">order</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"orderId"</span>, <span class="str">"ORD-001"</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"items"</span>,   <span class="vr">items</span>);   <span class="cm">// Mix: Map + List&lt;POJO&gt;</span>
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"total"</span>,   <span class="num">948.0</span>);
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">order</span>)
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s13-c5" class="cblk"><span class="cm">// ObjectMapperDirectTest.java — Jackson ObjectMapper direct usage
+// writeValueAsString() = POJO/Map → JSON string (explicit serialization)
+// readValue()          = JSON string → POJO (explicit deserialization)
+// ObjectNode           = dynamic JSON builder without POJO</span>
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.databind.ObjectMapper</span>;
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.databind.ObjectWriter</span>;
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.databind.node.ObjectNode</span>;
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.databind.node.ArrayNode</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">ObjectMapperDirectTest</span> {
+
+    <span class="kw">private final</span> <span class="cls">ObjectMapper</span> <span class="vr">om</span> = <span class="kw">new</span> <span class="cls">ObjectMapper</span>();
+    <span class="cm">// ObjectMapper is thread-safe after config — create once, reuse</span>
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">serializeAndDebug</span>() <span class="kw">throws</span> <span class="cls">Exception</span> {
+
+        <span class="cls">UserModel</span> <span class="vr">user</span> = <span class="kw">new</span> <span class="cls">UserModel</span>(<span class="str">"Chitti"</span>,<span class="str">"c@test.com"</span>);
+
+        <span class="cm">// writeValueAsString = compact JSON string</span>
+        <span class="cls">String</span> <span class="vr">compact</span> = <span class="vr">om</span>.<span class="fn">writeValueAsString</span>(<span class="vr">user</span>);
+
+        <span class="cm">// writerWithDefaultPrettyPrinter = formatted JSON</span>
+        <span class="cls">String</span> <span class="vr">pretty</span> = <span class="vr">om</span>.<span class="fn">writerWithDefaultPrettyPrinter</span>()
+                          .<span class="fn">writeValueAsString</span>(<span class="vr">user</span>);
+
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="str">"Compact: "</span>+<span class="vr">compact</span>);
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="str">"Pretty:\n"</span>+<span class="vr">pretty</span>);
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">compact</span>)
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>).<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">buildWithObjectNode</span>() {
+        <span class="cm">// ObjectNode = Jackson dynamic JSON builder (no POJO needed)</span>
+        <span class="cls">ObjectNode</span> <span class="vr">root</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">root</span>.<span class="fn">put</span>(<span class="str">"name"</span>,   <span class="str">"Chitti"</span>);
+        <span class="vr">root</span>.<span class="fn">put</span>(<span class="str">"active"</span>, <span class="kw">true</span>);
+
+        <span class="cls">ObjectNode</span> <span class="vr">addr</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">addr</span>.<span class="fn">put</span>(<span class="str">"city"</span>, <span class="str">"Delhi"</span>);
+        <span class="vr">root</span>.<span class="fn">set</span>(<span class="str">"address"</span>, <span class="vr">addr</span>);
+        <span class="cm">// set(key, ObjectNode) = embed nested object</span>
+
+        <span class="cls">ArrayNode</span> <span class="vr">roles</span> = <span class="vr">om</span>.<span class="fn">createArrayNode</span>();
+        <span class="vr">roles</span>.<span class="fn">add</span>(<span class="str">"ADMIN"</span>).<span class="fn">add</span>(<span class="str">"SDET"</span>); <span class="cm">// chainable</span>
+        <span class="vr">root</span>.<span class="fn">set</span>(<span class="str">"roles"</span>, <span class="vr">roles</span>);
+        <span class="cm">// set(key, ArrayNode) = embed array</span>
+
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="vr">root</span>.<span class="fn">toPrettyString</span>());
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">root</span>.<span class="fn">toString</span>())
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/users"</span>).<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+</div>
+
+<div class="sec">✅ Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Always add <code>@JsonIgnoreProperties(ignoreUnknown = true)</code> to every POJO — prevents test failures when the API adds new fields.</div>
+  <div class="ci"><span class="ck">✔</span> Always provide a no-arg constructor in POJO — Jackson requires it for deserialization via reflection.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>TypeRef&lt;List&lt;MyClass&gt;&gt;</code> not <code>List.class</code> for deserializing JSON arrays — plain List.class loses generic type info.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>@JsonInclude(NON_NULL)</code> to keep request bodies clean — avoids sending fields the API didn't ask for.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>ObjectMapper.writerWithDefaultPrettyPrinter()</code> during debugging to confirm exact JSON payload structure.</div>
+</div>
+
+<div class="sec">🎯 SDET Interview Q&A</div>
+<div class="qa" id="qa-s13">
+  <div class="qi"><div class="qq">Q1: Why does Jackson need a no-arg constructor in POJO? <span class="qtg">+</span></div><div class="qa-ans">Jackson's default deserialization creates an instance using the no-arg constructor via reflection, then populates fields using setters. Without it: InvalidDefinitionException. Workaround: use @JsonCreator on a parameterized constructor, annotating each parameter with @JsonProperty to map JSON keys to constructor arguments.</div></div>
+  <div class="qi"><div class="qq">Q2: What is Java type erasure and how does TypeRef solve it? <span class="qtg">+</span></div><div class="qa-ans">Type erasure means generic types (List&lt;User&gt;) lose their parameter at runtime — JVM sees raw List. So List&lt;User&gt;.class doesn't exist. TypeRef creates an anonymous subclass that preserves generic type info via Class hierarchy reflection. REST Assured uses this to tell Jackson to deserialize into List&lt;User&gt; specifically, not just List.</div></div>
+  <div class="qi"><div class="qq">Q3: How do @JsonIgnore and @JsonIgnoreProperties differ? <span class="qtg">+</span></div><div class="qa-ans">@JsonIgnore is field-level — marks ONE field to skip entirely in both directions. @JsonIgnoreProperties(ignoreUnknown=true) is class-level — silently skips JSON fields that have no matching POJO field (defensive deserialization). Different problems: @JsonIgnore controls what you send; @JsonIgnoreProperties controls what you accept from the API.</div></div>
+  <div class="qi"><div class="qq">Q4: What is ObjectNode and when would you use it over POJO? <span class="qtg">+</span></div><div class="qa-ans">ObjectNode is Jackson's dynamic JSON tree node — you build JSON without creating a POJO class. Use ObjectNode when JSON structure changes at runtime, for one-off payloads, or when the schema is variable. Use POJO when the structure is fixed and recurring — POJOs give compile-time safety, IDE support, and refactoring tools.</div></div>
+  <div class="qi"><div class="qq">Q5: How does @JsonAlias differ from @JsonProperty for deserialization? <span class="qtg">+</span></div><div class="qa-ans">@JsonProperty("key") sets ONE mapping used for both serialization (output key) and deserialization (input key). @JsonAlias({"key1","key2"}) adds ALTERNATIVE names for DESERIALIZATION ONLY — the field still serializes with its primary name. Use @JsonAlias when an API is migrating field names and may send either "name" or "full_name" for the same field.</div></div>
+</div>
+
+</div></div>
+
+<!-- ═══════════════ SESSION 14 ═══════════════ -->
+<div class="session" id="session-3">
+<div class="sp">
+
+<div class="sec">🌐 Overview — Deep Nested + Complex Arrays</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">❓</div><div class="ov-t">WHAT</div><div class="ov-tx">Real-world APIs have 4-5 level JSON with arrays of objects, nested arrays inside objects inside arrays. This session covers all patterns.</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">WHY</div><div class="ov-tx">E-commerce orders, banking transactions, nested catalogs — production APIs have complex JSON. SDETs must build AND validate them precisely.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">WHEN</div><div class="ov-tx">Any POST/PUT body with 3+ levels of nesting or arrays of objects. Order APIs, user profiles, invoice payloads.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">WHERE</div><div class="ov-tx">All 5 approaches shown for the same 4-level Order JSON payload — compare approaches side by side.</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">HOW</div><div class="ov-tx">Bottom-up: deepest object first → arrays → root object. Always log().body() to verify before asserting.</div></div>
+</div>
+
+<div class="sec">🎤 Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>Bottom-up approach</b> = always create the deepest nested object first, then wrap upward to root — prevents NullPointerException during build.</div>
+  <div class="ol"><b>Array of objects</b> = JSON pattern <code>[{...},{...}]</code> — Java: <code>List&lt;Map&gt;</code> or <code>List&lt;POJO&gt;</code> depending on which approach is used.</div>
+  <div class="ol"><b>Mixed nesting</b> = same JSON has nested objects AND arrays at the same level — e.g. order has customer (object) AND items (array of objects).</div>
+  <div class="ol"><b>items[0].tags[0]</b> = REST Assured GPath for double array access — first element of items array, then first element of its tags array.</div>
+  <div class="ol"><b>ObjectNode+ArrayNode</b> = Jackson's tree model for dynamic JSON — no POJO needed, build structures at runtime with createObjectNode/createArrayNode.</div>
+  <div class="ol"><b>Deserialization path</b> = after as(OrderModel.class), navigate nested data: <code>order.getCustomer().getAddress().getCity()</code>.</div>
+</div>
+
+<div class="sec">💡 Target 4-Level JSON Structure</div>
+<div class="cb">
+<div class="cb-t">🗂️ All 6 code tabs build this exact same JSON</div>
+<div class="arch"><span class="hl">{ "orderId":"ORD-2024-001", "status":"PENDING",</span>
+  <span class="hl">"customer":</span> {                              <span class="lb">← Level 2 object</span>
+    <span class="hl">"name":"Chitti", "email":"c@test.com",</span>
+    <span class="hl">"address":</span> {                             <span class="lb">← Level 3 object</span>
+      <span class="hl">"street":"123 CP", "city":"Delhi",</span>
+      <span class="hl">"geo":</span> <span class="bx">{ "lat":28.6, "lng":77.2 }</span>       <span class="lb">← Level 4 (deepest)</span>
+    }
+  },
+  <span class="hl">"items":</span> [                                  <span class="lb">← Level 2 array of objects</span>
+    { <span class="hl">"productId":101, "name":"REST Assured", "qty":2, "price":599.0,</span>
+      <span class="hl">"tags":</span> <span class="bx">["java","testing","api"]</span>          <span class="lb">← Level 3 string array</span>
+    },
+    { "productId":202, "name":"TestNG Book", "qty":1, "price":349.0 }
+  ],
+  <span class="hl">"payment":</span> {                               <span class="lb">← Level 2 object</span>
+    <span class="hl">"method":"CARD",</span>
+    <span class="hl">"card":</span> <span class="bx">{ "last4":"1234","expiry":"12/26","network":"VISA" }</span>  <span class="lb">← L3</span>
+  },
+  <span class="hl">"total":1547.0, "currency":"INR"</span> }</div>
+</div>
+
+<div class="sec">💻 Code Examples — Deep Nested + All Approaches</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s14">
+    <div class="ct active" data-ci="0" data-cs="s14">🏗️ POJO Classes</div>
+    <div class="ct" data-ci="1" data-cs="s14">📤 POJO+Jackson Send</div>
+    <div class="ct" data-ci="2" data-cs="s14">🗺️ HashMap Deep</div>
+    <div class="ct" data-ci="3" data-cs="s14">📦 JSONObject Deep</div>
+    <div class="ct" data-ci="4" data-cs="s14">🌳 ObjectNode Tree</div>
+    <div class="ct" data-ci="5" data-cs="s14">📥 Validate Deep JSON</div>
+  </div>
+  <div id="s14-c0" class="cblk active"><span class="cm">// Deep Nested POJO classes — GeoCoords → ShippingAddress → LineItem
+// Build bottom-up: deepest class first, then classes that contain them</span>
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.annotation.*</span>;
+<span class="kw">import</span> <span class="cls">java.util.List</span>;
+
+<span class="cm">// Level 4: GeoCoords (deepest nested POJO)</span>
+<span class="ann">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cls">GeoCoords</span> {
+    <span class="kw">private double</span> <span class="vr">lat</span>, <span class="vr">lng</span>;
+    <span class="kw">public</span> <span class="cls">GeoCoords</span>() {}
+    <span class="kw">public</span> <span class="cls">GeoCoords</span>(<span class="kw">double</span> <span class="vr">l</span>,<span class="kw">double</span> <span class="vr">g</span>){<span class="vr">lat</span>=<span class="vr">l</span>;<span class="vr">lng</span>=<span class="vr">g</span>;}
+    <span class="kw">public double</span> <span class="fn">getLat</span>(){<span class="kw">return</span> <span class="vr">lat</span>;} <span class="kw">public double</span> <span class="fn">getLng</span>(){<span class="kw">return</span> <span class="vr">lng</span>;}
+    <span class="kw">public void</span> <span class="fn">setLat</span>(<span class="kw">double</span> <span class="vr">v</span>){<span class="vr">lat</span>=<span class="vr">v</span>;} <span class="kw">public void</span> <span class="fn">setLng</span>(<span class="kw">double</span> <span class="vr">v</span>){<span class="vr">lng</span>=<span class="vr">v</span>;}
+}
+
+<span class="cm">// Level 3: ShippingAddress (contains GeoCoords)</span>
+<span class="ann">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cls">ShippingAddress</span> {
+    <span class="kw">private</span> <span class="cls">String</span>    <span class="vr">street</span>, <span class="vr">city</span>, <span class="vr">zip</span>;
+    <span class="kw">private</span> <span class="cls">GeoCoords</span> <span class="vr">geo</span>;  <span class="cm">// nested POJO → Level 4 JSON object</span>
+    <span class="kw">public</span> <span class="cls">ShippingAddress</span>() {}
+    <span class="kw">public</span> <span class="cls">ShippingAddress</span>(<span class="cls">String</span> <span class="vr">st</span>,<span class="cls">String</span> <span class="vr">ct</span>,<span class="cls">String</span> <span class="vr">z</span>,<span class="cls">GeoCoords</span> <span class="vr">g</span>)
+        {<span class="vr">street</span>=<span class="vr">st</span>;<span class="vr">city</span>=<span class="vr">ct</span>;<span class="vr">zip</span>=<span class="vr">z</span>;<span class="vr">geo</span>=<span class="vr">g</span>;}
+    <span class="kw">public</span> <span class="cls">String</span>    <span class="fn">getStreet</span>() {<span class="kw">return</span> <span class="vr">street</span>;}
+    <span class="kw">public</span> <span class="cls">String</span>    <span class="fn">getCity</span>()   {<span class="kw">return</span> <span class="vr">city</span>;}
+    <span class="kw">public</span> <span class="cls">String</span>    <span class="fn">getZip</span>()    {<span class="kw">return</span> <span class="vr">zip</span>;}
+    <span class="kw">public</span> <span class="cls">GeoCoords</span> <span class="fn">getGeo</span>()    {<span class="kw">return</span> <span class="vr">geo</span>;}
+    <span class="kw">public void</span> <span class="fn">setStreet</span>(<span class="cls">String</span> <span class="vr">v</span>){<span class="vr">street</span>=<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setCity</span>  (<span class="cls">String</span> <span class="vr">v</span>){<span class="vr">city</span>  =<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setZip</span>   (<span class="cls">String</span> <span class="vr">v</span>){<span class="vr">zip</span>   =<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setGeo</span>(<span class="cls">GeoCoords</span> <span class="vr">v</span>){<span class="vr">geo</span>   =<span class="vr">v</span>;}
+}
+
+<span class="cm">// Level 2: LineItem (array element POJO)</span>
+<span class="ann">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cls">LineItem</span> {
+    <span class="kw">private int</span>           <span class="vr">productId</span>;
+    <span class="kw">private</span> <span class="cls">String</span>        <span class="vr">name</span>;
+    <span class="kw">private int</span>           <span class="vr">qty</span>;
+    <span class="kw">private double</span>        <span class="vr">price</span>;
+    <span class="kw">private</span> <span class="cls">List</span>&lt;<span class="cls">String</span>&gt;  <span class="vr">tags</span>; <span class="cm">// List&lt;String&gt; → JSON string array</span>
+    <span class="kw">public</span> <span class="cls">LineItem</span>() {}
+    <span class="kw">public</span> <span class="cls">LineItem</span>(<span class="kw">int</span> <span class="vr">pid</span>,<span class="cls">String</span> <span class="vr">n</span>,<span class="kw">int</span> <span class="vr">q</span>,<span class="kw">double</span> <span class="vr">p</span>,<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="vr">t</span>)
+        {<span class="vr">productId</span>=<span class="vr">pid</span>;<span class="vr">name</span>=<span class="vr">n</span>;<span class="vr">qty</span>=<span class="vr">q</span>;<span class="vr">price</span>=<span class="vr">p</span>;<span class="vr">tags</span>=<span class="vr">t</span>;}
+    <span class="kw">public int</span>    <span class="fn">getProductId</span>()  {<span class="kw">return</span> <span class="vr">productId</span>;}
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getName</span>()       {<span class="kw">return</span> <span class="vr">name</span>;}
+    <span class="kw">public int</span>    <span class="fn">getQty</span>()        {<span class="kw">return</span> <span class="vr">qty</span>;}
+    <span class="kw">public double</span> <span class="fn">getPrice</span>()      {<span class="kw">return</span> <span class="vr">price</span>;}
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="fn">getTags</span>() {<span class="kw">return</span> <span class="vr">tags</span>;}
+    <span class="kw">public void</span> <span class="fn">setProductId</span>(<span class="kw">int</span> <span class="vr">v</span>)   {<span class="vr">productId</span>=<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setName</span>(<span class="cls">String</span> <span class="vr">v</span>)     {<span class="vr">name</span>=<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setQty</span>(<span class="kw">int</span> <span class="vr">v</span>)         {<span class="vr">qty</span>=<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setPrice</span>(<span class="kw">double</span> <span class="vr">v</span>)    {<span class="vr">price</span>=<span class="vr">v</span>;}
+    <span class="kw">public void</span> <span class="fn">setTags</span>(<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="vr">v</span>){<span class="vr">tags</span>=<span class="vr">v</span>;}
+}</div>
+  <div id="s14-c1" class="cblk"><span class="cm">// DeepNestedPOJOTest.java — 4-level nested JSON via POJO+Jackson
+// Build bottom-up: GeoCoords → ShippingAddress → items → order</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">java.util.*</span>;
+
+<span class="kw">public class</span> <span class="cls">DeepNestedPOJOTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postDeepNestedOrder</span>() {
+
+        <span class="cm">// Level 4: deepest object first</span>
+        <span class="cls">GeoCoords</span> <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">GeoCoords</span>(<span class="num">28.6139</span>, <span class="num">77.2090</span>);
+
+        <span class="cm">// Level 3: address wraps geo</span>
+        <span class="cls">ShippingAddress</span> <span class="vr">addr</span> = <span class="kw">new</span> <span class="cls">ShippingAddress</span>(
+            <span class="str">"123 CP"</span>, <span class="str">"Delhi"</span>, <span class="str">"110001"</span>, <span class="vr">geo</span>);
+        <span class="cm">// addr.geo = GeoCoords → Jackson serializes as 4th level</span>
+
+        <span class="cm">// Level 2: customer with address</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">customer</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"name"</span>,    <span class="str">"Chitti"</span>);
+        <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"email"</span>,   <span class="str">"c@test.com"</span>);
+        <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"address"</span>, <span class="vr">addr</span>);
+        <span class="cm">// Map value = POJO → Jackson handles the mix!</span>
+
+        <span class="cm">// Level 2: items with string tags</span>
+        <span class="cls">LineItem</span> <span class="vr">item1</span> = <span class="kw">new</span> <span class="cls">LineItem</span>(
+            <span class="num">101</span>, <span class="str">"REST Assured Pro"</span>, <span class="num">2</span>, <span class="num">599.0</span>,
+            <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"java"</span>, <span class="str">"testing"</span>, <span class="str">"api"</span>));
+
+        <span class="cls">LineItem</span> <span class="vr">item2</span> = <span class="kw">new</span> <span class="cls">LineItem</span>(
+            <span class="num">202</span>, <span class="str">"TestNG Bible"</span>, <span class="num">1</span>, <span class="num">349.0</span>,
+            <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"testng"</span>));
+
+        <span class="cls">List</span>&lt;<span class="cls">LineItem</span>&gt; <span class="vr">items</span> = <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="vr">item1</span>, <span class="vr">item2</span>);
+        <span class="cm">// List&lt;LineItem&gt; → JSON array of LineItem objects</span>
+
+        <span class="cm">// Level 2: payment with card</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">card</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">card</span>.<span class="fn">put</span>(<span class="str">"last4"</span>,<span class="str">"1234"</span>);<span class="vr">card</span>.<span class="fn">put</span>(<span class="str">"expiry"</span>,<span class="str">"12/26"</span>);<span class="vr">card</span>.<span class="fn">put</span>(<span class="str">"network"</span>,<span class="str">"VISA"</span>);
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">payment</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">payment</span>.<span class="fn">put</span>(<span class="str">"method"</span>,<span class="str">"CARD"</span>);<span class="vr">payment</span>.<span class="fn">put</span>(<span class="str">"card"</span>,<span class="vr">card</span>);
+
+        <span class="cm">// Root order — mix of Map, POJO, List&lt;POJO&gt;</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">order</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"orderId"</span>,  <span class="str">"ORD-2024-001"</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"status"</span>,   <span class="str">"PENDING"</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"customer"</span>, <span class="vr">customer</span>);  <span class="cm">// Map w/ nested POJO</span>
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"items"</span>,    <span class="vr">items</span>);     <span class="cm">// List of POJOs</span>
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"payment"</span>,  <span class="vr">payment</span>);  <span class="cm">// nested Map</span>
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"total"</span>,    <span class="num">1547.0</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"currency"</span>, <span class="str">"INR"</span>);
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">order</span>).<span class="fn">log</span>().<span class="fn">body</span>()
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s14-c2" class="cblk"><span class="cm">// DeepHashMapTest.java — same 4-level structure using only HashMaps
+// No extra classes needed but more verbose at this depth</span>
+<span class="kw">import</span> <span class="cls">java.util.*</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">DeepHashMapTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postDeepNestedHashMap</span>() {
+
+        <span class="cm">// Level 4: geo (deepest Map)</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">geo</span>.<span class="fn">put</span>(<span class="str">"lat"</span>,<span class="num">28.6139</span>); <span class="vr">geo</span>.<span class="fn">put</span>(<span class="str">"lng"</span>,<span class="num">77.2090</span>);
+
+        <span class="cm">// Level 3: address contains geo</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">addr</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">addr</span>.<span class="fn">put</span>(<span class="str">"street"</span>,<span class="str">"123 CP"</span>); <span class="vr">addr</span>.<span class="fn">put</span>(<span class="str">"city"</span>,<span class="str">"Delhi"</span>);
+        <span class="vr">addr</span>.<span class="fn">put</span>(<span class="str">"zip"</span>,<span class="str">"110001"</span>);
+        <span class="vr">addr</span>.<span class="fn">put</span>(<span class="str">"geo"</span>, <span class="vr">geo</span>);
+        <span class="cm">// Map inside Map → nested object inside nested object</span>
+
+        <span class="cm">// Level 2: customer contains address</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">customer</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"Chitti"</span>); <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"email"</span>,<span class="str">"c@t.com"</span>);
+        <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"address"</span>, <span class="vr">addr</span>);
+
+        <span class="cm">// Level 2: item with string tags array</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">item1</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"productId"</span>,<span class="num">101</span>); <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"REST Assured Pro"</span>);
+        <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"qty"</span>,<span class="num">2</span>); <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"price"</span>,<span class="num">599.0</span>);
+        <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"tags"</span>, <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"java"</span>,<span class="str">"testing"</span>));
+        <span class="cm">// List&lt;String&gt; inside item Map → string array inside object</span>
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">item2</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"productId"</span>,<span class="num">202</span>); <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"TestNG Book"</span>);
+        <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"qty"</span>,<span class="num">1</span>); <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"price"</span>,<span class="num">349.0</span>);
+        <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"tags"</span>, <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"testng"</span>));
+
+        <span class="cls">List</span>&lt;<span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt;&gt; <span class="vr">items</span> = <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="vr">item1</span>,<span class="vr">item2</span>);
+        <span class="cm">// List&lt;Map&gt; → JSON array of objects</span>
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">card</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">card</span>.<span class="fn">put</span>(<span class="str">"last4"</span>,<span class="str">"1234"</span>);<span class="vr">card</span>.<span class="fn">put</span>(<span class="str">"expiry"</span>,<span class="str">"12/26"</span>);<span class="vr">card</span>.<span class="fn">put</span>(<span class="str">"network"</span>,<span class="str">"VISA"</span>);
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">payment</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">payment</span>.<span class="fn">put</span>(<span class="str">"method"</span>,<span class="str">"CARD"</span>); <span class="vr">payment</span>.<span class="fn">put</span>(<span class="str">"card"</span>,<span class="vr">card</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">order</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"orderId"</span>, <span class="str">"ORD-2024-001"</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"customer"</span>,<span class="vr">customer</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"items"</span>,   <span class="vr">items</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"payment"</span>, <span class="vr">payment</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"total"</span>,   <span class="num">1547.0</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"currency"</span>,<span class="str">"INR"</span>);
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">order</span>).<span class="fn">log</span>().<span class="fn">body</span>()
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>).<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s14-c3" class="cblk"><span class="cm">// DeepJSONObjectTest.java — same 4-level structure using org.json
+// JSONObject.put(key, JSONObject) = nest object in object
+// JSONArray.put(JSONObject)       = add object to array</span>
+<span class="kw">import</span> <span class="cls">org.json.JSONObject</span>;
+<span class="kw">import</span> <span class="cls">org.json.JSONArray</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">DeepJSONObjectTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">postDeepNestedJSONObject</span>() {
+
+        <span class="cm">// Level 4 → 3 → 2 (bottom-up)</span>
+        <span class="cls">JSONObject</span> <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"lat"</span>,<span class="num">28.6139</span>).<span class="fn">put</span>(<span class="str">"lng"</span>,<span class="num">77.2090</span>);
+
+        <span class="cls">JSONObject</span> <span class="vr">address</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"street"</span>,<span class="str">"123 CP"</span>).<span class="fn">put</span>(<span class="str">"city"</span>,<span class="str">"Delhi"</span>)
+            .<span class="fn">put</span>(<span class="str">"zip"</span>,<span class="str">"110001"</span>).<span class="fn">put</span>(<span class="str">"geo"</span>,<span class="vr">geo</span>);
+
+        <span class="cls">JSONObject</span> <span class="vr">customer</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"Chitti"</span>).<span class="fn">put</span>(<span class="str">"email"</span>,<span class="str">"c@t.com"</span>)
+            .<span class="fn">put</span>(<span class="str">"address"</span>,<span class="vr">address</span>);
+
+        <span class="cm">// Item 1 with tags array</span>
+        <span class="cls">JSONArray</span> <span class="vr">tags1</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>().<span class="fn">put</span>(<span class="str">"java"</span>).<span class="fn">put</span>(<span class="str">"testing"</span>).<span class="fn">put</span>(<span class="str">"api"</span>);
+        <span class="cls">JSONObject</span> <span class="vr">item1</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"productId"</span>,<span class="num">101</span>).<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"REST Assured Pro"</span>)
+            .<span class="fn">put</span>(<span class="str">"qty"</span>,<span class="num">2</span>).<span class="fn">put</span>(<span class="str">"price"</span>,<span class="num">599.0</span>)
+            .<span class="fn">put</span>(<span class="str">"tags"</span>,<span class="vr">tags1</span>);     <span class="cm">// JSONArray inside JSONObject</span>
+
+        <span class="cls">JSONObject</span> <span class="vr">item2</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"productId"</span>,<span class="num">202</span>).<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"TestNG Book"</span>)
+            .<span class="fn">put</span>(<span class="str">"qty"</span>,<span class="num">1</span>).<span class="fn">put</span>(<span class="str">"price"</span>,<span class="num">349.0</span>)
+            .<span class="fn">put</span>(<span class="str">"tags"</span>,<span class="kw">new</span> <span class="cls">JSONArray</span>().<span class="fn">put</span>(<span class="str">"testng"</span>));
+
+        <span class="cls">JSONArray</span> <span class="vr">items</span> = <span class="kw">new</span> <span class="cls">JSONArray</span>().<span class="fn">put</span>(<span class="vr">item1</span>).<span class="fn">put</span>(<span class="vr">item2</span>);
+        <span class="cm">// JSONArray of JSONObjects → array of objects</span>
+
+        <span class="cls">JSONObject</span> <span class="vr">card</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"last4"</span>,<span class="str">"1234"</span>).<span class="fn">put</span>(<span class="str">"expiry"</span>,<span class="str">"12/26"</span>).<span class="fn">put</span>(<span class="str">"network"</span>,<span class="str">"VISA"</span>);
+        <span class="cls">JSONObject</span> <span class="vr">payment</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"method"</span>,<span class="str">"CARD"</span>).<span class="fn">put</span>(<span class="str">"card"</span>,<span class="vr">card</span>);
+
+        <span class="cls">JSONObject</span> <span class="vr">order</span> = <span class="kw">new</span> <span class="cls">JSONObject</span>()
+            .<span class="fn">put</span>(<span class="str">"orderId"</span>, <span class="str">"ORD-2024-001"</span>)
+            .<span class="fn">put</span>(<span class="str">"customer"</span>,<span class="vr">customer</span>)
+            .<span class="fn">put</span>(<span class="str">"items"</span>,   <span class="vr">items</span>)
+            .<span class="fn">put</span>(<span class="str">"payment"</span>, <span class="vr">payment</span>)
+            .<span class="fn">put</span>(<span class="str">"total"</span>,   <span class="num">1547.0</span>)
+            .<span class="fn">put</span>(<span class="str">"currency"</span>,<span class="str">"INR"</span>);
+
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="vr">order</span>.<span class="fn">toString</span>(<span class="num">2</span>));
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">order</span>.<span class="fn">toString</span>())
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>).<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s14-c4" class="cblk"><span class="cm">// ObjectNodeTreeTest.java — Jackson ObjectNode/ArrayNode
+// Best for: dynamic JSON where structure changes at runtime
+// ObjectNode.set(key,node) = embed node in object
+// ArrayNode.add(node)      = append node to array</span>
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.databind.ObjectMapper</span>;
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.databind.node.ObjectNode</span>;
+<span class="kw">import</span> <span class="cls">com.fasterxml.jackson.databind.node.ArrayNode</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+
+<span class="kw">public class</span> <span class="cls">ObjectNodeTreeTest</span> {
+
+    <span class="kw">private final</span> <span class="cls">ObjectMapper</span> <span class="vr">om</span> = <span class="kw">new</span> <span class="cls">ObjectMapper</span>();
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">buildDeepNestedWithObjectNode</span>() {
+
+        <span class="cm">// Level 4</span>
+        <span class="cls">ObjectNode</span> <span class="vr">geo</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">geo</span>.<span class="fn">put</span>(<span class="str">"lat"</span>,<span class="num">28.6139</span>); <span class="vr">geo</span>.<span class="fn">put</span>(<span class="str">"lng"</span>,<span class="num">77.2090</span>);
+
+        <span class="cm">// Level 3</span>
+        <span class="cls">ObjectNode</span> <span class="vr">address</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">address</span>.<span class="fn">put</span>(<span class="str">"street"</span>,<span class="str">"123 CP"</span>).<span class="fn">put</span>(<span class="str">"city"</span>,<span class="str">"Delhi"</span>);
+        <span class="vr">address</span>.<span class="fn">set</span>(<span class="str">"geo"</span>, <span class="vr">geo</span>);
+        <span class="cm">// set(key, ObjectNode) = embed ObjectNode inside ObjectNode</span>
+
+        <span class="cm">// Level 2: customer</span>
+        <span class="cls">ObjectNode</span> <span class="vr">customer</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"Chitti"</span>).<span class="fn">put</span>(<span class="str">"email"</span>,<span class="str">"c@t.com"</span>);
+        <span class="vr">customer</span>.<span class="fn">set</span>(<span class="str">"address"</span>, <span class="vr">address</span>);
+
+        <span class="cm">// Items ArrayNode with string tags inside each item</span>
+        <span class="cls">ArrayNode</span> <span class="vr">items</span> = <span class="vr">om</span>.<span class="fn">createArrayNode</span>();
+        <span class="cm">// createArrayNode() = creates empty JSON array []</span>
+
+        <span class="cls">ObjectNode</span> <span class="vr">item1</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"productId"</span>,<span class="num">101</span>).<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"REST Assured Pro"</span>);
+        <span class="vr">item1</span>.<span class="fn">put</span>(<span class="str">"qty"</span>,<span class="num">2</span>).<span class="fn">put</span>(<span class="str">"price"</span>,<span class="num">599.0</span>);
+        <span class="cls">ArrayNode</span> <span class="vr">tags1</span> = <span class="vr">om</span>.<span class="fn">createArrayNode</span>();
+        <span class="vr">tags1</span>.<span class="fn">add</span>(<span class="str">"java"</span>).<span class="fn">add</span>(<span class="str">"testing"</span>).<span class="fn">add</span>(<span class="str">"api"</span>);
+        <span class="cm">// ArrayNode.add() is chainable</span>
+        <span class="vr">item1</span>.<span class="fn">set</span>(<span class="str">"tags"</span>,<span class="vr">tags1</span>);
+        <span class="cm">// set(key, ArrayNode) = embed array inside object</span>
+
+        <span class="cls">ObjectNode</span> <span class="vr">item2</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"productId"</span>,<span class="num">202</span>).<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"TestNG Book"</span>);
+        <span class="vr">item2</span>.<span class="fn">put</span>(<span class="str">"qty"</span>,<span class="num">1</span>).<span class="fn">put</span>(<span class="str">"price"</span>,<span class="num">349.0</span>);
+
+        <span class="vr">items</span>.<span class="fn">add</span>(<span class="vr">item1</span>).<span class="fn">add</span>(<span class="vr">item2</span>);
+        <span class="cm">// ArrayNode.add(ObjectNode) = append item to array</span>
+
+        <span class="cls">ObjectNode</span> <span class="vr">card</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">card</span>.<span class="fn">put</span>(<span class="str">"last4"</span>,<span class="str">"1234"</span>).<span class="fn">put</span>(<span class="str">"expiry"</span>,<span class="str">"12/26"</span>).<span class="fn">put</span>(<span class="str">"network"</span>,<span class="str">"VISA"</span>);
+        <span class="cls">ObjectNode</span> <span class="vr">payment</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">payment</span>.<span class="fn">put</span>(<span class="str">"method"</span>,<span class="str">"CARD"</span>); <span class="vr">payment</span>.<span class="fn">set</span>(<span class="str">"card"</span>,<span class="vr">card</span>);
+
+        <span class="cls">ObjectNode</span> <span class="vr">order</span> = <span class="vr">om</span>.<span class="fn">createObjectNode</span>();
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"orderId"</span>,<span class="str">"ORD-2024-001"</span>);
+        <span class="vr">order</span>.<span class="fn">set</span>(<span class="str">"customer"</span>,<span class="vr">customer</span>);
+        <span class="vr">order</span>.<span class="fn">set</span>(<span class="str">"items"</span>,   <span class="vr">items</span>);
+        <span class="vr">order</span>.<span class="fn">set</span>(<span class="str">"payment"</span>, <span class="vr">payment</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"total"</span>,<span class="num">1547.0</span>).<span class="fn">put</span>(<span class="str">"currency"</span>,<span class="str">"INR"</span>);
+
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="vr">order</span>.<span class="fn">toPrettyString</span>());
+        <span class="cm">// toPrettyString() = formatted JSON output for verification</span>
+
+        <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">order</span>.<span class="fn">toString</span>())
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>).<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s14-c5" class="cblk"><span class="cm">// FullValidationTest.java — build + send + assert deep nested JSON response
+// Shows: body() GPath for 4-level deep paths + array indexing</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.*;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="kw">import</span> <span class="cls">java.util.*</span>;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+
+<span class="kw">public class</span> <span class="cls">FullValidationTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">buildAndValidateDeepNested</span>() {
+
+        <span class="cm">// Build request (HashMap approach)</span>
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">geo</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">geo</span>.<span class="fn">put</span>(<span class="str">"lat"</span>,<span class="num">28.6</span>); <span class="vr">geo</span>.<span class="fn">put</span>(<span class="str">"lng"</span>,<span class="num">77.2</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">addr</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">addr</span>.<span class="fn">put</span>(<span class="str">"city"</span>,<span class="str">"Delhi"</span>); <span class="vr">addr</span>.<span class="fn">put</span>(<span class="str">"geo"</span>,<span class="vr">geo</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">customer</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"name"</span>,<span class="str">"Chitti"</span>); <span class="vr">customer</span>.<span class="fn">put</span>(<span class="str">"address"</span>,<span class="vr">addr</span>);
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">item</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">item</span>.<span class="fn">put</span>(<span class="str">"productId"</span>,<span class="num">101</span>);
+        <span class="vr">item</span>.<span class="fn">put</span>(<span class="str">"tags"</span>,<span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"java"</span>,<span class="str">"api"</span>));
+
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>,<span class="cls">Object</span>&gt; <span class="vr">order</span> = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"orderId"</span>,<span class="str">"ORD-001"</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"customer"</span>,<span class="vr">customer</span>);
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"items"</span>,<span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="vr">item</span>));
+        <span class="vr">order</span>.<span class="fn">put</span>(<span class="str">"total"</span>,<span class="num">599.0</span>);
+
+        <span class="cm">// Send and store response</span>
+        <span class="cls">Response</span> <span class="vr">res</span> = <span class="fn">given</span>()
+            .<span class="fn">baseUri</span>(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .<span class="fn">contentType</span>(<span class="str">"application/json"</span>)
+            .<span class="fn">body</span>(<span class="vr">order</span>)
+        .<span class="fn">when</span>().<span class="fn">post</span>(<span class="str">"/posts"</span>)
+        .<span class="fn">then</span>().<span class="fn">statusCode</span>(<span class="num">201</span>)
+            .<span class="fn">extract</span>().<span class="fn">response</span>();
+
+        <span class="cm">// ── GPath assertions for deep nested paths ─────────</span>
+        <span class="vr">res</span>.<span class="fn">then</span>()
+            .<span class="fn">body</span>(<span class="str">"orderId"</span>,             <span class="fn">equalTo</span>(<span class="str">"ORD-001"</span>))
+            .<span class="fn">body</span>(<span class="str">"customer.name"</span>,         <span class="fn">equalTo</span>(<span class="str">"Chitti"</span>))
+            <span class="cm">// Level 2: customer.name</span>
+            .<span class="fn">body</span>(<span class="str">"customer.address.city"</span>,  <span class="fn">equalTo</span>(<span class="str">"Delhi"</span>))
+            <span class="cm">// Level 3: customer → address → city</span>
+            .<span class="fn">body</span>(<span class="str">"customer.address.geo.lat"</span>,<span class="fn">equalTo</span>(<span class="num">28.6f</span>))
+            <span class="cm">// Level 4: customer → address → geo → lat</span>
+            .<span class="fn">body</span>(<span class="str">"items[0].productId"</span>,     <span class="fn">equalTo</span>(<span class="num">101</span>))
+            <span class="cm">// Array: items[0] = first array element</span>
+            .<span class="fn">body</span>(<span class="str">"items[0].tags[0]"</span>,       <span class="fn">equalTo</span>(<span class="str">"java"</span>))
+            <span class="cm">// Double array: first item's first tag</span>
+            .<span class="fn">body</span>(<span class="str">"items[0].tags"</span>,          <span class="fn">hasItem</span>(<span class="str">"api"</span>));
+            <span class="cm">// hasItem = array contains "api"</span>
+
+        <span class="cm">// ── JsonPath extraction for assertions/reporting ────</span>
+        <span class="cls">JsonPath</span> <span class="vr">jp</span> = <span class="vr">res</span>.<span class="fn">jsonPath</span>();
+        <span class="cls">String</span> <span class="vr">city</span>     = <span class="vr">jp</span>.<span class="fn">getString</span>(<span class="str">"customer.address.city"</span>);
+        <span class="cls">String</span> <span class="vr">firstTag</span> = <span class="vr">jp</span>.<span class="fn">getString</span>(<span class="str">"items[0].tags[0]"</span>);
+        <span class="kw">int</span>    <span class="vr">pid</span>      = <span class="vr">jp</span>.<span class="fn">getInt</span>(<span class="str">"items[0].productId"</span>);
+
+        <span class="cls">Assert</span>.<span class="fn">assertEquals</span>(<span class="vr">city</span>,     <span class="str">"Delhi"</span>);
+        <span class="cls">Assert</span>.<span class="fn">assertEquals</span>(<span class="vr">firstTag</span>, <span class="str">"java"</span>);
+        <span class="cls">Assert</span>.<span class="fn">assertEquals</span>(<span class="vr">pid</span>,      <span class="num">101</span>);
+
+        <span class="cls">System</span>.<span class="vr">out</span>.<span class="fn">println</span>(<span class="str">"City:"</span>+<span class="vr">city</span>+<span class="str">" Tag:"</span>+<span class="vr">firstTag</span>+<span class="str">" PID:"</span>+<span class="vr">pid</span>);
+    }
+}</div>
+</div>
+
+<div class="sec">✅ Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Always build complex JSON bottom-up — deepest nested object first, then wrap outward to root.</div>
+  <div class="ci"><span class="ck">✔</span> For 3+ levels use POJO+Jackson — HashMap code becomes unreadable and error-prone at deep nesting.</div>
+  <div class="ci"><span class="ck">✔</span> Use ObjectNode/ArrayNode when JSON structure is dynamic at runtime — avoids creating rigid POJO classes for variable schemas.</div>
+  <div class="ci"><span class="ck">✔</span> For deep response validation use both body() assertions AND jsonPath() extraction — assert critical fields and extract for reporting.</div>
+  <div class="ci"><span class="ck">✔</span> For double-array access: <code>items[0].tags[0]</code> gets first element of items, then first element of its tags array.</div>
+</div>
+
+<div class="sec">🎯 SDET Interview Q&A</div>
+<div class="qa" id="qa-s14">
+  <div class="qi"><div class="qq">Q1: How do you navigate a 4-level deep JSON path in REST Assured? <span class="qtg">+</span></div><div class="qa-ans">Use dot notation in body(): body("customer.address.geo.lat", equalTo(28.6)). Each dot = one level deeper. For arrays: body("items[0].tags[0]", equalTo("java")) — [0] accesses array element by zero-based index. REST Assured evaluates this as a GPath expression using Groovy's navigation engine internally.</div></div>
+  <div class="qi"><div class="qq">Q2: ObjectNode vs POJO — when to choose which? <span class="qtg">+</span></div><div class="qa-ans">POJO for fixed/recurring structures — type-safe, IDE support, reusable. ObjectNode for dynamic structures where keys/values change at runtime, or one-off payloads where creating a dedicated class is overkill. Both integrate with REST Assured body(). ObjectNode avoids extra class files for simple, non-recurring JSON shapes.</div></div>
+  <div class="qi"><div class="qq">Q3: How do you assert a specific element inside a nested array? <span class="qtg">+</span></div><div class="qa-ans">Use array indexing in GPath: body("items[0].productId", equalTo(101)) accesses first element's productId. For "any element matches": body("items.productId", hasItem(101)). For "all elements": body("items.qty", everyItem(greaterThan(0))). For filtered: body("items.findAll{it.qty>1}.name", hasItem("REST Assured Pro")).</div></div>
+  <div class="qi"><div class="qq">Q4: Can you mix POJOs and Maps in the same request body? <span class="qtg">+</span></div><div class="qa-ans">Yes — Jackson handles mixed structures seamlessly. Example: a root Map containing a POJO as a value: map.put("address", addressPojo). Jackson serializes the root Map as a JSON object, and when it encounters the AddressModel POJO value, it recursively serializes it using the POJO's getters. Mix freely based on what's convenient.</div></div>
+  <div class="qi"><div class="qq">Q5: What is the difference between ArrayNode.add() and ObjectNode.set() in Jackson? <span class="qtg">+</span></div><div class="qa-ans">ArrayNode.add(value) appends an element to the end of the array — used to build JSON arrays. It's chainable (returns ArrayNode). ObjectNode.set(key, node) embeds a JsonNode (ObjectNode or ArrayNode) as the value for a key in the object — used for nesting. ObjectNode.put(key, value) is for primitive values (String, int, boolean); set() is for nested nodes.</div></div>
+</div>
+
+</div></div>
+
+</div><!-- end main -->
+
+<!-- PROGRESS BAR -->
+<div class="pbar">
+  <div class="nvb">
+    <button class="nb" id="prevBtn">← Prev</button>
+    <button class="nb" id="nextBtn">Next →</button>
+  </div>
+  <div class="pw"><div class="pf" id="pf" style="width:25%"></div></div>
+  <div class="pt" id="pt">S11 / 4 — Serialization: Intro &amp; HashMap</div>
+</div>
+
+</div>
+
+<script>
+(function(){
+  var cur = 0;
+  var labels = [
+    'S11 / 4 — Serialization: Intro & HashMap',
+    'S12 / 4 — JSONObject & Gson',
+    'S13 / 4 — POJO + Jackson Full Mastery',
+    'S14 / 4 — Deep Nested + Arrays'
+  ];
+
+  function goS(n){
+    cur = n;
+    document.querySelectorAll('.session').forEach(function(el,i){
+      el.classList.toggle('active', i===n);
+    });
+    document.querySelectorAll('#stabRow .stab').forEach(function(el,i){
+      el.classList.toggle('active', i===n);
+    });
+    document.getElementById('pf').style.width = (((n+1)/4)*100)+'%';
+    document.getElementById('pt').textContent = labels[n];
+  }
+
+  document.getElementById('stabRow').addEventListener('click', function(e){
+    var t = e.target.closest('.stab');
+    if(!t) return;
+    var si = parseInt(t.getAttribute('data-si'));
+    if(!isNaN(si)) goS(si);
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', function(){
+    if(cur > 0) goS(cur-1);
+  });
+  document.getElementById('nextBtn').addEventListener('click', function(){
+    if(cur < 3) goS(cur+1);
+  });
+
+  document.querySelectorAll('.ctbar').forEach(function(bar){
+    bar.addEventListener('click', function(e){
+      var t = e.target.closest('.ct');
+      if(!t) return;
+      var ci = parseInt(t.getAttribute('data-ci'));
+      var cs = t.getAttribute('data-cs');
+      if(isNaN(ci) || !cs) return;
+
+      bar.querySelectorAll('.ct').forEach(function(ct){ ct.classList.remove('active'); });
+      t.classList.add('active');
+
+      var session = bar.closest('.session');
+      session.querySelectorAll('.cblk').forEach(function(blk){ blk.classList.remove('active'); });
+      var target = document.getElementById(cs+'-c'+ci);
+      if(target) target.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.qq').forEach(function(qq){
+    qq.addEventListener('click', function(){
+      qq.classList.toggle('open');
+      var ans = qq.nextElementSibling;
+      if(ans) ans.classList.toggle('open');
+    });
+  });
+})();
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

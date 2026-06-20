@@ -1,0 +1,1767 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selenium Java: Fundamentals & Wait Strategies (Sessions 7 to 11)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+.hub{padding:1rem 0;max-width:700px;font-family:var(--font-sans)}
+.phase-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.phase-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;border:1.5px solid}
+.ph1{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.ph2{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.ph3{background:#FAECE7;color:#712B13;border-color:#F0997B}
+.ph4{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.ph5{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.session-tabs{display:flex;gap:0;border-bottom:1.5px solid var(--color-border-tertiary);overflow-x:auto}
+.stab{padding:9px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--color-text-secondary);white-space:nowrap;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;font-family:var(--font-sans)}
+.stab.active{color:#3C3489;border-bottom-color:#7F77DD;background:#EEEDFE}
+.stab:hover:not(.active){background:var(--color-background-secondary)}
+.progress-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#EEEDFE;border-bottom:0.5px solid #AFA9EC}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.done{background:#1D9E75}.dot.active{background:#7F77DD}.dot.todo{background:#D3D1C7}
+.prog-label{font-size:11px;color:#3C3489;font-weight:500}
+.overview-banner{background:#EEEDFE;padding:14px 16px;border-bottom:0.5px solid #AFA9EC}
+.overview-banner h2{font-size:11px;font-weight:500;color:#534AB7;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.overview-banner p{font-size:13px;color:#26215C;line-height:1.6}
+.section{padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.section h3{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.interview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.q-pill{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px;color:var(--color-text-primary);line-height:1.5;border-left:3px solid #7F77DD}
+.arch-box{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;margin-bottom:8px}
+.arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.arch-node{padding:5px 10px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500;text-align:center;line-height:1.4}
+.n1{background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC}
+.n2{background:#E1F5EE;color:#085041;border:1px solid #5DCAA5}
+.n3{background:#FAECE7;color:#712B13;border:1px solid #F0997B}
+.n4{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
+.n5{background:#E6F1FB;color:#0C447C;border:1px solid #85B7EB}
+.arch-arrow{color:var(--color-text-secondary);font-size:14px;font-weight:500}
+.diff-row{font-size:12px;color:var(--color-text-secondary);padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;gap:6px}
+.code-section{background:#ffffff;border:1.5px solid #e2e4e8;border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.code-section-header{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#f6f8fa;border-bottom:1px solid #e2e4e8}
+.code-section-header span{font-size:11px;font-weight:500;color:#24292f;letter-spacing:.06em;text-transform:uppercase;font-family:'Courier New',monospace}
+.dot-row{display:flex;gap:5px}
+.mac-dot{width:11px;height:11px;border-radius:50%}
+.mac-red{background:#ff5f57}.mac-yellow{background:#febc2e}.mac-green{background:#28c840}
+.code-tab-bar{display:flex;gap:0;background:#f0f2f5;border-bottom:1px solid #e2e4e8;overflow-x:auto}
+.ctab{padding:7px 13px;font-size:11px;cursor:pointer;border:none;background:transparent;color:#57606a;white-space:nowrap;font-family:'Courier New',monospace;border-bottom:2px solid transparent;font-weight:500}
+.ctab.active{color:#0969da;border-bottom-color:#0969da;background:#ffffff}
+.ctab:hover:not(.active){background:#e8eaed;color:#24292f}
+.code-panel{display:none;padding:16px 18px;overflow-x:auto;background:#ffffff}
+.code-panel.active{display:block}
+pre{font-family:'Courier New',monospace;font-size:12px;line-height:2;white-space:pre;color:#24292f}
+.ln{color:#8c9198;font-size:11px;user-select:none;margin-right:14px;display:inline-block;width:20px;text-align:right}
+.kw{color:#cf222e;font-weight:500}
+.cm{color:#6e7781;font-style:italic}
+.st{color:#0a3069}
+.cl{color:#953800;font-weight:500}
+.mt{color:#8250df}
+.nm{color:#0550ae}
+.vr{color:#24292f}
+.bo{color:#116329;font-weight:500}
+.file-badge{background:#f0f2f5;border:0.5px solid #d0d7de;border-radius:4px;padding:3px 10px;font-size:11px;color:#57606a;font-family:'Courier New',monospace;display:inline-block;margin-bottom:8px}
+.bp-list{list-style:none;display:grid;gap:6px}
+.bp-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.bp-check{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px}
+.qa-list{display:grid;gap:10px}
+.qa-item{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.qa-q{font-size:12px;font-weight:500;color:#0969da;margin-bottom:4px}
+.qa-a{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{padding:2px 8px;border-radius:12px;font-size:11px;background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC}
+</style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+  <div class="hub">
+<div class="phase-bar">
+  <span class="phase-pill ph1">S7 · Alerts &amp; Dialogs</span>
+  <span class="phase-pill ph2">S8 · iFrames</span>
+  <span class="phase-pill ph3">S9 · Windows &amp; Tabs</span>
+  <span class="phase-pill ph4">S10 · Navigation</span>
+  <span class="phase-pill ph5">S11 · All Selenium Ops</span>
+</div>
+
+<div class="session-tabs" id="sessionTabs">
+  <button class="stab active" onclick="switchSession(0)">S7 · Alerts &amp; Dialogs</button>
+  <button class="stab" onclick="switchSession(1)">S8 · iFrames</button>
+  <button class="stab" onclick="switchSession(2)">S9 · Windows &amp; Tabs</button>
+  <button class="stab" onclick="switchSession(3)">S10 · Navigation</button>
+  <button class="stab" onclick="switchSession(4)">S11 · All Selenium Ops</button>
+</div>
+
+<div class="progress-row">
+  <span id="progDots"></span>
+  <span class="prog-label" id="progLabel">Session 7 of 11</span>
+</div>
+
+<div id="allSessions">
+
+<!-- ═══════════════════════════════ SESSION 7 ═══════════════════════════════ -->
+<div id="s0">
+  <div class="overview-banner">
+    <h2>Selenium Java: Fundamentals & Wait Strategies (Sessions 7 to 11)</h2>
+    <p>A dialog or alert is a browser-level popup that interrupts user interaction. Selenium handles three types: <strong>Alert</strong> (simple message), <strong>Confirm</strong> (OK/Cancel), and <strong>Prompt</strong> (text input). Web-level dialogs (custom HTML modals) use standard WebElement interactions. Failing to handle alerts before performing other actions throws <code>UnhandledAlertException</code>.</p>
+  </div>
+
+  <div class="section">
+    <h3>Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">driver.switchTo().alert() switches Selenium focus to the currently active browser alert popup.</div>
+      <div class="q-pill">Alert.accept() clicks OK; Alert.dismiss() clicks Cancel — never swap them on a confirm dialog.</div>
+      <div class="q-pill">Alert.sendKeys() types text into a JavaScript prompt() dialog input field.</div>
+      <div class="q-pill">Alert.getText() retrieves the message text displayed inside the alert popup.</div>
+      <div class="q-pill">UnhandledAlertException is thrown if you interact with the page while an alert is still open.</div>
+      <div class="q-pill">Web-level dialogs (HTML modals) are NOT browser alerts — handle them using standard findElement() methods.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Dialog types — architecture</h3>
+    <div class="arch-box">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">3 browser-native alert types (JavaScript-generated)</div>
+      <div class="arch-flow">
+        <div class="arch-node n1">alert()<br><span style="font-size:10px">Message only<br>accept() → OK</span></div>
+        <div class="arch-arrow">|</div>
+        <div class="arch-node n2">confirm()<br><span style="font-size:10px">OK + Cancel<br>accept()/dismiss()</span></div>
+        <div class="arch-arrow">|</div>
+        <div class="arch-node n3">prompt()<br><span style="font-size:10px">Text input box<br>sendKeys() + accept()</span></div>
+        <div class="arch-arrow">|</div>
+        <div class="arch-node n4">HTML Modal<br><span style="font-size:10px">Web-level dialog<br>findElement() click</span></div>
+      </div>
+    </div>
+    <div class="arch-box">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">Switching flow</div>
+      <div class="arch-flow">
+        <div class="arch-node n5">Trigger alert<br><span style="font-size:10px">button.click()</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n1">switchTo().alert()<br><span style="font-size:10px">Focus moves to alert</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n2">getText() / sendKeys()<br><span style="font-size:10px">Read or type</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n3">accept() / dismiss()<br><span style="font-size:10px">Close alert</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n4">Back to page<br><span style="font-size:10px">Continue tests</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code Examples</h3>
+    <div class="code-section">
+      <div class="code-section-header">
+        <div class="dot-row"><span class="mac-dot mac-red"></span><span class="mac-dot mac-yellow"></span><span class="mac-dot mac-green"></span></div>
+        <span>CODE EXAMPLES — S7 · Alerts &amp; Dialogs</span>
+      </div>
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(0,0)">1. Simple Alert</button>
+        <button class="ctab" onclick="switchCode(0,1)">2. Confirm Dialog</button>
+        <button class="ctab" onclick="switchCode(0,2)">3. Prompt Dialog</button>
+        <button class="ctab" onclick="switchCode(0,3)">4. Alert getText</button>
+        <button class="ctab" onclick="switchCode(0,4)">5. Wait for Alert</button>
+        <button class="ctab" onclick="switchCode(0,5)">6. HTML Modal</button>
+      </div>
+
+      <div class="code-panel active" id="c0-0">
+        <div class="file-badge">SimpleAlertDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Simple Alert — JavaScript alert() popup ──────────────────────
+ 2// alert() → browser popup with a message and only ONE button (OK)
+ 3// You MUST handle the alert before doing anything else on the page
+ 4import org.openqa.selenium.Alert;       // Alert → interface for browser popups
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class SimpleAlertDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+13
+14    // Click the button that TRIGGERS a JavaScript alert() popup
+15    driver.findElement(By.xpath("//button[text()='Click for JS Alert']")).click();
+16
+17    // switchTo().alert() → moves Selenium's focus to the active alert
+18    // Returns an Alert object representing the open popup
+19    Alert alert = driver.switchTo().alert();
+20
+21    // getText() → retrieves the message shown inside the alert popup
+22    System.out.println("Alert message: " + alert.getText());
+23
+24    // accept() → clicks the OK button and CLOSES the alert
+25    // For a simple alert, accept() is the only valid action
+26    alert.accept();
+27
+28    System.out.println("Alert dismissed — page is accessible again");
+29    driver.quit();
+30  }
+31}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c0-1">
+        <div class="file-badge">ConfirmDialogDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Confirm Dialog — JavaScript confirm() popup ──────────────────
+ 2// confirm() → popup with TWO buttons: OK and Cancel
+ 3// accept() → clicks OK (returns true to JavaScript)
+ 4// dismiss() → clicks Cancel (returns false to JavaScript)
+ 5import org.openqa.selenium.Alert;
+ 6import org.openqa.selenium.By;
+ 7import org.openqa.selenium.WebDriver;
+ 8import org.openqa.selenium.chrome.ChromeDriver;
+ 9
+10public class ConfirmDialogDemo {
+11  public static void main(String[] args) {
+12    WebDriver driver = new ChromeDriver();
+13    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+14
+15    // Trigger the confirm() popup by clicking the button
+16    driver.findElement(By.xpath("//button[text()='Click for JS Confirm']")).click();
+17
+18    Alert confirm = driver.switchTo().alert();
+19    System.out.println("Confirm says: " + confirm.getText());
+20
+21    // SCENARIO A: Click OK → accept() confirms the action
+22    confirm.accept();   // returns true to the JavaScript calling confirm()
+23
+24    // ── Trigger again to demonstrate dismiss ──────────────────────
+25    driver.findElement(By.xpath("//button[text()='Click for JS Confirm']")).click();
+26    Alert confirm2 = driver.switchTo().alert();
+27
+28    // SCENARIO B: Click Cancel → dismiss() rejects the action
+29    confirm2.dismiss(); // returns false to the JavaScript calling confirm()
+30
+31    System.out.println("Both confirm scenarios handled!");
+32    driver.quit();
+33  }
+34}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c0-2">
+        <div class="file-badge">PromptDialogDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Prompt Dialog — JavaScript prompt() with text input ──────────
+ 2// prompt() → popup with a text INPUT FIELD + OK + Cancel buttons
+ 3// sendKeys() → types text into the prompt's input field
+ 4// accept() → submits the typed value back to JavaScript
+ 5import org.openqa.selenium.Alert;
+ 6import org.openqa.selenium.By;
+ 7import org.openqa.selenium.WebDriver;
+ 8import org.openqa.selenium.chrome.ChromeDriver;
+ 9
+10public class PromptDialogDemo {
+11  public static void main(String[] args) {
+12    WebDriver driver = new ChromeDriver();
+13    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+14
+15    // Click the button that triggers a JavaScript prompt() popup
+16    driver.findElement(By.xpath("//button[text()='Click for JS Prompt']")).click();
+17
+18    // switchTo().alert() → works for ALL 3 alert types (alert, confirm, prompt)
+19    Alert prompt = driver.switchTo().alert();
+20
+21    // getText() → reads the question shown in the prompt popup
+22    System.out.println("Prompt asks: " + prompt.getText());
+23
+24    // sendKeys() → types text into the prompt's input field
+25    // This is the ONLY way to type into a browser-native prompt dialog
+26    prompt.sendKeys("Selenium Automation");
+27
+27    // accept() → submits the typed value (like pressing Enter or clicking OK)
+28    prompt.accept();
+29
+30    // dismiss() would have cancelled the prompt and sent null to JavaScript
+31    System.out.println("Prompt filled and submitted!");
+32    driver.quit();
+33  }
+34}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c0-3">
+        <div class="file-badge">AlertGetTextDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Alert getText() — Read and assert alert messages ─────────────
+ 2// Use getText() to capture alert message BEFORE closing the alert
+ 3// Then assert it matches the expected value in your test
+ 4import org.openqa.selenium.Alert;
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class AlertGetTextDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+13
+14    driver.findElement(By.xpath("//button[text()='Click for JS Alert']")).click();
+15
+16    Alert alert = driver.switchTo().alert();
+17
+18    // Capture the alert text BEFORE accepting it
+19    // Once you call accept()/dismiss(), the alert closes and text is gone
+20    String alertText = alert.getText();
+21    System.out.println("Captured: " + alertText);
+22
+23    // Assert the alert message matches what the application should display
+24    String expected = "I am a JS Alert";
+25    if (alertText.equals(expected)) {
+26      System.out.println("PASS: Alert text matches expected value");
+27    } else {
+28      System.out.println("FAIL: Got '" + alertText + "'");
+29    }
+30
+31    alert.accept(); // ALWAYS close the alert after reading the text
+32    driver.quit();
+33  }
+34}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c0-4">
+        <div class="file-badge">WaitForAlertDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Wait for Alert — Using ExpectedConditions ─────────────────────
+ 2// If an alert takes time to appear, use WebDriverWait to avoid
+ 3// NoAlertPresentException (thrown when no alert exists)
+ 4import org.openqa.selenium.Alert;
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import org.openqa.selenium.support.ui.WebDriverWait;      // Explicit wait
+ 9import org.openqa.selenium.support.ui.ExpectedConditions; // Condition library
+10import java.time.Duration;
+11
+12public class WaitForAlertDemo {
+13  public static void main(String[] args) {
+14    WebDriver driver = new ChromeDriver();
+15    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+16
+17    driver.findElement(By.xpath("//button[text()='Click for JS Alert']")).click();
+18
+19    // WebDriverWait → explicit wait object (max 10s timeout)
+20    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+21
+22    // alertIsPresent() → ExpectedCondition that waits until an alert appears
+23    // Returns the Alert object when the alert is ready to be interacted with
+24    Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+25
+26    System.out.println("Alert appeared: " + alert.getText());
+27    alert.accept();
+28
+29    System.out.println("Alert handled with explicit wait — reliable!");
+30    driver.quit();
+31  }
+32}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c0-5">
+        <div class="file-badge">HTMLModalDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── HTML Modal Dialog — Web-level popup (NOT a browser alert) ─────
+ 2// HTML modals are custom &lt;div&gt; overlays built with CSS/JavaScript
+ 3// They are PART OF THE PAGE DOM — handle with standard findElement()
+ 4// DO NOT use switchTo().alert() for HTML modals — they are NOT alerts
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.WebElement;
+ 8import org.openqa.selenium.chrome.ChromeDriver;
+ 9import org.openqa.selenium.support.ui.WebDriverWait;
+10import org.openqa.selenium.support.ui.ExpectedConditions;
+11import java.time.Duration;
+12
+13public class HTMLModalDemo {
+14  public static void main(String[] args) {
+15    WebDriver driver = new ChromeDriver();
+16    driver.get("https://the-internet.herokuapp.com/entry_ad");
+17
+18    // Wait for the modal &lt;div&gt; to become VISIBLE on the page
+19    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+20    WebElement modal = wait.until(
+span class="cl">ExpectedConditions.visibilityOfElementLocated(By.id("modal")));
+21
+22    // Read the modal title — it's a normal DOM element, use getText()
+23    String title = modal.findElement(By.tagName("h3")).getText();
+24    System.out.println("Modal title: " + title);
+25
+26    // Close the HTML modal by clicking its close button (standard click)
+27    driver.findElement(By.cssSelector(".modal-footer p")).click();
+28    System.out.println("HTML modal closed — it's just a DOM element!");
+29    driver.quit();
+30  }
+31}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Best Practices</h3>
+    <ul class="bp-list">
+      <li><span class="bp-check">✓</span>Always use <code>WebDriverWait + alertIsPresent()</code> instead of directly calling <code>switchTo().alert()</code> — prevents <code>NoAlertPresentException</code> on slow pages</li>
+      <li><span class="bp-check">✓</span>Capture <code>alert.getText()</code> BEFORE calling <code>accept()</code> or <code>dismiss()</code> — once closed, the alert text is gone forever</li>
+      <li><span class="bp-check">✓</span>Never use <code>switchTo().alert()</code> for HTML modal dialogs — they are DOM elements, handled by <code>findElement()</code></li>
+      <li><span class="bp-check">✓</span>For <code>confirm()</code> popups, use <code>accept()</code> for OK and <code>dismiss()</code> for Cancel — never swap them</li>
+      <li><span class="bp-check">✓</span>For <code>prompt()</code>, call <code>sendKeys()</code> BEFORE <code>accept()</code> — typing after accepting has no effect</li>
+      <li><span class="bp-check">✓</span>In TestNG <code>@AfterMethod</code>, add a try-catch to close any open alerts before the next test starts</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What is the difference between alert(), confirm(), and prompt() in Selenium?</div><div class="qa-a">A: <code>alert()</code> has only OK (use <code>accept()</code>). <code>confirm()</code> has OK and Cancel (<code>accept()</code> for OK, <code>dismiss()</code> for Cancel). <code>prompt()</code> has a text field + OK/Cancel — use <code>sendKeys()</code> before <code>accept()</code>.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. What exception is thrown when an alert is present and you try to interact with the page?</div><div class="qa-a">A: <code>UnhandledAlertException</code> — thrown when Selenium tries to perform any action on the main page while a JavaScript alert is still open. Always handle the alert first.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. What exception is thrown when there is no alert but you call switchTo().alert()?</div><div class="qa-a">A: <code>NoAlertPresentException</code> — thrown when <code>switchTo().alert()</code> is called but no browser alert is currently open. Use <code>WebDriverWait + alertIsPresent()</code> to handle this safely.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. How do you handle an HTML modal dialog differently from a JavaScript alert?</div><div class="qa-a">A: HTML modals are part of the page DOM — find and interact with them using <code>findElement(By.id())</code>, <code>getText()</code>, and <code>click()</code>. Never use <code>switchTo().alert()</code> for HTML modals.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. Can you type into a browser alert using sendKeys() on a WebElement?</div><div class="qa-a">A: No. For a JavaScript <code>prompt()</code> dialog, you type via <code>alert.sendKeys("text")</code> on the Alert object itself — not via a WebElement, because the input inside an alert is not part of the DOM.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SESSION 8 ═══════════════════════════════ -->
+<div id="s1" style="display:none">
+  <div class="overview-banner">
+    <h2>Overview — iFrame Handling</h2>
+    <p>An <strong>iFrame</strong> (inline frame) is an HTML element that embeds another separate HTML document inside the current page. Selenium cannot directly access elements inside an iFrame without first switching context into it. After working inside the iFrame, you must switch back to the main document to access elements outside it.</p>
+  </div>
+
+  <div class="section">
+    <h3>Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">switchTo().frame() switches Selenium's context INTO an iFrame so you can find elements inside it.</div>
+      <div class="q-pill">switchTo().defaultContent() returns Selenium's focus to the TOP-LEVEL main page document.</div>
+      <div class="q-pill">switchTo().parentFrame() moves to the IMMEDIATE parent frame (one level up, not all the way to top).</div>
+      <div class="q-pill">You can switch into an iFrame by index, name/id string, or WebElement reference — 3 ways.</div>
+      <div class="q-pill">Nested iFrames require multiple switchTo().frame() calls — one per level to go deeper.</div>
+      <div class="q-pill">NoSuchFrameException is thrown when the iFrame you try to switch into does not exist.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>iFrame context switching flow</h3>
+    <div class="arch-box">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">Selenium context levels</div>
+      <div class="arch-flow">
+        <div class="arch-node n1">Main Page<br><span style="font-size:10px">defaultContent()</span></div>
+        <div class="arch-arrow">→ frame()</div>
+        <div class="arch-node n2">iFrame Level 1<br><span style="font-size:10px">switchTo().frame()</span></div>
+        <div class="arch-arrow">→ frame()</div>
+        <div class="arch-node n3">iFrame Level 2<br><span style="font-size:10px">nested iFrame</span></div>
+        <div class="arch-arrow">← parentFrame()</div>
+        <div class="arch-node n4">Back to Level 1<br><span style="font-size:10px">one level up</span></div>
+      </div>
+    </div>
+    <div class="arch-box">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">3 ways to switch into an iFrame</div>
+      <div class="diff-row"><span style="color:#3C3489;font-weight:500;width:80px;flex-shrink:0">By Index</span><span><code>driver.switchTo().frame(0)</code> — switches to the first iFrame (0-based index)</span></div>
+      <div class="diff-row"><span style="color:#085041;font-weight:500;width:80px;flex-shrink:0">By Name/ID</span><span><code>driver.switchTo().frame("myFrame")</code> — uses the name or id HTML attribute</span></div>
+      <div class="diff-row" style="border:none"><span style="color:#712B13;font-weight:500;width:80px;flex-shrink:0">By Element</span><span><code>driver.switchTo().frame(webElement)</code> — most reliable, uses located WebElement</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code Examples</h3>
+    <div class="code-section">
+      <div class="code-section-header">
+        <div class="dot-row"><span class="mac-dot mac-red"></span><span class="mac-dot mac-yellow"></span><span class="mac-dot mac-green"></span></div>
+        <span>CODE EXAMPLES — S8 · iFrame Handling</span>
+      </div>
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(1,0)">1. Switch by Index</button>
+        <button class="ctab" onclick="switchCode(1,1)">2. Switch by Name</button>
+        <button class="ctab" onclick="switchCode(1,2)">3. Switch by Element</button>
+        <button class="ctab" onclick="switchCode(1,3)">4. Nested iFrames</button>
+        <button class="ctab" onclick="switchCode(1,4)">5. parentFrame()</button>
+        <button class="ctab" onclick="switchCode(1,5)">6. Wait for iFrame</button>
+      </div>
+
+      <div class="code-panel active" id="c1-0">
+        <div class="file-badge">FrameByIndexDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Switch into iFrame by INDEX ───────────────────────────────────
+ 2// frame(int index) → switches to the Nth iFrame on the page (0-based)
+ 3// Index 0 = first iFrame, index 1 = second iFrame, etc.
+ 4// Least reliable approach — breaks if new iFrames are added to the page
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class FrameByIndexDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/iframe");
+13
+14    // Before switching: findElement() on main page works fine
+15    System.out.println("Main page title: " + driver.getTitle());
+16
+17    // switchTo().frame(0) → enters the FIRST iFrame on the page
+18    // After this call, ALL findElement() searches happen INSIDE the iFrame
+19    driver.switchTo().frame(0);
+20
+21    // Now we can access elements INSIDE the iFrame
+22    // This element is inside the iFrame — NOT accessible from the main page
+23    String text = driver.findElement(By.id("tinymce")).getText();
+24    System.out.println("iFrame content: " + text);
+25
+26    // defaultContent() → exits ALL iFrames, returns to main page context
+27    driver.switchTo().defaultContent();
+28
+29    // Now we're back on the main page — can access main page elements
+30    System.out.println("Back on main page!");
+31    driver.quit();
+32  }
+33}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c1-1">
+        <div class="file-badge">FrameByNameDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Switch into iFrame by NAME or ID ─────────────────────────────
+ 2// frame(String nameOrId) → switches to iFrame matching its name or id attribute
+ 3// HTML: &lt;iframe name="myFrame" id="iframe1"&gt;
+ 4// Both name and id attributes are checked — whichever matches is used
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class FrameByNameDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/iframe");
+13
+14    // frame("mce_0_ifr") → switches using the iFrame's name or id attribute
+15    // This is more stable than index (doesn't break on page reorder)
+16    driver.switchTo().frame("mce_0_ifr");
+17
+18    // Interact with element inside the iFrame
+19    driver.findElement(By.id("tinymce")).clear();
+20    driver.findElement(By.id("tinymce")).sendKeys("Hello from iFrame!");
+21
+22    String text = driver.findElement(By.id("tinymce")).getText();
+23    System.out.println("iFrame text: " + text);
+24
+25    // Switch back to main page after iFrame work is done
+26    driver.switchTo().defaultContent();
+27    System.out.println("Switched back to main document");
+28    driver.quit();
+29  }
+30}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c1-2">
+        <div class="file-badge">FrameByElementDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Switch into iFrame by WebElement — MOST RELIABLE method ──────
+ 2// frame(WebElement) → locate the &lt;iframe&gt; tag first, then switch into it
+ 3// Best practice: find the iFrame element with an explicit wait first
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import org.openqa.selenium.support.ui.WebDriverWait;
+ 9import org.openqa.selenium.support.ui.ExpectedConditions;
+10import java.time.Duration;
+11
+12public class FrameByElementDemo {
+13  public static void main(String[] args) {
+14    WebDriver driver = new ChromeDriver();
+15    driver.get("https://the-internet.herokuapp.com/iframe");
+16
+17    // Step 1: Wait for iFrame element to be present in the DOM
+18    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+19    WebElement iframeElement = wait.until(
+20      ExpectedConditions.presenceOfElementLocated(By.id("mce_0_ifr")));
+21
+22    // Step 2: Pass the WebElement into frame() — most stable method
+23    // Selenium locates the actual &lt;iframe&gt; DOM node and switches into it
+24    driver.switchTo().frame(iframeElement);
+25
+26    // Step 3: Now interact with content inside the iFrame
+27    WebElement editor = driver.findElement(By.id("tinymce"));
+28    editor.clear();
+29    editor.sendKeys("Typing inside iFrame via WebElement switch!");
+30
+31    // Step 4: Return to main page context
+32    driver.switchTo().defaultContent();
+33    driver.quit();
+34  }
+35}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c1-3">
+        <div class="file-badge">NestedFramesDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Nested iFrames — iFrame inside another iFrame ─────────────────
+ 2// Each switchTo().frame() goes ONE level deeper into a nested iFrame
+ 3// You MUST switch into each parent iFrame before accessing its children
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7
+ 8public class NestedFramesDemo {
+ 9  public static void main(String[] args) {
+10    WebDriver driver = new ChromeDriver();
+11    driver.get("https://the-internet.herokuapp.com/nested_frames");
+12
+13    // LEVEL 1: Switch into the outer "frame-top" frame first
+14    driver.switchTo().frame("frame-top");
+15    System.out.println("Inside frame-top");
+16
+17    // LEVEL 2: Switch into a NESTED frame inside frame-top
+18    // This only works because we're already inside frame-top
+19    driver.switchTo().frame("frame-middle");
+20    System.out.println("Inside frame-middle (nested)");
+21
+22    // Now we can find elements inside the deeply nested frame
+23    String bodyText = driver.findElement(By.id("content")).getText();
+24    System.out.println("Nested frame text: " + bodyText);
+25
+26    // parentFrame() → goes ONE level up (to frame-top, NOT main page)
+27    driver.switchTo().parentFrame();
+28    System.out.println("Back in frame-top");
+29
+30    // defaultContent() → jumps ALL the way back to the main page
+31    driver.switchTo().defaultContent();
+32    System.out.println("Back at main page!");
+33    driver.quit();
+34  }
+35}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c1-4">
+        <div class="file-badge">ParentFrameDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── parentFrame() vs defaultContent() — Know the difference ──────
+ 2// parentFrame() → goes UP exactly ONE iFrame level
+ 3// defaultContent() → jumps ALL the way back to the top-level main page
+ 4// Use parentFrame() when working with deeply nested iFrames
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class ParentFrameDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/nested_frames");
+13
+14    // Descend into 3 levels of nested iFrames
+15    driver.switchTo().frame("frame-top");    // Level 1
+16    driver.switchTo().frame("frame-middle"); // Level 2 (nested)
+17
+18    System.out.println("Currently at Level 2 (frame-middle)");
+19
+20    // parentFrame() → moves UP to Level 1 (frame-top)
+21    // NOT all the way to the main page
+22    driver.switchTo().parentFrame();
+23    System.out.println("parentFrame() → now at Level 1 (frame-top)");
+24
+25    // Can now access elements in frame-top (Level 1)
+26    // NOT possible to access main page elements yet
+27
+28    // defaultContent() → skips ALL levels, goes straight to main page
+29    driver.switchTo().defaultContent();
+30    System.out.println("defaultContent() → now at main page (Level 0)");
+31
+32    driver.quit();
+33  }
+34}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c1-5">
+        <div class="file-badge">WaitForFrameDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Wait for iFrame — ExpectedConditions.frameToBeAvailable ──────
+ 2// frameToBeAvailableAndSwitchToIt() → waits for iFrame AND switches
+ 3// into it in one step — most reliable for dynamic pages
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import org.openqa.selenium.support.ui.WebDriverWait;
+ 9import org.openqa.selenium.support.ui.ExpectedConditions;
+10import java.time.Duration;
+11
+12public class WaitForFrameDemo {
+13  public static void main(String[] args) {
+14    WebDriver driver = new ChromeDriver();
+15    driver.get("https://the-internet.herokuapp.com/iframe");
+16
+17    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+18
+19    // frameToBeAvailableAndSwitchToIt(By) → TWO actions in ONE:
+20    // 1. Waits until the iFrame is present and ready in the DOM
+21    // 2. Automatically switches context into the iFrame
+22    // Returns the WebDriver after the switch — ready for element search
+23    wait.until(ExpectedConditions
+24      .frameToBeAvailableAndSwitchToIt(By.id("mce_0_ifr")));
+25
+26    // Context is now INSIDE the iFrame — can interact with its elements
+27    WebElement editor = driver.findElement(By.id("tinymce"));
+28    editor.clear();
+29    editor.sendKeys("Typed after waiting for iFrame to be ready!");
+30
+31    System.out.println("iFrame text: " + editor.getText());
+32
+33    driver.switchTo().defaultContent(); // Always return to main page
+34    driver.quit();
+35  }
+36}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Best Practices</h3>
+    <ul class="bp-list">
+      <li><span class="bp-check">✓</span>Always call <code>switchTo().defaultContent()</code> after finishing work inside an iFrame — failure to do so causes <code>NoSuchElementException</code> when accessing the main page</li>
+      <li><span class="bp-check">✓</span>Prefer <code>frameToBeAvailableAndSwitchToIt(By)</code> over direct <code>switchTo().frame()</code> — it waits for the iFrame to load before switching</li>
+      <li><span class="bp-check">✓</span>Use WebElement-based switch (<code>switchTo().frame(webElement)</code>) instead of index — most stable and least affected by page changes</li>
+      <li><span class="bp-check">✓</span>For nested iFrames, always enter from the outermost level inward — you cannot jump directly to a deeply nested iFrame</li>
+      <li><span class="bp-check">✓</span>Use <code>parentFrame()</code> when you need to work between nested iFrame levels — use <code>defaultContent()</code> only when done with all iFrame work</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What is the difference between defaultContent() and parentFrame()?</div><div class="qa-a">A: <code>defaultContent()</code> jumps ALL the way back to the top-level main page from any nesting depth. <code>parentFrame()</code> goes exactly one level up — from child iFrame to its immediate parent iFrame.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. What exception is thrown when you try to find an element inside an iFrame without switching context first?</div><div class="qa-a">A: <code>NoSuchElementException</code> — the element exists in the DOM but is inside an iFrame's separate document context. Selenium searches only the current active context (main page or current iFrame).</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. What are the 3 ways to switch into an iFrame?</div><div class="qa-a">A: (1) By index: <code>frame(0)</code>; (2) By name or id: <code>frame("myFrame")</code>; (3) By WebElement: <code>frame(webElement)</code>. WebElement is most reliable, index is least reliable.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. How do you handle an iFrame that loads dynamically after page load?</div><div class="qa-a">A: Use <code>WebDriverWait + ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.id("iframeId"))</code> — it waits for the iFrame to appear in the DOM then switches into it automatically.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. What exception is thrown when the iFrame you try to switch into doesn't exist?</div><div class="qa-a">A: <code>NoSuchFrameException</code> — thrown when <code>switchTo().frame()</code> cannot find an iFrame matching the given index, name, id, or WebElement reference.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SESSION 9 ═══════════════════════════════ -->
+<div id="s2" style="display:none">
+  <div class="overview-banner">
+    <h2>Overview — Windows &amp; Tabs Handling</h2>
+    <p>When a test causes a new browser window or tab to open (e.g., clicking a link with <code>target="_blank"</code>), Selenium stays focused on the original window. You must explicitly switch to the new window using its <strong>window handle</strong> — a unique string ID assigned to each open window/tab. All operations apply to whichever window Selenium is currently focused on.</p>
+  </div>
+
+  <div class="section">
+    <h3>Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">getWindowHandle() returns the unique string ID of the currently focused browser window or tab.</div>
+      <div class="q-pill">getWindowHandles() returns a Set of all open window/tab handle IDs in the current session.</div>
+      <div class="q-pill">switchTo().window(handle) switches Selenium's focus to the window/tab with that handle ID.</div>
+      <div class="q-pill">driver.close() closes the CURRENTLY FOCUSED window/tab without ending the session.</div>
+      <div class="q-pill">After closing a child window, you MUST switch back to the parent window handle — driver is still open.</div>
+      <div class="q-pill">WindowType.TAB and WindowType.WINDOW in Selenium 4 open new tabs/windows natively without JavaScript.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Window handle switching flow</h3>
+    <div class="arch-box">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">Handle-based switching pattern</div>
+      <div class="arch-flow">
+        <div class="arch-node n1">Save parentHandle<br><span style="font-size:10px">getWindowHandle()</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n2">Action opens new window<br><span style="font-size:10px">click / newWindow()</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n3">Get all handles<br><span style="font-size:10px">getWindowHandles()</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n4">Switch to new handle<br><span style="font-size:10px">switchTo().window()</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node n5">Work → close()<br><span style="font-size:10px">then switch back</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code Examples</h3>
+    <div class="code-section">
+      <div class="code-section-header">
+        <div class="dot-row"><span class="mac-dot mac-red"></span><span class="mac-dot mac-yellow"></span><span class="mac-dot mac-green"></span></div>
+        <span>CODE EXAMPLES — S9 · Windows &amp; Tabs</span>
+      </div>
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(2,0)">1. Get Handles</button>
+        <button class="ctab" onclick="switchCode(2,1)">2. Switch Window</button>
+        <button class="ctab" onclick="switchCode(2,2)">3. Close &amp; Return</button>
+        <button class="ctab" onclick="switchCode(2,3)">4. New Tab (v4)</button>
+        <button class="ctab" onclick="switchCode(2,4)">5. New Window (v4)</button>
+        <button class="ctab" onclick="switchCode(2,5)">6. Multi-Window Loop</button>
+      </div>
+
+      <div class="code-panel active" id="c2-0">
+        <div class="file-badge">GetHandlesDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Window Handles — Understanding the handle system ─────────────
+ 2// A window handle is a unique opaque String ID assigned to each window/tab
+ 3// Example handle value: "CDwindow-4A5C9A5D0E4C3F1234567" (browser-generated)
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.chrome.ChromeDriver;
+ 6import java.util.Set; // Set → unordered collection of unique Strings
+ 7
+ 8public class GetHandlesDemo {
+ 9  public static void main(String[] args) {
+10    WebDriver driver = new ChromeDriver();
+11    driver.get("https://www.example.com");
+12
+13    // getWindowHandle() → returns CURRENT focused window's unique String ID
+14    // SAVE this BEFORE any action opens a new window — this is your parent!
+15    String parentHandle = driver.getWindowHandle();
+16    System.out.println("Parent handle: " + parentHandle);
+17
+18    // Open a new tab using Selenium 4 native method
+19    driver.switchTo().newWindow(org.openqa.selenium.WindowType.TAB);
+20
+21    // getWindowHandles() → returns Set of ALL open window/tab handle IDs
+22    Set&lt;String&gt; allHandles = driver.getWindowHandles();
+23    System.out.println("Total open windows/tabs: " + allHandles.size());
+24
+25    // Print all handles — each is a unique opaque string
+26    for (String handle : allHandles) {
+27      System.out.println("  Handle: " + handle);
+28    }
+29
+30    driver.quit(); // closes ALL windows
+31  }
+32}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c2-1">
+        <div class="file-badge">SwitchWindowDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Switch to New Window — Standard pattern ───────────────────────
+ 2// When a link opens a new window, Selenium stays on the original window
+ 3// You must MANUALLY switch to the new window's handle
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7import java.util.Set;
+ 8
+ 9public class SwitchWindowDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/windows");
+13
+14    // STEP 1: Save the PARENT window handle BEFORE clicking the link
+15    String parentHandle = driver.getWindowHandle();
+16
+17    // STEP 2: Click link that opens a new window (target="_blank")
+18    driver.findElement(By.linkText("Click Here")).click();
+19
+20    // STEP 3: Get all handles — now contains parent + new window
+21    Set&lt;String&gt; allHandles = driver.getWindowHandles();
+22
+23    // STEP 4: Loop through handles, find the NEW one (not the parent)
+24    for (String handle : allHandles) {
+25      if (!handle.equals(parentHandle)) {    // skip the parent
+26        driver.switchTo().window(handle);  // switch to new window
+27      }
+28    }
+29
+30    // STEP 5: Interact with the new window
+31    System.out.println("New window title: " + driver.getTitle());
+32    driver.quit();
+33  }
+34}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c2-2">
+        <div class="file-badge">CloseAndReturnDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Close Child Window and Return to Parent ───────────────────────
+ 2// After working in a child window, close it and switch BACK to parent
+ 3// CRITICAL: After close(), you MUST switch to another valid window handle
+ 4// The session is still alive — only that one window is closed
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import java.util.Set;
+ 9
+10public class CloseAndReturnDemo {
+11  public static void main(String[] args) {
+12    WebDriver driver = new ChromeDriver();
+13    driver.get("https://the-internet.herokuapp.com/windows");
+14
+15    String parentHandle = driver.getWindowHandle(); // Save parent
+16    driver.findElement(By.linkText("Click Here")).click();
+17
+18    // Switch to the child window
+19    for (String handle : driver.getWindowHandles()) {
+20      if (!handle.equals(parentHandle)) {
+21        driver.switchTo().window(handle);
+22      }
+23    }
+24
+25    // Do work in the child window
+26    System.out.println("Child window: " + driver.getTitle());
+27
+28    // close() → closes ONLY the currently focused window (child)
+29    // The WebDriver session is still ALIVE — parent window is still open
+30    driver.close();
+31
+32    // MUST switch back to parent — driver is "orphaned" after close()
+33    // Without this line, all subsequent driver calls will fail
+34    driver.switchTo().window(parentHandle);
+35    System.out.println("Back on parent: " + driver.getTitle());
+36    driver.quit();
+37  }
+38}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c2-3">
+        <div class="file-badge">NewTabSelenium4Demo.java</div>
+        <pre><code class="language-java">
+ 1// ── Open New TAB — Selenium 4 Native (no JavaScript needed) ──────
+ 2// WindowType.TAB → opens a new browser tab and focuses on it
+ 3// Selenium 3 required: ((JavascriptExecutor) driver).executeScript("window.open()")
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.WindowType; // NEW in Selenium 4
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7
+ 8public class NewTabSelenium4Demo {
+ 9  public static void main(String[] args) {
+10    WebDriver driver = new ChromeDriver();
+11    driver.get("https://www.google.com");
+12
+13    String parentHandle = driver.getWindowHandle(); // Save parent tab handle
+14
+15    // switchTo().newWindow(WindowType.TAB) → opens a NEW browser TAB
+16    // Driver focus automatically moves to the new tab
+17    driver.switchTo().newWindow(WindowType.TAB);
+18
+19    // Navigate in the new tab
+20    driver.get("https://www.selenium.dev");
+21    System.out.println("New TAB title: " + driver.getTitle());
+22    System.out.println("Total tabs open: " + driver.getWindowHandles().size());
+23
+24    // Close new tab and go back to original tab
+25    driver.close();
+26    driver.switchTo().window(parentHandle);
+27    System.out.println("Back on parent tab: " + driver.getTitle());
+28    driver.quit();
+29  }
+30}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c2-4">
+        <div class="file-badge">NewWindowSelenium4Demo.java</div>
+        <pre><code class="language-java">
+ 1// ── Open New WINDOW — Selenium 4 Native ──────────────────────────
+ 2// WindowType.WINDOW → opens a new separate browser window
+ 3// TAB vs WINDOW: TAB opens in same browser; WINDOW opens new OS window
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.WindowType;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7
+ 8public class NewWindowSelenium4Demo {
+ 9  public static void main(String[] args) {
+10    WebDriver driver = new ChromeDriver();
+11    driver.get("https://www.google.com");
+12
+13    String parentHandle = driver.getWindowHandle();
+14    System.out.println("Window 1 (parent): " + driver.getTitle());
+15
+16    // switchTo().newWindow(WindowType.WINDOW) → opens a NEW OS browser window
+17    // Driver focus automatically moves to the new window
+18    driver.switchTo().newWindow(WindowType.WINDOW);
+19    driver.get("https://www.selenium.dev");
+20    System.out.println("Window 2 (new):    " + driver.getTitle());
+21
+22    // Both windows are now part of the SAME WebDriver session
+23    System.out.println("Total windows: " + driver.getWindowHandles().size());
+24
+25    // Close Window 2 and return to Window 1
+26    driver.close();
+27    driver.switchTo().window(parentHandle); // switch back or driver is orphaned
+28    System.out.println("Back on Window 1: " + driver.getTitle());
+29    driver.quit();
+30  }
+31}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c2-5">
+        <div class="file-badge">MultiWindowLoopDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Multi-Window Loop — Handle all open windows dynamically ──────
+ 2// Iterate all window handles when you don't know how many windows open
+ 3import org.openqa.selenium.WebDriver;
+ 4import org.openqa.selenium.WindowType;
+ 5import org.openqa.selenium.chrome.ChromeDriver;
+ 6import java.util.ArrayList;
+ 7import java.util.List;
+ 8
+ 9public class MultiWindowLoopDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://www.google.com");
+13    String parent = driver.getWindowHandle();
+14
+15    // Open 3 new tabs and navigate to different URLs
+16    String[] urls = {"https://www.selenium.dev",
+17                      "https://www.example.com",
+18                      "https://www.github.com"};
+19    for (String url : urls) {
+20      driver.switchTo().newWindow(WindowType.TAB);
+21      driver.get(url);
+22    }
+23
+24    // Convert Set to List for indexed access (Set has no guaranteed order)
+25    List&lt;String&gt; handles = new ArrayList&lt;&gt;(driver.getWindowHandles());
+26    System.out.println("Total open: " + handles.size() + " tabs");
+27
+28    // Iterate all windows: switch → print title → continue
+29    for (String handle : handles) {
+30      driver.switchTo().window(handle);
+31      System.out.println("Tab: " + driver.getTitle() + " | " + driver.getCurrentUrl());
+32    }
+33
+34    driver.switchTo().window(parent); // Return to first window
+35    driver.quit();
+36  }
+37}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Best Practices</h3>
+    <ul class="bp-list">
+      <li><span class="bp-check">✓</span>Always save <code>driver.getWindowHandle()</code> as <code>parentHandle</code> BEFORE any action that opens a new window</li>
+      <li><span class="bp-check">✓</span>After calling <code>driver.close()</code> on a child window, ALWAYS call <code>driver.switchTo().window(parentHandle)</code> immediately</li>
+      <li><span class="bp-check">✓</span>Use <code>WindowType.TAB</code> and <code>WindowType.WINDOW</code> (Selenium 4) instead of JavaScript <code>window.open()</code> hacks</li>
+      <li><span class="bp-check">✓</span>Convert <code>getWindowHandles()</code> Set to ArrayList when you need index-based access — Sets have no guaranteed order</li>
+      <li><span class="bp-check">✓</span>In parallel tests, each WebDriver instance has its OWN isolated set of window handles — they do not share handles</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What is a window handle in Selenium?</div><div class="qa-a">A: A unique opaque String ID assigned by the browser to each open window or tab. Selenium uses it to identify and switch focus between multiple open browser windows/tabs in the same WebDriver session.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. What is the difference between getWindowHandle() and getWindowHandles()?</div><div class="qa-a">A: <code>getWindowHandle()</code> returns a single String — the ID of the CURRENTLY focused window. <code>getWindowHandles()</code> returns a <code>Set&lt;String&gt;</code> of ALL open window/tab IDs in the session.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. What happens if you call driver.close() and then try to use driver without switching to another window?</div><div class="qa-a">A: <code>NoSuchWindowException</code> — after <code>close()</code>, the driver focus points to a closed window. You must call <code>switchTo().window(someValidHandle)</code> before doing anything else.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. How do you switch to the newest opened window without knowing its handle?</div><div class="qa-a">A: Convert <code>getWindowHandles()</code> to an ArrayList and take the last element — <code>new ArrayList&lt;&gt;(driver.getWindowHandles()).get(size-1)</code> — as the most recently opened window is typically added last.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. What is the difference between driver.close() and driver.quit() in multi-window scenarios?</div><div class="qa-a">A: <code>close()</code> closes only the currently focused window/tab; other windows remain open and the session stays active. <code>quit()</code> closes ALL windows, tabs, and terminates the entire WebDriver session.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SESSION 10 ═══════════════════════════════ -->
+<div id="s3" style="display:none">
+  <div class="overview-banner">
+    <h2>Overview — All Navigation Handling</h2>
+    <p>Navigation in Selenium covers all methods for controlling <strong>where the browser goes</strong> and <strong>how it gets there</strong>. This includes opening URLs, using browser history (back/forward/refresh), handling page load timeouts, and advanced URL navigation patterns used in real test frameworks.</p>
+  </div>
+
+  <div class="section">
+    <h3>Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">driver.get(url) opens a URL and WAITS for the page to fully load before returning control.</div>
+      <div class="q-pill">driver.navigate().to(url) is functionally identical to get() but part of the navigate() object.</div>
+      <div class="q-pill">navigate().back() simulates clicking the browser Back button (uses browser history).</div>
+      <div class="q-pill">navigate().forward() simulates clicking the browser Forward button (uses browser history).</div>
+      <div class="q-pill">navigate().refresh() reloads the current page — equivalent to pressing F5 in the browser.</div>
+      <div class="q-pill">pageLoadTimeout sets the maximum time Selenium waits for a page to load before throwing TimeoutException.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Navigation methods architecture</h3>
+    <div class="arch-box">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">All navigation entry points</div>
+      <div class="diff-row"><span style="color:#3C3489;font-weight:500;width:160px;flex-shrink:0">driver.get(url)</span><span>Direct URL open — waits for full page load (readyState = complete)</span></div>
+      <div class="diff-row"><span style="color:#085041;font-weight:500;width:160px;flex-shrink:0">navigate().to(url)</span><span>Same as get() but via navigate() API — prefer for navigate chaining</span></div>
+      <div class="diff-row"><span style="color:#712B13;font-weight:500;width:160px;flex-shrink:0">navigate().back()</span><span>Browser history — one step back (URL must have been visited)</span></div>
+      <div class="diff-row"><span style="color:#633806;font-weight:500;width:160px;flex-shrink:0">navigate().forward()</span><span>Browser history — one step forward (must have gone back first)</span></div>
+      <div class="diff-row"><span style="color:#0C447C;font-weight:500;width:160px;flex-shrink:0">navigate().refresh()</span><span>Hard reload of current page — re-sends HTTP request, clears JS state</span></div>
+      <div class="diff-row" style="border:none"><span style="color:#712B13;font-weight:500;width:160px;flex-shrink:0">pageLoadTimeout</span><span>Max time to wait for page load — throws TimeoutException if exceeded</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code Examples</h3>
+    <div class="code-section">
+      <div class="code-section-header">
+        <div class="dot-row"><span class="mac-dot mac-red"></span><span class="mac-dot mac-yellow"></span><span class="mac-dot mac-green"></span></div>
+        <span>CODE EXAMPLES — S10 · Navigation Handling</span>
+      </div>
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(3,0)">1. get() vs to()</button>
+        <button class="ctab" onclick="switchCode(3,1)">2. back() forward()</button>
+        <button class="ctab" onclick="switchCode(3,2)">3. refresh()</button>
+        <button class="ctab" onclick="switchCode(3,3)">4. Page Load Timeout</button>
+        <button class="ctab" onclick="switchCode(3,4)">5. URL Assertions</button>
+        <button class="ctab" onclick="switchCode(3,5)">6. JS Navigation</button>
+      </div>
+
+      <div class="code-panel active" id="c3-0">
+        <div class="file-badge">GetVsNavigateDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── driver.get() vs navigate().to() — What is the difference? ────
+ 2// Both open a URL and wait for the page to fully load
+ 3// get(url) → direct, shorter syntax, most commonly used
+ 4// navigate().to(url) → part of the Navigate API, chainable pattern
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7
+ 8public class GetVsNavigateDemo {
+ 9  public static void main(String[] args) {
+10    WebDriver driver = new ChromeDriver();
+11
+12    // METHOD 1: driver.get(url)
+13    // Opens the URL and BLOCKS until document.readyState == "complete"
+14    // Most commonly used approach in Selenium tests
+15    driver.get("https://www.google.com");
+16    System.out.println("get() - Title: " + driver.getTitle());
+17
+18    // METHOD 2: driver.navigate().to(url)
+19    // navigate() returns a Navigate interface with to/back/forward/refresh
+20    // to() is functionally IDENTICAL to get() for URL loading
+21    driver.navigate().to("https://www.selenium.dev");
+22    System.out.println("navigate().to() - Title: " + driver.getTitle());
+23
+24    // KEY DIFFERENCE: navigate().to() can also accept a java.net.URL object
+25    // driver.navigate().to(new URL("https://www.example.com")); ← valid!
+26    // driver.get() only accepts String — navigate().to() accepts both
+27
+28    driver.quit();
+29  }
+30}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c3-1">
+        <div class="file-badge">BackForwardDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── navigate().back() and navigate().forward() ────────────────────
+ 2// back() → equivalent to clicking browser's BACK button (← arrow)
+ 3// forward() → equivalent to clicking browser's FORWARD button (→ arrow)
+ 4// Both use the browser's session history — only work if history exists
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7import java.time.Duration;
+ 8
+ 9public class BackForwardDemo {
+10  public static void main(String[] args) throws InterruptedException {
+11    WebDriver driver = new ChromeDriver();
+12
+13    // Visit 3 pages to build up browser history
+14    driver.get("https://www.google.com");
+15    driver.get("https://www.selenium.dev");
+16    driver.get("https://www.example.com");
+17
+18    // Current: example.com → History: [google, selenium, example]
+19    System.out.println("Current:  " + driver.getTitle());
+20
+21    // back() → moves to previous page in history (selenium.dev)
+22    driver.navigate().back();
+23    Thread.sleep(1000); // observe the navigation
+24    System.out.println("After back():     " + driver.getTitle());
+25
+26    // back() again → moves to google.com
+27    driver.navigate().back();
+28    Thread.sleep(1000);
+29    System.out.println("After back() x2:  " + driver.getTitle());
+30
+31    // forward() → moves forward in history (back to selenium.dev)
+32    driver.navigate().forward();
+33    Thread.sleep(1000);
+34    System.out.println("After forward():  " + driver.getTitle());
+35
+36    driver.quit();
+37  }
+38}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c3-2">
+        <div class="file-badge">RefreshDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── navigate().refresh() — Page reload ───────────────────────────
+ 2// refresh() → hard reload of current page (re-sends GET request)
+ 3// Use cases: wait for dynamic content, reset form state, retry AJAX calls
+ 4// Note: JS state (variables, listeners) is CLEARED on refresh
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7import org.openqa.selenium.By;
+ 8
+ 9public class RefreshDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/dynamic_loading/1");
+13
+14    System.out.println("Before refresh: " + driver.getTitle());
+15
+16    // navigate().refresh() → reloads the current page
+17    // Same as pressing F5 or Ctrl+R in the browser
+18    driver.navigate().refresh();
+19
+20    // After refresh, page is fully reloaded — verify title is the same
+21    System.out.println("After refresh:  " + driver.getTitle());
+22
+23    // Use case: polling pattern — refresh until an element appears
+24    for (int i = 0; i &lt; 3; i++) {
+25      try {
+26        driver.findElement(By.id("finish"));
+27        System.out.println("Element found on refresh attempt: " + (i+1));
+28        break; // exit loop when found
+29      } catch (Exception e) {
+30        driver.navigate().refresh(); // not found yet, refresh and retry
+31      }
+32    }
+33    driver.quit();
+34  }
+35}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c3-3">
+        <div class="file-badge">PageLoadTimeoutDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Page Load Timeout — Handle slow-loading pages ─────────────────
+ 2// By default, Selenium waits indefinitely for page to load
+ 3// pageLoadTimeout sets the maximum time before throwing TimeoutException
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.chrome.ChromeDriver;
+ 6import org.openqa.selenium.TimeoutException;
+ 7import java.time.Duration;
+ 8
+ 9public class PageLoadTimeoutDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12
+13    // pageLoadTimeout → how long to wait for page to fully load
+14    // If page doesn't load in this time, TimeoutException is thrown
+15    // Default: indefinite (waits forever without this setting)
+16    driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+17
+18    // implicitlyWait → polls for element existence (polling wait)
+19    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+20
+21    try {
+22      driver.get("https://www.example.com");
+23      System.out.println("Page loaded in time: " + driver.getTitle());
+24    } catch (TimeoutException e) {
+25      // TimeoutException → page didn't load within the specified timeout
+26      System.out.println("TIMEOUT: Page took too long to load!");
+27      // Still possible to interact with partially-loaded page elements
+28    }
+29
+30    driver.quit();
+31  }
+32}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c3-4">
+        <div class="file-badge">URLAssertionsDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── URL Assertions — Verify navigation happened correctly ─────────
+ 2// After navigation, always verify current URL matches expected destination
+ 3// This catches silent redirects, login redirects, 404 errors, etc.
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.chrome.ChromeDriver;
+ 6import org.openqa.selenium.support.ui.WebDriverWait;
+ 7import org.openqa.selenium.support.ui.ExpectedConditions;
+ 8import java.time.Duration;
+ 9
+10public class URLAssertionsDemo {
+11  public static void main(String[] args) {
+12    WebDriver driver = new ChromeDriver();
+13    driver.get("https://www.selenium.dev");
+14
+15    // getCurrentUrl() → returns the EXACT current browser URL (after redirects)
+16    String currentUrl = driver.getCurrentUrl();
+17    System.out.println("Current URL: " + currentUrl);
+18
+19    // Assert URL contains expected substring (flexible — handles trailing slashes)
+20    assert currentUrl.contains("selenium.dev") : "Wrong page loaded!";
+21
+22    // Use WebDriverWait to wait for URL to CHANGE (useful after form submits)
+23    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+24
+25    // urlContains("documentation") → waits until URL contains this substring
+26    driver.navigate().to("https://www.selenium.dev/documentation/");
+27    wait.until(ExpectedConditions.urlContains("documentation"));
+28    System.out.println("URL confirmed: " + driver.getCurrentUrl());
+29
+30    driver.quit();
+31  }
+32}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c3-5">
+        <div class="file-badge">JSNavigationDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── JavaScript Navigation — Advanced page navigation ──────────────
+ 2// Use JavascriptExecutor for navigation when WebDriver methods are insufficient
+ 3// e.g., single-page apps (SPAs) that update the URL via pushState()
+ 4import org.openqa.selenium.JavascriptExecutor;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7
+ 8public class JSNavigationDemo {
+ 9  public static void main(String[] args) throws InterruptedException {
+10    WebDriver driver = new ChromeDriver();
+11    driver.get("https://www.google.com");
+12
+13    JavascriptExecutor js = (JavascriptExecutor) driver;
+14
+15    // Navigate using JavaScript window.location — bypasses WebDriver
+16    // Useful when normal get()/navigate().to() cause issues on SPAs
+17    js.executeScript("window.location.href = 'https://www.selenium.dev';");
+18    Thread.sleep(2000); // Wait for page to load (JS navigation is asynchronous)
+19    System.out.println("JS Navigate title: " + driver.getTitle());
+20
+21    // history.back() via JavaScript — equivalent to navigate().back()
+22    js.executeScript("window.history.back();");
+23    Thread.sleep(2000);
+24    System.out.println("After JS back(): " + driver.getTitle());
+25
+26    // history.forward() via JavaScript — equivalent to navigate().forward()
+27    js.executeScript("window.history.forward();");
+28    Thread.sleep(2000);
+29    System.out.println("After JS forward(): " + driver.getTitle());
+30
+31    driver.quit();
+32  }
+33}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Best Practices</h3>
+    <ul class="bp-list">
+      <li><span class="bp-check">✓</span>Always set <code>pageLoadTimeout</code> to prevent tests from hanging indefinitely on slow pages</li>
+      <li><span class="bp-check">✓</span>After any navigation, use <code>ExpectedConditions.urlContains()</code> to verify the correct page loaded</li>
+      <li><span class="bp-check">✓</span>Prefer <code>driver.get()</code> over <code>navigate().to()</code> for simplicity — they behave identically for String URLs</li>
+      <li><span class="bp-check">✓</span>Use <code>navigate().back()</code> for testing browser history flows — do NOT call <code>get()</code> on the previous URL manually</li>
+      <li><span class="bp-check">✓</span>For SPA (Single Page Applications), use <code>ExpectedConditions.urlToBe()</code> or <code>urlContains()</code> instead of relying on page load events</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What is the difference between driver.get() and driver.navigate().to()?</div><div class="qa-a">A: Both load a URL and wait for the page to fully load. The key difference: <code>navigate().to()</code> also accepts a <code>java.net.URL</code> object in addition to String. <code>get()</code> accepts only String. Both are functionally equivalent for String URLs.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. What exception is thrown when page load exceeds the pageLoadTimeout?</div><div class="qa-a">A: <code>TimeoutException</code> — thrown when the page does not reach <code>document.readyState == "complete"</code> within the configured timeout duration. The page may be partially usable even after this exception.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. What happens if you call navigate().back() on the first page in history?</div><div class="qa-a">A: Nothing visible happens — the browser stays on the current page. There is no exception thrown. The command silently fails if there is no page to go back to in the session history.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. How do you wait for a URL to change after a form submission?</div><div class="qa-a">A: Use <code>WebDriverWait + ExpectedConditions.urlContains("expectedPath")</code> or <code>urlToBe("fullExpectedUrl")</code>. This is far more reliable than using <code>Thread.sleep()</code> after form submit.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. Does navigate().refresh() clear cookies or local storage?</div><div class="qa-a">A: No — <code>refresh()</code> only reloads the HTML/CSS/JS resources. Cookies, localStorage, and sessionStorage are preserved across a refresh. To clear those, use <code>driver.manage().deleteAllCookies()</code> or JavaScript <code>localStorage.clear()</code>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SESSION 11 ═══════════════════════════════ -->
+<div id="s4" style="display:none">
+  <div class="overview-banner">
+    <h2>Overview — All Selenium Operations</h2>
+    <p>This session covers the complete catalog of Selenium WebDriver operations used in real projects: browser launch, element interactions (click, clear, sendKeys, submit), state reads (getText, getAttribute, isDisplayed), waits, scrolling, dropdowns, checkboxes, and file uploads. These are the daily building blocks of every SDET's automation code.</p>
+  </div>
+
+  <div class="section">
+    <h3>Interview one-liners</h3>
+    <div class="interview-grid">
+      <div class="q-pill">click() simulates a left mouse button click on a visible, interactable WebElement.</div>
+      <div class="q-pill">sendKeys() types text into an input field — also used for keyboard shortcuts like Keys.ENTER.</div>
+      <div class="q-pill">clear() erases all text from an input field — always call it before sendKeys() on pre-filled fields.</div>
+      <div class="q-pill">getText() returns the visible text content of an element; getAttribute() returns any HTML attribute value.</div>
+      <div class="q-pill">isDisplayed(), isEnabled(), isSelected() check element state — use before interacting to avoid exceptions.</div>
+      <div class="q-pill">Select class handles HTML dropdown menus — selectByVisibleText(), selectByValue(), selectByIndex().</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Operations categories</h3>
+    <div class="arch-box">
+      <div class="diff-row"><span style="color:#3C3489;font-weight:500;width:120px;flex-shrink:0">Browser ops</span><span>get, quit, close, getTitle, getCurrentUrl, getPageSource, manage, navigate</span></div>
+      <div class="diff-row"><span style="color:#085041;font-weight:500;width:120px;flex-shrink:0">Element actions</span><span>click, sendKeys, clear, submit, getText, getAttribute, getCssValue</span></div>
+      <div class="diff-row"><span style="color:#712B13;font-weight:500;width:120px;flex-shrink:0">State checks</span><span>isDisplayed, isEnabled, isSelected, getTagName, getRect, getSize</span></div>
+      <div class="diff-row"><span style="color:#633806;font-weight:500;width:120px;flex-shrink:0">Wait ops</span><span>implicitlyWait, WebDriverWait, FluentWait, ExpectedConditions</span></div>
+      <div class="diff-row" style="border:none"><span style="color:#0C447C;font-weight:500;width:120px;flex-shrink:0">Special ops</span><span>Select dropdown, Actions, JavascriptExecutor, TakesScreenshot, Cookies</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code Examples</h3>
+    <div class="code-section">
+      <div class="code-section-header">
+        <div class="dot-row"><span class="mac-dot mac-red"></span><span class="mac-dot mac-yellow"></span><span class="mac-dot mac-green"></span></div>
+        <span>CODE EXAMPLES — S11 · All Selenium Operations</span>
+      </div>
+      <div class="code-tab-bar">
+        <button class="ctab active" onclick="switchCode(4,0)">1. Click &amp; Type</button>
+        <button class="ctab" onclick="switchCode(4,1)">2. State Checks</button>
+        <button class="ctab" onclick="switchCode(4,2)">3. Select Dropdown</button>
+        <button class="ctab" onclick="switchCode(4,3)">4. Checkbox &amp; Radio</button>
+        <button class="ctab" onclick="switchCode(4,4)">5. Scroll &amp; Cookies</button>
+        <button class="ctab" onclick="switchCode(4,5)">6. Explicit Wait</button>
+      </div>
+
+      <div class="code-panel active" id="c4-0">
+        <div class="file-badge">ClickAndTypeDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Core Operations: click, sendKeys, clear, submit, getText ──────
+ 2// These are the 5 most-used operations in any Selenium test suite
+ 3import org.openqa.selenium.By;
+ 4import org.openqa.selenium.Keys; // Keys → enum of keyboard key constants
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class ClickAndTypeDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://www.google.com");
+13
+14    WebElement searchBox = driver.findElement(By.name("q"));
+15
+16    // click() → left-click on the element (must be visible and enabled)
+17    searchBox.click();
+18
+19    // clear() → erases existing text in the input field
+20    // ALWAYS clear before sendKeys on fields that may have pre-filled text
+21    searchBox.clear();
+22
+23    // sendKeys("text") → types characters into the focused input field
+24    // Simulates each keystroke — respects keyboard shortcuts
+25    searchBox.sendKeys("Selenium Java automation");
+26
+27    // Keys.ENTER → sends the Enter key — same as pressing Enter on keyboard
+28    // Other Keys constants: Keys.TAB, Keys.ESCAPE, Keys.BACK_SPACE, Keys.CONTROL
+29    searchBox.sendKeys(Keys.ENTER);
+30
+31    // getText() → returns visible text content of the element
+32    // Works on &lt;h1&gt;, &lt;p&gt;, &lt;span&gt;, &lt;div&gt; etc. — NOT on input values
+33    // For input values use: getAttribute("value")
+34    WebElement heading = driver.findElement(By.tagName("h3"));
+35    System.out.println("First result: " + heading.getText());
+36
+37    driver.quit();
+38  }
+39}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c4-1">
+        <div class="file-badge">StateChecksDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── State Checks — isDisplayed, isEnabled, isSelected, getAttribute
+ 2// Always check element state BEFORE interacting to avoid exceptions
+ 3import org.openqa.selenium.By;
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.WebElement;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7
+ 8public class StateChecksDemo {
+ 9  public static void main(String[] args) {
+10    WebDriver driver = new ChromeDriver();
+11    driver.get("https://the-internet.herokuapp.com/dynamic_controls");
+12
+13    WebElement checkbox = driver.findElement(By.id("checkbox"));
+14    WebElement textInput = driver.findElement(By.cssSelector("input[type='text']"));
+15
+16    // isDisplayed() → true if element is VISIBLE on the page (not hidden by CSS)
+17    // Throws NoSuchElementException if element doesn't exist in DOM at all
+18    System.out.println("Checkbox visible?  " + checkbox.isDisplayed());
+19
+20    // isEnabled() → true if element is NOT disabled (can be interacted with)
+21    // Disabled elements have the 'disabled' HTML attribute set
+22    System.out.println("Input enabled?     " + textInput.isEnabled());
+23
+24    // isSelected() → true if a checkbox or radio button is CHECKED
+25    // Only meaningful for checkboxes, radio buttons, and &lt;option&gt; elements
+26    System.out.println("Checkbox selected? " + checkbox.isSelected());
+27
+28    // getAttribute("placeholder") → reads any HTML attribute value
+29    // Works for: id, class, name, value, href, src, type, placeholder, etc.
+30    System.out.println("Placeholder: " + textInput.getAttribute("placeholder"));
+31
+32    // getCssValue("color") → reads computed CSS property of the element
+33    System.out.println("CSS color: " + checkbox.getCssValue("background-color"));
+34
+35    driver.quit();
+36  }
+37}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c4-2">
+        <div class="file-badge">SelectDropdownDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Select Dropdown — Handle HTML &lt;select&gt; elements ──────────────
+ 2// The Select class provides helper methods for native HTML dropdowns
+ 3// Only works with actual &lt;select&gt; elements — NOT custom CSS dropdowns
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import org.openqa.selenium.support.ui.Select; // Select → dropdown helper class
+ 9import java.util.List;
+10
+11public class SelectDropdownDemo {
+12  public static void main(String[] args) {
+13    WebDriver driver = new ChromeDriver();
+14    driver.get("https://the-internet.herokuapp.com/dropdown");
+15
+16    // Find the &lt;select&gt; element, then wrap it with the Select class
+17    WebElement ddElement = driver.findElement(By.id("dropdown"));
+18    Select dropdown = new Select(ddElement); // wrap the WebElement
+19
+20    // METHOD 1: selectByVisibleText() → selects by text shown in the dropdown
+21    dropdown.selectByVisibleText("Option 1");
+22
+23    // METHOD 2: selectByValue() → selects by the HTML 'value' attribute
+24    // HTML: &lt;option value="2"&gt;Option 2&lt;/option&gt;
+25    dropdown.selectByValue("2");
+26
+27    // METHOD 3: selectByIndex() → selects by position (0-based)
+28    dropdown.selectByIndex(1); // selects the 2nd option (index starts at 0)
+29
+30    // getFirstSelectedOption() → returns the currently selected WebElement
+31    System.out.println("Selected: " + dropdown.getFirstSelectedOption().getText());
+32
+33    // getOptions() → returns List of ALL &lt;option&gt; elements in the dropdown
+34    List&lt;WebElement&gt; opts = dropdown.getOptions();
+35    System.out.println("Total options: " + opts.size());
+36
+37    driver.quit();
+38  }
+39}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c4-3">
+        <div class="file-badge">CheckboxRadioDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Checkbox and Radio Button Handling ───────────────────────────
+ 2// Checkboxes and radio buttons are toggled with click()
+ 3// isSelected() checks current state — prevents double-clicking mistakes
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class CheckboxRadioDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/checkboxes");
+13
+14    WebElement cb1 = driver.findElement(By.cssSelector("input[type='checkbox']:first-child"));
+15    WebElement cb2 = driver.findElement(By.cssSelector("input[type='checkbox']:last-child"));
+16
+17    System.out.println("CB1 initially checked? " + cb1.isSelected());
+18    System.out.println("CB2 initially checked? " + cb2.isSelected());
+19
+20    // BEST PRACTICE: check isSelected() BEFORE clicking
+21    // Prevents double-click that would UNCHECK an already checked box
+22    if (!cb1.isSelected()) {
+23      cb1.click(); // click to CHECK it (only if not already checked)
+24    }
+25    System.out.println("CB1 after click: " + cb1.isSelected());
+26
+27    if (cb2.isSelected()) {
+28      cb2.click(); // click to UNCHECK it (only if currently checked)
+29    }
+30    System.out.println("CB2 after click: " + cb2.isSelected());
+31
+32    driver.quit();
+33  }
+34}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c4-4">
+        <div class="file-badge">ScrollAndCookiesDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Scroll Operations and Cookie Management ───────────────────────
+ 2// Scrolling via JavascriptExecutor; Cookies via driver.manage().getCookies()
+ 3import org.openqa.selenium.By;
+ 4import org.openqa.selenium.JavascriptExecutor;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import org.openqa.selenium.Cookie; // Cookie → class representing a browser cookie
+ 9
+10public class ScrollAndCookiesDemo {
+11  public static void main(String[] args) {
+12    WebDriver driver = new ChromeDriver();
+13    driver.get("https://www.selenium.dev");
+14    JavascriptExecutor js = (JavascriptExecutor) driver;
+15
+16    // SCROLL by pixels: scrollBy(x-pixels, y-pixels)
+17    // Positive y = scroll DOWN; Negative y = scroll UP
+18    js.executeScript("window.scrollBy(0, 500);");    // scroll down 500px
+19    js.executeScript("window.scrollTo(0, 0);");     // scroll to TOP of page
+20    js.executeScript("window.scrollTo(0, document.body.scrollHeight);"); // scroll to BOTTOM
+21
+22    // Scroll a specific element INTO VIEW
+23    WebElement el = driver.findElement(By.tagName("footer"));
+24    js.executeScript("arguments[0].scrollIntoView(true);", el);
+25
+26    // ── COOKIE OPERATIONS ─────────────────────────────────────────
+27    // addCookie() → adds a cookie to the current browser session
+28    driver.manage().addCookie(new Cookie("testToken", "abc123"));
+29
+30    // getCookieNamed() → retrieves a specific cookie by name
+31    Cookie c = driver.manage().getCookieNamed("testToken");
+32    System.out.println("Cookie value: " + c.getValue());
+33
+34    // deleteAllCookies() → clears ALL cookies for the current domain
+35    driver.manage().deleteAllCookies();
+36    driver.quit();
+37  }
+38}</code></pre>
+      </div>
+
+      <div class="code-panel" id="c4-5">
+        <div class="file-badge">ExplicitWaitDemo.java</div>
+        <pre><code class="language-java">
+ 1// ── Explicit Wait — WebDriverWait + ExpectedConditions ────────────
+ 2// Explicit Wait = targeted wait for a specific condition to become true
+ 3// Much better than Thread.sleep() — only waits as long as needed
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import org.openqa.selenium.support.ui.WebDriverWait;
+ 9import org.openqa.selenium.support.ui.ExpectedConditions;
+10import java.time.Duration;
+11
+12public class ExplicitWaitDemo {
+13  public static void main(String[] args) {
+14    WebDriver driver = new ChromeDriver();
+15    driver.get("https://the-internet.herokuapp.com/dynamic_loading/1");
+16
+17    // WebDriverWait → explicit wait with max 15 second timeout
+18    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+19
+20    // Click the Start button to trigger dynamic loading
+21    driver.findElement(By.cssSelector("#start button")).click();
+22
+23    // visibilityOfElementLocated → waits until element EXISTS + is VISIBLE
+24    WebElement finish = wait.until(
+25      ExpectedConditions.visibilityOfElementLocated(By.id("finish")));
+26    System.out.println("Loaded text: " + finish.getText());
+27
+28    // OTHER KEY ExpectedConditions:
+29    // presenceOfElementLocated → element in DOM (not necessarily visible)
+30    // elementToBeClickable → visible AND enabled (safe to click)
+31    // textToBePresentInElement → waits for specific text to appear
+32    // invisibilityOfElement → waits for element to DISAPPEAR (e.g. loader)
+33    // titleContains("text") → waits for page title to contain a string
+34
+35    driver.quit();
+36  }
+37}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Best Practices</h3>
+    <ul class="bp-list">
+      <li><span class="bp-check">✓</span>Always call <code>clear()</code> before <code>sendKeys()</code> on input fields that might have pre-existing values</li>
+      <li><span class="bp-check">✓</span>Use <code>getAttribute("value")</code> to read input field contents — <code>getText()</code> returns empty for input elements</li>
+      <li><span class="bp-check">✓</span>Check <code>isSelected()</code> before clicking checkboxes/radios — prevents accidental unchecking</li>
+      <li><span class="bp-check">✓</span>Use <code>Select</code> class only for native HTML <code>&lt;select&gt;</code> elements — custom dropdowns require <code>click()</code> on list items</li>
+      <li><span class="bp-check">✓</span>Prefer <code>ExpectedConditions.elementToBeClickable()</code> over <code>visibilityOfElementLocated()</code> before calling <code>click()</code> — it checks both visibility AND enabled state</li>
+      <li><span class="bp-check">✓</span>Never mix implicit waits and explicit waits in the same test — they interact unpredictably and cause flaky timeouts</li>
+    </ul>
+  </div>
+
+  <div class="section" style="border:none">
+    <h3>SDET Interview Q&amp;A</h3>
+    <div class="qa-list">
+      <div class="qa-item"><div class="qa-q">Q1. What is the difference between getText() and getAttribute("value")?</div><div class="qa-a">A: <code>getText()</code> returns the visible rendered text between HTML tags (works on p, div, h1, span). <code>getAttribute("value")</code> reads the value attribute — used to get text typed into input fields, since <code>getText()</code> returns empty string for inputs.</div></div>
+      <div class="qa-item"><div class="qa-q">Q2. What is the difference between isDisplayed(), isEnabled(), and isSelected()?</div><div class="qa-a">A: <code>isDisplayed()</code> — element is visible (not hidden by CSS). <code>isEnabled()</code> — element is not disabled (can be clicked/typed into). <code>isSelected()</code> — checkbox/radio/option is currently checked/selected. All return boolean.</div></div>
+      <div class="qa-item"><div class="qa-q">Q3. How do you select an option in a dropdown if it doesn't have a native select element?</div><div class="qa-a">A: For custom CSS/JS dropdowns: (1) <code>click()</code> the dropdown trigger to open it; (2) use <code>findElement()</code> to locate the specific option in the list; (3) <code>click()</code> the option. The <code>Select</code> class only works with native HTML <code>&lt;select&gt;</code> elements.</div></div>
+      <div class="qa-item"><div class="qa-q">Q4. What is the difference between implicit wait and explicit wait?</div><div class="qa-a">A: Implicit wait applies GLOBALLY to every <code>findElement()</code> call for the entire session. Explicit wait (<code>WebDriverWait</code>) applies to ONE specific condition at one specific point. Never mix them — they interact badly and can cause unpredictable wait times.</div></div>
+      <div class="qa-item"><div class="qa-q">Q5. How do you scroll to an element that is not in the visible viewport?</div><div class="qa-a">A: Use JavaScript: <code>((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element)</code>. This scrolls the page so the element becomes visible. In Selenium 4, <code>Actions.scrollToElement(element)</code> is the native alternative.</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+var cur=0;
+var cP=[
+  ['c0-0','c0-1','c0-2','c0-3','c0-4','c0-5'],
+  ['c1-0','c1-1','c1-2','c1-3','c1-4','c1-5'],
+  ['c2-0','c2-1','c2-2','c2-3','c2-4','c2-5'],
+  ['c3-0','c3-1','c3-2','c3-3','c3-4','c3-5'],
+  ['c4-0','c4-1','c4-2','c4-3','c4-4','c4-5']
+];
+var sessionNums=[7,8,9,10,11];
+function switchSession(n){
+  document.getElementById('s'+cur).style.display='none';
+  document.getElementById('s'+n).style.display='block';
+  var tabs=document.getElementById('sessionTabs').children;
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active',i===n);
+  cur=n; updateProgress();
+}
+function switchCode(s,t){
+  var panels=cP[s];
+  var ctabs=document.getElementById('s'+s).querySelectorAll('.ctab');
+  panels.forEach(function(id,i){
+    var el=document.getElementById(id);
+    if(el) el.className='code-panel'+(i===t?' active':'');
+  });
+  ctabs.forEach(function(tb,i){tb.classList.toggle('active',i===t);});
+}
+function updateProgress(){
+  var d='';
+  for(var i=0;i<5;i++){
+    var c=i<cur?'done':(i===cur?'active':'todo');
+    d+='<span class="dot '+c+'"></span> ';
+  }
+  document.getElementById('progDots').innerHTML=d;
+  document.getElementById('progLabel').textContent='Session '+sessionNums[cur]+' of 11';
+}
+updateProgress();
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

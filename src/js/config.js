@@ -21,8 +21,8 @@ const courseData = [
     icon: "🥒",
     links: [
       {
-        title: "QA BDD Selenium 8 Session Course",
-        url: "src/sdet-topics/bdd-cucumber/html_20260613_814c7c.html",
+        title: "Selenium BDD Cucumber: 8 Sessions Course",
+        url: "src/sdet-topics/bdd-cucumber/selenium_bdd_cucumber_8_sessions.html",
       },
     ],
   },
@@ -35,8 +35,8 @@ const courseData = [
     icon: "⚙️",
     links: [
       {
-        title: "Playwright CI/CD Complete Course V2",
-        url: "src/sdet-topics/ci-cd-learning/html_20260613_cd3856.html",
+        title: "Playwright CI/CD: Complete Course V2",
+        url: "src/sdet-topics/ci-cd-learning/playwright_cicd_complete_course_v2.html",
       },
     ],
   },
@@ -57,7 +57,7 @@ const courseData = [
         url: "src/sdet-topics/java-learning/java_collections_portal.html",
       },
       {
-        title: "Java Learning Hub S11-S16",
+        title: "Java Learning Hub: Sessions 11 to 16",
         url: "src/sdet-topics/java-learning/java_learning_hub_s11_s16.html",
       },
       {
@@ -65,7 +65,7 @@ const courseData = [
         url: "src/sdet-topics/java-learning/java_learning_hub.html",
       },
       {
-        title: "Java Learning Portal Fixed",
+        title: "Java Learning Portal (Fixed)",
         url: "src/sdet-topics/java-learning/java_learning_portal_fixed.html",
       },
       {
@@ -73,11 +73,11 @@ const courseData = [
         url: "src/sdet-topics/java-learning/java_learning_portal.html",
       },
       {
-        title: "Java 8 Lambda Learning Hub",
+        title: "Java 8 Lambdas Learning Hub",
         url: "src/sdet-topics/java-learning/java8_lambda_learning_hub.html",
       },
       {
-        title: "Maven Java POM Learning",
+        title: "Maven Java POM Project Learning",
         url: "src/sdet-topics/java-learning/maven_java_pom_learning.html",
       },
       {
@@ -89,12 +89,12 @@ const courseData = [
         url: "src/sdet-topics/java-learning/oop_learning_hub.html",
       },
       {
-        title: "SOLID Principles Java Learning Platform",
+        title: "SOLID Principles in Java Learning Platform",
         url: "src/sdet-topics/java-learning/solid_principles_java_learning_platform.html",
       },
       {
-        title: "Solid Selenium Java Sessions 11-20",
-        url: "src/sdet-topics/java-learning/solid_selenium_java_sessions_11_to_20.html",
+        title: "SOLID Selenium Java: Sessions 11 to 20",
+        url: "src/sdet-topics/java-learning/solid_selenium_java_sessions_11_20.html",
       },
     ],
   },
@@ -107,11 +107,11 @@ const courseData = [
     icon: "⚡",
     links: [
       {
-        title: "JMeter Load Testing Course",
+        title: "Apache JMeter: Load Testing Course",
         url: "src/sdet-topics/load-testing/jmeter_load_testing_course.html",
       },
       {
-        title: "Postman Load Testing Course",
+        title: "Postman: Load Testing Course",
         url: "src/sdet-topics/load-testing/postman_load_testing_course.html",
       },
     ],
@@ -126,31 +126,31 @@ const courseData = [
     links: [
       {
         title: "Agile & Scrum Learning Hub",
-        url: "src/sdet-topics/manual-testing/agile_scrum_learning_hub_fixed.html",
+        url: "src/sdet-topics/manual-testing/agile_scrum_learning_hub.html",
       },
       {
         title: "QA Manual Testing Course",
-        url: "src/sdet-topics/manual-testing/qa_manual_testing_course_fixed.html",
+        url: "src/sdet-topics/manual-testing/qa_manual_testing_course.html",
       },
       {
-        title: "QA Manual Testing S11-S20",
-        url: "src/sdet-topics/manual-testing/qa_manual_testing_s11_s20_fixed.html",
+        title: "QA Manual Testing: Sessions 11 to 20",
+        url: "src/sdet-topics/manual-testing/qa_manual_testing_s11_s20.html",
       },
       {
-        title: "QA Manual Testing S21-S30",
-        url: "src/sdet-topics/manual-testing/qa_manual_testing_s21_s30_fixed.html",
+        title: "QA Manual Testing: Sessions 21 to 30",
+        url: "src/sdet-topics/manual-testing/qa_manual_testing_s21_s30.html",
       },
       {
-        title: "QA S31-S35: Severity & Priority",
-        url: "src/sdet-topics/manual-testing/qa_s31_s35_severity_priority_fixed.html",
+        title: "QA Manual Testing Sessions 31 to 35: Severity & Priority",
+        url: "src/sdet-topics/manual-testing/qa_s31_s35_severity_priority.html",
       },
       {
-        title: "QA Training Manual Testing S1-S10",
-        url: "src/sdet-topics/manual-testing/qa_training_manual_testing_s1_s10_fixed.html",
+        title: "QA Manual Testing: Sessions 1 to 10",
+        url: "src/sdet-topics/manual-testing/qa_training_manual_testing_s1_s10.html",
       },
       {
-        title: "Test Design Techniques S10-S20",
-        url: "src/sdet-topics/manual-testing/test_design_techniques_s10_s20_fixed.html",
+        title: "Test Design Techniques: Sessions 10 to 20",
+        url: "src/sdet-topics/manual-testing/test_design_techniques_s10_s20.html",
       },
     ],
   },
@@ -163,72 +163,72 @@ const courseData = [
     icon: "🎭",
     links: [
       {
-        title: "A1: API Mastery 10 Sessions",
-        url: "src/sdet-topics/playwright-ts/A1_playwright_api_mastery_10sessions.html",
+        title: "Playwright API Mastery: 10 Sessions Course",
+        url: "src/sdet-topics/playwright-typescript/playwright_api_mastery_10_sessions.html",
       },
       {
-        title: "A1: Config Mastery 10 Sessions",
-        url: "src/sdet-topics/playwright-ts/A1_playwright_config_mastery_10sessions.html",
+        title: "Playwright Config Mastery: 10 Sessions Course",
+        url: "src/sdet-topics/playwright-typescript/playwright_config_mastery_10_sessions.html",
       },
       {
-        title: "A1: QA Mastery Dashboard",
-        url: "src/sdet-topics/playwright-ts/A1_playwright_qa_mastery_dashboard.html",
+        title: "Playwright QA Mastery Dashboard",
+        url: "src/sdet-topics/playwright-typescript/playwright_qa_mastery_dashboard.html",
       },
       {
-        title: "A2: TS Learning Hub (Part 1)",
-        url: "src/sdet-topics/playwright-ts/A2_playwright_ts_learning_hub (1).html",
+        title: "Playwright TypeScript Learning Hub: Part 1",
+        url: "src/sdet-topics/playwright-typescript/playwright_typescript_learning_hub_part1.html",
       },
       {
-        title: "A2: TS Learning Hub (Part 2)",
-        url: "src/sdet-topics/playwright-ts/A2_playwright_ts_learning_hub (2).html",
+        title: "Playwright TypeScript Learning Hub: Part 2",
+        url: "src/sdet-topics/playwright-typescript/playwright_typescript_learning_hub_part2.html",
       },
       {
-        title: "Chitti S19-S21: Skip Env CLI",
-        url: "src/sdet-topics/playwright-ts/chitti_s19_s20_s21_skip_env_cli.html",
+        title: "Chitti Sessions 19 to 21: Skip, Environment & CLI Options",
+        url: "src/sdet-topics/playwright-typescript/chitti_s19_s21_skip_env_cli.html",
       },
       {
-        title: "Jarvis: Playwright TS Learning Hub",
-        url: "src/sdet-topics/playwright-ts/jarvis_playwright_ts_learning_hub.html",
+        title: "Jarvis: Playwright TypeScript Learning Hub",
+        url: "src/sdet-topics/playwright-typescript/jarvis_playwright_typescript_learning_hub.html",
       },
       {
-        title: "Jarvis S2: Pages Tabs Windows",
-        url: "src/sdet-topics/playwright-ts/jarvis_s2_pages_tabs_windows.html",
+        title: "Jarvis Session 2: Pages, Tabs & Windows Handling",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s2_pages_tabs_windows.html",
       },
       {
-        title: "Jarvis S3: Frames Handling",
-        url: "src/sdet-topics/playwright-ts/jarvis_s3_frames_handling.html",
+        title: "Jarvis Session 3: Frames & Iframes Handling",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s3_frames_handling.html",
       },
       {
-        title: "Jarvis S4: Alerts Dialogs",
-        url: "src/sdet-topics/playwright-ts/jarvis_s4_alerts_dialogs.html",
+        title: "Jarvis Session 4: Alerts, Dialogs & Popups Handling",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s4_alerts_dialogs.html",
       },
       {
-        title: "Jarvis S5-S8: Combined",
-        url: "src/sdet-topics/playwright-ts/jarvis_s5_s6_s7_s8_combined.html",
+        title: "Jarvis Sessions 5 to 8: Combined Topics",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s5_s8_combined.html",
       },
       {
-        title: "Jarvis S8-S10: Complete",
-        url: "src/sdet-topics/playwright-ts/jarvis_s8_s9_s10_complete.html",
+        title: "Jarvis Sessions 8 to 10: Complete Topics",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s8_s10_complete.html",
       },
       {
-        title: "Jarvis S11-S13: Complete",
-        url: "src/sdet-topics/playwright-ts/jarvis_s11_s12_s13_complete.html",
+        title: "Jarvis Sessions 11 to 13: Complete Topics",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s11_s13_complete.html",
       },
       {
-        title: "Jarvis S14-S15: Hooks Describe",
-        url: "src/sdet-topics/playwright-ts/jarvis_s14_s15_hooks_describe.html",
+        title: "Jarvis Sessions 14 & 15: Hooks & Describe Blocks",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s14_s15_hooks_describe.html",
       },
       {
-        title: "Jarvis S16-S18: Cookies Storage Runner",
-        url: "src/sdet-topics/playwright-ts/jarvis_s16_s17_s18_cookies_storage_runner.html",
+        title: "Jarvis Sessions 16 to 18: Cookies, Storage State & Test Runner",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s16_s18_cookies_storage_runner.html",
       },
       {
-        title: "Jarvis S22-S25: Fixed",
-        url: "src/sdet-topics/playwright-ts/jarvis_s22_to_s25_fixed.html",
+        title: "Jarvis Sessions 22 to 25: Advanced Concepts",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s22_s25.html",
       },
       {
-        title: "Jarvis S26-S28: Data Driven",
-        url: "src/sdet-topics/playwright-ts/jarvis_s26_s27_s28_data_driven.html",
+        title: "Jarvis Sessions 26 to 28: Data Driven Testing",
+        url: "src/sdet-topics/playwright-typescript/jarvis_s26_s28_data_driven.html",
       },
     ],
   },
@@ -241,7 +241,7 @@ const courseData = [
     icon: "📮",
     links: [
       {
-        title: "Postman Interview Notes",
+        title: "Postman: Technical Interview Questions & Notes",
         url: "src/sdet-topics/postman-learning/postman_interview_notes.html",
       },
     ],
@@ -255,24 +255,24 @@ const courseData = [
     icon: "🐍",
     links: [
       {
-        title: "Python QA Beginner S1-S10",
-        url: "src/sdet-topics/python-learning/python_qa_beginner_s1_s10_fixed.html",
+        title: "Python for QA Beginners: Sessions 1 to 10",
+        url: "src/sdet-topics/python-learning/python_qa_beginner_s1_s10.html",
       },
       {
-        title: "Python QA Advanced S11-S20",
-        url: "src/sdet-topics/python-learning/python_qa_advanced_s11_s20_fixed.html",
+        title: "Python for QA Advanced: Sessions 11 to 20",
+        url: "src/sdet-topics/python-learning/python_qa_advanced_s11_s20.html",
       },
       {
-        title: "Python S21-S28 Hub",
-        url: "src/sdet-topics/python-learning/python_s21_s28_hub_fixed.html",
+        title: "Python QA Hub: Sessions 21 to 28",
+        url: "src/sdet-topics/python-learning/python_s21_s28_hub.html",
       },
       {
-        title: "Python QA Learning Hub (Condensed)",
-        url: "src/sdet-topics/python-learning/python_qa_learning_hub_1_fixed.html",
+        title: "Python QA Learning Hub (Condensed Edition)",
+        url: "src/sdet-topics/python-learning/python_qa_learning_hub_condensed.html",
       },
       {
-        title: "Python QA Learning Hub (Full)",
-        url: "src/sdet-topics/python-learning/python_qa_learning_hub_fixed.html",
+        title: "Python QA Learning Hub (Full Edition)",
+        url: "src/sdet-topics/python-learning/python_qa_learning_hub_full.html",
       },
     ],
   },
@@ -285,52 +285,52 @@ const courseData = [
     icon: "🌐",
     links: [
       {
-        title: "All New REST Assured Learning Hub",
-        url: "src/sdet-topics/restAssure-Java/All_New rest_assured_learning_hub.html",
+        title: "REST Assured Learning Hub",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_learning_hub.html",
       },
       {
-        title: "REST Assured Session 1 Tabs",
-        url: "src/sdet-topics/restAssure-Java/rest_assured_session1_tabs.html",
+        title: "REST Assured Session 1: Basic Setup & Tabs",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_session1_tabs.html",
       },
       {
-        title: "REST Assured Testing Tutorial",
-        url: "src/sdet-topics/restAssure-Java/rest_assured_testng_tutorial.html",
+        title: "REST Assured: Integration with TestNG Tutorial",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_testng_tutorial.html",
       },
       {
-        title: "S01: REST Assured Complete Learning",
-        url: "src/sdet-topics/restAssure-Java/S01rest_assured_complete_learning.html",
+        title: "REST Assured Complete Learning: Session 1",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_complete_learning.html",
       },
       {
-        title: "S11-S14: Fixed Serialization",
-        url: "src/sdet-topics/restAssure-Java/s11_s14_fixed_serialization_.html",
+        title: "REST Assured: Serialization Concepts (Sessions 11 to 14)",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_serialization_s11_s14.html",
       },
       {
-        title: "S15-S17: Deserialization",
-        url: "src/sdet-topics/restAssure-Java/s15_s17 deserialization_.html",
+        title: "REST Assured: Deserialization Concepts (Sessions 15 to 17)",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_deserialization_s15_s17.html",
       },
       {
-        title: "S18-S20: Parallel OAuth2 Schema",
-        url: "src/sdet-topics/restAssure-Java/s18_s20_parallel_oauth2_schema.html",
+        title: "REST Assured: Parallel Runs, OAuth2 & Schema Validation (Sessions 18 to 20)",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_parallel_oauth2_schema_s18_s20.html",
       },
       {
-        title: "S21-S23: Glossary Deep Dive",
-        url: "src/sdet-topics/restAssure-Java/s21_s23_glossary_deep_dive.html",
+        title: "REST Assured: Glossary & Terminology Deep Dive (Sessions 21 to 23)",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_glossary_deep_dive_s21_s23.html",
       },
       {
-        title: "S24-S29: REST Assured Response Extraction",
-        url: "src/sdet-topics/restAssure-Java/S24 to S29 REST Assured Response Extraction — S24 to S29.html",
+        title: "REST Assured: Response Extraction (Sessions 24 to 29)",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_response_extraction_s24_s29.html",
       },
       {
-        title: "S24-S29: Fixed Tabs",
-        url: "src/sdet-topics/restAssure-Java/s24_s29_fixed_tabs.html",
+        title: "REST Assured: Response Extraction Tabs (Sessions 24 to 29)",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_response_extraction_tabs_s24_s29.html",
       },
       {
-        title: "S24-S29: Response Extraction",
-        url: "src/sdet-topics/restAssure-Java/s24_s29_response_extraction.html",
+        title: "REST Assured: Response Extraction Technical Details (Sessions 24 to 29)",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_response_extraction_details_s24_s29.html",
       },
       {
-        title: "S30-S32: Request Creation",
-        url: "src/sdet-topics/restAssure-Java/s30_s32_request_creation.html",
+        title: "REST Assured: Dynamic Request Creation (Sessions 30 to 32)",
+        url: "src/sdet-topics/rest-assured-java/rest_assured_request_creation_s30_s32.html",
       },
     ],
   },
@@ -343,48 +343,48 @@ const courseData = [
     icon: "🚀",
     links: [
       {
-        title: "Best 1: Selenium Mastery Framework",
-        url: "src/sdet-topics/selenium-java/Best_1_Best_selenium_mastery_framework.html",
+        title: "Selenium Java Mastery: Hybrid Test Automation Framework",
+        url: "src/sdet-topics/selenium-java/selenium_mastery_framework.html",
       },
       {
-        title: "Best 2: Selenium4 Advanced Sessions S11+",
-        url: "src/sdet-topics/selenium-java/Best_2_selenium4_advanced_sessions_s11_s23.html",
+        title: "Selenium 4 Advanced Concepts: Sessions 11 to 23",
+        url: "src/sdet-topics/selenium-java/selenium4_advanced_sessions_s11_s23.html",
       },
       {
-        title: "Best 3: Selenium Mastery S1-S23 Full",
-        url: "src/sdet-topics/selenium-java/Best_3_selenium_mastery_s1_s23_full.html",
+        title: "Selenium Java Complete Course: Sessions 1 to 23",
+        url: "src/sdet-topics/selenium-java/selenium_mastery_s1_s23_full.html",
       },
       {
-        title: "Best 4: Selenium Code Fix",
-        url: "src/sdet-topics/selenium-java/Best_4_selenium_code_fix.html",
+        title: "Selenium Java Framework: Code Fixes & Optimizations",
+        url: "src/sdet-topics/selenium-java/selenium_code_fix.html",
       },
       {
-        title: "Selenium Java Basics Course",
+        title: "Selenium Java: Core Basics Course",
         url: "src/sdet-topics/selenium-java/selenium_java_basics_course.html",
       },
       {
-        title: "S1-S6: Selenium Java Colorful Hub",
+        title: "Selenium Java Learning Hub: Basic Topics",
         url: "src/sdet-topics/selenium-java/selenium_java_colorful_hub.html",
       },
       {
-        title: "S1-S6: Selenium Java Learning Hub",
+        title: "Selenium Java: Complete Learning Hub",
         url: "src/sdet-topics/selenium-java/selenium_java_learning_hub.html",
       },
       {
-        title: "S7-S11: Fundamentals",
-        url: "src/sdet-topics/selenium-java/selenium_java_s7_s11_hub.html",
+        title: "Selenium Java: Fundamentals & Wait Strategies (Sessions 7 to 11)",
+        url: "src/sdet-topics/selenium-java/selenium_java_s7_s11.html",
       },
       {
-        title: "S12-S16: Windows & Nav",
+        title: "Selenium Java: Multiple Windows & Navigation (Sessions 12 to 16)",
         url: "src/sdet-topics/selenium-java/selenium_java_s12_s16.html",
       },
       {
-        title: "S17-S19: Cookies & Broken Links",
-        url: "src/sdet-topics/selenium-java/selenium_s17_s19_cookies_brokenlinks.html",
+        title: "Selenium Java: Cookies & Broken Link Identification (Sessions 17 to 19)",
+        url: "src/sdet-topics/selenium-java/selenium_s17_s19_cookies_broken_links.html",
       },
       {
-        title: "S20-S22: Popups & File Upload",
-        url: "src/sdet-topics/selenium-java/selenium_s20_s22_popups_fileupload.html",
+        title: "Selenium Java: Alerts, Popups & File Upload Handling (Sessions 20 to 22)",
+        url: "src/sdet-topics/selenium-java/selenium_s20_s22_popups_file_upload.html",
       },
     ],
   },
@@ -397,12 +397,12 @@ const courseData = [
     icon: "🧪",
     links: [
       {
-        title: "TestNG Framework Hub S9-S17",
-        url: "src/sdet-topics/testNg-learning/testng_framework_hub_s9_s17.html",
+        title: "TestNG Framework Hub: Sessions 9 to 17",
+        url: "src/sdet-topics/testng-learning/testng_framework_hub_s9_s17.html",
       },
       {
-        title: "TestNG Learning Hub",
-        url: "src/sdet-topics/testNg-learning/testng_learning_hub.html",
+        title: "TestNG: Standard Learning Hub",
+        url: "src/sdet-topics/testng-learning/testng_learning_hub.html",
       },
     ],
   },
@@ -415,11 +415,11 @@ const courseData = [
     icon: "📘",
     links: [
       {
-        title: "TypeScript Learning Hub",
+        title: "TypeScript Core Concepts Learning Hub",
         url: "src/sdet-topics/typescript-learning/typescript_learning_hub.html",
       },
       {
-        title: "typescript_sessions",
+        title: "TypeScript Practical Programming Sessions",
         url: "src/sdet-topics/typescript-learning/typescript_sessions.html",
       },
     ],

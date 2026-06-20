@@ -1,0 +1,1656 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chitti Sessions 19 to 21: Skip, Environment & CLI Options</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#f7fafc;--bg4:#e2e8f0;
+  --bdr:#e2e8f0;--bdr2:#cbd5e0;
+  --txt:#000000;--mut:#2d3748;--dim:#718096;
+  --blue:#0969da;--bl-bg:#ddf4ff;--bl-bd:#54aeff;
+  --green:#1a7f37;--gr-bg:#dafbe1;--gr-bd:#56d364;
+  --purple:#8250df;--pu-bg:#fbefff;--pu-bd:#d2a8ff;
+  --orange:#bc4c00;--or-bg:#fff1e5;--or-bd:#f69d50;
+  --red:#cf222e;--rd-bg:#ffebe9;--rd-bd:#ff8182;
+  --teal:#0a3069;--tl-bg:#cae8ff;--tl-bd:#79c0ff;
+  --yellow:#9a6700;--yw-bg:#fdf0c4;--yw-bd:#e3b341;
+  --font-sans:'Outfit',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-sans);font-size:13px;min-height:100vh}
+/* top bar */
+.topbar{display:flex;align-items:center;gap:10px;padding:11px 18px;background:var(--bg2);border-bottom:1px solid var(--bdr);flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--green);background:var(--gr-bg);border:1px solid var(--gr-bd);border-radius:20px;padding:3px 11px;letter-spacing:.4px;text-transform:uppercase}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:bl 2s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.t-title{font-size:14px;font-weight:800;color:#000000}
+.t-sub{font-size:11px;color:var(--mut);margin-left:auto;font-weight:600}
+/* session nav */
+.snav{display:flex;background:var(--bg2);border-bottom:2px solid var(--bdr);overflow-x:auto;scrollbar-width:none}
+.snav::-webkit-scrollbar{display:none}
+.sbtn{padding:11px 20px;font-size:12px;font-weight:600;cursor:pointer;color:var(--mut);border-bottom:3px solid transparent;white-space:nowrap;background:none;border-left:none;border-right:none;border-top:none;transition:all .15s;display:flex;align-items:center;gap:8px}
+.sbtn:hover{color:var(--txt);background:var(--bg3)}
+.sbtn.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--bl-bg);font-weight:700}
+.badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.b1{background:var(--rd-bg);color:var(--red);border:1px solid var(--rd-bd)}
+.b2{background:var(--yw-bg);color:var(--yellow);border:1px solid var(--yw-bd)}
+.b3{background:var(--tl-bg);color:var(--teal);border:1px solid var(--tl-bd)}
+/* panels */
+.sc{display:none}.sc.active{display:block}
+.sectabs{display:flex;background:var(--bg3);border-bottom:1px solid var(--bdr);overflow-x:auto;scrollbar-width:none;padding:0 14px;gap:2px}
+.sectabs::-webkit-scrollbar{display:none}
+.secbtn{padding:9px 14px;font-size:11px;font-weight:600;cursor:pointer;color:var(--mut);border-bottom:2.5px solid transparent;white-space:nowrap;background:none;border-left:none;border-right:none;border-top:none;transition:all .15s;border-radius:6px 6px 0 0}
+.secbtn:hover{color:var(--txt);background:var(--bg4)}.secbtn.active{color:var(--green);border-bottom-color:var(--green);background:var(--gr-bg);font-weight:700}
+.pan{display:none;padding:15px 17px}.pan.active{display:block}
+/* def card */
+.dc{border-left:4px solid var(--blue);background:var(--bl-bg);border-radius:0 8px 8px 0;padding:12px 15px;margin-bottom:12px}
+.dc .dl{font-size:10px;font-weight:800;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.dc p{font-size:13px;color:var(--txt);line-height:1.7;font-weight:500}
+/* grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.gc{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:11px}
+.gc h4{font-size:11px;font-weight:800;color:#000000;letter-spacing:.7px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.gc h4::before{content:'';width:3px;height:10px;border-radius:2px;background:var(--blue);display:inline-block}
+.gc p{font-size:12px;color:var(--mut);line-height:1.6;font-weight:500}
+.fc{grid-column:1/-1}
+/* glossary */
+.gi{display:flex;gap:11px;padding:8px 0;border-bottom:1px solid var(--bdr)}
+.gi:last-child{border-bottom:none}
+.gk{font-family:var(--font-mono);font-size:11px;color:var(--orange);background:var(--or-bg);border:1px solid var(--or-bd);padding:2px 7px;border-radius:4px;white-space:nowrap;height:fit-content;margin-top:2px;flex-shrink:0;font-weight:700}
+.gd{font-size:12px;color:var(--mut);line-height:1.5;font-weight:500}
+/* oneliners */
+.ols{display:flex;flex-direction:column;gap:7px}
+.oli{background:var(--bg2);border:1px solid var(--gr-bd);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:9px 13px;font-size:12px;color:var(--txt);line-height:1.55;font-style:italic;font-weight:500}
+.oli .lbl{color:var(--green);font-weight:800;font-style:normal;font-size:10px;display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+/* concept blocks */
+.cb{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;margin-bottom:11px;overflow:hidden}
+.cb h4{background:var(--bg3);padding:9px 13px;font-size:12px;font-weight:800;color:#000000;border-bottom:1px solid var(--bdr)}
+.cbb{padding:11px 13px}
+.cbb p{font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:6px;font-weight:500}
+.cbb p:last-child{margin-bottom:0}
+/* flow box */
+.fb{background:var(--bg3);border:1px solid var(--bdr);border-radius:7px;padding:11px;margin-top:7px;font-family:var(--font-mono);font-size:11px;overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;display:block}
+.fr{display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:nowrap;width:max-content}
+.fr:last-child{margin-bottom:0}
+.fc2{border-radius:4px;padding:3px 8px;font-size:10px;white-space:nowrap;font-weight:700}
+.bl{background:var(--bl-bg);color:var(--blue);border:1px solid var(--bl-bd)}
+.gr{background:var(--gr-bg);color:var(--green);border:1px solid var(--gr-bd)}
+.or{background:var(--or-bg);color:var(--orange);border:1px solid var(--or-bd)}
+.rd{background:var(--rd-bg);color:var(--red);border:1px solid var(--rd-bd)}
+.yw{background:var(--yw-bg);color:var(--yellow);border:1px solid var(--yw-bd)}
+.pu{background:var(--pu-bg);color:var(--purple);border:1px solid var(--pu-bd)}
+.nn{background:var(--bg4);color:var(--mut);border:1px solid var(--bdr2)}
+.ar{color:var(--dim);font-size:13px;font-weight:700}
+/* bp list */
+.bpl{list-style:none}
+.bpi{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:12px;color:var(--txt);font-weight:500}
+.bpi:last-child{border-bottom:none}
+.bpic{min-width:18px;height:18px;border-radius:50%;background:var(--gr-bg);border:1px solid var(--gr-bd);color:var(--green);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+/* qa */
+.qa{border:1px solid var(--bdr);border-radius:8px;margin-bottom:8px;overflow:hidden;transition:all 0.2s ease}
+.qa:hover{border-color:var(--bdr2);box-shadow:0 2px 6px rgba(0,0,0,0.02)}
+.qaq{background:var(--bg3);padding:10px 13px;font-size:12.5px;font-weight:700;color:#000000;cursor:pointer;display:flex;justify-content:space-between;align-items:center;line-height:1.4}
+.qaq:hover{background:var(--bl-bg)}
+.qaa{background:var(--bg2);padding:11px 13px;font-size:12px;color:var(--mut);line-height:1.65;display:none;border-top:1px solid var(--bdr);font-weight:500}
+.qaa.open{display:block;padding-top:8px;margin-top:0px;border-top:0.5px solid var(--bdr)}
+.chevron-icon{font-size:14px;transition:transform 0.2s ease;color:var(--mut);flex-shrink:0}
+.qa.open .chevron-icon{transform:rotate(180deg)}
+/* code */
+.ctabs{display:flex;background:#fafafb;border-bottom:1.5px solid #d0d7de;padding:8px 12px 0;gap:6px;overflow-x:auto;scrollbar-width:none}
+.ctabs::-webkit-scrollbar{display:none}
+.ctb{padding:6px 14px;font-size:11px;cursor:pointer;border:1.5px solid #d0d7de;border-bottom:none;background:#f6f8fa;color:#4a5568;white-space:nowrap;font-family:var(--font-sans);border-radius:6px 6px 0 0;margin-bottom:-1.5px;display:inline-flex;align-items:center;gap:6px;transition:all 0.1s ease;font-weight:700}
+.ctb.active{color:#000000;border:1.5px solid #1f2328;border-bottom:3.5px solid #d97706 !important;background:#ffffff;font-weight:800;z-index:1}
+.ctb:hover:not(.active){background:#eaecef;color:#1a202c;border-color:#cbd5e0}
+.fxt{font-size:9px;font-weight:800;text-transform:lowercase;padding:1px 4px;border-radius:4px;border:1px solid;display:inline-block;}
+.fxt-ts { color:#0369a1; background:#e0f2fe; border-color:#bae6fd; }
+.fxt-sh { color:#b45309; background:#fef3c7; border-color:#fde68a; }
+.fxt-json { color:#065f46; background:#d1fae5; border-color:#a7f3d0; }
+.cpan{display:none}.cpan.active{display:block}
+.ch{display:flex;align-items:center !important;gap:8px;padding:8px 14px;background:#ffffff;border-bottom:1px dashed #e2e4e8;flex-wrap:nowrap !important}
+.ch::before { content:''; width:8px; height:8px; border-radius:50%; background:#d97706; display:inline-block; flex-shrink:0; margin-right:6px; }
+.cfn{font-family:var(--font-mono) !important;font-size:11px !important;color:#57606a;display:flex;align-items:center;gap:7px;font-weight:600 !important;text-transform:none !important;line-height:1.4 !important;margin-top:0px !important}
+.cfndot{display:none}
+.cpbtn{font-size:10px;padding:2px 8px;border:0.5px solid #d1d1db;border-radius:4px;background:none;cursor:pointer;color:#57606a;font-family:var(--font-sans);transition:all .15s;margin-left:auto;font-weight:600}
+.cpbtn:hover{color:#000;background:#f6f8fa}
+pre{margin:0;padding:14px 18px;overflow-x:auto;font-size:12px;line-height:2;font-family:var(--font-mono);background:#fff;color:#24292f}
+.kw{color:#cf222e;font-weight:700}.fn{color:#8250df}.str{color:#0a3069}
+.cm{color:#9198a1;font-style:italic}.num{color:#0550ae}.cls{color:#953800;font-weight:700}
+.prop{color:#116329}.val{color:#1a7f37;font-weight:700}.type{color:#953800}
+/* CLI table */
+.cli{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+.cli th{background:var(--bg3);padding:7px 10px;text-align:left;color:var(--mut);font-weight:800;border-bottom:1.5px solid var(--bdr);font-size:10px;letter-spacing:.5px;text-transform:uppercase}
+.cli td{padding:7px 10px;border-bottom:1px solid var(--bdr);vertical-align:top;font-weight:500}
+.cli td:first-child{font-family:var(--font-mono);color:var(--blue);font-size:11px;font-weight:700;white-space:nowrap}
+.cli td:nth-child(2){color:var(--orange);font-family:var(--font-mono);font-size:10px;white-space:nowrap;font-weight:700}
+.cli td:last-child{color:var(--mut);font-size:11px}
+.cli tr:last-child td{border-bottom:none}
+.cli tr:hover td{background:var(--bg3)}
+.sh{font-size:11px;font-weight:800;color:var(--blue);background:var(--bl-bg);border:1px solid var(--bl-bd);border-radius:4px;padding:2px 9px;display:inline-block;margin:11px 0 6px}
+.tsec{font-size:12px;font-weight:800;color:#000000;letter-spacing:.8px;text-transform:uppercase;margin-bottom:9px;margin-top:14px;display:flex;align-items:center;gap:8px}
+.tsec::after{content:'';flex:1;height:1px;background:var(--bdr)}
+code{font-family:var(--font-mono);font-size:11px;background:var(--bg4);padding:1px 5px;border-radius:3px;color:var(--orange);font-weight:700}
+
+/* Keyword highlighting class */
+.hl-kw {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #c2185b;
+  background: #fce4ec;
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 0.5px solid #f8bbd0;
+  display: inline-block;
+  font-size: 0.9em;
+}
+
+@media(max-width:768px){
+  .g2{grid-template-columns:1fr !important}
+  .sbtn{flex:1 1 auto;text-align:center}
+  .secbtn{flex:1 1 auto;text-align:center}
+}
+</style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+
+<div class="topbar">
+  <div class="pill"><div class="dot"></div>CHITTI ONLINE</div>
+  <span class="t-title">Playwright-TS — Sessions 19 · 20 · 21</span>
+  <span class="t-sub">test.skip · Environments · Full CLI · 5 code examples each</span>
+</div>
+
+<div class="snav" id="snav">
+  <button class="sbtn active" data-s="s19">S19 <span class="badge b1">P2</span> test.skip — Full Guide</button>
+  <button class="sbtn" data-s="s20">S20 <span class="badge b2">P2</span> Environments Dev/Test/UAT</button>
+  <button class="sbtn" data-s="s21">S21 <span class="badge b3">P2</span> Full CLI Reference</button>
+</div>
+
+<!-- ═══════════════════ S19 ═══════════════════ -->
+<div class="sc active" id="sc-s19">
+<div class="sectabs" id="st-s19">
+  <button class="secbtn active" data-p="ov">Overview</button>
+  <button class="secbtn" data-p="gl">Glossary</button>
+  <button class="secbtn" data-p="ol">1-Liners</button>
+  <button class="secbtn" data-p="con">Concepts</button>
+  <button class="secbtn" data-p="bp">Best Practices</button>
+  <button class="secbtn" data-p="qa">Interview</button>
+  <button class="secbtn" data-p="cd">Code ×5</button>
+</div>
+
+<div class="pan active" id="s19-ov">
+  <div class="dc"><div class="dl">Session 19 · test.skip — Complete Guide</div>
+    <p><code>test.skip()</code> tells Playwright to completely bypass a test or group without running it. The test is recorded as <strong>skipped</strong> (not passed, not failed) in reports. It can be used unconditionally, conditionally at runtime, and at different levels — test, describe, or inside a test body. <strong>Placement matters critically</strong>: inside the test body vs as the first argument changes when and how it is evaluated.</p>
+  </div>
+  <div class="g2">
+    <div class="gc"><h4>WHAT is test.skip?</h4><p>A modifier that marks a test as "not to be executed." Playwright skips its setup, execution, and teardown. It shows as skipped (⚠️) in HTML reports — not as a failure. Completely different from test.fail() which still runs the test.</p></div>
+    <div class="gc"><h4>WHY use it?</h4><p>Skip tests for: unimplemented features, known flaky third-party tests, browser-specific bugs, environment-specific tests (no email server in CI), tests under active development, or temporarily bypassing broken infrastructure.</p></div>
+    <div class="gc"><h4>WHEN and placement?</h4><p><strong>Top-level (static):</strong> <code>test.skip('name', fn)</code> — evaluated at collection time, before any browser starts. <strong>Inside body (dynamic):</strong> <code>test.skip(condition)</code> — evaluated at runtime, can use fixture values like browserName, page, testInfo.</p></div>
+    <div class="gc"><h4>WHERE it affects</h4><p>At <strong>test level</strong>: skips one test. At <strong>describe level</strong>: <code>test.describe.skip()</code> skips ALL tests in that block. At <strong>file level</strong>: <code>test.skip()</code> at top of file skips ALL tests. Inside test body: skips from that point (hooks for the test still ran up to that point).</p></div>
+  </div>
+</div>
+
+<div class="pan" id="s19-gl">
+  <div class="tsec">Keyword Glossary — Session 19</div>
+  <div class="gi"><span class="gk">test.skip()</span><span class="gd">Static modifier form — test.skip('name', async fn) or test.skip('name', options, async fn). The test is never instantiated. Evaluated during test collection, not execution.</span></div>
+  <div class="gi"><span class="gk">test.skip(condition)</span><span class="gd">Dynamic/conditional form — called INSIDE a test body: test.skip(browserName==='webkit', 'reason'). Evaluated at runtime after fixtures are injected. Can use any fixture value.</span></div>
+  <div class="gi"><span class="gk">test.skip(condition, reason)</span><span class="gd">Conditional skip with a message. The reason string appears in the HTML report under the skipped test entry, explaining WHY it was skipped. Always provide a reason.</span></div>
+  <div class="gi"><span class="gk">test.describe.skip()</span><span class="gd">Skips an entire describe block and all tests inside it. Equivalent to marking every test.skip() within that block. Use for feature groups under construction or temporarily disabled.</span></div>
+  <div class="gi"><span class="gk">skipped status</span><span class="gd">A test's outcome when skip runs. Shows as ⚠️ in reports. Exit code 0 (not a failure). Different from failed (❌). Appears in summary: X passed, Y failed, Z skipped.</span></div>
+  <div class="gi"><span class="gk">Static placement</span><span class="gd">test.skip() as the first argument style — evaluated at plan build time before any browser launches. No access to fixtures. Cannot be conditional on runtime values.</span></div>
+  <div class="gi"><span class="gk">Dynamic placement</span><span class="gd">test.skip(condition) called INSIDE the test body after fixtures are available. Can evaluate any runtime value: browserName, process.env, page.url(), testInfo.retry count, etc.</span></div>
+  <div class="gi"><span class="gk">test.fixme()</span><span class="gd">Identical behavior to test.skip() — skips the test — but communicates different intent: "broken, needs fixing." Shows with a fixme icon. Use when infrastructure is broken, not just not-yet-implemented.</span></div>
+  <div class="gi"><span class="gk">browserName fixture</span><span class="gd">Built-in Playwright fixture: 'chromium' | 'firefox' | 'webkit'. Available inside test body for conditional skip based on the current browser being tested.</span></div>
+  <div class="gi"><span class="gk">process.env</span><span class="gd">Node.js environment variable access. Used in conditional skip to detect CI=true, TEST_ENV, or feature flags. Available both at static (collection) time and dynamic (runtime) time.</span></div>
+</div>
+
+<div class="pan" id="s19-ol">
+  <div class="tsec">Interview One-Liners — Session 19</div>
+  <div class="ols">
+    <div class="oli"><span class="lbl">Placement matters</span>"The placement of test.skip() fundamentally changes when it's evaluated — as a static modifier like test.skip('name', fn) it's evaluated at plan-build time before any browser opens, so no fixtures are available. Inside the test body as test.skip(condition), it's evaluated at runtime when all fixtures including browserName and page are fully available."</div>
+    <div class="oli"><span class="lbl">vs test.fail</span>"test.skip() never runs the test body — it immediately marks the test as skipped and moves on. test.fail() DOES run the test body — it just inverts the pass condition. If you want the test to be completely bypassed, use skip. If you want it to run but expect it to fail, use fail."</div>
+    <div class="oli"><span class="lbl">Reason string</span>"I always provide a reason string to test.skip(): test.skip(true, 'BUG-456: payment widget broken on Firefox 120') — it shows up in the HTML report so any team member can understand why the test was skipped without reading the code."</div>
+    <div class="oli"><span class="lbl">describe.skip</span>"When an entire feature is not yet ready, I use test.describe.skip('Feature group name', () => {...}) — it marks the entire block as skipped with a single annotation instead of adding skip to each individual test, and the report clearly shows the feature name as the skipped group."</div>
+    <div class="oli"><span class="lbl">Environment skip</span>"test.skip(process.env.CI === 'true', 'Skipped in CI — requires local SMTP server') is one of the most useful patterns — it lets me skip infrastructure-dependent tests only in CI without removing them, so they still run locally where the infrastructure exists."</div>
+    <div class="oli"><span class="lbl">Inside body vs outside</span>"If I call test.skip(true) at line 1 inside the test body, the beforeEach hooks HAVE already run before that line — they run for every test regardless. If I use the static form test.skip('name', fn), beforeEach never runs for that test at all."</div>
+    <div class="oli"><span class="lbl">Exit code</span>"Skipped tests return exit code 0 in CI — they do NOT fail the pipeline. This is intentional: a skip means 'we chose not to run this' not 'something is broken.' This is important to understand when teammates ask why CI is green with skipped tests."</div>
+  </div>
+</div>
+
+<div class="pan" id="s19-con">
+  <div class="tsec">Core Concepts — Session 19</div>
+  <div class="cb"><h4>⬡ All test.skip() Forms — Reference</h4>
+    <div class="cbb">
+      <div class="fb">
+        <div class="fr"><span class="fc2 bl">Form 1</span><span class="fc2 nn">test.skip('name', async fn)</span><span class="ar">→</span><span class="fc2 nn">static, always skipped</span></div>
+        <div class="fr"><span class="fc2 bl">Form 2</span><span class="fc2 nn">test.skip('name', options, async fn)</span><span class="ar">→</span><span class="fc2 nn">static + options (timeout etc)</span></div>
+        <div class="fr"><span class="fc2 gr">Form 3</span><span class="fc2 nn">Inside body: test.skip()</span><span class="ar">→</span><span class="fc2 gr">runtime, always skip</span></div>
+        <div class="fr"><span class="fc2 gr">Form 4</span><span class="fc2 nn">Inside body: test.skip(condition)</span><span class="ar">→</span><span class="fc2 gr">runtime, conditional</span></div>
+        <div class="fr"><span class="fc2 gr">Form 5</span><span class="fc2 nn">Inside body: test.skip(condition, 'reason')</span><span class="ar">→</span><span class="fc2 gr">runtime + reason</span></div>
+        <div class="fr"><span class="fc2 or">Form 6</span><span class="fc2 nn">test.describe.skip('group', fn)</span><span class="ar">→</span><span class="fc2 or">entire block skipped</span></div>
+        <div class="fr"><span class="fc2 pu">Form 7</span><span class="fc2 nn">test.skip() at file top (no args)</span><span class="ar">→</span><span class="fc2 pu">all tests in file skipped</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb"><h4>⬡ Where skip is Called — How Hooks Behave</h4>
+    <div class="cbb">
+      <p>This is the most asked interview question about test.skip(). Understanding what runs and what doesn't based on placement:</p>
+      <div class="fb">
+        <div class="fr"><span class="fc2 rd">Static form</span><span class="fc2 nn">test.skip('name', fn)</span></div>
+        <div class="fr" style="margin-left:10px"><span class="ar">→</span><span class="fc2 rd">beforeAll: ✗ does NOT run for this test</span></div>
+        <div class="fr" style="margin-left:10px"><span class="ar">→</span><span class="fc2 rd">beforeEach: ✗ does NOT run</span></div>
+        <div class="fr" style="margin-left:10px"><span class="ar">→</span><span class="fc2 rd">test body: ✗ never entered</span></div>
+        <div class="fr" style="margin-left:10px"><span class="ar">→</span><span class="fc2 rd">afterEach: ✗ does NOT run</span></div>
+        <div class="fr" style="margin-top:6px"><span class="fc2 gr">Dynamic: test.skip(cond) at LINE 1 inside body</span></div>
+        <div class="fr" style="margin-left:10px"><span class="ar">→</span><span class="fc2 gr">beforeEach: ✓ DOES run (before test body starts)</span></div>
+        <div class="fr" style="margin-left:10px"><span class="ar">→</span><span class="fc2 gr">test body: enters, hits skip → exits immediately</span></div>
+        <div class="fr" style="margin-left:10px"><span class="ar">→</span><span class="fc2 gr">afterEach: ✓ DOES run (cleanup still needed)</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb"><h4>⬡ skip vs fixme vs fail — Decision Chart</h4>
+    <div class="cbb">
+      <div class="fb">
+        <div class="fr"><span class="fc2 bl">test.skip()</span><span class="ar">→</span><span class="fc2 nn">Feature not yet built / env not available</span></div>
+        <div class="fr"><span class="fc2 pu">test.fixme()</span><span class="ar">→</span><span class="fc2 nn">Known broken infrastructure / needs dev attention</span></div>
+        <div class="fr"><span class="fc2 rd">test.fail()</span><span class="ar">→</span><span class="fc2 nn">Confirmed bug — test runs, expected to fail</span></div>
+        <div class="fr" style="margin-top:5px"><span class="fc2 nn">Question: Does the test body need to run?</span></div>
+        <div class="fr"><span class="fc2 rd">NO</span><span class="ar">→</span><span class="fc2 nn">use skip or fixme</span></div>
+        <div class="fr"><span class="fc2 gr">YES</span><span class="ar">→</span><span class="fc2 nn">use fail (runs test, inverts assertion)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pan" id="s19-bp">
+  <div class="tsec">Best Practices — Session 19</div>
+  <ul class="bpl">
+    <li class="bpi"><div class="bpic">✓</div><div>Always provide a <strong>reason string</strong> with skip: <code>test.skip(cond, 'BUG-123: broken on Firefox 120')</code>. It shows in reports and communicates intent without reading code.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use the <strong>static form</strong> <code>test.skip('name', fn)</code> when the skip is unconditional and permanent. Use the <strong>dynamic form</strong> <code>test.skip(condition)</code> inside the body when the condition uses runtime values like <code>browserName</code> or <code>process.env</code>.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Prefer <code>test.describe.skip()</code> over skipping each test individually when an entire feature group is disabled — one annotation instead of N, and the report groups them under the feature name.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>test.skip(process.env.CI === 'true', 'needs local infra')</code> for environment-conditional skips — run locally, skip in CI — without removing or duplicating tests.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Never use skip as a permanent solution for broken tests — attach a Jira/GitHub issue number to the reason so it gets tracked and resolved: <code>'JIRA-456: regression after refactor'</code>.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>test.fixme()</code> instead of <code>test.skip()</code> when the test is intentionally broken (needs dev attention) — it communicates different intent and appears differently in reports.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Track the count of skipped tests in CI — a rising skip count over time is a signal of test debt. Set a maximum allowed skip count and alert when exceeded.</div></li>
+  </ul>
+</div>
+
+<div class="pan" id="s19-qa">
+  <div class="tsec">Interview Prep — 5 SDET Q&A</div>
+  <div class="qa" id="q19-1"><div class="qaq" onclick="tq(this)">Q1: What is the exact difference between calling test.skip() outside vs inside a test body? <span class="qtg">▶</span></div>
+  <div class="qaa">Outside (static): test.skip('my test', async () => {...}) — this is evaluated during Playwright's test collection phase before any browser starts. The test is never added to the execution queue. No hooks run at all — not beforeEach, not afterEach, not the test body. Inside (dynamic): test('my test', async ({browserName}) => { test.skip(browserName==='webkit', 'not supported'); ...}) — this is evaluated at runtime AFTER fixtures are injected, AFTER beforeEach ran, and AFTER entering the test body. When skip fires inside the body: afterEach STILL runs (cleanup must happen), but the remainder of the test body after the skip call does NOT execute. The key interview answer: static = plan time, no hooks run. Dynamic = runtime, beforeEach and afterEach STILL run.</div></div>
+  <div class="qa" id="q19-2"><div class="qaq" onclick="tq(this)">Q2: How does test.skip() affect the CI pipeline exit code? <span class="qtg">▶</span></div>
+  <div class="qaa">Skipped tests do NOT cause pipeline failure. The Playwright process exits with code 0 when all non-skipped tests pass, regardless of how many tests are skipped. The summary shows: "10 passed, 2 skipped" — exit code 0. If ANY test fails: exit code 1 — pipeline fails. This is fundamentally different from failing — a skip means a conscious decision was made not to run the test. Important implication: if you accidentally skip tests that should be running (e.g., wrong condition), CI appears green but coverage is reduced. Teams should monitor the skip count in CI metrics and alert when it rises unexpectedly.</div></div>
+  <div class="qa" id="q19-3"><div class="qaq" onclick="tq(this)">Q3: How do you skip tests only on a specific browser? <span class="qtg">▶</span></div>
+  <div class="qaa">Use the dynamic form inside the test body with the built-in browserName fixture: test('drag-drop test', async ({page, browserName}) => { test.skip(browserName === 'webkit', 'BUG-789: Drag and drop broken on WebKit 17'); await page.dragAndDrop(...); }). For skipping in a describe block: test.describe('Payment flow', () => { test.beforeEach(async ({browserName}) => { test.skip(browserName === 'firefox', 'Stripe widget not supported on FF'); }); }). The beforeEach skip approach skips all tests in the describe for that browser without touching each test. The browserName values are: 'chromium', 'firefox', 'webkit' — always lowercase. For multiple browsers: test.skip(['webkit','firefox'].includes(browserName), 'Desktop-only feature').</div></div>
+  <div class="qa" id="q19-4"><div class="qaq" onclick="tq(this)">Q4: What is the difference between test.skip() and test.fixme()? <span class="qtg">▶</span></div>
+  <div class="qaa">Both skip the test — the test body never executes, both show exit code 0. The difference is semantic/communicative: test.skip() means "we consciously chose not to run this" — reasons: unimplemented feature, missing environment, conditional platform. test.fixme() means "this is broken and needs fixing" — it signals technical debt, a known broken test that someone should address. In HTML reports, fixme tests appear with a distinct fixme icon vs a generic skip icon. Some teams configure CI alerts when fixme count rises. In practice: if a test is skipped because the feature isn't built yet → test.skip(). If a test is skipped because a recent code change broke it and needs a developer to fix it → test.fixme().</div></div>
+  <div class="qa" id="q19-5"><div class="qaq" onclick="tq(this)">Q5: How do you skip all tests in a file without modifying every test? <span class="qtg">▶</span></div>
+  <div class="qaa">Three approaches: (1) File-level skip at top of file — call test.skip() with no arguments at the very top (outside any describe): test.skip(). This skips ALL tests in the file. (2) Wrap everything in a skipped describe: test.describe.skip('Entire checkout module', () => { all your tests here }). The describe name appears in reports making it clear what was skipped. (3) Conditional file skip: test.skip(process.env.SKIP_PAYMENT_TESTS === 'true', 'Payment tests disabled via env flag'). The best approach for a temporarily disabled feature is option 2 — the describe name in reports tells teammates exactly which feature is disabled. Option 1 is fine for a file that is completely irrelevant in the current environment.</div></div>
+</div>
+
+<div class="pan" id="s19-cd">
+  <div class="ctabs" id="ct-s19">
+    <button class="ctb active" data-c="c19-1"><span class="fxt">.ts</span>static-skip-forms.ts</button>
+    <button class="ctb" data-c="c19-2"><span class="fxt">.ts</span>dynamic-conditional-skip.ts</button>
+    <button class="ctb" data-c="c19-3"><span class="fxt">.ts</span>describe-skip.ts</button>
+    <button class="ctb" data-c="c19-4"><span class="fxt">.ts</span>browser-env-skip.ts</button>
+    <button class="ctb" data-c="c19-5"><span class="fxt">.ts</span>skip-vs-fixme-fail.ts</button>
+  </div>
+  <div id="c19-1" class="cpan active"><div class="ch"><span class="cfn"><span class="cfndot"></span>static-skip-forms.ts</span><button class="cpbtn" onclick="doCopy('c19-1')">Copy</button></div>
+<pre><code class="language-typescript">// static-skip-forms.ts
+// PURPOSE: All static/unconditional forms of test.skip()
+// KEY: Evaluated at PLAN BUILD TIME — hooks never run for these tests
+
+import { test, expect } from '@playwright/test';
+
+// ── FORM 1: Static skip — test body is the 2nd argument ─────────
+// test.skip replaces test() — first arg = name, second = async fn
+// beforeEach, afterEach do NOT run for this test
+test.skip('payment feature not implemented yet', async ({ page }) => {
+  // This body is NEVER executed — plan build time skip
+  await page.goto('/checkout/payment');
+  await expect(page.locator('.payment-form')).toBeVisible();
+});
+
+// ── FORM 2: Static skip with options (timeout, retries) ──────────
+test.skip('dark mode persistence — pending design',
+  { timeout: 60_000 },  // options object is 2nd arg
+  async ({ page }) => {
+    // Also never runs — static skip with options
+    await page.goto('/');
+  }
+);
+
+// ── FORM 3: File-level skip — skips ALL tests in this file ────────
+// Call with NO arguments at the very top of the file (outside describe)
+// test.skip(); ← uncomment to skip entire file
+
+// ── Comparison: normal test — runs normally ───────────────────────
+test('homepage loads — this runs normally', async ({ page }) => {
+  await page.goto('https://myapp.com');
+  await expect(page).toHaveTitle(/MyApp/);
+});
+
+// Report output:
+// ✅ homepage loads — this runs normally        [passed]
+// ⚠️ payment feature not implemented yet         [skipped]
+// ⚠️ dark mode persistence — pending design      [skipped]
+// Summary: 1 passed, 0 failed, 2 skipped  ← exit code 0</code></pre></div>
+
+  <div id="c19-2" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>dynamic-conditional-skip.ts</span><button class="cpbtn" onclick="doCopy('c19-2')">Copy</button></div>
+<pre><code class="language-typescript">// dynamic-conditional-skip.ts
+// PURPOSE: Conditional skip INSIDE test body — runtime evaluation
+// KEY: beforeEach RUNS before this skip fires (opposite of static skip)
+
+import { test, expect } from '@playwright/test';
+
+// ── PATTERN 1: Simple condition ───────────────────────────────────
+test('skip based on boolean condition', async ({ page }) => {
+
+  // Called INSIDE body — runtime evaluation (fixtures available)
+  // test.skip(condition) — no reason
+  test.skip(process.env.CI === 'true');
+  // If CI=true: test stops here. afterEach still runs for cleanup.
+
+  await page.goto('https://myapp.com');
+  await expect(page.locator('h1')).toBeVisible();
+});
+
+// ── PATTERN 2: With reason message ───────────────────────────────
+test('email test — requires local SMTP', async ({ page }) => {
+
+  // test.skip(condition, 'reason') — reason appears in HTML report
+  test.skip(
+    process.env.CI === 'true',
+    'Requires local SMTP server — not available in CI pipeline'
+  );
+
+  await page.goto('https://myapp.com/send-email');
+  await page.click('#send-test-email');
+  await expect(page.locator('.email-sent-success')).toBeVisible();
+});
+
+// ── PATTERN 3: Multi-condition skip ──────────────────────────────
+test('complex multi-condition skip', async ({ page }, testInfo) => {
+
+  // Combine multiple conditions with logical operators
+  const skipConditions = [
+    process.env.CI === 'true',            // in CI pipeline
+    process.env.TEST_ENV === 'dev',        // on dev environment
+    testInfo.project.name === 'mobile',   // mobile project
+  ];
+
+  test.skip(
+    skipConditions.some(c => c),   // ANY condition = true → skip
+    'Skipped: CI or Dev env or mobile project detected'
+  );
+
+  await page.goto('https://myapp.com/admin');
+  await expect(page.locator('.admin-panel')).toBeVisible();
+});</code></pre></div>
+
+  <div id="c19-3" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>describe-skip.ts</span><button class="cpbtn" onclick="doCopy('c19-3')">Copy</button></div>
+<pre><code class="language-typescript">// describe-skip.ts
+// PURPOSE: Skip entire describe blocks — group-level skip
+// Shows: describe.skip, conditional via beforeEach, nested skip
+
+import { test, expect } from '@playwright/test';
+
+// ── test.describe.skip() — skips ALL tests in the block ───────────
+test.describe.skip('Payment Gateway — Stripe integration not ready', () => {
+
+  // None of these run — entire block is skipped
+  test('credit card payment', async ({ page }) => {
+    await page.goto('/checkout/card');
+  });
+
+  test('UPI payment', async ({ page }) => {
+    await page.goto('/checkout/upi');
+  });
+
+  test('net banking', async ({ page }) => {
+    await page.goto('/checkout/netbanking');
+  });
+  // Report: 3 tests under "Payment Gateway" → all ⚠️ skipped
+});
+
+// ── Conditional skip via beforeEach — affects ALL tests in describe ─
+test.describe('Notifications — conditional skip', () => {
+
+  // Skip ALL tests in this group when running on mobile project
+  test.beforeEach(async ({}, testInfo) => {
+    test.skip(
+      testInfo.project.name.includes('mobile'),
+      'Push notifications not available on mobile browser project'
+    );
+  });
+
+  test('browser push notification sent', async ({ page }) => {
+    // Skipped on mobile project, runs on desktop
+    await page.goto('https://myapp.com/notifications');
+    await expect(page.locator('.notification-bell')).toBeVisible();
+  });
+
+  test('notification preferences saved', async ({ page }) => {
+    // Also skipped on mobile — beforeEach fires for each test
+    await page.goto('https://myapp.com/settings/notifications');
+    await expect(page.locator('.prefs-saved')).toBeVisible();
+  });
+});
+
+// ── Normal test for comparison ────────────────────────────────────
+test('homepage always runs', async ({ page }) => {
+  await page.goto('https://myapp.com');
+  await expect(page).toHaveTitle(/MyApp/);
+});</code></pre></div>
+
+  <div id="c19-4" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>browser-env-skip.ts</span><button class="cpbtn" onclick="doCopy('c19-4')">Copy</button></div>
+<pre><code class="language-typescript">// browser-env-skip.ts
+// PURPOSE: Real-world skip patterns — browser-specific + env-specific
+// Shows: browserName, project name, retry skip, testInfo properties
+
+import { test, expect } from '@playwright/test';
+
+// ── Skip specific browsers ────────────────────────────────────────
+test('drag and drop — skip on webkit', async ({ page, browserName }) => {
+
+  // browserName is a built-in Playwright fixture: 'chromium'|'firefox'|'webkit'
+  test.skip(
+    browserName === 'webkit',
+    'BUG-456: Drag and drop events broken on WebKit 17.x — tracking in JIRA'
+  );
+
+  await page.goto('https://myapp.com/kanban');
+  await page.dragAndDrop('.card-todo', '.column-doing');
+  await expect(page.locator('.column-doing .card')).toHaveCount(1);
+});
+
+// ── Skip multiple browsers ────────────────────────────────────────
+test('WebRTC video call — chromium only', async ({ page, browserName }) => {
+
+  test.skip(
+    ['firefox', 'webkit'].includes(browserName),
+    'WebRTC screen sharing only supported on Chromium in test env'
+  );
+
+  await page.goto('https://myapp.com/video-call');
+  await expect(page.locator('.video-preview')).toBeVisible();
+});
+
+// ── Skip on retry — stop wasting CI time ─────────────────────────
+test('no-retry test — give up on first failure',
+  async ({ page }, testInfo) => {
+
+  // If this is a retry attempt (retry > 0), skip instead of retrying
+  test.skip(
+    testInfo.retry > 0,
+    'Skipping retry — flakiness needs investigation not retry'
+  );
+
+  await page.goto('https://myapp.com/critical-flow');
+  await expect(page).toHaveTitle(/Critical/);
+});
+
+// ── Skip based on project name ─────────────────────────────────────
+test('desktop-only feature — skip mobile project',
+  async ({ page }, testInfo) => {
+
+  // testInfo.project.name matches playwright.config.ts project names
+  test.skip(
+    testInfo.project.name.toLowerCase().includes('mobile'),
+    'Keyboard shortcut test — not applicable on touch devices'
+  );
+
+  await page.goto('https://myapp.com');
+  await page.keyboard.press('Control+K'); // command palette
+  await expect(page.locator('.command-palette')).toBeVisible();
+});</code></pre></div>
+
+  <div id="c19-5" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>skip-vs-fixme-fail.ts</span><button class="cpbtn" onclick="doCopy('c19-5')">Copy</button></div>
+<pre><code class="language-typescript">// skip-vs-fixme-fail.ts
+// PURPOSE: Side-by-side comparison of skip, fixme, and fail modifiers
+// Shows the right modifier for each scenario
+
+import { test, expect } from '@playwright/test';
+
+// ── test.skip() — Feature not built yet / env not available ───────
+// Behavior: test body NEVER runs, exit code 0
+// Use: conscious choice to not run
+test.skip('SKIP: analytics dashboard — feature in sprint 15',
+  async ({ page }) => {
+  await page.goto('/analytics'); // never reached
+});
+
+// ── test.fixme() — Broken test that needs developer attention ─────
+// Behavior: identical to skip (body never runs), but shows fixme icon
+// Use: signals "someone broke this, needs fixing"
+test.fixme('FIXME: dark mode toggle crashes React — regression from PR #234',
+  async ({ page }) => {
+  await page.click('#dark-toggle'); // never reached
+});
+
+// ── test.fail() — Known bug: test RUNS and is expected to fail ─────
+// Behavior: test body RUNS, assertion fails → test PASSES (inverted)
+// Use: document bugs that exist in production right now
+// If bug is fixed: assertion passes → test.fail() makes it FAIL → alert!
+test.fail('FAIL: BUG-789 checkout button disabled on iOS Safari 17',
+  async ({ page }) => {
+  await page.goto('/checkout');
+  // This assertion FAILS due to the bug — test.fail() makes the suite pass
+  // When bug is fixed: assertion PASSES → test.fail() marks test as FAILED
+  // → that's your signal to remove test.fail() annotation!
+  await expect(page.getByRole('button', { name: 'Place Order' }))
+    .toBeEnabled(); // fails on buggy build → test.fail() = suite passes
+});
+
+// ── Correct pairing guide ─────────────────────────────────────────
+// QUESTION: Should the test body run?
+// NO  → test.skip()  (not built) or test.fixme() (broken infra)
+// YES → test.fail()  (known bug, test documents it)
+//
+// QUESTION: Is this a bug or a missing feature?
+// Missing feature → test.skip('feature sprint 15')
+// Broken by code change → test.fixme('regression from PR #234')
+// Confirmed production bug → test.fail('BUG-123 known issue')
+
+test('normal comparison test — always runs', async ({ page }) => {
+  await page.goto('https://myapp.com');
+  await expect(page).toHaveTitle(/MyApp/);
+});</code></pre></div>
+</div>
+</div><!-- end s19 -->
+
+<!-- ═══════════════════ S20 ═══════════════════ -->
+<div class="sc" id="sc-s20">
+<div class="sectabs" id="st-s20">
+  <button class="secbtn active" data-p="ov">Overview</button>
+  <button class="secbtn" data-p="gl">Glossary</button>
+  <button class="secbtn" data-p="ol">1-Liners</button>
+  <button class="secbtn" data-p="con">Concepts</button>
+  <button class="secbtn" data-p="bp">Best Practices</button>
+  <button class="secbtn" data-p="qa">Interview</button>
+  <button class="secbtn" data-p="cd">Code ×5</button>
+</div>
+
+<div class="pan active" id="s20-ov">
+  <div class="dc"><div class="dl">Session 20 · Environment Handling — Dev / Test / UAT URLs</div>
+    <p>Environment handling means making your Playwright tests point to the correct <strong>base URL</strong> (Dev, Test, UAT, Production) based on where they're running — without hardcoding URLs in test files. This is achieved through <code>process.env</code> variables, <code>playwright.config.ts</code> baseURL, and environment-specific config files.</p>
+  </div>
+  <div class="g2">
+    <div class="gc"><h4>WHAT are environments?</h4><p>Dev (developer laptop), Test/QA (shared testing server), UAT (User Acceptance Testing — pre-prod), Production. Each has a different base URL. Tests must point to the right one without code changes between runs.</p></div>
+    <div class="gc"><h4>WHY handle environments?</h4><p>Hardcoded URLs break when the environment changes. Environment handling lets the same test suite run against Dev, Test, and UAT automatically — just by changing an env variable or passing a flag. CI pipelines use this heavily.</p></div>
+    <div class="gc"><h4>HOW it works</h4><p>Set <code>BASE_URL</code> environment variable → <code>playwright.config.ts</code> reads <code>process.env.BASE_URL</code> → sets <code>baseURL</code> → all <code>page.goto('/path')</code> calls resolve against that base. One config, all environments.</p></div>
+    <div class="gc fc"><h4>WHERE it's configured</h4><p>The <strong>baseURL</strong> in <code>playwright.config.ts</code> <code>use:{}</code> block is the central switch. It's read from <code>process.env.BASE_URL</code>. CI pipelines set this in workflow YAML. Developers set it in a <code>.env.local</code> file. Never hardcode URLs in individual test files.</p></div>
+  </div>
+</div>
+
+<div class="pan" id="s20-gl">
+  <div class="tsec">Keyword Glossary — Session 20</div>
+  <div class="gi"><span class="gk">baseURL</span><span class="gd">Config key in playwright.config.ts use:{}. When set, page.goto('/dashboard') resolves to baseURL+'/dashboard'. Eliminates hardcoded hostnames in every test file. The core of environment handling.</span></div>
+  <div class="gi"><span class="gk">process.env</span><span class="gd">Node.js object containing all environment variables. process.env.BASE_URL, process.env.CI, process.env.TEST_ENV. Set via .env file, CI YAML, shell export, or dotenv package. Available at config read time.</span></div>
+  <div class="gi"><span class="gk">.env file</span><span class="gd">A text file in project root containing KEY=VALUE pairs. Loaded by dotenv package: require('dotenv').config(). Not committed to git (.gitignore). Used for local developer environment configuration.</span></div>
+  <div class="gi"><span class="gk">dotenv</span><span class="gd">npm package: npm install -D dotenv. Loads .env file into process.env. Import in playwright.config.ts: import dotenv from 'dotenv'; dotenv.config(). Enables local .env without CI pipeline changes.</span></div>
+  <div class="gi"><span class="gk">TEST_ENV</span><span class="gd">Custom environment variable used to identify the current environment: 'dev' | 'test' | 'uat' | 'prod'. Separate from BASE_URL — used for conditional logic, skip decisions, and test data selection.</span></div>
+  <div class="gi"><span class="gk">env-specific config</span><span class="gd">Pattern of having multiple config files: playwright.config.dev.ts, playwright.config.uat.ts. Run with: npx playwright test --config=playwright.config.uat.ts. Each file has different baseURL, credentials, project settings.</span></div>
+  <div class="gi"><span class="gk">--config flag</span><span class="gd">CLI flag to specify which config file to use: npx playwright test --config=playwright.config.uat.ts. Overrides the default playwright.config.ts. Enables environment-specific configs without env variable management.</span></div>
+  <div class="gi"><span class="gk">test-accounts.json</span><span class="gd">Pattern file storing test credentials per environment: { "dev": {"email":"...", "pass":"..."}, "uat": {...} }. Read using process.env.TEST_ENV to select the right account. Never commit real credentials.</span></div>
+</div>
+
+<div class="pan" id="s20-ol">
+  <div class="tsec">Interview One-Liners — Session 20</div>
+  <div class="ols">
+    <div class="oli"><span class="lbl">baseURL</span>"Setting baseURL in playwright.config.ts means all page.goto('/dashboard') calls automatically resolve to the correct environment URL — changing the environment only requires changing one environment variable, not touching any test file."</div>
+    <div class="oli"><span class="lbl">dotenv</span>"I use dotenv in playwright.config.ts to load a .env.local file that developers create on their machines — this way each developer can point tests at their own dev server without modifying the shared config file."</div>
+    <div class="oli"><span class="lbl">env-specific configs</span>"For complex environments with different browser settings, retries, and reporter configs, I maintain separate playwright.config files per environment and use --config=playwright.config.uat.ts to select the right one. This is cleaner than if/else chains in one config file."</div>
+    <div class="oli"><span class="lbl">test.skip for envs</span>"I combine environment handling with test.skip to skip tests that can't run in certain environments — test.skip(process.env.TEST_ENV === 'prod', 'No destructive tests on production') prevents accidentally running data-mutating tests against production."</div>
+    <div class="oli"><span class="lbl">credentials per env</span>"I load environment-specific test credentials from a JSON file keyed by TEST_ENV — this means Dev has sandbox accounts, UAT has UAT accounts, and the same test code works everywhere without hardcoded usernames."</div>
+    <div class="oli"><span class="lbl">CI pipeline</span>"In CI, I set BASE_URL and TEST_ENV as pipeline secrets or environment variables in the workflow YAML. The playwright.config.ts reads them — no code changes needed when the CI target environment changes."</div>
+    <div class="oli"><span class="lbl">never hardcode</span>"The biggest anti-pattern I see in Playwright suites is hardcoded URLs like page.goto('https://uat.myapp.com/login') inside test files. This makes environment switching require a find-and-replace across 50 test files instead of changing one env variable."</div>
+  </div>
+</div>
+
+<div class="pan" id="s20-con">
+  <div class="tsec">Core Concepts — Session 20</div>
+  <div class="cb"><h4>⬡ Environment Architecture — How URLs Flow</h4>
+    <div class="cbb">
+      <div class="fb">
+        <div class="fr"><span class="fc2 or">CI Pipeline / .env file</span><span class="ar">→</span><span class="fc2 nn">BASE_URL=https://uat.myapp.com</span></div>
+        <div class="fr"><span class="fc2 bl">playwright.config.ts</span><span class="ar">→</span><span class="fc2 nn">use: { baseURL: process.env.BASE_URL }</span></div>
+        <div class="fr"><span class="fc2 gr">test file</span><span class="ar">→</span><span class="fc2 nn">page.goto('/dashboard') — no hardcoded URL</span></div>
+        <div class="fr"><span class="fc2 gr">resolved URL</span><span class="ar">→</span><span class="fc2 nn">https://uat.myapp.com/dashboard</span></div>
+        <div class="fr" style="margin-top:5px"><span class="fc2 rd">Anti-pattern</span><span class="ar">→</span><span class="fc2 nn">page.goto('https://uat.myapp.com/dashboard') in test</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb"><h4>⬡ Environment Tiers — Typical Setup</h4>
+    <div class="cbb">
+      <div class="fb">
+        <div class="fr"><span class="fc2 bl">DEV</span><span class="fc2 nn">http://localhost:3000</span><span class="ar">→</span><span class="fc2 nn">developer's local machine</span></div>
+        <div class="fr"><span class="fc2 gr">TEST/QA</span><span class="fc2 nn">https://test.myapp.com</span><span class="ar">→</span><span class="fc2 nn">shared CI target, runs on every PR</span></div>
+        <div class="fr"><span class="fc2 yw">UAT</span><span class="fc2 nn">https://uat.myapp.com</span><span class="ar">→</span><span class="fc2 nn">pre-production, stakeholder sign-off</span></div>
+        <div class="fr"><span class="fc2 rd">PROD</span><span class="fc2 nn">https://myapp.com</span><span class="ar">→</span><span class="fc2 nn">smoke tests only — no data mutation</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb"><h4>⬡ Three Patterns for Environment Switching</h4>
+    <div class="cbb">
+      <div class="fb">
+        <div class="fr"><span class="fc2 bl">Pattern 1: env variable + single config</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fc2 nn">BASE_URL=https://uat.myapp.com npx playwright test</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fc2 gr">✓ Simplest, works great for most teams</span></div>
+        <div class="fr" style="margin-top:5px"><span class="fc2 yw">Pattern 2: multiple config files per env</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fc2 nn">npx playwright test --config=playwright.config.uat.ts</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fc2 gr">✓ Best for environments with very different settings</span></div>
+        <div class="fr" style="margin-top:5px"><span class="fc2 or">Pattern 3: dotenv + .env.local file</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fc2 nn">Create .env.local → dotenv.config() in playwright.config.ts</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fc2 gr">✓ Best for developer-local config without shell exports</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pan" id="s20-bp">
+  <div class="tsec">Best Practices — Session 20</div>
+  <ul class="bpl">
+    <li class="bpi"><div class="bpic">✓</div><div>NEVER hardcode environment URLs in test files. Every <code>page.goto()</code> should use a relative path like <code>'/dashboard'</code> that resolves against the config's <code>baseURL</code>.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>BASE_URL</code> as the single source of truth. Set it once in the CI pipeline YAML or <code>.env.local</code>. Let <code>playwright.config.ts</code> read it — no test files ever read <code>process.env.BASE_URL</code> directly.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>test.skip(process.env.TEST_ENV === 'prod', 'No destructive tests on production')</code> to protect production from data-mutating tests that should only run in lower environments.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Store environment-specific test credentials in a <code>test-accounts.ts</code> file keyed by environment — never commit real passwords. Use secrets management in CI (GitHub Secrets, GitLab Variables).</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Add <code>.env.local</code> and <code>.env*.local</code> to <code>.gitignore</code>. Commit only a <code>.env.example</code> with placeholder values that shows teammates what variables they need to create.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>process.env.TEST_ENV ?? 'dev'</code> pattern with a default value — tests still work locally even without setting the variable, defaulting to the dev environment.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Run a smoke test suite against production post-deployment — only read-only tests, no creates/deletes. Use a dedicated project config for prod: <code>playwright.config.prod.ts</code> with smoke test filter.</div></li>
+  </ul>
+</div>
+
+<div class="pan" id="s20-qa">
+  <div class="tsec">Interview Prep — 5 SDET Q&A</div>
+  <div class="qa" id="q20-1"><div class="qaq" onclick="tq(this)">Q1: How do you configure Playwright to run the same tests against Dev, Test, and UAT? <span class="qtg">▶</span></div>
+  <div class="qaa">The standard approach: in playwright.config.ts, set baseURL: process.env.BASE_URL ?? 'http://localhost:3000'. In all test files, use relative paths: page.goto('/dashboard') — never absolute URLs. To run against different environments: npx BASE_URL=https://test.myapp.com playwright test (Test env). npx BASE_URL=https://uat.myapp.com playwright test (UAT). npx playwright test (defaults to localhost Dev). In CI, set BASE_URL as a pipeline environment variable or secret. On developer machines, create .env.local with BASE_URL=http://localhost:3000 and load it with dotenv. This way: zero test files change between environments, only the environment variable changes.</div></div>
+  <div class="qa" id="q20-2"><div class="qaq" onclick="tq(this)">Q2: How do you handle different credentials for each environment? <span class="qtg">▶</span></div>
+  <div class="qaa">I create a test-accounts.ts file that exports credentials per environment: const TEST_ACCOUNTS = { dev: { email:'dev-user@test.com', password:'DevPass123' }, test: { email:'qa-user@test.com', password:'QAPass123' }, uat: { email:'uat-user@test.com', password:'UATPass123' } }. In tests: const env = (process.env.TEST_ENV ?? 'dev') as keyof typeof TEST_ACCOUNTS; const {email, password} = TEST_ACCOUNTS[env]. In CI: set TEST_ENV=uat and the actual credential values as secrets (process.env.UAT_EMAIL, process.env.UAT_PASSWORD). Never hardcode real passwords. For globalSetup: it reads TEST_ENV and uses the right account to login and save storageState.</div></div>
+  <div class="qa" id="q20-3"><div class="qaq" onclick="tq(this)">Q3: What is dotenv and how do you use it with Playwright? <span class="qtg">▶</span></div>
+  <div class="qaa">dotenv is an npm package that reads a .env file and loads each KEY=VALUE line into process.env. In Playwright: npm install -D dotenv. In playwright.config.ts: import dotenv from 'dotenv'; dotenv.config({path:'.env.local'}). The .env.local file (NOT committed to git): BASE_URL=http://localhost:3000, TEST_ENV=dev, TEST_PASSWORD=localdevpassword. The .env.example file (committed, placeholder values): BASE_URL=, TEST_ENV=dev, TEST_PASSWORD=. This workflow: new developer joins, copies .env.example to .env.local, fills in their local values, runs tests — they work without any shared config changes. CI doesn't use dotenv — it has real env variables set in the pipeline YAML or secrets manager.</div></div>
+  <div class="qa" id="q20-4"><div class="qaq" onclick="tq(this)">Q4: How do you prevent tests from accidentally running against production? <span class="qtg">▶</span></div>
+  <div class="qaa">Multiple layers: (1) Skip destructive tests on prod: test.skip(process.env.TEST_ENV === 'prod', 'No data-mutating tests on production'). (2) Separate config file for prod: playwright.config.prod.ts with testMatch:['**/smoke/**/*.spec.ts'] — only smoke tests. (3) Global check in globalSetup: if (process.env.TEST_ENV === 'prod' && process.env.ALLOW_PROD_TESTS !== 'true') throw new Error('Production tests require explicit ALLOW_PROD_TESTS=true flag'). (4) CI pipeline gate: the prod smoke test job only runs on specific tags/branches (release tags), never on every PR. (5) Read-only test accounts on prod: prod test user has no write permissions, so even if a destructive test runs it fails with 403 before mutating data.</div></div>
+  <div class="qa" id="q20-5"><div class="qaq" onclick="tq(this)">Q5: How do you structure multiple environment config files? <span class="qtg">▶</span></div>
+  <div class="qaa">Create a base config and environment-specific overrides: base.config.ts exports shared settings (projects, timeout, reporters). Environment-specific configs import and override: playwright.config.uat.ts — import base, spread it, override use:{baseURL:'https://uat.myapp.com', storageState:'playwright/.auth/uat-user.json'}, retries:1. playwright.config.prod.ts — import base, override testMatch:['**/smoke/**'], retries:0, use:{baseURL:'https://myapp.com'}. Run with: npx playwright test --config=playwright.config.uat.ts. In CI: uat-job uses --config=playwright.config.uat.ts, smoke-job uses --config=playwright.config.prod.ts. This avoids a single giant config.ts with dozens of if/else branches.</div></div>
+</div>
+
+<div class="pan" id="s20-cd">
+  <div class="ctabs" id="ct-s20">
+    <button class="ctb active" data-c="c20-1"><span class="fxt">.ts</span>playwright-config-env.ts</button>
+    <button class="ctb" data-c="c20-2"><span class="fxt">.ts</span>dotenv-setup.ts</button>
+    <button class="ctb" data-c="c20-3"><span class="fxt">.ts</span>env-credentials.ts</button>
+    <button class="ctb" data-c="c20-4"><span class="fxt">.ts</span>multi-env-configs.ts</button>
+    <button class="ctb" data-c="c20-5"><span class="fxt">.ts</span>env-skip-guard.ts</button>
+  </div>
+  <div id="c20-1" class="cpan active"><div class="ch"><span class="cfn"><span class="cfndot"></span>playwright-config-env.ts</span><button class="cpbtn" onclick="doCopy('c20-1')">Copy</button></div>
+<pre><code class="language-typescript">// playwright-config-env.ts → rename to playwright.config.ts
+// PURPOSE: Single config that handles Dev / Test / UAT via env vars
+// Usage:
+//   Dev:  npx playwright test  (defaults to localhost)
+//   Test: BASE_URL=https://test.myapp.com npx playwright test
+//   UAT:  BASE_URL=https://uat.myapp.com  TEST_ENV=uat npx playwright test
+
+import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+// Load .env.local (developer machine) — .gitignored
+// CI uses real env vars instead — dotenv.config() is no-op when file missing
+dotenv.config({ path: '.env.local' });
+
+// ── Environment detection ────────────────────────────────────────
+const ENV = process.env.TEST_ENV ?? 'dev'; // dev | test | uat | prod
+
+// URL map — select based on TEST_ENV
+const BASE_URLS: Record&lt;string, string&gt; = {
+  dev:  'http://localhost:3000',
+  test: 'https://test.myapp.com',
+  uat:  'https://uat.myapp.com',
+  prod: 'https://myapp.com',
+};
+
+// Final base URL: env var wins, falls back to map, then localhost
+const BASE_URL = process.env.BASE_URL ?? BASE_URLS[ENV] ?? 'http://localhost:3000';
+
+console.log(`🌍 Running against: ${ENV} → ${BASE_URL}`);
+
+export default defineConfig({
+  testDir: './tests',
+  fullyParallel: true,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 4 : undefined,
+
+  // Prod: only run smoke tests (readonly) to protect data
+  testMatch: ENV === 'prod'
+    ? ['**/smoke/**/*.spec.ts']
+    : ['**/*.spec.ts'],
+
+  use: {
+    baseURL: BASE_URL,       // ALL goto('/path') resolves here
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+  ],
+});</code></pre></div>
+
+  <div id="c20-2" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>dotenv-setup.ts</span><button class="cpbtn" onclick="doCopy('c20-2')">Copy</button></div>
+<pre><code class="language-typescript">// dotenv-setup.ts
+// PURPOSE: Show dotenv integration, .env file structure, .gitignore
+// Files to create in project root:
+
+// ── .env.example (COMMIT THIS — placeholder values) ───────────────
+// # Copy to .env.local and fill in your values
+// TEST_ENV=dev
+// BASE_URL=http://localhost:3000
+// TEST_EMAIL=
+// TEST_PASSWORD=
+// DEV_API_KEY=
+
+// ── .env.local (DO NOT COMMIT — real developer values) ──────────
+// TEST_ENV=dev
+// BASE_URL=http://localhost:3000
+// TEST_EMAIL=alice@myapp.com
+// TEST_PASSWORD=MyLocalDevPass123!
+// DEV_API_KEY=sk-dev-abc123xyz
+
+// ── .gitignore entries ────────────────────────────────────────────
+// .env.local
+// .env*.local
+// playwright/.auth/          ← saved auth states
+
+// ── playwright.config.ts with dotenv ────────────────────────────
+import { defineConfig } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load .env.local from project root — no-op if file doesn't exist (CI)
+dotenv.config({
+  path: path.resolve(__dirname, '.env.local'),
+  override: false, // CI env vars win over .env.local values
+});
+
+// Optional: load environment-specific .env file
+const envFile = `.env.${process.env.TEST_ENV ?? 'dev'}`;
+dotenv.config({ path: path.resolve(__dirname, envFile), override: false });
+// This loads: .env.dev, .env.test, .env.uat based on TEST_ENV
+
+export default defineConfig({
+  use: {
+    baseURL: process.env.BASE_URL ?? 'http://localhost:3000',
+  },
+});
+
+// npm install -D dotenv
+// Install: npm install --save-dev dotenv
+// TypeScript types included in dotenv package since v16</code></pre></div>
+
+  <div id="c20-3" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>env-credentials.ts</span><button class="cpbtn" onclick="doCopy('c20-3')">Copy</button></div>
+<pre><code class="language-typescript">// env-credentials.ts
+// PURPOSE: Per-environment test credentials management
+// NEVER commit real passwords — use CI secrets for sensitive values
+
+import { test, expect } from '@playwright/test';
+
+// ── test-accounts.ts — per-environment credential map ─────────────
+// In real project: sensitive values from process.env, not hardcoded
+export const TEST_ACCOUNTS = {
+  dev: {
+    adminEmail:    process.env.DEV_ADMIN_EMAIL ?? 'admin@dev.local',
+    adminPassword: process.env.DEV_ADMIN_PASS  ?? 'DevAdmin123',
+    buyerEmail:    'buyer@dev.local',
+    buyerPassword: 'DevBuyer123',
+  },
+  test: {
+    adminEmail:    process.env.TEST_ADMIN_EMAIL!,
+    adminPassword: process.env.TEST_ADMIN_PASS!,
+    buyerEmail:    process.env.TEST_BUYER_EMAIL!,
+    buyerPassword: process.env.TEST_BUYER_PASS!,
+  },
+  uat: {
+    adminEmail:    process.env.UAT_ADMIN_EMAIL!,
+    adminPassword: process.env.UAT_ADMIN_PASS!,
+    buyerEmail:    process.env.UAT_BUYER_EMAIL!,
+    buyerPassword: process.env.UAT_BUYER_PASS!,
+  },
+} as const;
+
+// ── Helper: get credentials for current environment ───────────────
+type EnvKey = keyof typeof TEST_ACCOUNTS;
+export function getCredentials() {
+  const env = (process.env.TEST_ENV ?? 'dev') as EnvKey;
+  return TEST_ACCOUNTS[env] ?? TEST_ACCOUNTS.dev;
+}
+
+// ── In tests ──────────────────────────────────────────────────────
+test('login with environment-specific credentials', async ({ page }) => {
+  const { adminEmail, adminPassword } = getCredentials();
+
+  await page.goto('/login'); // resolves to baseURL + /login
+  await page.fill('#email',    adminEmail);
+  await page.fill('#password', adminPassword);
+  await page.click('button[type="submit"]');
+  await expect(page).toHaveURL(/dashboard/);
+});</code></pre></div>
+
+  <div id="c20-4" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>multi-env-configs.ts</span><button class="cpbtn" onclick="doCopy('c20-4')">Copy</button></div>
+<pre><code class="language-typescript">// multi-env-configs.ts
+// PURPOSE: Multiple config files for different environments
+// Run: npx playwright test --config=playwright.config.uat.ts
+// Files: base.config.ts, playwright.config.dev.ts, playwright.config.uat.ts
+
+import { defineConfig, devices } from '@playwright/test';
+
+// ── base.config.ts — shared across all environments ───────────────
+export const baseConfig = {
+  testDir: './tests',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  reporter: [['html', { open: 'never' }], ['dot']] as any,
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
+  ],
+};
+
+// ── playwright.config.dev.ts — local developer ───────────────────
+export default defineConfig({
+  ...baseConfig,
+  retries: 0,        // no retries locally
+  workers: 2,        // fewer workers on dev laptop
+  use: {
+    baseURL: 'http://localhost:3000',
+    trace: 'on',       // always trace locally for debugging
+    headless: false,   // show browser locally
+  },
+});
+
+// ── playwright.config.uat.ts — UAT environment ────────────────────
+// export default defineConfig({
+//   ...baseConfig,
+//   retries: 1,
+//   workers: 4,
+//   globalSetup: './setup/uat-global-setup.ts',
+//   use: {
+//     baseURL: 'https://uat.myapp.com',
+//     storageState: 'playwright/.auth/uat-admin.json',
+//     trace: 'on-first-retry',
+//     headless: true,
+//     ignoreHTTPSErrors: false, // strict on UAT — it HAS certs
+//   },
+// });
+
+// ── playwright.config.prod.ts — production smoke tests only ───────
+// export default defineConfig({
+//   ...baseConfig,
+//   testMatch: ['**/smoke/**/*.spec.ts'], // ONLY smoke tests
+//   retries: 0,
+//   use: {
+//     baseURL: 'https://myapp.com',
+//   },
+// });
+
+// CLI usage:
+// npx playwright test --config=playwright.config.dev.ts
+// npx playwright test --config=playwright.config.uat.ts
+// npx playwright test --config=playwright.config.prod.ts</code></pre></div>
+
+  <div id="c20-5" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>env-skip-guard.ts</span><button class="cpbtn" onclick="doCopy('c20-5')">Copy</button></div>
+<pre><code class="language-typescript">// env-skip-guard.ts
+// PURPOSE: Skip/guard tests based on environment — protect production
+// Shows: prod guard, env-specific data setup, env assertion helper
+
+import { test, expect } from '@playwright/test';
+
+// ── Helper: current environment ───────────────────────────────────
+const ENV = process.env.TEST_ENV ?? 'dev';
+const isProd   = ENV === 'prod';
+const isCI     = process.env.CI === 'true';
+const isDevOrTest = ['dev', 'test'].includes(ENV);
+
+// ── Guard: NEVER run destructive tests on production ──────────────
+test('create and delete user — blocked on prod', async ({ page, request }) => {
+
+  test.skip(isProd, 'SAFETY: No user creation/deletion on production environment');
+
+  // Only runs on dev / test / uat
+  const resp = await request.post('/api/users', {
+    data: { email: `test_${Date.now()}@test.com`, role: 'viewer' },
+  });
+  expect(resp.ok()).toBeTruthy();
+  const { id } = await resp.json();
+  await request.delete(`/api/users/${id}`);
+});
+
+// ── Guard: ONLY run smoke tests on prod ───────────────────────────
+// (Alternatively, use testMatch:['**/smoke/**'] in prod config)
+test('homepage smoke test — runs everywhere', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle(/MyApp/);
+  await expect(page.locator('nav')).toBeVisible();
+});
+
+// ── Guard: CI-only skip (requires local infra) ────────────────────
+test('email delivery test — local SMTP only', async ({ page }) => {
+  test.skip(isCI, 'Requires local SMTP at localhost:1025 — not in CI');
+  await page.goto('/send-test-email');
+  await page.click('#send');
+  await expect(page.locator('.sent-success')).toBeVisible();
+});
+
+// ── Dev/Test only: run seeded-data-dependent tests ─────────────────
+test('search with seed products — dev/test only', async ({ page }) => {
+  test.skip(
+    !isDevOrTest,
+    'Requires pre-seeded product catalog — not available on UAT/Prod'
+  );
+  await page.goto('/search?q=seed-laptop-001');
+  await expect(page.locator('.product-card')).toHaveCount(1);
+});</code></pre></div>
+</div>
+</div><!-- end s20 -->
+
+<!-- ═══════════════════ S21 ═══════════════════ -->
+<div class="sc" id="sc-s21">
+<div class="sectabs" id="st-s21">
+  <button class="secbtn active" data-p="ov">Overview</button>
+  <button class="secbtn" data-p="gl">Glossary</button>
+  <button class="secbtn" data-p="ol">1-Liners</button>
+  <button class="secbtn" data-p="con">Concepts</button>
+  <button class="secbtn" data-p="bp">Best Practices</button>
+  <button class="secbtn" data-p="qa">Interview</button>
+  <button class="secbtn" data-p="cd">Code ×5</button>
+</div>
+
+<div class="pan active" id="s21-ov">
+  <div class="dc"><div class="dl">Session 21 · Complete Playwright CLI Reference</div>
+    <p>The Playwright Command Line Interface (CLI) is the entry point for all test operations — running, debugging, recording, inspecting, and managing browsers. Every command starts with <code>npx playwright</code>. Understanding the full CLI lets you control every aspect of test execution from a terminal or CI pipeline.</p>
+  </div>
+  <div class="g2">
+    <div class="gc"><h4>WHAT is the CLI?</h4><p>A Node.js binary installed with <code>@playwright/test</code>. Entry point: <code>npx playwright</code>. Provides commands for: running tests, debugging, generating code, installing browsers, showing reports, and more.</p></div>
+    <div class="gc"><h4>WHY master the CLI?</h4><p>CI/CD pipelines are 100% CLI-driven. Debugging, running specific tests, filtering by project/browser, sharding across machines, updating snapshots — all done via CLI flags. No GUI required.</p></div>
+    <div class="gc"><h4>Main commands</h4><p><code>test</code> (run), <code>show-report</code>, <code>show-trace</code>, <code>codegen</code> (record), <code>install</code> (browsers), <code>debug</code>, <code>merge-reports</code>, <code>--ui</code> mode. Each has its own sub-options.</p></div>
+    <div class="gc"><h4>Flag priority</h4><p>CLI flags override <code>playwright.config.ts</code>. So <code>--headed</code> overrides <code>headless:true</code> in config. <code>--retries=0</code> overrides <code>retries:2</code> in config. CLI is the highest priority override layer.</p></div>
+  </div>
+</div>
+
+<div class="pan" id="s21-gl">
+  <div class="tsec">Keyword Glossary — Session 21</div>
+  <div class="gi"><span class="gk">npx playwright test</span><span class="gd">Run all tests. The main command. Reads playwright.config.ts by default. Exits 0 on pass, 1 on failure.</span></div>
+  <div class="gi"><span class="gk">--headed</span><span class="gd">Run tests with a visible browser window. Opposite of headless. Use for debugging locally. Slow — each test opens a visible window.</span></div>
+  <div class="gi"><span class="gk">--debug</span><span class="gd">Shorthand for PWDEBUG=1. Opens Playwright Inspector, pauses at page.pause() calls, enables step-through debugging.</span></div>
+  <div class="gi"><span class="gk">--ui</span><span class="gd">Opens the Playwright UI Mode — an interactive test runner with a browser panel, test tree, and time-travel debugging. Best local debugging experience.</span></div>
+  <div class="gi"><span class="gk">--project</span><span class="gd">Run tests only for a named project from playwright.config.ts: --project=chromium. Can be specified multiple times for multiple projects.</span></div>
+  <div class="gi"><span class="gk">--grep / -g</span><span class="gd">Filter tests by title regex: -g "checkout" runs only tests whose title matches. Case-insensitive. Also: --grep-invert to exclude matching tests.</span></div>
+  <div class="gi"><span class="gk">--workers</span><span class="gd">Override number of parallel workers: --workers=1 (serial), --workers=4, --workers=50%. Overrides config.</span></div>
+  <div class="gi"><span class="gk">--retries</span><span class="gd">Override retry count from config: --retries=2. --retries=0 disables retries even if config has them.</span></div>
+  <div class="gi"><span class="gk">--shard</span><span class="gd">Split test suite across machines: --shard=1/4 runs 25% of tests. Used with CI matrix jobs and blob reporter.</span></div>
+  <div class="gi"><span class="gk">--timeout</span><span class="gd">Per-test timeout in ms: --timeout=60000. Overrides config timeout. --timeout=0 means no timeout.</span></div>
+  <div class="gi"><span class="gk">--reporter</span><span class="gd">Override reporters: --reporter=html,dot. Comma-separated list. Overrides config reporter array.</span></div>
+  <div class="gi"><span class="gk">--update-snapshots</span><span class="gd">Regenerate visual regression baselines for toHaveScreenshot(). Run after intentional UI changes.</span></div>
+  <div class="gi"><span class="gk">codegen</span><span class="gd">Record browser interactions as Playwright TypeScript code: npx playwright codegen https://myapp.com. Interactive — click around, code appears in real time.</span></div>
+  <div class="gi"><span class="gk">show-trace</span><span class="gd">Open the interactive trace viewer: npx playwright show-trace path/to/trace.zip. Full action timeline, network, DOM snapshots.</span></div>
+  <div class="gi"><span class="gk">--last-failed</span><span class="gd">Re-run only tests that failed in the previous run. Reads .last-run.json file created after each run. Fastest re-run pattern during debugging.</span></div>
+</div>
+
+<div class="pan" id="s21-ol">
+  <div class="tsec">Interview One-Liners — Session 21</div>
+  <div class="ols">
+    <div class="oli"><span class="lbl">CLI priority</span>"CLI flags are the highest priority override in Playwright — they override playwright.config.ts completely. So --retries=0 in the CLI disables retries even if the config says retries:2. This lets CI pipelines customize behavior without editing config files."</div>
+    <div class="oli"><span class="lbl">--last-failed</span>"--last-failed is the fastest debugging shortcut — after a test run with failures, I run npx playwright test --last-failed to immediately re-run only the failing tests. It reads .last-run.json automatically. No need to copy test names."</div>
+    <div class="oli"><span class="lbl">--ui mode</span>"Playwright UI mode (npx playwright test --ui) is the most productive local debugging experience — it shows a test tree, runs individual tests with a click, shows the browser live, and enables time-travel through the test's action history without needing traces."</div>
+    <div class="oli"><span class="lbl">codegen</span>"npx playwright codegen https://myapp.com opens a browser where every click, fill, and navigation is recorded as Playwright TypeScript code in real time. It generates working locators automatically — it's not production-quality code but it's the fastest way to get a working starting point."</div>
+    <div class="oli"><span class="lbl">--shard</span>"--shard=2/4 means 'run the second quarter of all tests' — Playwright deterministically splits the test plan so each shard gets roughly equal work. Combined with a matrix CI job and blob reporter merge, it gives 4× speed improvement."</div>
+    <div class="oli"><span class="lbl">PWDEBUG</span>"PWDEBUG=1 npx playwright test --headed is my go-to for debugging a specific failing test — it launches in headed mode with the Inspector open, pauses at page.pause() calls, and lets me step through actions, inspect locators live, and understand exactly what the browser sees."</div>
+    <div class="oli"><span class="lbl">--grep</span>"npx playwright test -g 'checkout' --project=chromium runs only tests whose title contains 'checkout' on Chromium only — the combination of --grep and --project is the fastest way to isolate a specific test scenario on a specific browser."</div>
+  </div>
+</div>
+
+<div class="pan" id="s21-con">
+  <div class="tsec">Core Concepts — Session 21</div>
+  <div class="cb"><h4>⬡ Complete CLI Command Reference</h4>
+    <div class="cbb">
+      <div class="sh">▶ Running Tests</div>
+      <table class="cli">
+        <tr><th>Command</th><th>Flag</th><th>Description</th></tr>
+        <tr><td>npx playwright test</td><td></td><td>Run all tests in all projects</td></tr>
+        <tr><td>npx playwright test login.spec.ts</td><td>filename</td><td>Run a single spec file</td></tr>
+        <tr><td>npx playwright test tests/auth/</td><td>folder</td><td>Run all tests in a folder</td></tr>
+        <tr><td>npx playwright test -g "login"</td><td>-g / --grep</td><td>Filter tests by title pattern (regex)</td></tr>
+        <tr><td>npx playwright test --grep-invert "slow"</td><td>--grep-invert</td><td>Exclude tests matching pattern</td></tr>
+        <tr><td>npx playwright test --project=chromium</td><td>--project</td><td>Run specific project only</td></tr>
+        <tr><td>npx playwright test --headed</td><td>--headed</td><td>Show browser window</td></tr>
+        <tr><td>npx playwright test --workers=4</td><td>--workers</td><td>Set parallel worker count</td></tr>
+        <tr><td>npx playwright test --retries=2</td><td>--retries</td><td>Retry failed tests N times</td></tr>
+        <tr><td>npx playwright test --timeout=60000</td><td>--timeout</td><td>Per-test timeout in ms (0 = no timeout)</td></tr>
+        <tr><td>npx playwright test --repeat-each=3</td><td>--repeat-each</td><td>Run each test N times (flakiness detection)</td></tr>
+        <tr><td>npx playwright test --shard=1/4</td><td>--shard=x/n</td><td>Run shard x of n (CI machine splitting)</td></tr>
+        <tr><td>npx playwright test --last-failed</td><td>--last-failed</td><td>Only re-run tests that failed in last run</td></tr>
+        <tr><td>npx playwright test --fail-on-flaky-tests</td><td>--fail-on-flaky-tests</td><td>Fail if any test passes on retry (was flaky)</td></tr>
+        <tr><td>npx playwright test --pass-with-no-tests</td><td>--pass-with-no-tests</td><td>Exit 0 even if no test files found</td></tr>
+      </table>
+      <div class="sh">▶ Artifacts &amp; Reports</div>
+      <table class="cli">
+        <tr><th>Command</th><th>Flag</th><th>Description</th></tr>
+        <tr><td>npx playwright test --reporter=html</td><td>--reporter</td><td>html, dot, line, json, junit, blob, allure-playwright</td></tr>
+        <tr><td>npx playwright test --trace=on</td><td>--trace</td><td>on | off | on-first-retry | retain-on-failure</td></tr>
+        <tr><td>npx playwright test --video=on</td><td>--video</td><td>on | off | on-first-retry | retain-on-failure</td></tr>
+        <tr><td>npx playwright test --screenshot=on</td><td>--screenshot</td><td>on | off | only-on-failure</td></tr>
+        <tr><td>npx playwright test --update-snapshots</td><td>--update-snapshots</td><td>Regenerate toHaveScreenshot() baselines</td></tr>
+        <tr><td>npx playwright show-report</td><td></td><td>Open HTML report in browser</td></tr>
+        <tr><td>npx playwright show-report ./my-report</td><td>path</td><td>Open specific report folder</td></tr>
+        <tr><td>npx playwright show-trace trace.zip</td><td></td><td>Open trace viewer for a trace file</td></tr>
+        <tr><td>npx playwright merge-reports ./blobs</td><td></td><td>Merge blob reports from shards</td></tr>
+      </table>
+      <div class="sh">▶ Debugging</div>
+      <table class="cli">
+        <tr><th>Command</th><th>Flag</th><th>Description</th></tr>
+        <tr><td>npx playwright test --debug</td><td>--debug</td><td>Open Inspector, pause at page.pause()</td></tr>
+        <tr><td>PWDEBUG=1 npx playwright test</td><td>env var</td><td>Same as --debug via environment variable</td></tr>
+        <tr><td>npx playwright test --ui</td><td>--ui</td><td>Interactive UI Mode — best local debugger</td></tr>
+        <tr><td>npx playwright test --headed --timeout=0</td><td>combo</td><td>Headed + no timeout — interactive debugging</td></tr>
+        <tr><td>npx playwright test file.spec.ts:42</td><td>:lineNum</td><td>Run the specific test at line 42</td></tr>
+      </table>
+      <div class="sh">▶ Code Generation</div>
+      <table class="cli">
+        <tr><th>Command</th><th>Flag</th><th>Description</th></tr>
+        <tr><td>npx playwright codegen https://myapp.com</td><td></td><td>Record browser interactions as code</td></tr>
+        <tr><td>npx playwright codegen --target=ts URL</td><td>--target</td><td>TypeScript output (default)</td></tr>
+        <tr><td>npx playwright codegen --save-storage=auth.json</td><td>--save-storage</td><td>Save cookies/localStorage after recording</td></tr>
+        <tr><td>npx playwright codegen --load-storage=auth.json</td><td>--load-storage</td><td>Restore session before recording</td></tr>
+        <tr><td>npx playwright codegen -o output.ts URL</td><td>-o</td><td>Save generated code to file</td></tr>
+        <tr><td>npx playwright codegen --viewport-size=375,812 URL</td><td>--viewport-size</td><td>Record at specific viewport</td></tr>
+        <tr><td>npx playwright codegen --device="iPhone 14" URL</td><td>--device</td><td>Emulate a device while recording</td></tr>
+      </table>
+      <div class="sh">▶ Browser &amp; Config Management</div>
+      <table class="cli">
+        <tr><th>Command</th><th>Flag</th><th>Description</th></tr>
+        <tr><td>npx playwright install</td><td></td><td>Install all browsers (chromium, firefox, webkit)</td></tr>
+        <tr><td>npx playwright install chromium</td><td>browser</td><td>Install only Chromium</td></tr>
+        <tr><td>npx playwright install --with-deps</td><td>--with-deps</td><td>Install browsers + OS system dependencies (CI must-have)</td></tr>
+        <tr><td>npx playwright install --dry-run</td><td>--dry-run</td><td>Show what would be installed without installing</td></tr>
+        <tr><td>npx playwright uninstall</td><td></td><td>Remove downloaded browser binaries</td></tr>
+        <tr><td>npx playwright --version</td><td></td><td>Print installed Playwright version</td></tr>
+        <tr><td>npx playwright test --config=file.ts</td><td>--config</td><td>Use specific config file (not default)</td></tr>
+        <tr><td>npx playwright test --forbid-only</td><td>--forbid-only</td><td>Fail if test.only() found in any file</td></tr>
+        <tr><td>npx playwright test --list</td><td>--list</td><td>List all collected tests without running them</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="pan" id="s21-bp">
+  <div class="tsec">Best Practices — Session 21</div>
+  <ul class="bpl">
+    <li class="bpi"><div class="bpic">✓</div><div>Always use <code>npx playwright install --with-deps</code> in CI pipelines — the <code>--with-deps</code> flag installs required OS libraries (libnss, libgbm, etc.) that headless browsers need on Linux CI runners.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>--last-failed</code> immediately after a failing run to re-run only broken tests — much faster than re-running the entire suite during debugging sessions.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>npx playwright test --ui</code> for local debugging instead of adding <code>page.pause()</code> calls — it's non-invasive, visual, and supports time-travel through test history.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>npx playwright test --list</code> to verify test collection before running — confirms your <code>--grep</code> and <code>--project</code> filters match the expected tests without actually executing them.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Use <code>--repeat-each=10</code> to detect flaky tests during development — run the suspicious test 10 times and check if it ever fails. Far better than discovering flakiness in CI.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Combine <code>--grep</code> and <code>--project</code> for fast targeted runs: <code>npx playwright test -g "checkout" --project=chromium --workers=1 --headed</code> — isolates exactly the test you're debugging.</div></li>
+    <li class="bpi"><div class="bpic">✓</div><div>Script common CLI commands in <code>package.json scripts</code>: <code>"test:uat": "BASE_URL=https://uat.myapp.com npx playwright test"</code> — teammates run <code>npm run test:uat</code> without needing to remember the full CLI.</div></li>
+  </ul>
+</div>
+
+<div class="pan" id="s21-qa">
+  <div class="tsec">Interview Prep — 5 SDET Q&A</div>
+  <div class="qa" id="q21-1"><div class="qaq" onclick="tq(this)">Q1: How do you run a single test from the command line? <span class="qtg">▶</span></div>
+  <div class="qaa">Three approaches: (1) By file: npx playwright test tests/checkout.spec.ts — runs all tests in that file. (2) By test title pattern: npx playwright test -g "checkout button works" — runs all tests whose title matches. Use quotes for multi-word titles. (3) By file and line number: npx playwright test tests/checkout.spec.ts:42 — runs the specific test defined at line 42 of that file. This is the most precise. (4) Combined: npx playwright test checkout.spec.ts -g "payment" --project=chromium --headed --workers=1 — runs payment tests in checkout.spec.ts on Chromium in headed mode with a single worker, ideal for debugging. The --workers=1 flag is important during debugging because parallel workers interleave output making it hard to follow.</div></div>
+  <div class="qa" id="q21-2"><div class="qaq" onclick="tq(this)">Q2: What is the difference between --debug, --ui, and PWDEBUG=1? <span class="qtg">▶</span></div>
+  <div class="qaa">--debug and PWDEBUG=1 are identical — both launch the test in headed mode with the Playwright Inspector open. The test pauses at every page.pause() call in the test code. You can step through actions, inspect elements, and use the locator picker. --ui is different and more powerful — it opens the Playwright UI Mode, which is a full GUI application showing: a tree of all tests, the ability to click any test to run it, a live browser panel showing what's happening, time-travel scrubbing through the test's action history, and detailed assertion information. --ui doesn't require page.pause() in the test — it's always interactive. Best practice: use --ui for general debugging, use --debug only when you need to step through specific page.pause() points in the test code.</div></div>
+  <div class="qa" id="q21-3"><div class="qaq" onclick="tq(this)">Q3: How does --shard work and why is it used in CI? <span class="qtg">▶</span></div>
+  <div class="qaa">--shard=x/n tells Playwright to run the x-th slice of a total n slices of the test plan. Playwright deterministically divides all collected tests into equal groups. --shard=1/4 runs tests 1-25%, --shard=2/4 runs 26-50%, etc. In CI: set up a matrix job (GitHub Actions matrix, GitLab parallel) that runs multiple machines simultaneously, each with a different --shard value. Example: 100 tests × 4 shards = 25 tests per machine → ~4× speed improvement. The workflow: each shard saves results as blob reporter output. A final merge job downloads all blob files and runs: npx playwright merge-reports --reporter html ./all-blobs to create a unified HTML report showing all 100 test results. This gives both speed AND a single unified report.</div></div>
+  <div class="qa" id="q21-4"><div class="qaq" onclick="tq(this)">Q4: How do you use codegen and what are its limitations? <span class="qtg">▶</span></div>
+  <div class="qaa">npx playwright codegen https://myapp.com opens two windows: the browser and a code panel. As you interact in the browser (click, fill, navigate), Playwright generates TypeScript code in real time. Useful for: quickly getting working locators for elements you've never tested, generating the skeleton of a new test flow, recording auth flows to extract cookie/localStorage patterns. Limitations: (1) Generated locators are often CSS-based (.class names) rather than semantic (getByRole) — always review and improve them. (2) Generated code doesn't handle async waits intelligently — it records actions but not the page's loading state between them. (3) It can't generate assertions — it only records actions. (4) Code often needs significant cleanup for production use: add proper waits, replace brittle locators, add assertions, extract page objects. Think of codegen as a starting scaffold, not production code.</div></div>
+  <div class="qa" id="q21-5"><div class="qaq" onclick="tq(this)">Q5: What package.json scripts do you set up for a typical Playwright project? <span class="qtg">▶</span></div>
+  <div class="qaa">Typical scripts: "test": "playwright test" — run all tests, "test:dev": "BASE_URL=http://localhost:3000 playwright test" — run against local dev, "test:uat": "BASE_URL=https://uat.myapp.com TEST_ENV=uat playwright test --config=playwright.config.uat.ts" — UAT run, "test:smoke": "playwright test --config=playwright.config.prod.ts" — production smoke, "test:debug": "playwright test --debug --headed", "test:ui": "playwright test --ui" — UI mode, "test:headed": "playwright test --headed", "test:chrome": "playwright test --project=chromium", "test:last-failed": "playwright test --last-failed", "codegen": "playwright codegen", "report": "playwright show-report", "install:browsers": "playwright install --with-deps". Package.json scripts let teammates run complex CLI commands with simple npm run commands without memorizing flag combinations.</div></div>
+</div>
+
+<div class="pan" id="s21-cd">
+  <div class="ctabs" id="ct-s21">
+    <button class="ctb active" data-c="c21-1"><span class="fxt">.sh</span>cli-run-commands.sh</button>
+    <button class="ctb" data-c="c21-2"><span class="fxt">.sh</span>cli-debug-commands.sh</button>
+    <button class="ctb" data-c="c21-3"><span class="fxt">.sh</span>cli-reporters-artifacts.sh</button>
+    <button class="ctb" data-c="c21-4"><span class="fxt">.sh</span>cli-sharding-ci.sh</button>
+    <button class="ctb" data-c="c21-5"><span class="fxt">.json</span>package-json-scripts.json</button>
+  </div>
+  <div id="c21-1" class="cpan active"><div class="ch"><span class="cfn"><span class="cfndot"></span>cli-run-commands.sh</span><button class="cpbtn" onclick="doCopy('c21-1')">Copy</button></div>
+<pre><code class="language-typescript">#!/bin/bash
+# cli-run-commands.sh
+# PURPOSE: All test running CLI commands with explanations
+# Copy individual commands as needed
+
+# ── BASIC RUNS ────────────────────────────────────────────────────
+
+# Run ALL tests in ALL projects
+npx playwright test
+
+# Run a specific spec file
+npx playwright test tests/auth/login.spec.ts
+
+# Run all specs in a folder
+npx playwright test tests/checkout/
+
+# Run a specific test by line number (most precise)
+npx playwright test tests/checkout.spec.ts:42
+
+# ── FILTERING ─────────────────────────────────────────────────────
+
+# Filter tests by title — runs tests whose name contains "login"
+npx playwright test -g "login"
+npx playwright test --grep "checkout flow"     # multi-word — use quotes
+npx playwright test --grep "login|checkout"    # regex OR
+
+# Exclude tests matching pattern
+npx playwright test --grep-invert "slow-test"
+
+# Run only a specific project (browser config)
+npx playwright test --project=chromium
+npx playwright test --project=firefox --project=webkit   # multiple projects
+
+# ── EXECUTION CONTROL ─────────────────────────────────────────────
+
+# Set parallel workers (--workers=auto = half CPU cores)
+npx playwright test --workers=4
+npx playwright test --workers=1            # serial — use when debugging order
+npx playwright test --workers=50%          # 50% of available cores
+
+# Retry failed tests
+npx playwright test --retries=2
+npx playwright test --retries=0            # override config retries
+
+# Run each test multiple times — detect flaky tests
+npx playwright test --repeat-each=5        # runs every test 5 times
+
+# Re-run only tests that failed in the last run
+npx playwright test --last-failed          # reads .last-run.json
+
+# Timeout overrides
+npx playwright test --timeout=60000        # 60 second per-test timeout
+npx playwright test --timeout=0            # NO timeout (dangerous in CI)
+
+# List all collected tests without running them
+npx playwright test --list
+npx playwright test --list --grep "checkout"   # list + filter combo
+
+# Use a different config file
+npx playwright test --config=playwright.config.uat.ts
+
+# Fail if test.only() is found anywhere
+npx playwright test --forbid-only
+
+# Pass even if no test files found (useful in CI when tests are optional)
+npx playwright test --pass-with-no-tests
+
+# Combined: most common debugging combo
+npx playwright test checkout.spec.ts -g "payment" \
+  --project=chromium \
+  --headed \
+  --workers=1 \
+  --timeout=0</code></pre></div>
+
+  <div id="c21-2" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>cli-debug-commands.sh</span><button class="cpbtn" onclick="doCopy('c21-2')">Copy</button></div>
+<pre><code class="language-typescript">#!/bin/bash
+# cli-debug-commands.sh
+# PURPOSE: All debugging-related CLI commands
+
+# ── PLAYWRIGHT INSPECTOR (Step-through debugger) ──────────────────
+
+# Open Inspector — pauses at page.pause() calls in test code
+npx playwright test --debug
+
+# Same via environment variable (Linux/Mac)
+PWDEBUG=1 npx playwright test
+
+# On Windows (PowerShell)
+# $env:PWDEBUG=1; npx playwright test
+
+# Debug a specific test only
+npx playwright test login.spec.ts --debug
+
+# Debug with no timeout (needed when you're slow stepping through)
+npx playwright test --debug --timeout=0
+
+# ── UI MODE (Best local debugging experience) ─────────────────────
+
+# Open Playwright UI Mode — interactive test runner with browser panel
+npx playwright test --ui
+
+# UI mode on a specific port
+npx playwright test --ui --ui-port=8080
+
+# UI mode with specific host (for remote access)
+npx playwright test --ui --ui-host=0.0.0.0
+
+# ── HEADED MODE (Show browser window) ────────────────────────────
+
+# Run with visible browser
+npx playwright test --headed
+
+# Slow motion — delay between each action (ms)
+# Configure in playwright.config.ts: use: { launchOptions: { slowMo: 500 } }
+# Or via CLI with PWDEBUG=console
+PWDEBUG=console npx playwright test --headed
+
+# ── CODE GENERATION (Record test flows) ───────────────────────────
+
+# Start recording — opens browser + code panel
+npx playwright codegen https://myapp.com
+
+# Record with TypeScript output explicitly
+npx playwright codegen --target=typescript https://myapp.com
+
+# Save generated code to a file automatically
+npx playwright codegen -o tests/generated/new-test.spec.ts https://myapp.com
+
+# Record with a saved auth session loaded
+npx playwright codegen --load-storage=playwright/.auth/admin.json https://myapp.com
+
+# Record and save the session at the end
+npx playwright codegen --save-storage=playwright/.auth/recorded.json https://myapp.com
+
+# Record on a specific viewport size
+npx playwright codegen --viewport-size=375,812 https://myapp.com
+
+# Record emulating a device
+npx playwright codegen --device="iPhone 14 Pro" https://myapp.com
+
+# ── TRACE VIEWER ─────────────────────────────────────────────────
+
+# Open a trace file in the interactive viewer
+npx playwright show-trace test-results/my-test/trace.zip
+
+# Show trace for a specific test-results folder
+npx playwright show-trace test-results/login-chromium/trace.zip</code></pre></div>
+
+  <div id="c21-3" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>cli-reporters-artifacts.sh</span><button class="cpbtn" onclick="doCopy('c21-3')">Copy</button></div>
+<pre><code class="language-typescript">#!/bin/bash
+# cli-reporters-artifacts.sh
+# PURPOSE: Reporter configuration, artifact capture, report viewing
+
+# ── REPORTERS ─────────────────────────────────────────────────────
+
+# HTML report (rich interactive — saved to playwright-report/)
+npx playwright test --reporter=html
+
+# Dot reporter (CI-friendly — one dot per test)
+npx playwright test --reporter=dot
+
+# Line reporter (one line per test)
+npx playwright test --reporter=line
+
+# JSON report (machine-readable — for custom processing)
+npx playwright test --reporter=json
+npx playwright test --reporter=json --output=test-results/results.json
+
+# JUnit XML (for CI dashboards — GitHub, Jenkins, GitLab)
+npx playwright test --reporter=junit
+npx playwright test --reporter=junit --output=test-results/junit.xml
+
+# Multiple reporters simultaneously
+npx playwright test --reporter=html,dot
+
+# Blob reporter (for shard merging)
+npx playwright test --reporter=blob
+
+# ── ARTIFACTS ─────────────────────────────────────────────────────
+
+# Override trace setting
+npx playwright test --trace=on              # always capture trace
+npx playwright test --trace=on-first-retry  # trace only on retry
+npx playwright test --trace=off             # disable trace
+
+# Override screenshot setting
+npx playwright test --screenshot=on               # always capture
+npx playwright test --screenshot=only-on-failure  # only on fail
+npx playwright test --screenshot=off
+
+# Override video recording
+npx playwright test --video=on               # always record
+npx playwright test --video=on-first-retry   # only on retry
+npx playwright test --video=off
+
+# ── VISUAL REGRESSION ─────────────────────────────────────────────
+
+# Update toHaveScreenshot() baselines after intentional UI changes
+npx playwright test --update-snapshots
+
+# Update only specific test's snapshots
+npx playwright test checkout.spec.ts --update-snapshots
+
+# ── REPORT VIEWING ────────────────────────────────────────────────
+
+# Open HTML report in browser (default: playwright-report/)
+npx playwright show-report
+
+# Open a specific report folder
+npx playwright show-report ./custom-report/
+
+# Merge shard blob reports into unified HTML
+npx playwright merge-reports --reporter html ./all-blob-reports
+
+# Merge with specific output folder
+npx playwright merge-reports --reporter html \
+  --output ./merged-report \
+  ./all-blob-reports</code></pre></div>
+
+  <div id="c21-4" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>cli-sharding-ci.sh</span><button class="cpbtn" onclick="doCopy('c21-4')">Copy</button></div>
+<pre><code class="language-typescript">#!/bin/bash
+# cli-sharding-ci.sh
+# PURPOSE: Sharding commands for CI and browser/install management
+
+# ── SHARDING — Split tests across multiple CI machines ────────────
+
+# Run shard 1 of 4 (first 25% of tests)
+npx playwright test --shard=1/4
+
+# Run shard 2 of 4 (second 25% of tests)
+npx playwright test --shard=2/4
+
+# With blob reporter for merging later
+npx playwright test --shard=1/4 --reporter=blob
+
+# Merge all shard results after CI completes
+npx playwright merge-reports --reporter html ./blob-reports
+
+# ── GitHub Actions matrix example (conceptual) ────────────────────
+# In .github/workflows/playwright.yml:
+#
+# strategy:
+#   matrix:
+#     shardIndex: [1, 2, 3, 4]
+#     shardTotal: [4]
+#
+# Then in steps:
+# npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+# ── BROWSER MANAGEMENT ────────────────────────────────────────────
+
+# Install ALL browsers (chromium, firefox, webkit)
+npx playwright install
+
+# Install specific browser
+npx playwright install chromium
+npx playwright install firefox
+npx playwright install webkit
+npx playwright install chromium firefox          # multiple browsers
+
+# Install with OS system dependencies (REQUIRED in CI)
+# Installs: libnss3, libgbm, libatk1.0-0, etc. on Ubuntu
+npx playwright install --with-deps
+
+# Install specific browser with its dependencies
+npx playwright install chromium --with-deps
+
+# See what would be installed without actually installing
+npx playwright install --dry-run
+
+# Remove installed browser binaries
+npx playwright uninstall
+
+# ── VERSION AND INFO ─────────────────────────────────────────────
+
+# Show installed Playwright version
+npx playwright --version
+
+# Show help
+npx playwright help
+npx playwright help test          # help for the test command
+npx playwright help codegen       # help for codegen
+npx playwright help install       # help for install
+
+# ── ENVIRONMENT VARIABLE COMBOS (Linux/Mac) ──────────────────────
+
+# Run against UAT with custom env
+BASE_URL=https://uat.myapp.com TEST_ENV=uat npx playwright test
+
+# Run with full debug in headed mode
+PWDEBUG=1 npx playwright test --headed --timeout=0 --workers=1
+
+# CI-style run with all artifacts
+CI=true npx playwright test \
+  --reporter=html,junit \
+  --trace=on-first-retry \
+  --screenshot=only-on-failure</code></pre></div>
+
+  <div id="c21-5" class="cpan"><div class="ch"><span class="cfn"><span class="cfndot"></span>package-json-scripts.json</span><button class="cpbtn" onclick="doCopy('c21-5')">Copy</button></div>
+<pre><code class="language-typescript">// package-json-scripts.json
+// PURPOSE: Complete package.json scripts section for a Playwright project
+// Teammates run: npm run test:uat  instead of remembering CLI flags
+
+{
+  "scripts": {
+
+    // ── Core test runs ────────────────────────────────────────────
+
+    "test":          "playwright test",
+    "test:headed":   "playwright test --headed",
+    "test:debug":    "playwright test --debug --headed --timeout=0",
+    "test:ui":       "playwright test --ui",
+
+    // ── Browser-specific runs ─────────────────────────────────────
+
+    "test:chrome":   "playwright test --project=chromium",
+    "test:firefox":  "playwright test --project=firefox",
+    "test:safari":   "playwright test --project=webkit",
+    "test:mobile":   "playwright test --project=mobile-chrome",
+
+    // ── Environment-specific runs ─────────────────────────────────
+
+    "test:dev":      "BASE_URL=http://localhost:3000 TEST_ENV=dev playwright test",
+    "test:test":     "BASE_URL=https://test.myapp.com TEST_ENV=test playwright test",
+    "test:uat":      "BASE_URL=https://uat.myapp.com TEST_ENV=uat playwright test --config=playwright.config.uat.ts",
+    "test:prod":     "TEST_ENV=prod playwright test --config=playwright.config.prod.ts",
+
+    // ── Debugging shortcuts ───────────────────────────────────────
+
+    "test:last-failed": "playwright test --last-failed",
+    "test:flaky":    "playwright test --repeat-each=10",
+    "test:list":     "playwright test --list",
+
+    // ── Artifact management ───────────────────────────────────────
+
+    "report":           "playwright show-report",
+    "test:snapshots":   "playwright test --update-snapshots",
+
+    // ── Code generation ───────────────────────────────────────────
+
+    "codegen":       "playwright codegen http://localhost:3000",
+    "codegen:uat":   "playwright codegen --load-storage=playwright/.auth/admin.json https://uat.myapp.com",
+
+    // ── Browser installation ──────────────────────────────────────
+
+    "install:browsers": "playwright install",
+    "install:ci":       "playwright install --with-deps",
+
+    // ── CI pipeline commands ──────────────────────────────────────
+
+    "test:ci": "CI=true playwright test --reporter=html,junit --trace=on-first-retry",
+    "test:shard1": "playwright test --shard=1/4 --reporter=blob",
+    "test:shard2": "playwright test --shard=2/4 --reporter=blob",
+    "merge-reports": "playwright merge-reports --reporter html ./blob-reports"
+  }
+}</code></pre></div>
+</div>
+</div><!-- end s21 -->
+
+<script>
+function tq(el){const b=el.closest('.qa');const a=b.querySelector('.qaa');b.classList.toggle('open');a.classList.toggle('open')}
+function doCopy(id){
+  const p=document.getElementById(id);
+  const t=p.querySelector('pre').innerText;
+  navigator.clipboard.writeText(t).then(()=>{
+    const b=p.querySelector('.cpbtn');
+    b.textContent='Copied!';
+    setTimeout(()=>b.textContent='Copy',2000);
+  })
+}
+
+function highlightKeywordsInDOM() {
+  const selectors = ['.oli', '.cbb p', '.bpi', '.gd', '.qaa'];
+  const keywords = [
+    'test\\.skip\\(\\)', 'test\\.fixme\\(\\)', 'test\\.fail\\(\\)', 'test\\.describe\\.skip\\(\\)', 'page\\.goto\\(\\)',
+    'expect\\(\\)', 'toBeVisible\\(\\)', 'toHaveTitle\\(\\)', 'page\\.click\\(\\)', 'page\\.dragAndDrop\\(\\)',
+    'expect\\.poll\\(\\)', 'expect\\.toPass\\(\\)', 'process\\.env\\.CI', 'process\\.env', 'browserName',
+    'playwright\\.config\\.ts', 'playwright test', 'npx playwright test', '--headed', '--project', '--grep',
+    '--shard', 'merge-reports'
+  ];
+  const regex = new RegExp('\\b(' + keywords.join('|') + ')\\b', 'g');
+  
+  selectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => {
+      const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+      const nodes = [];
+      let node;
+      while (node = walk.nextNode()) nodes.push(node);
+      nodes.forEach(textNode => {
+        const text = textNode.nodeValue;
+        if (regex.test(text)) {
+          const span = document.createElement('span');
+          span.innerHTML = text.replace(regex, match => `<span class="hl-kw">${match}</span>`);
+          textNode.parentNode.replaceChild(span, textNode);
+        }
+      });
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.qaq .qtg').forEach(el => {
+    el.outerHTML = '<i class="ti ti-chevron-down chevron-icon"></i>';
+  });
+  
+  // Dynamically map badge colors based on file extension text
+  document.querySelectorAll('.fxt').forEach(span => {
+    const ext = span.textContent.trim().toLowerCase();
+    if (ext === '.ts') {
+      span.classList.add('fxt-ts');
+    } else if (ext === '.sh') {
+      span.classList.add('fxt-sh');
+    } else if (ext === '.json') {
+      span.classList.add('fxt-json');
+    }
+  });
+
+  highlightKeywordsInDOM();
+});
+document.getElementById('snav').addEventListener('click',e=>{
+  const btn=e.target.closest('.sbtn');if(!btn)return;
+  const sid=btn.dataset.s;
+  document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.sc').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sc-'+sid).classList.add('active');
+});
+['s19','s20','s21'].forEach(sid=>{
+  const st=document.getElementById('st-'+sid);
+  if(!st)return;
+  st.addEventListener('click',e=>{
+    const btn=e.target.closest('.secbtn');if(!btn)return;
+    const p=btn.dataset.p;
+    st.querySelectorAll('.secbtn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#sc-'+sid+' .pan').forEach(x=>x.classList.remove('active'));
+    const target=document.getElementById(sid+'-'+p);
+    if(target)target.classList.add('active');
+  });
+  const ct=document.getElementById('ct-'+sid);
+  if(!ct)return;
+  ct.addEventListener('click',e=>{
+    const btn=e.target.closest('.ctb');if(!btn)return;
+    const cid=btn.dataset.c;
+    ct.querySelectorAll('.ctb').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const num=sid.slice(1);
+    document.querySelectorAll('[id^="c'+num+'-"]').forEach(x=>x.classList.remove('active'));
+    const target=document.getElementById(cid);
+    if(target)target.classList.add('active');
+  });
+});
+</script>
+
+<script>
+/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
+(function(){try{
+  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
+    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
+      btn.addEventListener('click',function(){
+        var t=this.nextElementSibling;
+        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
+      });
+    }
+  });
+  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
+    if(!tab.dataset.vTab){tab.dataset.vTab='1';
+      tab.addEventListener('click',function(){
+        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
+        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
+      });
+    }
+  });
+}catch(e){console.log('VE:',e)}})();
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selenium Java: Cookies & Broken Link Identification (Sessions 17 to 19)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+.hub{padding:1rem 0;max-width:700px;font-family:var(--font-sans)}
+.pbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pp{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:500;border:1.5px solid}
+.ph1{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.ph2{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.ph3{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.stabs{display:flex;border-bottom:1.5px solid var(--color-border-tertiary);overflow-x:auto}
+.stab{padding:9px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--color-text-secondary);white-space:nowrap;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;font-family:var(--font-sans)}
+.stab.active{color:#3C3489;border-bottom-color:#7F77DD;background:#EEEDFE}
+.stab:hover:not(.active){background:var(--color-background-secondary)}
+.prow{display:flex;align-items:center;gap:8px;padding:8px 13px;background:#EEEDFE;border-bottom:0.5px solid #AFA9EC}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.dn{background:#1D9E75}.dot.ac{background:#7F77DD}.dot.td{background:#D3D1C7}
+.plbl{font-size:11px;color:#3C3489;font-weight:500}
+.obanner{background:#EEEDFE;padding:14px 16px;border-bottom:0.5px solid #AFA9EC}
+.obanner h2{font-size:11px;font-weight:500;color:#534AB7;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.obanner p{font-size:13px;color:#26215C;line-height:1.6}
+.sec{padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec h3{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qp{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px;color:var(--color-text-primary);line-height:1.5;border-left:3px solid #7F77DD}
+.abox{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;margin-bottom:8px}
+.aflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.an{padding:5px 10px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500;text-align:center;line-height:1.4}
+.n1{background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC}
+.n2{background:#E1F5EE;color:#085041;border:1px solid #5DCAA5}
+.n3{background:#FAECE7;color:#712B13;border:1px solid #F0997B}
+.n4{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
+.n5{background:#E6F1FB;color:#0C447C;border:1px solid #85B7EB}
+.arr{color:var(--color-text-secondary);font-size:13px;font-weight:500}
+.dr{font-size:12px;color:var(--color-text-secondary);padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;gap:6px}
+.glosgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.gitem{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px}
+.gkw{font-size:11px;font-weight:500;color:#3C3489;font-family:'Courier New',monospace;margin-bottom:3px}
+.gdef{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.cs{background:#fff;border:1.5px solid #e2e4e8;border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.csh{display:flex;align-items:flex-start !important;gap:8px;padding:8px 14px;background:#f6f8fa;border-bottom:1px solid #e2e4e8;flex-wrap:nowrap !important}
+.csh span{font-size:13px !important;font-weight:700 !important;color:#24292f;letter-spacing:.03em !important;text-transform:uppercase;font-family:'Outfit', sans-serif !important;line-height:1.4 !important}
+.dr2{display:flex;gap:5px;margin-top:4px !important;flex-shrink:0 !important}
+.md{width:11px;height:11px;border-radius:50%}
+.mr{background:#ff5f57}.my{background:#febc2e}.mg{background:#28c840}
+.ctbar{display:flex;background:#f0f2f5;border-bottom:1px solid #e2e4e8;overflow-x:auto}
+.ct{padding:7px 12px;font-size:11px;cursor:pointer;border:none;background:transparent;color:#57606a;white-space:nowrap;font-family:'Courier New',monospace;border-bottom:2px solid transparent;font-weight:500}
+.ct.active{color:#0969da;border-bottom-color:#0969da;background:#fff}
+.ct:hover:not(.active){background:#e8eaed;color:#24292f}
+.cp{display:none;padding:14px 18px;overflow-x:auto;background:#fff}
+.cp.active{display:block}
+pre{font-family:'Courier New',monospace;font-size:12px;line-height:2;white-space:pre;color:#24292f}
+.ln{color:#8c9198;font-size:11px;user-select:none;margin-right:14px;display:inline-block;width:22px;text-align:right}
+.kw{color:#cf222e;font-weight:500}.cm{color:#6e7781;font-style:italic}.st{color:#0a3069}
+.cl{color:#953800;font-weight:500}.mt{color:#8250df}.nm{color:#0550ae}
+.vr{color:#24292f}.bo{color:#116329;font-weight:500}
+.fb{background:#f0f2f5;border:0.5px solid #d0d7de;border-radius:4px;padding:3px 10px;font-size:11px;color:#57606a;font-family:'Courier New',monospace;display:inline-block;margin-bottom:8px}
+.bpl{list-style:none;display:grid;gap:6px}
+.bpl li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.bpc{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px}
+.ql{display:grid;gap:10px}
+.qi{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.qq{font-size:12px;font-weight:500;color:#0969da;margin-bottom:4px}
+.qa{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.flowrow{display:flex;align-items:stretch;gap:0;margin:10px 0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.fstep{flex:1;padding:10px 8px;font-size:11px;text-align:center;border-right:0.5px solid var(--color-border-tertiary)}
+.fstep:last-child{border-right:none}
+.fstep .fn{font-weight:500;margin-bottom:3px;font-size:12px}
+.fstep .fd{color:var(--color-text-secondary);font-size:11px}
+</style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+  <div class="hub">
+<div class="pbar">
+  <span class="pp ph1">S17 · Cookies in Selenium</span>
+  <span class="pp ph2">S18 · Broken Links — Capture &amp; Validate</span>
+  <span class="pp ph3">S19 · Broken Links — Advanced Patterns</span>
+</div>
+
+<div class="stabs" id="sTabs">
+  <button class="stab active" onclick="sw(0)">S17 · Cookie Handling</button>
+  <button class="stab" onclick="sw(1)">S18 · Broken Links Basics</button>
+  <button class="stab" onclick="sw(2)">S19 · Advanced Link Validation</button>
+</div>
+
+<div class="prow">
+  <span id="pd"></span>
+  <span class="plbl" id="pl">Session 17 of 19</span>
+</div>
+
+<div id="allS">
+
+<!-- ══════════════════════ SESSION 17 — COOKIES ══════════════════════ -->
+<div id="s0">
+  <div class="obanner">
+    <h2>Selenium Java: Cookies & Broken Link Identification (Sessions 17 to 19)</h2>
+    <p>A cookie is a small piece of key-value data stored in the browser by a website. Selenium provides the <code>driver.manage()</code> API to add, get, delete, and inspect cookies programmatically. Cookie manipulation is essential for bypassing login flows, injecting auth tokens, testing remember-me features, and resetting session state between tests.</p>
+  </div>
+
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Key-value text data stored by browser per domain — controls sessions, preferences, tracking</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Skip repetitive login steps, test session expiry, inject auth tokens, validate cookie presence</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Before tests needing login state, after login to save session, between test methods for isolation</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>In <code>@BeforeMethod</code> for setup, <code>@AfterMethod</code> for cleanup, inside test for cookie assertions</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span><code>driver.manage().addCookie()</code> / <code>getCookies()</code> / <code>deleteCookie()</code> after navigating to domain first</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Cookie</div><div class="gdef">Java class in Selenium representing a browser cookie with name, value, domain, path, expiry</div></div>
+      <div class="gitem"><div class="gkw">driver.manage()</div><div class="gdef">Returns Options object — gateway to cookies, timeouts, window management</div></div>
+      <div class="gitem"><div class="gkw">addCookie(cookie)</div><div class="gdef">Injects a cookie into the current browser session for the loaded domain</div></div>
+      <div class="gitem"><div class="gkw">getCookies()</div><div class="gdef">Returns Set&lt;Cookie&gt; — all cookies for the current page domain</div></div>
+      <div class="gitem"><div class="gkw">getCookieNamed(name)</div><div class="gdef">Fetches a single Cookie object by its name string — returns null if not found</div></div>
+      <div class="gitem"><div class="gkw">deleteCookie(cookie)</div><div class="gdef">Removes a specific Cookie object from the browser session</div></div>
+      <div class="gitem"><div class="gkw">deleteCookieNamed(name)</div><div class="gdef">Removes cookie by name string — shortcut that avoids fetching object first</div></div>
+      <div class="gitem"><div class="gkw">deleteAllCookies()</div><div class="gdef">Removes ALL cookies for current domain — use to reset test state</div></div>
+      <div class="gitem"><div class="gkw">Cookie.Builder</div><div class="gdef">Fluent builder pattern to construct Cookie with domain, path, expiry, secure flag</div></div>
+      <div class="gitem"><div class="gkw">SameSite</div><div class="gdef">Cookie attribute controlling cross-site sending: Strict, Lax, None</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Interview one-liners</h3>
+    <div class="igrid">
+      <div class="qp">You must navigate to the domain first before adding or reading cookies — Selenium enforces the same-origin policy.</div>
+      <div class="qp">driver.manage().addCookie() injects a cookie into the current browser session without any network request.</div>
+      <div class="qp">getCookieNamed() returns null if the cookie does not exist — always null-check before calling getValue().</div>
+      <div class="qp">deleteAllCookies() is called in @AfterMethod to ensure each test starts with a clean session state.</div>
+      <div class="qp">Cookie.Builder allows setting domain, path, expiry date, and secure/httpOnly flags programmatically.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Cookie lifecycle flow</h3>
+    <div class="flowrow">
+      <div class="fstep n1"><div class="fn">1. Navigate</div><div class="fd">driver.get(domain)<br>Required before cookies</div></div>
+      <div class="fstep n2"><div class="fn">2. Add / Inject</div><div class="fd">addCookie(new Cookie)<br>Bypasses login</div></div>
+      <div class="fstep n3"><div class="fn">3. Refresh</div><div class="fd">driver.navigate().refresh()<br>Cookie takes effect</div></div>
+      <div class="fstep n4"><div class="fn">4. Read &amp; Assert</div><div class="fd">getCookieNamed()<br>Validate values</div></div>
+      <div class="fstep n5"><div class="fn">5. Delete / Clean</div><div class="fd">deleteAllCookies()<br>Reset for next test</div></div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">Cookie attributes explained</div>
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:80px;flex-shrink:0">name</span><span>The cookie identifier key — e.g., "sessionToken", "userPrefs"</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:80px;flex-shrink:0">value</span><span>The data stored — e.g., "abc123", "true", JWT token string</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:80px;flex-shrink:0">domain</span><span>Which domain owns this cookie — must match the current page domain</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:80px;flex-shrink:0">path</span><span>URL path scope — "/" means available to entire domain</span></div>
+      <div class="dr"><span style="color:#0C447C;font-weight:500;width:80px;flex-shrink:0">expiry</span><span>java.util.Date after which cookie is deleted by browser</span></div>
+      <div class="dr" style="border:none"><span style="color:#3C3489;font-weight:500;width:80px;flex-shrink:0">secure</span><span>boolean — if true, cookie sent only over HTTPS connections</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh"><div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S17 · Handling Cookies in Selenium</span></div>
+      <div class="ctbar">
+        <button class="ct active" onclick="sc(0,0)">1. Add Cookie</button>
+        <button class="ct" onclick="sc(0,1)">2. Get All Cookies</button>
+        <button class="ct" onclick="sc(0,2)">3. Get by Name</button>
+        <button class="ct" onclick="sc(0,3)">4. Delete Cookie</button>
+        <button class="ct" onclick="sc(0,4)">5. Cookie.Builder</button>
+        <button class="ct" onclick="sc(0,5)">6. Login via Cookie</button>
+        <button class="ct" onclick="sc(0,6)">7. Assert Cookie</button>
+        <button class="ct" onclick="sc(0,7)">8. Cookie Lifecycle</button>
+      </div>
+
+      <div class="cp active" id="c0-0"><div class="fb">AddCookieDemo.java</div><pre><code class="language-java">
+ 1// ── addCookie() — Inject a cookie into current browser session ────
+ 2// Cookie class: org.openqa.selenium.Cookie
+ 3// RULE: You MUST navigate to the domain first — cannot add cookies
+ 4// for a domain you haven't loaded (browser same-origin policy)
+ 5import org.openqa.selenium.Cookie;  // Cookie → Selenium class for browser cookies
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class AddCookieDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12
+13    // STEP 1: Navigate to the domain BEFORE adding cookies
+14    // Cannot add cookie for a domain that hasn't been loaded yet
+15    driver.get("https://the-internet.herokuapp.com");
+16
+17    // Simple Cookie constructor: new Cookie(name, value)
+18    // name  → identifier key for this cookie (like a HashMap key)
+19    // value → data stored in this cookie (any String)
+20    Cookie simpleCookie = new Cookie("userToken", "abc123xyz");
+21
+22    // driver.manage() → returns an Options object
+23    // addCookie() → injects the Cookie into the browser session
+24    // Browser stores it exactly as if the server had sent a Set-Cookie header
+25    driver.manage().addCookie(simpleCookie);
+26    System.out.println("Cookie added: " + simpleCookie.getName());
+27
+28    // Add another cookie with name-value shorthand
+29    driver.manage().addCookie(new Cookie("theme", "dark"));
+30    driver.manage().addCookie(new Cookie("language", "en-US"));
+31    System.out.println("Total cookies: " + driver.manage().getCookies().size());
+32
+33    driver.quit();
+34  }
+35}</code></pre></div>
+
+      <div class="cp" id="c0-1"><div class="fb">GetAllCookiesDemo.java</div><pre><code class="language-java">
+ 1// ── getCookies() — Retrieve all cookies for current domain ────────
+ 2// getCookies() returns Set&lt;Cookie&gt; — an unordered collection
+ 3// Each Cookie object has: getName(), getValue(), getDomain(),
+ 4// getPath(), getExpiry(), isSecure(), isHttpOnly(), getSameSite()
+ 5import org.openqa.selenium.Cookie;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import java.util.Set; // Set → unordered collection with no duplicates
+ 9
+10public class GetAllCookiesDemo {
+11  public static void main(String[] args) {
+12    WebDriver driver = new ChromeDriver();
+13
+14    // Navigate to a site that sets cookies automatically
+15    driver.get("https://www.selenium.dev");
+16
+17    // getCookies() → Set of ALL cookies for current domain
+18    // Returns only cookies matching the CURRENT page's domain
+19    Set&lt;Cookie&gt; allCookies = driver.manage().getCookies();
+20    System.out.println("Total cookies found: " + allCookies.size());
+21
+22    // Iterate all cookies and print every attribute
+23    for (Cookie c : allCookies) {
+24      System.out.println("──────────────────────────");
+25      System.out.println("Name    : " + c.getName());     // cookie name key
+26      System.out.println("Value   : " + c.getValue());    // cookie value data
+27      System.out.println("Domain  : " + c.getDomain());   // owning domain
+28      System.out.println("Path    : " + c.getPath());     // URL scope
+29      System.out.println("Expiry  : " + c.getExpiry());   // null = session cookie
+30      System.out.println("Secure  : " + c.isSecure());    // HTTPS only?
+31      System.out.println("HttpOnly: " + c.isHttpOnly()); // JS cannot read?
+32    }
+33
+34    driver.quit();
+35  }
+36}</code></pre></div>
+
+      <div class="cp" id="c0-2"><div class="fb">GetCookieByNameDemo.java</div><pre><code class="language-java">
+ 1// ── getCookieNamed() — Fetch a specific cookie by name ────────────
+ 2// Returns null if cookie with that name doesn't exist
+ 3// ALWAYS null-check before calling getValue() to avoid NullPointerException
+ 4import org.openqa.selenium.Cookie;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7
+ 8public class GetCookieByNameDemo {
+ 9  public static void main(String[] args) {
+10    WebDriver driver = new ChromeDriver();
+11    driver.get("https://the-internet.herokuapp.com");
+12
+13    // Add test cookies to work with
+14    driver.manage().addCookie(new Cookie("sessionId", "sess_abc_789"));
+15    driver.manage().addCookie(new Cookie("userRole",  "admin"));
+16
+17    // getCookieNamed(name) → returns ONE Cookie object or null
+18    // Searches all cookies for the current domain by name key
+19    Cookie session = driver.manage().getCookieNamed("sessionId");
+20
+21    // CRITICAL: Always null-check — returns null if cookie not found
+22    if (session != null) {
+23      System.out.println("Found: " + session.getName() + " = " + session.getValue());
+24    } else {
+25      System.out.println("Cookie 'sessionId' not found!");
+26    }
+27
+28    // Check if a cookie exists by name (null-safe existence check)
+29    boolean cookieExists = driver.manage().getCookieNamed("userRole") != null;
+30    System.out.println("userRole cookie exists: " + cookieExists);
+31
+32    // Check for non-existent cookie safely
+33    boolean missing = driver.manage().getCookieNamed("noSuchCookie") != null;
+34    System.out.println("noSuchCookie exists: " + missing); // false
+35
+36    driver.quit();
+37  }
+38}</code></pre></div>
+
+      <div class="cp" id="c0-3"><div class="fb">DeleteCookieDemo.java</div><pre><code class="language-java">
+ 1// ── deleteCookie / deleteCookieNamed / deleteAllCookies ───────────
+ 2// 3 ways to remove cookies — choose based on what you know
+ 3import org.openqa.selenium.Cookie;
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.chrome.ChromeDriver;
+ 6
+ 7public class DeleteCookieDemo {
+ 8  public static void main(String[] args) {
+ 9    WebDriver driver = new ChromeDriver();
+10    driver.get("https://the-internet.herokuapp.com");
+11
+12    // Set up 3 cookies to demonstrate different deletion methods
+13    Cookie cookieA = new Cookie("alpha", "value_A");
+14    driver.manage().addCookie(cookieA);
+15    driver.manage().addCookie(new Cookie("beta",  "value_B"));
+16    driver.manage().addCookie(new Cookie("gamma", "value_C"));
+17    System.out.println("Before delete: " + driver.manage().getCookies().size() + " cookies");
+18
+19    // METHOD 1: deleteCookie(Cookie object)
+20    // Removes cookie matching the exact name of the provided Cookie object
+21    driver.manage().deleteCookie(cookieA);
+22    System.out.println("After deleteCookie(obj): " + driver.manage().getCookies().size());
+23
+24    // METHOD 2: deleteCookieNamed(name) — remove by name string directly
+25    // Shortcut — no need to fetch Cookie object first
+26    driver.manage().deleteCookieNamed("beta");
+27    System.out.println("After deleteCookieNamed: " + driver.manage().getCookies().size());
+28
+29    // METHOD 3: deleteAllCookies() — nuclear option, wipes everything
+30    // Use in @AfterMethod to completely reset session state between tests
+31    driver.manage().deleteAllCookies();
+32    System.out.println("After deleteAllCookies: " + driver.manage().getCookies().size()); // 0
+33
+34    driver.quit();
+35  }
+36}</code></pre></div>
+
+      <div class="cp" id="c0-4"><div class="fb">CookieBuilderDemo.java</div><pre><code class="language-java">
+ 1// ── Cookie.Builder — Create cookies with full attributes ──────────
+ 2// Cookie.Builder is a fluent builder pattern for constructing
+ 3// Cookie objects with all attributes: domain, path, expiry, secure, httpOnly
+ 4import org.openqa.selenium.Cookie;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7import java.util.Date;       // Date → used for cookie expiry timestamp
+ 8import java.util.Calendar;   // Calendar → helper to build future dates
+ 9
+10public class CookieBuilderDemo {
+11  public static void main(String[] args) {
+12    WebDriver driver = new ChromeDriver();
+13    driver.get("https://the-internet.herokuapp.com");
+14
+15    // Set expiry date 30 days from now using Calendar
+16    Calendar cal = Calendar.getInstance(); // get current time
+17    cal.add(Calendar.DAY_OF_MONTH, 30);     // add 30 days
+18    Date expiry = cal.getTime();             // convert to Date object
+19
+20    // Cookie.Builder(name, value) → start building with required fields
+21    // .domain()   → which domain owns this cookie
+22    // .path()     → URL scope ("/") = available to entire domain
+23    // .expiresOn()→ expiry Date object (null = session cookie)
+24    // .isSecure() → true = send only over HTTPS
+25    // .isHttpOnly()→ true = JavaScript cannot read this cookie
+26    Cookie richCookie = new Cookie.Builder("authToken", "jwt_header.payload.sig")
+27      .domain("the-internet.herokuapp.com")
+28      .path("/")
+29      .expiresOn(expiry)
+30      .isSecure(false)
+31      .isHttpOnly(true)  // JS cannot steal this token
+32      .build();          // build() finalises and returns the Cookie object
+33
+34    driver.manage().addCookie(richCookie);
+35    System.out.println("Built cookie: " + richCookie.toString());
+36    driver.quit();
+37  }
+38}</code></pre></div>
+
+      <div class="cp" id="c0-5"><div class="fb">LoginViaCookieDemo.java</div><pre><code class="language-java">
+ 1// ── Login via Cookie — Skip login UI for test speed ───────────────
+ 2// Pattern: perform login once → save cookies → reuse in every test
+ 3// Reduces test execution time significantly in large test suites
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.Cookie;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import java.util.Set;
+ 9
+10public class LoginViaCookieDemo {
+11
+12  // Simulates saving session cookies after first login
+13  static Set&lt;Cookie&gt; savedCookies; // in-memory store (use file in real projects)
+14
+15  public static void main(String[] args) {
+16    WebDriver driver = new ChromeDriver();
+17
+18    // ── STEP 1: Perform real login once ──────────────────────────
+19    driver.get("https://the-internet.herokuapp.com/login");
+20    driver.findElement(By.id("username")).sendKeys("tomsmith");
+21    driver.findElement(By.id("password")).sendKeys("SuperSecretPassword!");
+22    driver.findElement(By.cssSelector("button[type='submit']")).click();
+23
+24    // ── STEP 2: Save all session cookies after successful login ────
+25    savedCookies = driver.manage().getCookies();
+26    System.out.println("Saved " + savedCookies.size() + " session cookies");
+27    driver.manage().deleteAllCookies(); // simulate new browser session
+28
+29    // ── STEP 3: Restore cookies without going through login page ──
+30    driver.get("https://the-internet.herokuapp.com"); // navigate to domain first
+31    for (Cookie c : savedCookies) {
+32      driver.manage().addCookie(c); // re-inject each saved cookie
+33    }
+34
+35    // ── STEP 4: Navigate to protected page — no login needed now ──
+36    driver.navigate().to("https://the-internet.herokuapp.com/secure");
+37    System.out.println("Logged in via cookie! Title: " + driver.getTitle());
+38    driver.quit();
+39  }
+40}</code></pre></div>
+
+      <div class="cp" id="c0-6"><div class="fb">AssertCookieDemo.java</div><pre><code class="language-java">
+ 1// ── Assert Cookie — Validate presence, name, value, attributes ────
+ 2// Use in test assertions to verify correct cookie behaviour
+ 3import org.openqa.selenium.Cookie;
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.chrome.ChromeDriver;
+ 6import org.testng.Assert;   // TestNG Assert — throws AssertionError on failure
+ 7
+ 8public class AssertCookieDemo {
+ 9  public static void main(String[] args) {
+10    WebDriver driver = new ChromeDriver();
+11    driver.get("https://the-internet.herokuapp.com");
+12
+13    // Add a cookie to assert against
+14    driver.manage().addCookie(new Cookie("consent", "accepted"));
+15
+16    // ASSERTION 1: Verify cookie EXISTS
+17    Cookie c = driver.manage().getCookieNamed("consent");
+18    Assert.assertNotNull(c, "Cookie 'consent' should exist after accepting");
+19
+20    // ASSERTION 2: Verify cookie VALUE is correct
+21    Assert.assertEquals(c.getValue(), "accepted",
+22      "Cookie value should be 'accepted'");
+23
+24    // ASSERTION 3: Verify cookie COUNT on page
+25    int count = driver.manage().getCookies().size();
+26    Assert.assertTrue(count &gt;= 1, "At least 1 cookie should be present");
+27
+27    // ASSERTION 4: Verify cookie DOES NOT EXIST (after deletion)
+28    driver.manage().deleteCookieNamed("consent");
+29    Assert.assertNull(driver.manage().getCookieNamed("consent"),
+30      "Cookie should be null after deletion");
+31
+32    System.out.println("All cookie assertions passed!");
+33    driver.quit();
+34  }
+35}</code></pre></div>
+
+      <div class="cp" id="c0-7"><div class="fb">CookieLifecycleTestNG.java</div><pre><code class="language-java">
+ 1// ── Cookie lifecycle in a full TestNG test class ──────────────────
+ 2// Shows the correct places to handle cookies in a test framework
+ 3import org.openqa.selenium.Cookie;
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.chrome.ChromeDriver;
+ 6import org.testng.annotations.AfterMethod;
+ 7import org.testng.annotations.BeforeMethod;
+ 8import org.testng.annotations.Test;
+ 9import org.testng.Assert;
+10
+11public class CookieLifecycleTestNG {
+12  private WebDriver driver;
+13
+14  @BeforeMethod // runs before EACH test method
+15  public void setUp() {
+16    driver = new ChromeDriver();
+17    driver.get("https://the-internet.herokuapp.com");
+18    // Inject auth cookie to skip login for every test
+19    driver.manage().addCookie(new Cookie("rack.session", "testSessionValue"));
+20    driver.navigate().refresh(); // apply the cookie
+21  }
+22
+23  @Test
+24  public void verifyCookiePresent() {
+25    // Verify the injected cookie is active
+26    Cookie session = driver.manage().getCookieNamed("rack.session");
+27    Assert.assertNotNull(session, "Session cookie must be present");
+28    System.out.println("Test 1 — cookie verified: " + session.getValue());
+29  }
+30
+31  @Test
+32  public void verifyCookieDeletion() {
+33    driver.manage().deleteCookieNamed("rack.session");
+34    Assert.assertNull(driver.manage().getCookieNamed("rack.session"));
+35    System.out.println("Test 2 — cookie deleted confirmed");
+36  }
+37
+38  @AfterMethod // runs after EACH test method
+39  public void tearDown() {
+40    driver.manage().deleteAllCookies(); // reset state for next test
+41    driver.quit();
+42  }
+43}</code></pre></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Best Practices</h3>
+    <ul class="bpl">
+      <li><span class="bpc">✓</span>Always navigate to the target domain <em>before</em> calling any <code>manage().addCookie()</code> — WebDriver enforces same-origin policy; adding cookies for a domain not loaded throws <code>InvalidCookieDomainException</code></li>
+      <li><span class="bpc">✓</span>Always null-check the result of <code>getCookieNamed()</code> before calling <code>.getValue()</code> — it returns null if not found</li>
+      <li><span class="bpc">✓</span>Call <code>driver.navigate().refresh()</code> after injecting cookies — some pages only read cookies on load, not mid-session</li>
+      <li><span class="bpc">✓</span>Use <code>deleteAllCookies()</code> in <code>@AfterMethod</code> and <code>@BeforeMethod</code> to guarantee clean state between tests</li>
+      <li><span class="bpc">✓</span>Use <code>Cookie.Builder</code> when setting domain, path, or expiry — the two-arg <code>new Cookie(name, value)</code> constructor leaves these null (browser defaults apply)</li>
+      <li><span class="bpc">✓</span>Store session cookies in a <code>Set&lt;Cookie&gt;</code> variable after first login — re-inject them in subsequent tests to avoid repeated UI login flows</li>
+    </ul>
+  </div>
+
+  <div class="sec" style="border:none">
+    <h3>Interview Prep — 5 SDET Q&amp;A</h3>
+    <div class="ql">
+      <div class="qi"><div class="qq">Q1. Why do you need to navigate to a domain before adding a cookie in Selenium?</div><div class="qa">A: Browsers enforce the same-origin policy — a cookie must belong to the currently loaded domain. Selenium mirrors this: calling <code>addCookie()</code> before <code>driver.get(domainUrl)</code> throws <code>InvalidCookieDomainException</code>. Always load the domain first, even if just the root URL.</div></div>
+      <div class="qi"><div class="qq">Q2. What is the difference between deleteCookie(Cookie), deleteCookieNamed(String), and deleteAllCookies()?</div><div class="qa">A: <code>deleteCookie(cookieObj)</code> removes by matching the Cookie object's name. <code>deleteCookieNamed("name")</code> is a shortcut — removes by name string directly without needing the object. <code>deleteAllCookies()</code> removes every cookie for the current domain.</div></div>
+      <div class="qi"><div class="qq">Q3. How would you use cookies to speed up test login?</div><div class="qa">A: Perform a real UI login once in a <code>@BeforeSuite</code> method, save the resulting cookies via <code>getCookies()</code> into a <code>Set&lt;Cookie&gt;</code>. In each subsequent test's <code>@BeforeMethod</code>, navigate to the domain and inject all saved cookies via <code>addCookie()</code>, then refresh. This bypasses the login page entirely.</div></div>
+      <div class="qi"><div class="qq">Q4. What is Cookie.Builder and when do you use it over the simple constructor?</div><div class="qa">A: The simple <code>new Cookie(name, value)</code> constructor creates a minimal cookie with browser-default domain, path, and no expiry. <code>Cookie.Builder</code> lets you explicitly set all attributes: <code>domain()</code>, <code>path()</code>, <code>expiresOn()</code>, <code>isSecure()</code>, <code>isHttpOnly()</code>. Use Builder when testing cookie attributes or injecting production-like cookies for auth.</div></div>
+      <div class="qi"><div class="qq">Q5. What does isHttpOnly() mean on a cookie, and how can you test it?</div><div class="qa">A: An httpOnly cookie cannot be read by JavaScript — it's a security measure against XSS attacks. In Selenium, you set it via <code>Cookie.Builder.isHttpOnly(true)</code> and verify it via <code>cookie.isHttpOnly()</code>. Testing: add cookie with <code>isHttpOnly(true)</code>, call <code>getCookieNamed()</code> and assert <code>cookie.isHttpOnly() == true</code>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ SESSION 18 — BROKEN LINKS BASICS ══════════════════════ -->
+<div id="s1" style="display:none">
+  <div class="obanner">
+    <h2>Overview — Broken links: capture &amp; validate</h2>
+    <p>A broken link is a hyperlink on a webpage that returns an HTTP error response (4xx/5xx) instead of a valid page (2xx). Selenium itself cannot check HTTP status codes — it only controls the browser. We combine Selenium (to collect all <code>&lt;a&gt;</code> href URLs) with Java's <code>HttpURLConnection</code> (to send HTTP HEAD requests and check response codes).</p>
+  </div>
+
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>A link whose URL returns HTTP 4xx (client error) or 5xx (server error) — not accessible to users</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Broken links damage SEO, user experience, and indicate deployment or content issues</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>After every deployment, as part of smoke tests, during regression runs on content-heavy sites</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>On home pages, nav menus, footer links, sitemap pages — high-impact link locations</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Selenium collects hrefs → Java HttpURLConnection sends HEAD request → check response code ≥ 400</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">HttpURLConnection</div><div class="gdef">Java class to open HTTP connections and read response codes — no browser needed</div></div>
+      <div class="gitem"><div class="gkw">getResponseCode()</div><div class="gdef">Returns integer HTTP status code: 200=OK, 301=redirect, 404=not found, 500=server error</div></div>
+      <div class="gitem"><div class="gkw">HEAD request</div><div class="gdef">HTTP method that asks server for headers only — no body downloaded, much faster than GET</div></div>
+      <div class="gitem"><div class="gkw">findElements(By.tagName)</div><div class="gdef">Gets all anchor &lt;a&gt; tags on the page — returns List&lt;WebElement&gt;</div></div>
+      <div class="gitem"><div class="gkw">getAttribute("href")</div><div class="gdef">Reads the href attribute value from an &lt;a&gt; element — the actual URL string</div></div>
+      <div class="gitem"><div class="gkw">setRequestMethod</div><div class="gdef">Sets HTTP method on HttpURLConnection: "HEAD", "GET", "POST"</div></div>
+      <div class="gitem"><div class="gkw">connect()</div><div class="gdef">Opens the actual HTTP connection to the server — must be called before getResponseCode()</div></div>
+      <div class="gitem"><div class="gkw">disconnect()</div><div class="gdef">Releases the HTTP connection — always call in finally block to free resources</div></div>
+      <div class="gitem"><div class="gkw">HTTP 200</div><div class="gdef">OK — link is working. Also valid: 201 Created, 204 No Content, 301/302 Redirects</div></div>
+      <div class="gitem"><div class="gkw">HTTP 4xx / 5xx</div><div class="gdef">404 Not Found, 403 Forbidden, 500 Server Error = broken link categories</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Interview one-liners</h3>
+    <div class="igrid">
+      <div class="qp">Selenium cannot check HTTP status codes directly — combine it with Java's HttpURLConnection to validate links.</div>
+      <div class="qp">Use HEAD requests instead of GET when checking links — it retrieves headers only with no body download, making it much faster.</div>
+      <div class="qp">A link with response code &gt;= 400 is considered broken — 404 Not Found and 500 Server Error are the most common.</div>
+      <div class="qp">getAttribute("href") may return null for anchor tags without href or with javascript: URLs — always null-check before sending HTTP request.</div>
+      <div class="qp">Always call disconnect() on HttpURLConnection in a finally block to release the TCP connection and avoid resource leaks.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Broken link validation flow</h3>
+    <div class="flowrow">
+      <div class="fstep n1"><div class="fn">1. Load page</div><div class="fd">driver.get(url)<br>Selenium opens page</div></div>
+      <div class="fstep n2"><div class="fn">2. Collect links</div><div class="fd">findElements(tagName("a"))<br>Get all &lt;a&gt; tags</div></div>
+      <div class="fstep n3"><div class="fn">3. Extract hrefs</div><div class="fd">getAttribute("href")<br>Null-check each URL</div></div>
+      <div class="fstep n4"><div class="fn">4. HTTP HEAD</div><div class="fd">HttpURLConnection<br>Send HEAD request</div></div>
+      <div class="fstep n5"><div class="fn">5. Classify</div><div class="fd">code &lt; 400 = valid<br>code &gt;= 400 = broken</div></div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">HTTP response code categories</div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:80px;flex-shrink:0">2xx — OK</span><span>200 OK, 201 Created, 204 No Content — link is working correctly</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:80px;flex-shrink:0">3xx — Redir</span><span>301 Moved, 302 Found — redirect; consider whether final destination is valid</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:80px;flex-shrink:0">4xx — Client</span><span>400 Bad Request, 403 Forbidden, 404 Not Found — BROKEN links (client-side issue)</span></div>
+      <div class="dr" style="border:none"><span style="color:#A32D2D;font-weight:500;width:80px;flex-shrink:0">5xx — Server</span><span>500 Internal Server Error, 503 Service Unavailable — BROKEN links (server-side issue)</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh"><div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S18 · Broken Link Detection</span></div>
+      <div class="ctbar">
+        <button class="ct active" onclick="sc(1,0)">1. Collect All Links</button>
+        <button class="ct" onclick="sc(1,1)">2. Check One Link</button>
+        <button class="ct" onclick="sc(1,2)">3. Full Page Scan</button>
+        <button class="ct" onclick="sc(1,3)">4. Print Results</button>
+        <button class="ct" onclick="sc(1,4)">5. Filter &amp; Skip</button>
+        <button class="ct" onclick="sc(1,5)">6. Count &amp; Report</button>
+        <button class="ct" onclick="sc(1,6)">7. HEAD vs GET</button>
+        <button class="ct" onclick="sc(1,7)">8. TestNG Integration</button>
+      </div>
+
+      <div class="cp active" id="c1-0"><div class="fb">CollectAllLinksDemo.java</div><pre><code class="language-java">
+ 1// ── Step 1: Collect all &lt;a&gt; hrefs from a webpage ─────────────────
+ 2// findElements(By.tagName("a")) → gets every &lt;a&gt; element on the page
+ 3// getAttribute("href") → extracts the URL from each anchor tag
+ 4// Result: a clean List&lt;String&gt; of all URLs ready for HTTP checking
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.WebElement;
+ 8import org.openqa.selenium.chrome.ChromeDriver;
+ 9import java.util.ArrayList;
+10import java.util.List;
+11
+12public class CollectAllLinksDemo {
+13  public static void main(String[] args) {
+14    WebDriver driver = new ChromeDriver();
+15    driver.get("https://the-internet.herokuapp.com");
+16
+17    // Get ALL anchor (&lt;a&gt;) elements on the page (includes nav, footer, body)
+18    List&lt;WebElement&gt; anchors = driver.findElements(By.tagName("a"));
+19    System.out.println("Total &lt;a&gt; tags found: " + anchors.size());
+20
+21    // Extract href attribute from each &lt;a&gt; element
+22    // IMPORTANT: href can be null (&lt;a name="anchor"&gt;), empty (""),
+23    // or a javascript: link — all must be filtered out
+24    List&lt;String&gt; allUrls = new ArrayList&lt;&gt;();
+25    for (WebElement a : anchors) {
+26      String href = a.getAttribute("href"); // may return null
+27      // Filter: skip null, blank, fragment-only (#), and javascript: links
+28      if (href != null &amp;&amp; !href.isEmpty()
+29          &amp;&amp; !href.startsWith("#")
+30          &amp;&amp; !href.startsWith("javascript:")
+31          &amp;&amp; !href.startsWith("mailto:")) {
+32        allUrls.add(href);
+33      }
+34    }
+35    System.out.println("Valid URLs to check: " + allUrls.size());
+36    allUrls.forEach(System.out::println); // print all collected URLs
+37    driver.quit();
+38  }
+39}</code></pre></div>
+
+      <div class="cp" id="c1-1"><div class="fb">CheckOneLinkDemo.java</div><pre><code class="language-java">
+ 1// ── Check a single URL with HttpURLConnection ─────────────────────
+ 2// HttpURLConnection → Java built-in class for making HTTP requests
+ 3// No external library needed — part of java.net package
+ 4import java.net.HttpURLConnection; // core HTTP client class in Java
+ 5import java.net.URL;               // URL → parses and holds a URL string
+ 6
+ 7public class CheckOneLinkDemo {
+ 8  public static void main(String[] args) throws Exception {
+ 9
+10    String urlStr = "https://the-internet.herokuapp.com/status_codes/404";
+11
+12    // new URL(string) → parses the URL string into a URL object
+13    // openConnection() → returns URLConnection; cast to HttpURLConnection
+14    HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
+15
+16    // setRequestMethod("HEAD") → HTTP HEAD = headers only, no body
+17    // Faster than GET — we only need the status code, not the page content
+18    conn.setRequestMethod("HEAD");
+19
+20    // setConnectTimeout → max time to establish TCP connection (ms)
+21    // setReadTimeout    → max time to wait for server response (ms)
+22    conn.setConnectTimeout(5000); // 5 seconds connect timeout
+23    conn.setReadTimeout(5000);    // 5 seconds read timeout
+24
+25    // connect() → opens actual TCP connection to the server
+26    conn.connect();
+27
+28    // getResponseCode() → returns HTTP status integer: 200, 301, 404, 500...
+29    int code = conn.getResponseCode();
+30    String status = (code &gt;= 400) ? "BROKEN" : "VALID";
+31    System.out.printf("[%s] HTTP %d → %s%n", status, code, urlStr);
+32
+33    // disconnect() → releases the TCP connection — ALWAYS call this
+34    conn.disconnect();
+35  }
+36}</code></pre></div>
+
+      <div class="cp" id="c1-2"><div class="fb">FullPageLinkScanDemo.java</div><pre><code class="language-java">
+ 1// ── Full page link scan — Combine Selenium + HttpURLConnection ────
+ 2// THE CORE PATTERN: Selenium collects URLs, Java checks each one
+ 3import org.openqa.selenium.By;
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.WebElement;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7import java.net.HttpURLConnection;
+ 8import java.net.URL;
+ 9import java.util.List;
+10
+11public class FullPageLinkScanDemo {
+12  public static void main(String[] args) {
+13    WebDriver driver = new ChromeDriver();
+14    driver.get("https://the-internet.herokuapp.com");
+15
+16    // PHASE 1: Selenium collects ALL &lt;a&gt; href URLs from the page
+17    List&lt;WebElement&gt; links = driver.findElements(By.tagName("a"));
+18    System.out.println("=== BROKEN LINK SCAN ===");
+19    System.out.println("Total links found: " + links.size());
+20
+21    // PHASE 2: Check each link's HTTP response code
+22    int brokenCount = 0, validCount = 0;
+23    for (WebElement link : links) {
+24      String href = link.getAttribute("href");
+25      if (href == null || href.isEmpty() || href.startsWith("#")
+26          || href.startsWith("javascript:")) continue; // skip invalid
+27      HttpURLConnection conn = null;
+28      try {
+29        conn = (HttpURLConnection) new URL(href).openConnection();
+30        conn.setRequestMethod("HEAD");
+31        conn.setConnectTimeout(5000);
+32        conn.connect();
+33        int code = conn.getResponseCode();
+34        if (code &gt;= 400) {
+35          brokenCount++;
+36          System.out.println("[BROKEN] HTTP " + code + " → " + href);
+37        } else {
+38          validCount++;
+39          System.out.println("[VALID]  HTTP " + code + " → " + href);
+40        }
+41      } catch (Exception e) {
+42        brokenCount++;
+43        System.out.println("[ERROR]  Cannot reach → " + href + " | " + e.getMessage());
+44      } finally {
+45        if (conn != null) conn.disconnect(); // always release connection
+46      }
+47    }
+48    System.out.println("Valid: " + validCount + " | Broken: " + brokenCount);
+49    driver.quit();
+50  }
+51}</code></pre></div>
+
+      <div class="cp" id="c1-3"><div class="fb">PrintLinkResultsDemo.java</div><pre><code class="language-java">
+ 1// ── Formatted print of ALL links with status, code, and URL ──────
+ 2// Print a clear, tabular report of every link found on the page
+ 3import org.openqa.selenium.By;
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.WebElement;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7import java.net.HttpURLConnection;
+ 8import java.net.URL;
+ 9import java.util.List;
+10
+11public class PrintLinkResultsDemo {
+12  public static void main(String[] args) {
+13    WebDriver driver = new ChromeDriver();
+14    driver.get("https://the-internet.herokuapp.com");
+15    List&lt;WebElement&gt; links = driver.findElements(By.tagName("a"));
+16
+17    // Formatted header for the report
+18    System.out.printf("%-10s %-6s %-60s %-30s%n",
+19      "STATUS", "CODE", "URL", "LINK TEXT");
+20    System.out.println("-".repeat(106));
+21
+22    for (WebElement a : links) {
+23      String href     = a.getAttribute("href");
+24      String linkText = a.getText().trim(); // visible text of the link
+25      if (href == null || href.startsWith("#") || href.startsWith("javascript:"))
+26        continue;
+27      int code = 0;
+28      HttpURLConnection conn = null;
+29      try {
+30        conn = (HttpURLConnection) new URL(href).openConnection();
+31        conn.setRequestMethod("HEAD"); conn.setConnectTimeout(4000); conn.connect();
+32        code = conn.getResponseCode();
+33      } catch (Exception e) { code = -1; } // -1 = connection error
+34      finally { if (conn != null) conn.disconnect(); }
+35      // Classify status: VALID=2xx/3xx, BROKEN=4xx/5xx, ERROR=exception
+36      String status = (code == -1) ? "ERROR" : (code &gt;= 400) ? "BROKEN" : "VALID";
+37      System.out.printf("%-10s %-6d %-60s %-30s%n",
+38        status, code, href.length() &gt; 57 ? href.substring(0,57)+"..." : href,
+39        linkText.length() &gt; 27 ? linkText.substring(0,27)+"..." : linkText);
+40    }
+41    driver.quit();
+42  }
+43}</code></pre></div>
+
+      <div class="cp" id="c1-4"><div class="fb">FilterAndSkipLinksDemo.java</div><pre><code class="language-java">
+ 1// ── Filter and skip specific link types before checking ──────────
+ 2// Not all hrefs are checkable HTTP URLs — must filter intelligently
+ 3// Types to skip: null, #anchors, javascript:, mailto:, tel:, ftp:, data:
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import java.util.ArrayList;
+ 9import java.util.List;
+10
+11public class FilterAndSkipLinksDemo {
+12
+13  // Helper: returns true if the href is an HTTP/HTTPS URL worth checking
+14  static boolean isCheckable(String href) {
+15    if (href == null || href.isBlank())          return false;
+16    if (href.startsWith("#"))                    return false; // page anchor
+17    if (href.startsWith("javascript:"))           return false; // JS link
+18    if (href.startsWith("mailto:"))               return false; // email link
+19    if (href.startsWith("tel:"))                  return false; // phone link
+20    if (href.startsWith("ftp:"))                  return false; // FTP link
+21    if (href.startsWith("data:"))                 return false; // embedded data
+22    return href.startsWith("http"); // only http:// and https://
+23  }
+24
+25  public static void main(String[] args) {
+26    WebDriver driver = new ChromeDriver();
+27    driver.get("https://the-internet.herokuapp.com");
+28    List&lt;String&gt; checkable = new ArrayList&lt;&gt;();
+29    int skipped = 0;
+30    for (WebElement a : driver.findElements(By.tagName("a"))) {
+31      String href = a.getAttribute("href");
+32      if (isCheckable(href)) checkable.add(href);
+33      else skipped++;
+34    }
+35    System.out.println("Checkable: " + checkable.size() + " | Skipped: " + skipped);
+36    checkable.forEach(url -&gt; System.out.println("  → " + url));
+37    driver.quit();
+38  }
+39}</code></pre></div>
+
+      <div class="cp" id="c1-5"><div class="fb">CountAndReportDemo.java</div><pre><code class="language-java">
+ 1// ── Count &amp; summary report of broken vs valid links ──────────────
+ 2// Produces a clean summary: total links, valid count, broken count
+ 3import org.openqa.selenium.By;
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.WebElement;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7import java.net.HttpURLConnection;
+ 8import java.net.URL;
+ 9import java.util.ArrayList;
+10import java.util.List;
+11
+12public class CountAndReportDemo {
+13  public static void main(String[] args) {
+14    WebDriver driver = new ChromeDriver();
+15    driver.get("https://the-internet.herokuapp.com");
+16    List&lt;String&gt; brokenList = new ArrayList&lt;&gt;();
+17    int total = 0, valid = 0, broken = 0, errors = 0;
+18
+19    for (WebElement a : driver.findElements(By.tagName("a"))) {
+20      String href = a.getAttribute("href");
+21      if (href == null || !href.startsWith("http")) continue;
+22      total++;
+23      HttpURLConnection conn = null;
+24      try {
+25        conn = (HttpURLConnection) new URL(href).openConnection();
+26        conn.setRequestMethod("HEAD"); conn.setConnectTimeout(5000); conn.connect();
+27        int code = conn.getResponseCode();
+28        if (code &gt;= 400) { broken++; brokenList.add(href + " [HTTP " + code + "]"); }
+29        else valid++;
+30      } catch (Exception e) { errors++; brokenList.add(href + " [ERROR]"); }
+31      finally { if (conn != null) conn.disconnect(); }
+32    }
+33    // Print summary report
+34    System.out.println("\n=== LINK AUDIT SUMMARY ===");
+35    System.out.println("Total checked : " + total);
+36    System.out.println("Valid links   : " + valid);
+37    System.out.println("Broken links  : " + broken);
+38    System.out.println("Conn errors   : " + errors);
+39    // Print each broken link detail
+40    if (!brokenList.isEmpty()) { System.out.println("\n--- BROKEN DETAILS ---"); brokenList.forEach(System.out::println); }
+41    driver.quit();
+42  }
+43}</code></pre></div>
+
+      <div class="cp" id="c1-6"><div class="fb">HeadVsGetDemo.java</div><pre><code class="language-java">
+ 1// ── HEAD vs GET request for link validation ───────────────────────
+ 2// HEAD is preferred but some servers return 405 (Method Not Allowed)
+ 3// Fallback pattern: try HEAD first → if 405, retry with GET
+ 4import java.net.HttpURLConnection;
+ 5import java.net.URL;
+ 6
+ 7public class HeadVsGetDemo {
+ 8
+ 9  // Smart link checker: tries HEAD, falls back to GET if HEAD not supported
+10  static int checkUrl(String urlStr) {
+11    HttpURLConnection conn = null;
+12    try {
+13      conn = (HttpURLConnection) new URL(urlStr).openConnection();
+14      conn.setRequestMethod("HEAD"); // TRY HEAD first — faster
+15      conn.setConnectTimeout(5000);
+16      conn.connect();
+17      int code = conn.getResponseCode();
+18
+19      // HTTP 405 = Method Not Allowed — server doesn't support HEAD
+20      // Retry with GET to get the actual status code
+21      if (code == 405) {
+22        conn.disconnect();
+23        conn = (HttpURLConnection) new URL(urlStr).openConnection();
+24        conn.setRequestMethod("GET"); // FALLBACK to GET
+25        conn.setConnectTimeout(5000);
+26        conn.connect();
+27        code = conn.getResponseCode();
+28        System.out.println("  (HEAD→405, retried with GET)");
+29      }
+30      return code;
+31    } catch (Exception e) { return -1; }
+32    finally { if (conn != null) conn.disconnect(); }
+33  }
+34
+35  public static void main(String[] args) {
+36    String[] urls = {
+37      "https://the-internet.herokuapp.com",
+38      "https://the-internet.herokuapp.com/status_codes/404",
+39      "https://the-internet.herokuapp.com/status_codes/500"
+40    };
+41    for (String url : urls) {
+42      int code = checkUrl(url);
+43      System.out.printf("HTTP %-6d [%s] %s%n", code,
+44        code &gt;= 400 ? "BROKEN" : "VALID ", url);
+45    }
+46  }
+47}</code></pre></div>
+
+      <div class="cp" id="c1-7"><div class="fb">BrokenLinkTestNG.java</div><pre><code class="language-java">
+ 1// ── TestNG integration — Assert zero broken links ─────────────────
+ 2// Fails the test if any broken link is found — clean CI gate
+ 3import org.openqa.selenium.By;
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.chrome.ChromeDriver;
+ 6import org.testng.Assert;
+ 7import org.testng.annotations.AfterMethod;
+ 8import org.testng.annotations.BeforeMethod;
+ 9import org.testng.annotations.Test;
+10import java.net.HttpURLConnection;
+11import java.net.URL;
+12import java.util.ArrayList;
+13import java.util.List;
+14
+15public class BrokenLinkTestNG {
+16  private WebDriver driver;
+17
+18  @BeforeMethod
+19  public void setUp() { driver = new ChromeDriver(); }
+20
+21  @Test
+22  public void nobrokenLinksOnHomePage() throws Exception {
+23    driver.get("https://the-internet.herokuapp.com");
+24    List&lt;String&gt; brokenLinks = new ArrayList&lt;&gt;();
+25    for (var a : driver.findElements(By.tagName("a"))) {
+26      String href = a.getAttribute("href");
+27      if (href == null || !href.startsWith("http")) continue;
+28      HttpURLConnection c = (HttpURLConnection) new URL(href).openConnection();
+29      try {
+30        c.setRequestMethod("HEAD"); c.setConnectTimeout(4000); c.connect();
+31        if (c.getResponseCode() &gt;= 400)
+32          brokenLinks.add(href + " [HTTP " + c.getResponseCode() + "]");
+33      } catch (Exception e) { brokenLinks.add(href + " [CONN_ERROR]"); }
+34      finally { c.disconnect(); }
+35    }
+36    // Assert no broken links found — prints all broken URLs in message
+37    Assert.assertTrue(brokenLinks.isEmpty(),
+38      "Broken links found:\n" + String.join("\n", brokenLinks));
+39  }
+40
+41  @AfterMethod
+42  public void tearDown() { driver.quit(); }
+43}</code></pre></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Best Practices</h3>
+    <ul class="bpl">
+      <li><span class="bpc">✓</span>Always use <code>setRequestMethod("HEAD")</code> first — it downloads headers only (no body) making it 2–5x faster than GET for large pages</li>
+      <li><span class="bpc">✓</span>Implement HEAD-to-GET fallback: some servers return <code>405 Method Not Allowed</code> for HEAD — retry with GET in that case</li>
+      <li><span class="bpc">✓</span>Always wrap the connection check in try-catch-finally — <code>conn.disconnect()</code> in <code>finally</code> prevents TCP connection leaks</li>
+      <li><span class="bpc">✓</span>Filter out null, <code>#</code>, <code>javascript:</code>, <code>mailto:</code>, <code>tel:</code> hrefs before sending HTTP requests — they will throw <code>MalformedURLException</code></li>
+      <li><span class="bpc">✓</span>Set reasonable timeouts (<code>setConnectTimeout(5000)</code>) — some servers are slow and will hang your entire test if no timeout is set</li>
+      <li><span class="bpc">✓</span>Consider 3xx redirects (301, 302) as valid by default — only flag them if you specifically need to detect outdated URLs</li>
+    </ul>
+  </div>
+
+  <div class="sec" style="border:none">
+    <h3>Interview Prep — 5 SDET Q&amp;A</h3>
+    <div class="ql">
+      <div class="qi"><div class="qq">Q1. Can Selenium alone detect broken links? Why or why not?</div><div class="qa">A: No. Selenium automates the browser UI — it clicks, types, and reads elements. It cannot access HTTP response codes because those happen at the network layer before the browser renders anything. We must combine Selenium (to collect href values) with Java's <code>HttpURLConnection</code> (to make HTTP requests and read status codes).</div></div>
+      <div class="qi"><div class="qq">Q2. What is an HTTP HEAD request and why is it preferred for link checking?</div><div class="qa">A: HEAD is an HTTP method that asks the server to return only the response headers — no body/content. This means we get the status code (200, 404, 500) without downloading the full HTML/CSS/images of the page. This makes link checking 2–5x faster than using GET, which downloads the full response body.</div></div>
+      <div class="qi"><div class="qq">Q3. What HTTP codes indicate a broken link?</div><div class="qa">A: Any response code &gt;= 400. Common broken link codes: 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found (most common), 410 Gone, 500 Internal Server Error, 503 Service Unavailable. Codes 200–399 (including 301/302 redirects) are generally considered valid.</div></div>
+      <div class="qi"><div class="qq">Q4. Why must you always call disconnect() on HttpURLConnection?</div><div class="qa">A: <code>HttpURLConnection</code> uses a TCP connection from the JVM's connection pool. Without <code>disconnect()</code>, the connection stays open and is counted against the OS's maximum open socket limit. In a loop checking hundreds of links, not disconnecting causes resource exhaustion, connection refused errors, and test hangs.</div></div>
+      <div class="qi"><div class="qq">Q5. How would you handle links that return null from getAttribute("href")?</div><div class="qa">A: An anchor tag without a href attribute (e.g., <code>&lt;a name="top"&gt;</code> or <code>&lt;a&gt;</code> acting as a placeholder) returns null from <code>getAttribute("href")</code>. Always null-check before using the value. In the filtering step: <code>if (href == null || href.isEmpty()) continue;</code> — skipping these safely without causing <code>NullPointerException</code>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ SESSION 19 — ADVANCED LINK VALIDATION ══════════════════════ -->
+<div id="s2" style="display:none">
+  <div class="obanner">
+    <h2>Overview — Advanced link validation patterns</h2>
+    <p>This session covers production-grade broken link testing patterns: parallel link checking (dramatically faster), checking image links, checking links inside specific sections, redirect chain detection, generating HTML reports, and building a reusable utility class for the entire framework.</p>
+  </div>
+
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Advanced patterns: parallel checking, image validation, section-scoped, redirect detection, HTML reporting</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Sequential scanning of 200+ links is too slow — parallel execution and reusable utilities are needed</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Large websites, full regression suites, CI/CD pipelines where test time matters</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>In dedicated link-check test classes, framework utility layers, smoke test suites</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>ExecutorService (thread pool) + Callable tasks, scoped findElements, image src checking, FileWriter</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">ExecutorService</div><div class="gdef">Java thread pool manager — runs multiple HTTP checks concurrently (parallel)</div></div>
+      <div class="gitem"><div class="gkw">Callable&lt;T&gt;</div><div class="gdef">Like Runnable but returns a result and can throw exceptions — used for parallel tasks</div></div>
+      <div class="gitem"><div class="gkw">Future&lt;T&gt;</div><div class="gdef">Represents result of async computation — get() blocks until task completes</div></div>
+      <div class="gitem"><div class="gkw">invokeAll()</div><div class="gdef">Submits list of Callables to thread pool, returns List&lt;Future&gt;</div></div>
+      <div class="gitem"><div class="gkw">setInstanceFollowRedirects</div><div class="gdef">HttpURLConnection option: true=auto-follow redirects, false=see raw 301/302 code</div></div>
+      <div class="gitem"><div class="gkw">getHeaderField("Location")</div><div class="gdef">Returns redirect destination URL from response headers</div></div>
+      <div class="gitem"><div class="gkw">img[src]</div><div class="gdef">CSS selector for all &lt;img&gt; elements — use getAttribute("src") to get image URL</div></div>
+      <div class="gitem"><div class="gkw">FileWriter</div><div class="gdef">Java class to write text to a file — used to generate HTML/CSV link reports</div></div>
+      <div class="gitem"><div class="gkw">LinkResult</div><div class="gdef">Custom POJO class holding url, httpCode, status, linkText for each checked link</div></div>
+      <div class="gitem"><div class="gkw">scoped findElements</div><div class="gdef">Call findElements on a WebElement (section/div) instead of driver to limit search scope</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Interview one-liners</h3>
+    <div class="igrid">
+      <div class="qp">Parallel link checking with ExecutorService reduces scan time from minutes to seconds on large pages.</div>
+      <div class="qp">Image broken link checking uses getAttribute("src") on &lt;img&gt; tags instead of getAttribute("href") on anchors.</div>
+      <div class="qp">Call findElements on a WebElement (not driver) to check links only within a specific section like the footer or nav.</div>
+      <div class="qp">setInstanceFollowRedirects(false) lets you detect 301/302 redirect chains and their final destinations.</div>
+      <div class="qp">A reusable LinkChecker utility class separates HTTP logic from test logic — following the Single Responsibility Principle.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Parallel vs sequential comparison</h3>
+    <div class="flowrow">
+      <div class="fstep" style="background:#FAECE7"><div class="fn" style="color:#712B13">Sequential (slow)</div><div class="fd" style="color:#993C1D">1 link at a time<br>100 links = ~50s</div></div>
+      <div class="fstep" style="background:#E1F5EE"><div class="fn" style="color:#085041">Parallel (fast)</div><div class="fd" style="color:#0F6E56">10 links at once<br>100 links = ~5s</div></div>
+      <div class="fstep n1"><div class="fn">ExecutorService</div><div class="fd">Fixed thread pool<br>Callable tasks</div></div>
+      <div class="fstep n2"><div class="fn">invokeAll()</div><div class="fd">Submit all tasks<br>wait for results</div></div>
+      <div class="fstep n4"><div class="fn">Future.get()</div><div class="fd">Collect results<br>Build report</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh"><div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S19 · Advanced Link Validation</span></div>
+      <div class="ctbar">
+        <button class="ct active" onclick="sc(2,0)">1. Parallel Check</button>
+        <button class="ct" onclick="sc(2,1)">2. Image Links</button>
+        <button class="ct" onclick="sc(2,2)">3. Section Scoped</button>
+        <button class="ct" onclick="sc(2,3)">4. Redirect Detection</button>
+        <button class="ct" onclick="sc(2,4)">5. LinkResult POJO</button>
+        <button class="ct" onclick="sc(2,5)">6. HTML Report</button>
+        <button class="ct" onclick="sc(2,6)">7. Reusable Utility</button>
+        <button class="ct" onclick="sc(2,7)">8. Full Framework Test</button>
+      </div>
+
+      <div class="cp active" id="c2-0"><div class="fb">ParallelLinkCheckerDemo.java</div><pre><code class="language-java">
+ 1// ── Parallel link checking using ExecutorService ───────────────────
+ 2// ExecutorService → Java thread pool manager (java.util.concurrent)
+ 3// Callable → task that returns a result (here: HTTP response code)
+ 4// Future   → placeholder for a result that will arrive from a thread
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import java.net.HttpURLConnection;
+ 9import java.net.URL;
+10import java.util.*;
+11import java.util.concurrent.*; // ExecutorService, Callable, Future
+12
+13public class ParallelLinkCheckerDemo {
+14  public static void main(String[] args) throws Exception {
+15    WebDriver driver = new ChromeDriver();
+16    driver.get("https://the-internet.herokuapp.com");
+17
+18    // Collect all valid HTTP hrefs from the page
+19    List&lt;String&gt; urls = new ArrayList&lt;&gt;();
+20    driver.findElements(By.tagName("a")).forEach(a -&gt; {
+21      String h = a.getAttribute("href");
+22      if (h != null &amp;&amp; h.startsWith("http")) urls.add(h);
+23    });
+24    driver.quit();
+25    System.out.println("Checking " + urls.size() + " links in PARALLEL...");
+26
+27    // newFixedThreadPool(10) → creates pool of 10 concurrent threads
+28    // 10 threads check 10 links simultaneously instead of 1 at a time
+29    ExecutorService pool = Executors.newFixedThreadPool(10);
+30
+31    // Build a Callable task for each URL — Callable returns a result
+32    List&lt;Callable&lt;String&gt;&gt; tasks = new ArrayList&lt;&gt;();
+33    for (String url : urls) {
+34      tasks.add(() -&gt; {       // lambda creates a Callable for each URL
+35        HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+36        try {
+37          c.setRequestMethod("HEAD"); c.setConnectTimeout(5000); c.connect();
+38          int code = c.getResponseCode();
+39          return (code &gt;= 400 ? "[BROKEN] " : "[VALID]  ") + code + " " + url;
+40        } finally { c.disconnect(); }
+41      });
+42    }
+43    // invokeAll() → submits ALL tasks and blocks until ALL complete
+44    List&lt;Future&lt;String&gt;&gt; results = pool.invokeAll(tasks);
+45    // future.get() → retrieves the result of each completed task
+46    for (Future&lt;String&gt; f : results) System.out.println(f.get());
+47    pool.shutdown(); // shutdown() → no new tasks, wait for current to finish
+48  }
+49}</code></pre></div>
+
+      <div class="cp" id="c2-1"><div class="fb">ImageLinkCheckerDemo.java</div><pre><code class="language-java">
+ 1// ── Check broken image links — &lt;img src="..."&gt; validation ────────
+ 2// Images can also be "broken" — returning 404 shows a broken image icon
+ 3// findElements(By.tagName("img")) → gets all image elements
+ 4// getAttribute("src") → reads the image URL
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.WebElement;
+ 8import org.openqa.selenium.chrome.ChromeDriver;
+ 9import java.net.HttpURLConnection;
+10import java.net.URL;
+11import java.util.List;
+12
+13public class ImageLinkCheckerDemo {
+14  public static void main(String[] args) {
+15    WebDriver driver = new ChromeDriver();
+16    driver.get("https://the-internet.herokuapp.com/broken_images");
+17
+18    // Get all &lt;img&gt; elements on the page
+19    List&lt;WebElement&gt; images = driver.findElements(By.tagName("img"));
+20    System.out.println("Total images found: " + images.size());
+21
+22    int brokenImages = 0;
+23    for (WebElement img : images) {
+24      // getAttribute("src") → gets the image source URL
+25      // May return null for images with no src or data: URIs
+26      String src = img.getAttribute("src");
+27      if (src == null || !src.startsWith("http")) continue;
+28
+29      HttpURLConnection conn = null;
+30      try {
+31        conn = (HttpURLConnection) new URL(src).openConnection();
+32        conn.setRequestMethod("HEAD");
+33        conn.setConnectTimeout(5000);
+34        conn.connect();
+35        int code = conn.getResponseCode();
+36        String alt = img.getAttribute("alt"); // img alt text for identification
+37        if (code &gt;= 400) {
+38          brokenImages++;
+39          System.out.printf("[BROKEN IMG] HTTP %d | alt='%s' | %s%n", code, alt, src);
+40        } else {
+41          System.out.printf("[VALID IMG]  HTTP %d | alt='%s' | %s%n", code, alt, src);
+42        }
+43      } catch (Exception e) {
+44        brokenImages++;
+45        System.out.println("[IMG ERROR] " + src + " | " + e.getMessage());
+46      } finally { if (conn != null) conn.disconnect(); }
+47    }
+48    System.out.println("Broken images: " + brokenImages);
+49    driver.quit();
+50  }
+51}</code></pre></div>
+
+      <div class="cp" id="c2-2"><div class="fb">SectionScopedLinksDemo.java</div><pre><code class="language-java">
+ 1// ── Section-scoped link check — only check links in nav/footer ────
+ 2// Call findElements on a WebElement (not driver) to scope the search
+ 3// e.g., footerElement.findElements(By.tagName("a")) = only footer links
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import java.net.HttpURLConnection;
+ 9import java.net.URL;
+10import java.util.List;
+11
+12public class SectionScopedLinksDemo {
+13  public static void main(String[] args) {
+14    WebDriver driver = new ChromeDriver();
+15    driver.get("https://the-internet.herokuapp.com");
+16
+17    // CHECK ONLY NAVIGATION LINKS — scope to the &lt;ul&gt; list
+18    // navSection.findElements() → searches INSIDE the section only
+19    WebElement navSection = driver.findElement(By.cssSelector("ul"));
+20    List&lt;WebElement&gt; navLinks = navSection.findElements(By.tagName("a"));
+21    System.out.println("Nav links to check: " + navLinks.size());
+22
+23    for (WebElement a : navLinks) {
+24      String href = a.getAttribute("href");
+25      if (href == null || !href.startsWith("http")) continue;
+26      HttpURLConnection conn = null;
+27      try {
+28        conn = (HttpURLConnection) new URL(href).openConnection();
+29        conn.setRequestMethod("HEAD"); conn.setConnectTimeout(4000); conn.connect();
+30        int code = conn.getResponseCode();
+31        System.out.printf("[%-6s] %d | %-30s | %s%n",
+32          code &gt;= 400 ? "BROKEN" : "VALID", code, a.getText().trim(), href);
+33      } catch (Exception e) {
+34        System.out.println("[ERROR ] Cannot reach: " + href);
+35      } finally { if (conn != null) conn.disconnect(); }
+36    }
+37    driver.quit();
+38  }
+39}</code></pre></div>
+
+      <div class="cp" id="c2-3"><div class="fb">RedirectDetectionDemo.java</div><pre><code class="language-java">
+ 1// ── Detect redirect chains — 301/302 detection ────────────────────
+ 2// setInstanceFollowRedirects(false) → don't auto-follow 301/302
+ 3// We can then read the raw 301 code AND the Location redirect header
+ 4import java.net.HttpURLConnection;
+ 5import java.net.URL;
+ 6
+ 7public class RedirectDetectionDemo {
+ 8
+ 9  // Detect if URL redirects and where it redirects to
+10  static void checkWithRedirect(String urlStr) {
+11    HttpURLConnection conn = null;
+12    try {
+13      conn = (HttpURLConnection) new URL(urlStr).openConnection();
+14      conn.setRequestMethod("HEAD");
+15
+16      // setInstanceFollowRedirects(false) → STOP at 301/302, don't auto-follow
+17      // Allows us to see the raw redirect code instead of final destination
+18      conn.setInstanceFollowRedirects(false);
+19      conn.setConnectTimeout(5000);
+20      conn.connect();
+21
+22      int code = conn.getResponseCode();
+23
+24      if (code == 301 || code == 302 || code == 307 || code == 308) {
+25        // getHeaderField("Location") → reads where the redirect points to
+26        String location = conn.getHeaderField("Location");
+27        System.out.printf("[REDIRECT-%d] %s%n         → %s%n", code, urlStr, location);
+28      } else if (code &gt;= 400) {
+29        System.out.printf("[BROKEN-%d]   %s%n", code, urlStr);
+30      } else {
+31        System.out.printf("[VALID-%d]    %s%n", code, urlStr);
+32      }
+33    } catch (Exception e) {
+34      System.out.println("[ERROR] Cannot reach: " + urlStr);
+35    } finally { if (conn != null) conn.disconnect(); }
+36  }
+37
+38  public static void main(String[] args) {
+39    checkWithRedirect("https://the-internet.herokuapp.com");
+40    checkWithRedirect("https://the-internet.herokuapp.com/status_codes/301");
+41    checkWithRedirect("https://the-internet.herokuapp.com/status_codes/404");
+42  }
+43}</code></pre></div>
+
+      <div class="cp" id="c2-4"><div class="fb">LinkResultPOJO.java</div><pre><code class="language-java">
+ 1// ── LinkResult POJO — Data class for storing link check results ───
+ 2// POJO = Plain Old Java Object — a simple class holding data fields
+ 3// Storing results in objects makes reporting, sorting, and filtering easier
+ 4
+ 5// ── FILE: LinkResult.java ─────────────────────────────────────────
+public class LinkResult {
+ 7  // Fields storing all info about a single checked link
+ 8  private final String  url;        // the URL that was checked
+ 9  private final int     httpCode;   // HTTP response code (200, 404, etc.)
+10  private final String  status;     // "VALID", "BROKEN", or "ERROR"
+11  private final String  linkText;   // visible text of the link
+12
+13  // Constructor — takes all required fields
+14  public LinkResult(String url, int httpCode, String status, String linkText) {
+15    this.url      = url;
+16    this.httpCode= httpCode;
+17    this.status  = status;
+18    this.linkText= linkText;
+19  }
+20
+21  // Getter methods — follow JavaBean naming convention
+22  public String  getUrl()       { return url; }
+23  public int     getHttpCode()  { return httpCode; }
+24  public String  getStatus()    { return status; }
+25  public String  getLinkText()  { return linkText; }
+26  public boolean isBroken()     { return "BROKEN".equals(status) || "ERROR".equals(status); }
+27
+28  // toString → readable format for printing/logging
+29  @Override
+30  public String toString() {
+31    return String.format("[%-6s] HTTP %-4d %-40s %s",
+32      status, httpCode, linkText, url);
+33  }
+34}</code></pre></div>
+
+      <div class="cp" id="c2-5"><div class="fb">HTMLReportGeneratorDemo.java</div><pre><code class="language-java">
+ 1// ── Generate HTML report of all link check results ────────────────
+ 2// FileWriter → Java class for writing characters to a file
+ 3// Produces a styled HTML file showing VALID/BROKEN with colours
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7import java.io.FileWriter;  // FileWriter → writes chars to file
+ 8import java.net.HttpURLConnection;
+ 9import java.net.URL;
+10
+11public class HTMLReportGeneratorDemo {
+12  public static void main(String[] args) throws Exception {
+13    WebDriver driver = new ChromeDriver();
+14    driver.get("https://the-internet.herokuapp.com");
+15
+16    // FileWriter("link-report.html") → creates/overwrites the file
+17    try (FileWriter fw = new FileWriter("link-report.html")) {
+18      fw.write("&lt;html&gt;&lt;head&gt;&lt;style&gt;body{font-family:sans-serif}" +
+19               ".V{color:green}.B{color:red}.E{color:orange}" +
+20               "table{border-collapse:collapse}td{padding:6px;border:1px solid #ccc}" +
+21               "&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h2&gt;Link Audit Report&lt;/h2&gt;" +
+22               "&lt;table&gt;&lt;tr&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;HTTP&lt;/th&gt;&lt;th&gt;URL&lt;/th&gt;&lt;th&gt;Text&lt;/th&gt;&lt;/tr&gt;");
+23
+24      for (var a : driver.findElements(By.tagName("a"))) {
+25        String href = a.getAttribute("href"), txt = a.getText().trim();
+26        if (href == null || !href.startsWith("http")) continue;
+27        HttpURLConnection c = null; int code = 0; String css = "V";
+28        try {
+29          c = (HttpURLConnection) new URL(href).openConnection();
+30          c.setRequestMethod("HEAD"); c.setConnectTimeout(4000); c.connect();
+31          code = c.getResponseCode();
+32          css  = code &gt;= 400 ? "B" : "V";
+33        } catch (Exception e) { css = "E"; code = -1; }
+34        finally { if (c != null) c.disconnect(); }
+35        fw.write(String.format("&lt;tr class='%s'&gt;&lt;td&gt;%s&lt;/td&gt;&lt;td&gt;%d&lt;/td&gt;&lt;td&gt;%s&lt;/td&gt;&lt;td&gt;%s&lt;/td&gt;&lt;/tr&gt;",
+36          css, css.equals("V") ? "VALID" : (css.equals("B") ? "BROKEN" : "ERROR"),
+37          code, href, txt));
+38      }
+39      fw.write("&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;");
+40    }
+41    System.out.println("HTML report saved: link-report.html");
+42    driver.quit();
+43  }
+44}</code></pre></div>
+
+      <div class="cp" id="c2-6"><div class="fb">LinkCheckerUtil.java</div><pre><code class="language-java">
+ 1// ── Reusable LinkChecker utility class for your test framework ────
+ 2// Single Responsibility: separates HTTP checking logic from test logic
+ 3// Static methods — no instantiation needed, call directly
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import java.net.HttpURLConnection;
+ 8import java.net.URL;
+ 9import java.util.ArrayList;
+10import java.util.List;
+11
+12public class LinkCheckerUtil {
+13
+14  // getHttpCode(url) → returns HTTP response code for a URL
+15  // Returns -1 on connection error
+16  public static int getHttpCode(String url) {
+17    HttpURLConnection conn = null;
+18    try {
+19      conn = (HttpURLConnection) new URL(url).openConnection();
+20      conn.setRequestMethod("HEAD"); conn.setConnectTimeout(5000); conn.connect();
+21      int code = conn.getResponseCode();
+22      if (code == 405) { // HEAD not supported — retry with GET
+23        conn.disconnect();
+24        conn = (HttpURLConnection) new URL(url).openConnection();
+25        conn.setRequestMethod("GET"); conn.setConnectTimeout(5000); conn.connect();
+26        return conn.getResponseCode();
+27      }
+28      return code;
+29    } catch (Exception e) { return -1; }
+30    finally { if (conn != null) conn.disconnect(); }
+31  }
+32
+33  // isBroken(code) → true if code indicates a broken/unreachable link
+34  public static boolean isBroken(int code) { return code &gt;= 400 || code == -1; }
+35
+36  // getBrokenLinks(driver) → returns List of all broken href URLs on page
+37  public static List&lt;String&gt; getBrokenLinks(WebDriver driver) {
+38    List&lt;String&gt; broken = new ArrayList&lt;&gt;();
+39    for (WebElement a : driver.findElements(By.tagName("a"))) {
+40      String href = a.getAttribute("href");
+41      if (href == null || !href.startsWith("http")) continue;
+42      if (isBroken(getHttpCode(href))) broken.add(href);
+43    }
+44    return broken;
+45  }
+46
+47  // getBrokenImages(driver) → returns List of broken &lt;img src&gt; URLs
+48  public static List&lt;String&gt; getBrokenImages(WebDriver driver) {
+49    List&lt;String&gt; broken = new ArrayList&lt;&gt;();
+50    for (WebElement img : driver.findElements(By.tagName("img"))) {
+51      String src = img.getAttribute("src");
+52      if (src != null &amp;&amp; src.startsWith("http") &amp;&amp; isBroken(getHttpCode(src))) broken.add(src);
+53    }
+54    return broken;
+55  }
+56}</code></pre></div>
+
+      <div class="cp" id="c2-7"><div class="fb">FullFrameworkLinkTest.java</div><pre><code class="language-java">
+ 1// ── Full framework test using LinkCheckerUtil + TestNG assertions ──
+ 2// Production-ready test class — clean separation of concerns
+ 3import org.openqa.selenium.WebDriver;
+ 4import org.openqa.selenium.chrome.ChromeDriver;
+ 5import org.testng.Assert;
+ 6import org.testng.annotations.AfterClass;
+ 7import org.testng.annotations.BeforeClass;
+ 8import org.testng.annotations.Test;
+ 9import java.util.List;
+10
+11public class FullFrameworkLinkTest {
+12  private WebDriver driver;
+13  private static final String BASE_URL = "https://the-internet.herokuapp.com";
+14
+15  @BeforeClass // runs ONCE before all tests in this class
+16  public void setUp() {
+17    driver = new ChromeDriver();
+18    driver.get(BASE_URL);
+19  }
+20
+21  @Test(description = "No broken anchor links on home page")
+22  public void noBrokenAnchorLinks() {
+23    // Use reusable utility — test stays clean and readable
+24    List&lt;String&gt; broken = LinkCheckerUtil.getBrokenLinks(driver);
+25    broken.forEach(b -&gt; System.err.println("BROKEN: " + b)); // log each
+26    Assert.assertTrue(broken.isEmpty(),
+27      broken.size() + " broken links found on home page");
+28  }
+29
+30  @Test(description = "No broken image sources on home page")
+31  public void noBrokenImages() {
+32    List&lt;String&gt; brokenImgs = LinkCheckerUtil.getBrokenImages(driver);
+33    Assert.assertTrue(brokenImgs.isEmpty(),
+34      brokenImgs.size() + " broken images: " + brokenImgs);
+35  }
+36
+37  @Test(description = "Specific URL returns HTTP 200")
+38  public void specificUrlIsAccessible() {
+39    int code = LinkCheckerUtil.getHttpCode(BASE_URL + "/login");
+40    Assert.assertEquals(code, 200, "Login page must return HTTP 200");
+41  }
+42
+43  @AfterClass
+44  public void tearDown() { driver.quit(); }
+45}</code></pre></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Best Practices</h3>
+    <ul class="bpl">
+      <li><span class="bpc">✓</span>Use parallel checking (<code>ExecutorService</code> with 10–20 threads) for pages with 50+ links — reduces scan time from minutes to seconds</li>
+      <li><span class="bpc">✓</span>Build a reusable <code>LinkCheckerUtil</code> class — keeps HTTP logic out of test methods and follows the Single Responsibility Principle</li>
+      <li><span class="bpc">✓</span>Check image <code>src</code> attributes as well as anchor <code>href</code> attributes — broken images are as harmful as broken links to users</li>
+      <li><span class="bpc">✓</span>Use scoped <code>findElements</code> on a section WebElement when you only want to check links in nav/footer/header areas</li>
+      <li><span class="bpc">✓</span>Generate an HTML report file (<code>link-report.html</code>) with colour-coded results — easier to share with developers than console output</li>
+      <li><span class="bpc">✓</span>Shut down the <code>ExecutorService</code> via <code>pool.shutdown()</code> after <code>invokeAll()</code> — otherwise JVM won't exit cleanly after tests</li>
+    </ul>
+  </div>
+
+  <div class="sec" style="border:none">
+    <h3>Interview Prep — 5 SDET Q&amp;A</h3>
+    <div class="ql">
+      <div class="qi"><div class="qq">Q1. Why use ExecutorService for broken link checking instead of a simple loop?</div><div class="qa">A: A sequential loop checks one link at a time — each HTTP request typically takes 200–500ms. For 100 links that's 20–50 seconds. An <code>ExecutorService</code> with 10 threads checks 10 links simultaneously, reducing total time to ~5 seconds. The tradeoff: thread-safety must be considered for shared data structures (use <code>Collections.synchronizedList()</code> or <code>CopyOnWriteArrayList</code>).</div></div>
+      <div class="qi"><div class="qq">Q2. How do you check broken links in a specific section (e.g., only the footer)?</div><div class="qa">A: Instead of calling <code>driver.findElements(By.tagName("a"))</code> (searches the whole page), first locate the section element: <code>WebElement footer = driver.findElement(By.tagName("footer"))</code>, then call <code>footer.findElements(By.tagName("a"))</code> — this returns only anchors within that specific section.</div></div>
+      <div class="qi"><div class="qq">Q3. How would you detect redirect chains in link validation?</div><div class="qa">A: Set <code>conn.setInstanceFollowRedirects(false)</code> before connecting. The response code will then show the raw 301/302 instead of the final 200. Read <code>conn.getHeaderField("Location")</code> to get the redirect target URL. This lets you flag outdated URLs that redirect and optionally check the final destination separately.</div></div>
+      <div class="qi"><div class="qq">Q4. How do you check broken images with Selenium?</div><div class="qa">A: Use <code>driver.findElements(By.tagName("img"))</code> to get all image elements, then <code>img.getAttribute("src")</code> to get the image URL. Send an HTTP HEAD request to each src URL via <code>HttpURLConnection</code>. Response code &gt;= 400 means the image is broken and will show as a missing image icon in the browser.</div></div>
+      <div class="qi"><div class="qq">Q5. Where in a test framework would you place a broken link utility class?</div><div class="qa">A: In a <code>utils/</code> or <code>helpers/</code> package as a static utility class (e.g., <code>com.myframework.utils.LinkCheckerUtil</code>). It should have no dependencies on test frameworks or page object classes — only <code>WebDriver</code> and <code>java.net</code>. This makes it reusable across all test classes and easy to unit-test independently.</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+var cur=0;
+var cP=[
+  ['c0-0','c0-1','c0-2','c0-3','c0-4','c0-5','c0-6','c0-7'],
+  ['c1-0','c1-1','c1-2','c1-3','c1-4','c1-5','c1-6','c1-7'],
+  ['c2-0','c2-1','c2-2','c2-3','c2-4','c2-5','c2-6','c2-7']
+];
+var sNums=[17,18,19];
+function sw(n){
+  document.getElementById('s'+cur).style.display='none';
+  document.getElementById('s'+n).style.display='block';
+  var tabs=document.getElementById('sTabs').children;
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active',i===n);
+  cur=n; upP();
+}
+function sc(s,t){
+  var panels=cP[s];
+  var ctabs=document.getElementById('s'+s).querySelectorAll('.ct');
+  panels.forEach(function(id,i){
+    var el=document.getElementById(id);
+    if(el) el.className='cp'+(i===t?' active':'');
+  });
+  ctabs.forEach(function(tb,i){tb.classList.toggle('active',i===t);});
+}
+function upP(){
+  var d='';
+  for(var i=0;i<3;i++){
+    var c=i<cur?'dn':(i===cur?'ac':'td');
+    d+='<span class="dot '+c+'"></span> ';
+  }
+  document.getElementById('pd').innerHTML=d;
+  document.getElementById('pl').textContent='Session '+sNums[cur]+' of 19';
+}
+upP();
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,633 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jarvis Session 2: Pages, Tabs & Windows Handling</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+/* ===== VIKRANT VISUAL ENHANCEMENT LAYER v2.0 ===== */
+h1,h2{font-weight:700 !important;border-left:4px solid #6C5CE7 !important;padding-left:12px !important;background:rgba(108,92,231,0.07) !important;border-radius:0 8px 8px 0 !important;margin-top:1.2em !important;margin-bottom:0.6em !important;padding-top:6px !important;padding-bottom:6px !important}
+h3,h4{font-weight:700 !important;border-left:3px solid #00b894 !important;padding-left:10px !important;background:rgba(0,184,148,0.06) !important;border-radius:0 6px 6px 0 !important;margin-top:1em !important;margin-bottom:0.5em !important;padding-top:4px !important;padding-bottom:4px !important}
+h5,h6{font-weight:600 !important;border-left:2px solid #fdcb6e !important;padding-left:8px !important;background:rgba(253,203,110,0.08) !important;border-radius:0 4px 4px 0 !important}
+.section-title,.card-title,.topic-title,[class*="title"],[class*="heading"],.card h3,.card h4,summary,.panel-title,.accordion-header{font-weight:700 !important}
+pre,.code-block,.code-example,.code-container,[class*="code-block"],[class*="codeblock"]{background:#1e1e2e !important;color:#cdd6f4 !important;border-radius:10px !important;padding:16px 18px !important;overflow-x:auto !important;font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace !important;font-size:0.82rem !important;border-left:4px solid #6C5CE7 !important;line-height:1.7 !important;white-space:pre-wrap !important;word-wrap:break-word !important;margin:12px 0 !important;box-shadow:0 2px 12px rgba(0,0,0,0.15) !important;position:relative !important}
+pre code,.code-block code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border:none !important;font-size:inherit !important;border-left:none !important}
+code{background:rgba(108,92,231,0.12) !important;color:#6C5CE7 !important;padding:2px 6px !important;border-radius:4px !important;font-family:'JetBrains Mono','Fira Code',monospace !important;font-size:0.85em !important}
+pre code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border-left:none !important}
+.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{display:flex !important;flex-wrap:wrap !important;gap:8px !important;padding:8px !important}
+.tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"],.tab-button{padding:8px 18px !important;border-radius:20px !important;border:1.5px solid #ddd !important;background:#f8f9fa !important;color:#2d3436 !important;font-weight:600 !important;font-size:0.85rem !important;cursor:pointer !important;transition:all 0.25s ease !important;min-width:fit-content !important;text-align:center !important}
+.tab-btn:hover,.session-tab:hover,[class*="tab-btn"]:hover,button[class*="tab"]:hover{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;transform:translateY(-1px) !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.tab-btn.active,.session-tab.active,[class*="tab-btn"].active,button[class*="tab"].active{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.card,.section,.panel,[class*="card"]{border-radius:12px !important;box-shadow:0 2px 8px rgba(0,0,0,0.06) !important;border-top:3px solid #6C5CE7 !important;margin-bottom:16px !important;padding:16px !important}
+details{border-left:3px solid #00b894 !important;border-radius:8px !important;margin-bottom:12px !important;padding:8px 12px !important;box-shadow:0 1px 4px rgba(0,0,0,0.05) !important}
+details summary{font-weight:700 !important;cursor:pointer !important;padding:10px 12px !important;background:rgba(0,184,148,0.06) !important;border-radius:8px !important;transition:background 0.2s !important}
+details summary:hover{background:rgba(0,184,148,0.12) !important}
+table{width:100% !important;border-collapse:collapse !important;margin:12px 0 !important;border-radius:8px !important;overflow:hidden !important;box-shadow:0 1px 6px rgba(0,0,0,0.08) !important}
+thead th,table thead td{background:#6C5CE7 !important;color:#fff !important;font-weight:700 !important;padding:10px 14px !important;text-align:left !important}
+tbody td{padding:10px 14px !important;border-bottom:1px solid #eee !important}
+tbody tr:hover{background:rgba(108,92,231,0.04) !important}
+.toggle-btn,.accordion-btn,[class*="toggle"],[class*="collapsible"]{cursor:pointer !important;transition:all 0.3s ease !important}
+.toggle-content,.accordion-content,.collapsible-content{overflow:hidden !important;transition:max-height 0.4s ease,opacity 0.3s ease !important}
+@media(max-width:768px){
+  .tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{flex-wrap:wrap !important;justify-content:center !important}
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{font-size:0.78rem !important;padding:6px 14px !important;flex:1 1 auto !important;min-width:80px !important}
+  pre,.code-block,[class*="code-block"]{font-size:0.75rem !important;padding:12px !important}
+  h1{font-size:1.4rem !important}h2{font-size:1.2rem !important}h3{font-size:1.05rem !important}
+  .card,.section,.panel,[class*="card"]{padding:12px !important}
+  body{padding:8px !important}
+}
+@media(max-width:480px){
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{flex:1 1 100% !important;font-size:0.75rem !important;padding:8px 10px !important;border-radius:8px !important}
+  pre,.code-block{font-size:0.7rem !important;padding:10px !important;overflow-x:scroll !important}
+  h1{font-size:1.2rem !important}h2{font-size:1.05rem !important}h3{font-size:0.95rem !important}
+  table{font-size:0.8rem !important;display:block !important;overflow-x:auto !important}
+  body{padding:4px !important}
+}
+pre::-webkit-scrollbar{height:6px}pre::-webkit-scrollbar-track{background:#2a2a3e;border-radius:3px}pre::-webkit-scrollbar-thumb{background:#6C5CE7;border-radius:3px}
+/* ===== END ENHANCEMENT LAYER v2.0 ===== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;--border:#30363d;--border2:#484f58;--text:#e6edf3;--muted:#8b949e;--dim:#6e7681;--green:#3fb950;--blue:#79c0ff;--purple:#d2a8ff;--orange:#ffa657;--red:#ff7b72;--yellow:#e3b341;--cyan:#56d364;--pink:#ff9af1}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh}
+.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:18px 24px 14px;position:relative}
+.hero::after{content:'S2';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:60px;font-weight:800;color:rgba(121,192,255,0.06);font-family:'Syne',sans-serif;pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(121,192,255,0.1);border:1px solid rgba(121,192,255,0.25);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hero h1{font-size:21px;font-weight:800;margin-bottom:4px}.hero h1 span{color:var(--blue)}
+.hero p{font-size:13px;color:var(--muted)}
+.phase-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.ph-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace;background:rgba(210,168,255,0.1);color:var(--purple);border:1px solid rgba(210,168,255,0.2)}
+
+.stabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.stabs::-webkit-scrollbar{display:none}
+.stab{padding:10px 16px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;font-family:'Syne',sans-serif;letter-spacing:.3px}
+.stab:hover{color:var(--text)}
+.stab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+.panel{display:none;padding:18px 20px}.panel.active{display:block}
+
+.def-box{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:16px}
+.def-box .lbl{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.def-box p{font-size:14px;color:var(--text);line-height:1.7}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px}
+.card h4{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card h4::before{content:'';width:3px;height:12px;border-radius:2px;background:var(--blue);display:inline-block}
+.card p{font-size:13px;color:var(--text);line-height:1.6}
+.full{grid-column:1/-1}
+
+.gitem{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.gitem:last-child{border-bottom:none}
+.gkw{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(227,179,65,0.08);border:1px solid rgba(227,179,65,0.18);padding:2px 8px;border-radius:4px;white-space:nowrap;height:fit-content;margin-top:2px;flex-shrink:0}
+.gdesc{font-size:13px;color:var(--muted);line-height:1.5}
+
+.oneliners{display:flex;flex-direction:column;gap:8px}
+.ol{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:var(--text);line-height:1.5;font-style:italic}
+.ol span{color:var(--green);font-weight:700;font-style:normal;font-size:10px;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+
+.cb{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden}
+.cb h4{background:var(--bg3);padding:10px 14px;font-size:12px;font-weight:700;color:var(--cyan);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.cb-body{padding:14px}
+.cb-body p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px}
+.cb-body p:last-child{margin-bottom:0}
+
+.flow{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.fr{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+.fb{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;white-space:nowrap}
+.fb.b{color:var(--blue)}.fb.g{color:var(--green);border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.05)}
+.fb.p{color:var(--purple);border-color:rgba(210,168,255,.3);background:rgba(210,168,255,.05)}
+.fb.o{color:var(--orange);border-color:rgba(255,166,87,.3);background:rgba(255,166,87,.05)}
+.fb.r{color:var(--red);border-color:rgba(255,123,114,.3);background:rgba(255,123,114,.05)}
+.arr{color:var(--dim);font-size:13px}
+
+.bplist{list-style:none}
+.bpitem{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
+.bpitem:last-child{border-bottom:none}
+.bpicon{width:18px;height:18px;border-radius:50%;background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.28);color:var(--green);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+.qablock{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden}
+.qaq{background:var(--bg3);padding:10px 14px;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.qaa{background:var(--bg2);padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.6;display:none;border-top:1px solid var(--border)}
+.qaa.open{display:block}
+.qt{color:var(--dim);font-size:15px;transition:transform .2s;flex-shrink:0}
+.qablock.open .qt{transform:rotate(90deg)}
+
+.ctabs{display:flex;background:var(--bg);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;padding:0 16px}
+.ctabs::-webkit-scrollbar{display:none}
+.ctab{padding:8px 13px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:5px}
+.ctab:hover{color:var(--muted)}.ctab.active{color:var(--orange);border-bottom-color:var(--orange)}
+.fi{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--bg3);color:var(--dim);font-weight:700}
+
+.cpanel{display:none}.cpanel.active{display:block}
+.cwrap{background:#0d1117}
+.cheader{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.cfname{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.cfname::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--orange);display:inline-block}
+.copybtn{font-size:11px;padding:3px 10px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif;transition:all .2s}
+.copybtn:hover{color:var(--text);border-color:var(--dim)}
+pre{margin:0;padding:16px;overflow-x:auto;font-size:12.5px;line-height:1.75;font-family:'JetBrains Mono',monospace;background:#0d1117}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#6e7681;font-style:italic}
+.num{color:#79c0ff}.cls{color:#ffa657}.prop{color:#79c0ff}.val{color:#3fb950}
+.type{color:#ffa657}.dec{color:#f0883e}
+
+.tsec{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;margin-top:16px;display:flex;align-items:center;gap:8px}
+.tsec::after{content:'';flex:1;height:1px;background:var(--border)}
+.info-box{background:rgba(121,192,255,.08);border:1px solid rgba(121,192,255,.2);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--blue);margin-bottom:12px}
+</style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+  <div class="hero">
+  <div class="badge"><div class="dot"></div>JARVIS · SESSION 2 · PHASE 1</div>
+  <h1>Jarvis Session 2: Pages, Tabs & Windows Handling</h1>
+  <p>Opening tabs, popup detection, multi-window control, bringToFront, window events</p>
+  <div class="phase-row"><span class="ph-badge">⬡ Phase 1 — Fundamentals</span><span class="ph-badge" style="background:rgba(63,185,80,.1);color:var(--green);border-color:rgba(63,185,80,.2)">S2 of 10</span></div>
+</div>
+
+<div class="stabs" id="stabs2">
+  <div class="stab active" data-p="overview">Overview</div>
+  <div class="stab" data-p="glossary">Glossary</div>
+  <div class="stab" data-p="oneliners">Interview 1-Liners</div>
+  <div class="stab" data-p="concepts">Concepts</div>
+  <div class="stab" data-p="bp">Best Practices</div>
+  <div class="stab" data-p="interview">Interview Prep</div>
+  <div class="stab" data-p="code">Code Examples</div>
+</div>
+
+<div class="panel active" id="p2-overview">
+  <div class="def-box">
+    <div class="lbl">Session 2 · Core Definition</div>
+    <p>A <strong style="color:var(--blue)">Page</strong> in Playwright represents a single browser tab or window. Pages live inside a BrowserContext. You can open new tabs programmatically, detect popup windows triggered by user actions (like clicking links with target="_blank"), and control focus between multiple open pages.</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h4>WHAT is it?</h4><p>A Page object wraps one browser tab. It exposes all navigation, DOM interaction, and event APIs. Multiple pages can exist inside one context, sharing cookies/auth but each with its own URL and DOM state.</p></div>
+    <div class="card"><h4>WHY use it?</h4><p>Modern apps open new tabs for OAuth flows, receipts, PDFs, and external links. Playwright must capture and control those popups — missing them means your test goes blind to key user journeys.</p></div>
+    <div class="card"><h4>WHEN to use it?</h4><p>Whenever your app opens a new tab (target="_blank" links, window.open() calls, OAuth redirects, download confirmations) or when you need to test multi-tab workflows like comparing two products.</p></div>
+    <div class="card"><h4>HOW to detect popups?</h4><p>Use <code style="color:var(--orange)">page.waitForEvent('popup')</code> BEFORE triggering the action that opens the new tab. This sets up the listener first, then the click happens, and Playwright captures the new page reference.</p></div>
+    <div class="card full"><h4>WHERE does it fit?</h4><p>Browser → BrowserContext → <strong style="color:var(--blue)">Page (Tab 1)</strong> + <strong style="color:var(--green)">Page (Tab 2 — popup)</strong>. Both tabs share the same context cookies. Switching between them is done by simply using the correct page variable — no "switch to window handle" like Selenium.</p></div>
+  </div>
+</div>
+
+<div class="panel" id="p2-glossary">
+  <div class="tsec">Keyword Glossary — Session 2</div>
+  <div class="gitem"><span class="gkw">context.newPage()</span><span class="gdesc">Creates a new tab programmatically inside the current BrowserContext. Returns a Page object. The new page shares cookies/auth with the context.</span></div>
+  <div class="gitem"><span class="gkw">page.waitForEvent('popup')</span><span class="gdesc">Listens for the 'popup' event which fires when a new tab/window opens from this page (via target="_blank" or window.open). Must be called BEFORE the action that triggers the popup.</span></div>
+  <div class="gitem"><span class="gkw">popup</span><span class="gdesc">A new Page instance that opened as a result of a user action on the parent page. Has its own URL, DOM, and navigation state. Returned by waitForEvent('popup').</span></div>
+  <div class="gitem"><span class="gkw">page.bringToFront()</span><span class="gdesc">Brings the specified page/tab to the foreground (focused). Useful when multiple tabs are open and you need to ensure UI interactions happen on the correct tab.</span></div>
+  <div class="gitem"><span class="gkw">context.pages()</span><span class="gdesc">Returns an array of all currently open Page objects inside the context. Useful for finding a specific tab by URL or title when you don't have a direct reference.</span></div>
+  <div class="gitem"><span class="gkw">page.waitForLoadState()</span><span class="gdesc">Waits for the page to reach a specific load state: 'load' (all resources), 'domcontentloaded' (HTML parsed), or 'networkidle' (no network requests for 500ms).</span></div>
+  <div class="gitem"><span class="gkw">page.close()</span><span class="gdesc">Closes a specific page/tab. Does NOT close the context or browser. Use to clean up popup pages after you're done asserting them.</span></div>
+  <div class="gitem"><span class="gkw">page.url()</span><span class="gdesc">Returns the current URL string of the page. Useful for asserting the popup landed on the correct URL after opening.</span></div>
+  <div class="gitem"><span class="gkw">page.title()</span><span class="gdesc">Returns the page's document title (the &lt;title&gt; tag content). Async method — must be awaited.</span></div>
+  <div class="gitem"><span class="gkw">page.on('popup')</span><span class="gdesc">Event listener variant of popup detection. Alternative to waitForEvent — registers a callback that fires every time a new tab opens from this page.</span></div>
+  <div class="gitem"><span class="gkw">window.open()</span><span class="gdesc">JavaScript method in the browser that opens a new tab/window. Playwright detects this as a 'popup' event. Can be triggered by JS code or button clicks.</span></div>
+</div>
+
+<div class="panel" id="p2-oneliners">
+  <div class="tsec">Interview One-Liners — Session 2</div>
+  <div class="oneliners">
+    <div class="ol"><span>Popup Detection</span>"In Playwright, you must set up waitForEvent('popup') BEFORE clicking the element that opens a new tab — if you click first and then wait, the popup event may have already fired and your Promise will never resolve."</div>
+    <div class="ol"><span>vs Selenium</span>"Unlike Selenium where you manage window handles using driver.getWindowHandles() and driver.switchTo().window(), Playwright gives you a direct Page object reference for each new tab — no handle juggling, no switchTo() calls."</div>
+    <div class="ol"><span>Context Sharing</span>"A popup opened from a page shares the same BrowserContext, which means it inherits all cookies and auth tokens — so if the parent page is logged in, the popup is too, which matters for OAuth redirect testing."</div>
+    <div class="ol"><span>Multiple Tabs</span>"When multiple tabs are open, context.pages() returns an array of all Page objects — I can find the tab I need by filtering on page.url() or page.title() rather than guessing by index."</div>
+    <div class="ol"><span>bringToFront</span>"page.bringToFront() is important for tests that involve clipboard operations or focus-dependent UI — browsers sometimes refuse to execute these unless the tab is in the foreground."</div>
+    <div class="ol"><span>Cleanup</span>"I always close popup pages after asserting them — an unclosed popup stays in context.pages() and can interfere with subsequent test steps that iterate over all pages."</div>
+    <div class="ol"><span>waitForLoadState</span>"After capturing a popup page reference, I always call await popupPage.waitForLoadState('domcontentloaded') before interacting with it — the popup reference is returned before the page has fully loaded its DOM."</div>
+  </div>
+</div>
+
+<div class="panel" id="p2-concepts">
+  <div class="tsec">Core Concepts — Session 2</div>
+  <div class="cb">
+    <h4>⬡ How Popup Detection Works (Event Race Condition)</h4>
+    <div class="cb-body">
+      <p>The most common beginner mistake with popups is the ordering problem. Playwright's 'popup' event fires the moment the new tab opens. If you await the click first, the event has already fired before your listener is registered — you miss it forever.</p>
+      <div class="flow">
+        <div class="fr"><span class="fb r">❌ WRONG ORDER</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb r">await page.click('#open-tab')</span><span class="arr">→</span><span class="fb r">popup fires NOW</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb r">await page.waitForEvent('popup')</span><span class="arr">→</span><span class="fb r">too late! missed it</span></div>
+        <div class="fr" style="margin-top:10px"><span class="fb g">✅ CORRECT ORDER</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb g">const popupPromise = page.waitForEvent('popup')</span><span class="arr">→</span><span class="fb g">listener ready</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb g">await page.click('#open-tab')</span><span class="arr">→</span><span class="fb g">popup fires</span></div>
+        <div class="fr" style="margin-left:10px"><span class="fb g">const popup = await popupPromise</span><span class="arr">→</span><span class="fb g">captured! ✓</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb">
+    <h4>⬡ Page Lifecycle States</h4>
+    <div class="cb-body">
+      <p>After navigating or getting a popup reference, the page goes through several states. Waiting for the wrong state causes flaky tests.</p>
+      <div class="flow">
+        <div class="fr"><span class="fb b">commit</span><span class="arr">→</span><span class="fb b">domcontentloaded</span><span class="arr">→</span><span class="fb g">load</span><span class="arr">→</span><span class="fb p">networkidle</span></div>
+        <div class="fr" style="margin-top:6px"><span class="fb b">HTML starts arriving</span></div>
+        <div class="fr"><span class="fb b">DOM parsed (fast)</span><span class="arr">←</span><span class="fb" style="color:var(--muted)">use for SPAs</span></div>
+        <div class="fr"><span class="fb g">all resources loaded</span><span class="arr">←</span><span class="fb" style="color:var(--muted)">default for goto()</span></div>
+        <div class="fr"><span class="fb p">no network for 500ms</span><span class="arr">←</span><span class="fb" style="color:var(--muted)">use for dynamic content</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cb">
+    <h4>⬡ Multi-Tab Architecture in Playwright</h4>
+    <div class="cb-body">
+      <p>All pages in a context are independent tab objects. You control them by variable reference — not by "switching active tab" like Selenium. Both pages run concurrently.</p>
+      <div class="flow">
+        <div class="fr"><span class="fb p">BrowserContext</span></div>
+        <div class="fr" style="margin-left:20px"><span class="fb b">page1 → Tab 1 (parent)</span><span class="arr">active, navigatable</span></div>
+        <div class="fr" style="margin-left:20px"><span class="fb g">page2 → Tab 2 (popup)</span><span class="arr">active, navigatable</span></div>
+        <div class="fr" style="margin-left:20px"><span class="fb o">page3 → Tab 3 (manual)</span><span class="arr">via context.newPage()</span></div>
+        <div class="fr" style="margin-top:6px"><span class="fb" style="color:var(--muted)">page.bringToFront()</span><span class="arr">→</span><span class="fb g">focuses that tab in UI</span></div>
+        <div class="fr"><span class="fb" style="color:var(--muted)">context.pages()</span><span class="arr">→</span><span class="fb g">[page1, page2, page3]</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="p2-bp">
+  <div class="tsec">Best Practices — Session 2</div>
+  <ul class="bplist">
+    <li class="bpitem"><div class="bpicon">✓</div><div>Always register <strong style="color:var(--blue)">waitForEvent('popup')</strong> BEFORE the click that triggers it. Store it as a Promise, click, then await the Promise — this is the correct race-condition-safe pattern.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>After capturing a popup reference, always <strong style="color:var(--blue)">await popup.waitForLoadState()</strong> before interacting. The reference is returned before the page DOM is ready.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>Use <strong style="color:var(--blue)">context.pages()</strong> to find a tab dynamically by URL or title when you lose the reference — never hardcode an array index like context.pages()[1] in production tests.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>Always <strong style="color:var(--blue)">close popup pages</strong> after asserting them with await popup.close() — leaving them open bloats context.pages() and can cause unexpected interactions with event listeners.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>Use <strong style="color:var(--blue)">Promise.all()</strong> when opening multiple tabs simultaneously — this lets them load in parallel instead of sequentially, making tests faster.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>For OAuth flows that open a popup for login: capture the popup, fill credentials in the popup page, then assert the parent page reflects the logged-in state — the context shares the resulting auth cookies automatically.</div></li>
+    <li class="bpitem"><div class="bpicon">✓</div><div>Call <strong style="color:var(--blue)">page.bringToFront()</strong> before clipboard or focus-sensitive interactions — some browsers silently fail these operations on background tabs.</div></li>
+  </ul>
+</div>
+
+<div class="panel" id="p2-interview">
+  <div class="tsec">Interview Prep — 5 SDET Q&A</div>
+  <div class="qablock" id="q2-1"><div class="qaq" onclick="tq('q2-1')">Q1: How does Playwright handle new tab/window popups differently from Selenium? <span class="qt">▶</span></div><div class="qaa">In Selenium, you manage window handles — you call getWindowHandles() to get a Set of IDs, then switchTo().window(handle) to change focus. This is fragile because handle IDs are opaque strings and switching is a global state change. In Playwright, each new tab returns a concrete Page object via waitForEvent('popup'). You interact with any tab at any time using its variable — there's no global "active window" concept. You can drive page1 and popupPage simultaneously without switching. This is a fundamental design improvement that eliminates an entire class of flaky test patterns.</div></div>
+  <div class="qablock" id="q2-2"><div class="qaq" onclick="tq('q2-2')">Q2: Why must waitForEvent('popup') be called before the click, not after? <span class="qt">▶</span></div><div class="qaa">Because 'popup' is an event, not a polling check. When you call waitForEvent('popup'), Playwright registers an event listener on the page. If the click happens first, the popup opens, the event fires immediately, and there's no listener to catch it — it's gone. The Promise returned by waitForEvent('popup') will then hang forever waiting for a popup that already happened. The correct pattern is: const popupPromise = page.waitForEvent('popup') — this returns a Promise that resolves when the event fires. Then you click. Then you await popupPromise. This guarantees the listener is registered before the event can fire.</div></div>
+  <div class="qablock" id="q2-3"><div class="qaq" onclick="tq('q2-3')">Q3: How would you find a specific tab by URL when you have multiple tabs open? <span class="qt">▶</span></div><div class="qaa">I use context.pages() which returns an array of all open Page objects in the context. Then I filter by URL: const targetPage = context.pages().find(p => p.url().includes('/dashboard')). If the page might still be loading, I'd instead do: const pages = context.pages(); const target = pages.find(p => p.url().includes('target-path')) ?? await context.waitForEvent('page'); This handles the case where the page hasn't been added to the array yet. I always validate the result is not undefined before using it.</div></div>
+  <div class="qablock" id="q2-4"><div class="qaq" onclick="tq('q2-4')">Q4: How would you test an OAuth flow that opens a popup for Google login? <span class="qt">▶</span></div><div class="qaa">First, I register the popup listener before clicking Login with Google: const popupPromise = page.waitForEvent('popup'). Then click the button: await page.click('#google-login-btn'). Capture the popup: const googlePopup = await popupPromise. Wait for it to load: await googlePopup.waitForLoadState('domcontentloaded'). Fill in credentials on the Google login page: await googlePopup.fill('#email', testEmail), await googlePopup.click('#next'), await googlePopup.fill('#password', testPass), await googlePopup.click('#signIn'). The popup closes automatically after Google redirects back. Then I assert on the parent page that the user is logged in: await expect(page.locator('.user-avatar')).toBeVisible(). The auth cookie is shared via the context.</div></div>
+  <div class="qablock" id="q2-5"><div class="qaq" onclick="tq('q2-5')">Q5: What is page.bringToFront() and when is it necessary? <span class="qt">▶</span></div><div class="qaa">bringToFront() makes a specific tab the active/focused tab in the browser UI. In headless mode this matters less, but in headed mode and for certain browser APIs it's critical. Clipboard operations (navigator.clipboard.writeText/readText) are often restricted to the focused tab — calling them on a background tab silently fails or throws a permissions error. Similarly, some drag-and-drop implementations and focus() calls behave differently on background tabs. I call page.bringToFront() before any clipboard test, before testing keyboard shortcuts that depend on window focus, and before testing any feature that explicitly checks document.hasFocus() in its source code.</div></div>
+</div>
+
+<div class="panel" id="p2-code">
+  <div class="ctabs" id="ctabs2">
+    <div class="ctab active" data-c="c2-1"><span class="fi">.ts</span> new-tab-manual.ts</div>
+    <div class="ctab" data-c="c2-2"><span class="fi">.ts</span> popup-detection.ts</div>
+    <div class="ctab" data-c="c2-3"><span class="fi">.ts</span> multi-tab-control.ts</div>
+    <div class="ctab" data-c="c2-4"><span class="fi">.ts</span> oauth-popup.ts</div>
+    <div class="ctab" data-c="c2-5"><span class="fi">.ts</span> find-tab-by-url.ts</div>
+    <div class="ctab" data-c="c2-6"><span class="fi">.ts</span> window-events.ts</div>
+  </div>
+  <div class="cwrap">
+    <div class="cpanel active" id="c2-1">
+      <div class="cheader"><span class="cfname">new-tab-manual.ts</span><button class="copybtn" onclick="cp('c2-1')">Copy</button></div>
+      <pre><code class="language-typescript">// new-tab-manual.ts
+// PURPOSE: Open a new tab programmatically and work with it
+// USE CASE: Test multi-step flows across tabs you control
+
+import { test, expect } from '@playwright/test';
+
+test('open new tab manually and navigate', async ({ context }) => {
+
+  // Tab 1: Open first page
+  const page1 = await context.newPage();
+  await page1.goto('https://playwright.dev');
+  await expect(page1).toHaveTitle(/Playwright/);
+
+  // Tab 2: Open second tab in the same context (shares cookies)
+  const page2 = await context.newPage();
+  await page2.goto('https://example.com');
+
+  // Both tabs are open simultaneously — verify independently
+  await expect(page1).toHaveURL(/playwright\.dev/);
+  await expect(page2).toHaveURL(/example\.com/);
+
+  // Bring Tab 1 to front (focus it)
+  await page1.bringToFront();
+
+  // How many tabs are open in this context?
+  const allPages = context.pages();
+  console.log(`Open tabs: ${allPages.length}`); // → 2
+
+  // Close Tab 2 explicitly
+  await page2.close();
+  console.log(`After close: ${context.pages().length} tabs`); // → 1
+});</code></pre>
+    </div>
+    <div class="cpanel" id="c2-2">
+      <div class="cheader"><span class="cfname">popup-detection.ts</span><button class="copybtn" onclick="cp('c2-2')">Copy</button></div>
+      <pre><code class="language-typescript">// popup-detection.ts
+// PURPOSE: Capture a popup opened by target="_blank" link or window.open()
+// CRITICAL: listener MUST be set up BEFORE the triggering action
+
+import { test, expect } from '@playwright/test';
+
+test('detect and interact with popup tab', async ({ page }) => {
+
+  await page.goto('https://myapp.com/products');
+
+  // ✅ STEP 1: Register the popup listener FIRST (returns a Promise)
+  const popupPromise = page.waitForEvent('popup');
+
+  // ✅ STEP 2: Trigger the action that opens the new tab
+  // This link has target="_blank" — opens in new tab
+  await page.click('a[target="_blank"]');
+
+  // ✅ STEP 3: Await the popup Promise — returns the new Page
+  const popup = await popupPromise;
+
+  // STEP 4: Wait for popup DOM to be ready before interacting
+  await popup.waitForLoadState('domcontentloaded');
+
+  // STEP 5: Assert on the popup page
+  await expect(popup).toHaveURL(/product-detail/);
+  await expect(popup.locator('h1.product-title')).toBeVisible();
+
+  // STEP 6: Interact with the popup if needed
+  await popup.click('#add-to-cart');
+
+  // STEP 7: Close the popup — clean up
+  await popup.close();
+
+  // Parent page is unaffected and still open
+  await expect(page).toHaveURL(/products/);
+});</code></pre>
+    </div>
+    <div class="cpanel" id="c2-3">
+      <div class="cheader"><span class="cfname">multi-tab-control.ts</span><button class="copybtn" onclick="cp('c2-3')">Copy</button></div>
+      <pre><code class="language-typescript">// multi-tab-control.ts
+// PURPOSE: Control multiple tabs simultaneously
+// USE CASE: Compare two pages, test tab-switching UX
+
+import { test, expect } from '@playwright/test';
+
+test('compare product details across two tabs', async ({ context }) => {
+
+  // Open two tabs in parallel (both load simultaneously)
+  const [page1, page2] = await Promise.all([
+    context.newPage().then(p => (p.goto('https://myapp.com/product/1'), p)),
+    context.newPage().then(p => (p.goto('https://myapp.com/product/2'), p)),
+  ]);
+
+  // Wait for both to finish loading
+  await Promise.all([
+    page1.waitForLoadState('networkidle'),
+    page2.waitForLoadState('networkidle'),
+  ]);
+
+  // Read prices from both tabs
+  const price1 = await page1.locator('.price').textContent();
+  const price2 = await page2.locator('.price').textContent();
+  console.log(`Product 1: ${price1} | Product 2: ${price2}`);
+
+  // Bring page1 to front and interact
+  await page1.bringToFront();
+  await page1.click('#add-to-cart');
+
+  // Switch to page2 and interact
+  await page2.bringToFront();
+  await page2.click('#add-to-cart');
+
+  // Verify cart count updated on page1 (shared context = shared cookies)
+  await page1.reload();
+  await expect(page1.locator('.cart-count')).toHaveText('2');
+
+  // Close both tabs
+  await Promise.all([page1.close(), page2.close()]);
+});</code></pre>
+    </div>
+    <div class="cpanel" id="c2-4">
+      <div class="cheader"><span class="cfname">oauth-popup.ts</span><button class="copybtn" onclick="cp('c2-4')">Copy</button></div>
+      <pre><code class="language-typescript">// oauth-popup.ts
+// PURPOSE: Handle OAuth / social login popup flow
+// USE CASE: Google/GitHub login opens a popup window for auth
+
+import { test, expect } from '@playwright/test';
+
+test('login with Google OAuth popup', async ({ page }) => {
+
+  await page.goto('https://myapp.com/login');
+
+  // Register popup listener BEFORE clicking — critical ordering!
+  const popupPromise = page.waitForEvent('popup');
+
+  // Click "Login with Google" button (opens OAuth popup window)
+  await page.click('#google-login-btn');
+
+  // Capture the OAuth popup page
+  const googlePopup = await popupPromise;
+
+  // Wait for Google's login form to load
+  await googlePopup.waitForLoadState('domcontentloaded');
+
+  // Verify we landed on Google's auth page
+  await expect(googlePopup).toHaveURL(/accounts\.google\.com/);
+
+  // Fill in test Google credentials
+  await googlePopup.fill('input[type="email"]', 'testuser@gmail.com');
+  await googlePopup.click('#identifierNext');
+  await googlePopup.waitForSelector('input[type="password"]');
+  await googlePopup.fill('input[type="password"]', 'TestPass123!');
+  await googlePopup.click('#passwordNext');
+
+  // Google redirects back → popup closes automatically
+  // Wait for parent page to show logged-in state
+  await page.waitForURL('**/dashboard');
+
+  // Auth cookies are shared via context — parent page is now logged in
+  await expect(page.locator('.user-avatar')).toBeVisible();
+  await expect(page.locator('.welcome-message'))
+    .toContainText('testuser');
+});</code></pre>
+    </div>
+    <div class="cpanel" id="c2-5">
+      <div class="cheader"><span class="cfname">find-tab-by-url.ts</span><button class="copybtn" onclick="cp('c2-5')">Copy</button></div>
+      <pre><code class="language-typescript">// find-tab-by-url.ts
+// PURPOSE: Find a specific tab by URL or title
+// USE CASE: When you don't have a direct reference to the page you need
+
+import { test, expect, Page } from '@playwright/test';
+
+// Helper: find page by URL substring
+function findPageByURL(pages: Page[], urlPart: string): Page | undefined {
+  return pages.find(p => p.url().includes(urlPart));
+}
+
+test('find and use a tab by its URL', async ({ context }) => {
+
+  // Open three tabs with different pages
+  const home   = await context.newPage();
+  const about  = await context.newPage();
+  const contact = await context.newPage();
+
+  await Promise.all([
+    home.goto('https://myapp.com/'),
+    about.goto('https://myapp.com/about'),
+    contact.goto('https://myapp.com/contact'),
+  ]);
+
+  // Find the contact tab dynamically using context.pages()
+  const allPages = context.pages();
+  console.log(`Total open tabs: ${allPages.length}`); // 3
+
+  // Find contact tab without having the direct variable
+  const contactTab = findPageByURL(allPages, 'contact');
+  if (!contactTab) throw new Error('Contact tab not found!');
+
+  // Use the found tab
+  await contactTab.bringToFront();
+  await expect(contactTab.locator('h1')).toContainText('Contact');
+
+  // Find page by title (async — must await title())
+  const titles = await Promise.all(allPages.map(p => p.title()));
+  const aboutIndex = titles.findIndex(t => t.includes('About'));
+  const aboutTab = allPages[aboutIndex];
+  await expect(aboutTab).toHaveURL(/about/);
+});</code></pre>
+    </div>
+    <div class="cpanel" id="c2-6">
+      <div class="cheader"><span class="cfname">window-events.ts</span><button class="copybtn" onclick="cp('c2-6')">Copy</button></div>
+      <pre><code class="language-typescript">// window-events.ts
+// PURPOSE: Listen to page-level events (close, crash, popup, download)
+// USE CASE: Track unexpected tab activity, verify cleanup
+
+import { test, expect } from '@playwright/test';
+
+test('listen to page events', async ({ context, page }) => {
+
+  // Track ALL popups opened from context (global listener)
+  const openedPopups: string[] = [];
+  context.on('page', (newPage) => {
+    openedPopups.push(newPage.url());
+    console.log(`🆕 New tab opened: ${newPage.url()}`);
+  });
+
+  // Listen for page close event
+  page.on('close', () => {
+    console.log('🔴 Page was closed');
+  });
+
+  // Listen for page crash (e.g. OOM, renderer process crash)
+  page.on('crash', () => {
+    console.error('💥 Page crashed!');
+  });
+
+  // Listen for console errors on the page
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      console.error(`❌ Browser console error: ${msg.text()}`);
+    }
+  });
+
+  // Navigate and trigger some popups
+  await page.goto('https://myapp.com');
+
+  // Programmatically open a popup via JS evaluation
+  const popupPromise = page.waitForEvent('popup');
+  await page.evaluate(() => window.open('https://example.com', '_blank'));
+  const newTab = await popupPromise;
+  await newTab.waitForLoadState();
+
+  // Verify our context listener tracked the new page
+  expect(openedPopups.length).toBeGreaterThan(0);
+  console.log(`Tracked popups: ${openedPopups.join(', ')}`);
+
+  await newTab.close();
+});</code></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+function tq(id){const b=document.getElementById(id);const a=b.querySelector('.qaa');b.classList.toggle('open');a.classList.toggle('open')}
+function cp(id){const p=document.getElementById(id);const c=p.querySelector('pre').innerText;navigator.clipboard.writeText(c).then(()=>{const b=p.querySelector('.copybtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000)})}
+document.getElementById('stabs2').addEventListener('click',e=>{
+  const t=e.target.closest('.stab');if(!t)return;
+  document.querySelectorAll('#stabs2 .stab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const pid='p2-'+t.dataset.p;
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  document.getElementById(pid).classList.add('active');
+});
+document.getElementById('ctabs2').addEventListener('click',e=>{
+  const t=e.target.closest('.ctab');if(!t)return;
+  document.querySelectorAll('#ctabs2 .ctab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const cid=t.dataset.c;
+  document.querySelectorAll('.cpanel').forEach(x=>x.classList.remove('active'));
+  document.getElementById(cid).classList.add('active');
+});
+</script>
+
+<script>
+/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
+(function(){try{
+  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
+    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
+      btn.addEventListener('click',function(){
+        var t=this.nextElementSibling;
+        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
+      });
+    }
+  });
+  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
+    if(!tab.dataset.vTab){tab.dataset.vTab='1';
+      tab.addEventListener('click',function(){
+        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
+        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
+      });
+    }
+  });
+}catch(e){console.log('VE:',e)}})();
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

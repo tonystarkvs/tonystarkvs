@@ -1,0 +1,1763 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: var(--color-background-primary);
+  --bg2: var(--color-background-secondary);
+  --bg3: var(--color-background-tertiary);
+  --txt: var(--color-text-primary);
+  --txt2: var(--color-text-secondary);
+  --txt3: var(--color-text-tertiary);
+  --border: var(--color-border-tertiary);
+  --border2: var(--color-border-secondary);
+  --accent-blue: #378ADD;
+  --accent-teal: #1D9E75;
+  --accent-amber: #BA7517;
+  --accent-coral: #D85A30;
+  --accent-purple: #7F77DD;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Sora', var(--font-sans), sans-serif;
+  --font-sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --color-text-primary:#1a1a2e;
+  --color-text-secondary:#555770;
+  --color-text-tertiary:#8e90a6;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f4f8;
+  --color-background-tertiary:#eaeaef;
+  --color-border-secondary:#d1d1db;
+  --color-border-tertiary:#e4e4eb;
+}
+
+body {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--txt);
+  background: transparent;
+  line-height: 1.6;
+  padding: 0;
+}
+
+/* ── Header ── */
+.hub-header {
+  padding: 20px 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 0.5px solid var(--border);
+  padding-bottom: 0;
+}
+.hub-logo {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: #fff; font-weight: 600; flex-shrink: 0;
+  font-family: var(--mono);
+}
+.hub-title { font-size: 16px; font-weight: 600; }
+.hub-sub { font-size: 12px; color: var(--txt2); margin-top: 1px; }
+.progress-bar-wrap { margin-left: auto; text-align: right; }
+.progress-label { font-size: 11px; color: var(--txt3); margin-bottom: 4px; }
+.progress-track { width: 120px; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent-teal); border-radius: 2px; transition: width 0.4s; width: 10%; }
+
+/* ── Session Tabs ── */
+.tab-nav {
+  display: flex; overflow-x: auto; gap: 0;
+  border-bottom: 0.5px solid var(--border);
+  padding: 0 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  font-size: 11px; font-weight: 500;
+  font-family: var(--sans);
+  color: var(--txt3);
+  background: none; border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--txt2); }
+.tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); font-weight: 600; }
+.tab-dot {
+  display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; margin-right: 5px; vertical-align: middle;
+}
+
+/* ── Session Content ── */
+.session-panel { display: none; padding: 20px; }
+.session-panel.active { display: block; }
+
+/* Section labels */
+.section-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 9px; border-radius: 4px;
+  margin-bottom: 8px;
+}
+.tag-what    { background: #E6F1FB; color: #185FA5; }
+.tag-why     { background: #E1F5EE; color: #0F6E56; }
+.tag-when    { background: #FAEEDA; color: #854F0B; }
+.tag-how     { background: #EEEDFE; color: #534AB7; }
+.tag-where   { background: #FAECE7; color: #993C1D; }
+.tag-inter   { background: #EAF3DE; color: #3B6D11; }
+.tag-practice { background: #FBEAF0; color: #993556; }
+.tag-mistake { background: #FCEBEB; color: #A32D2D; }
+.tag-best    { background: #E1F5EE; color: #0F6E56; }
+
+/* Session title */
+.session-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.session-desc  { font-size: 13px; color: var(--txt2); margin-bottom: 20px; }
+
+/* Two-col layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.one-col { margin-bottom: 14px; }
+
+/* Cards */
+.card {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.card-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--txt2); }
+.card-body  { font-size: 13px; color: var(--txt); line-height: 1.65; }
+
+/* Code blocks */
+.code-wrap {
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+.code-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 12px;
+  border-bottom: 0.5px solid var(--border);
+  font-size: 11px; color: var(--txt3);
+}
+.code-label { font-weight: 500; color: var(--txt2); }
+.copy-btn {
+  font-size: 10px; padding: 2px 8px;
+  border: 0.5px solid var(--border2);
+  border-radius: 4px; background: none; cursor: pointer;
+  color: var(--txt3); font-family: var(--sans);
+  transition: all 0.15s;
+}
+.copy-btn:hover { background: var(--bg2); color: var(--txt2); }
+pre {
+  font-family: var(--mono); font-size: 12px;
+  line-height: 1.7; padding: 12px 14px;
+  overflow-x: auto; color: var(--txt);
+}
+
+/* Syntax highlighting classes */
+.kw { color: var(--accent-purple); font-weight: 500; }
+.fn { color: var(--accent-blue); }
+.st { color: var(--accent-teal); }
+.cm { color: var(--txt3); font-style: italic; }
+.nb { color: var(--accent-amber); }
+.op { color: var(--accent-coral); }
+
+/* Interview cards */
+.interview-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.interview-list li {
+  font-size: 12.5px; color: var(--txt);
+  padding: 8px 12px; border-radius: 7px;
+  border-left: 3px solid var(--accent-blue);
+  background: var(--bg);
+  line-height: 1.55;
+}
+.interview-q { font-weight: 600; color: var(--accent-blue); font-size: 11px; display: block; margin-bottom: 2px; }
+
+/* Best practices */
+.bp-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.bp-list li {
+  font-size: 12.5px; padding: 7px 10px 7px 32px;
+  border-radius: 7px; background: var(--bg);
+  border: 0.5px solid var(--border);
+  position: relative; line-height: 1.5;
+}
+.bp-list li::before {
+  content: '✓'; position: absolute; left: 10px;
+  color: var(--accent-teal); font-weight: 600;
+}
+
+/* Mistakes */
+.mistake-item {
+  border-radius: 8px; overflow: hidden;
+  margin-bottom: 8px; border: 0.5px solid #F7C1C1;
+}
+.mistake-bad  { background: #FFF5F5; padding: 8px 12px; font-size: 12px; }
+.mistake-good { background: #F0FAF5; padding: 8px 12px; font-size: 12px; border-top: 0.5px solid #C0DD97; }
+.mistake-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; display: block; margin-bottom: 3px; }
+.bad-label  { color: #A32D2D; }
+.good-label { color: #3B6D11; }
+
+/* Diagram / SVG area */
+.diagram-area {
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  background: var(--bg2);
+}
+
+/* Flowchart labels */
+.flow-desc { font-size: 12px; color: var(--txt2); padding: 8px 14px; border-top: 0.5px solid var(--border); }
+
+/* Nav footer */
+.session-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0 0;
+  border-top: 0.5px solid var(--border);
+  margin-top: 8px;
+}
+.nav-btn {
+  padding: 7px 16px; border-radius: 7px;
+  border: 0.5px solid var(--border2);
+  background: var(--bg2); cursor: pointer;
+  font-size: 12px; font-family: var(--sans);
+  color: var(--txt2); transition: all 0.15s;
+}
+.nav-btn:hover { background: var(--bg3); color: var(--txt); }
+.nav-btn.primary { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+.nav-btn.primary:hover { opacity: 0.9; }
+.nav-btn:disabled { opacity: 0.35; cursor: default; }
+.session-counter { font-size: 11px; color: var(--txt3); }
+
+/* Responsive */
+@media (max-width: 520px) { .two-col { grid-template-columns: 1fr; } }
+
+.c-amber rect{fill:#FAEEDA;stroke:#EF9F27;stroke-width:1.5}
+.c-blue rect{fill:#E6F1FB;stroke:#85B7EB;stroke-width:1.5}
+.c-coral rect{fill:#FAECE7;stroke:#F0997B;stroke-width:1.5}
+.c-gray rect{fill:#f4f4f8;stroke:#d1d1db;stroke-width:1.5}
+.c-green rect{fill:#EAF3DE;stroke:#97C459;stroke-width:1.5}
+.c-purple rect{fill:#EEEDFE;stroke:#AFA9EC;stroke-width:1.5}
+.c-red rect{fill:#FDE8E8;stroke:#DC3545;stroke-width:1.5}
+.c-teal rect{fill:#E1F5EE;stroke:#5DCAA5;stroke-width:1.5}
+svg .th{font-weight:600;fill:var(--color-text-primary);font-family:var(--font-sans);font-size:13px}
+svg .ts{font-size:11px;fill:var(--color-text-secondary);font-family:var(--font-sans)}
+</style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+
+<div class="hub-header">
+  <div class="hub-logo">Py</div>
+  <div>
+    <div class="hub-title">Python for QA / SDET</div>
+    <div class="hub-sub">10 progressive learning sessions · Beginner → Real-world</div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-label" id="progress-label">Session 1 of 10</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+</div>
+
+<div class="tab-nav" id="tab-nav">
+  <button class="tab-btn active" onclick="switchTab(0)"><span class="tab-dot" style="background:#378ADD"></span>S1: Basics</button>
+  <button class="tab-btn" onclick="switchTab(1)"><span class="tab-dot" style="background:#1D9E75"></span>S2: Data Types</button>
+  <button class="tab-btn" onclick="switchTab(2)"><span class="tab-dot" style="background:#BA7517"></span>S3: Control Flow</button>
+  <button class="tab-btn" onclick="switchTab(3)"><span class="tab-dot" style="background:#7F77DD"></span>S4: Functions</button>
+  <button class="tab-btn" onclick="switchTab(4)"><span class="tab-dot" style="background:#D85A30"></span>S5: Collections</button>
+  <button class="tab-btn" onclick="switchTab(5)"><span class="tab-dot" style="background:#378ADD"></span>S6: OOP</button>
+  <button class="tab-btn" onclick="switchTab(6)"><span class="tab-dot" style="background:#1D9E75"></span>S7: File I/O</button>
+  <button class="tab-btn" onclick="switchTab(7)"><span class="tab-dot" style="background:#BA7517"></span>S8: Error Handling</button>
+  <button class="tab-btn" onclick="switchTab(8)"><span class="tab-dot" style="background:#7F77DD"></span>S9: Modules & Libs</button>
+  <button class="tab-btn" onclick="switchTab(9)"><span class="tab-dot" style="background:#D85A30"></span>S10: QA Framework</button>
+</div>
+
+<!-- ═══════════════ SESSION 1 ═══════════════ -->
+<div class="session-panel active" id="panel-0">
+  <div class="session-title">Session 1 — Python Basics & Setup</div>
+  <div class="session-desc">Variables · Print · Input · Comments · Data type overview · Python as interpreted language</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 160" role="img">
+      <title>Python QA Learning Hub (Condensed Edition)</title>
+      <desc>How Python code runs from writing to output</desc>
+      <defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-blue"><rect x="30" y="58" width="110" height="44" rx="8" stroke-width="0.5"/><text class="th" x="85" y="80" text-anchor="middle" dominant-baseline="central">You write</text><text class="ts" x="85" y="96" text-anchor="middle" dominant-baseline="central">.py file</text></g>
+      <line x1="140" y1="80" x2="172" y2="80" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a1)"/>
+      <g class="c-amber"><rect x="172" y="58" width="120" height="44" rx="8" stroke-width="0.5"/><text class="th" x="232" y="80" text-anchor="middle" dominant-baseline="central">Interpreter</text><text class="ts" x="232" y="96" text-anchor="middle" dominant-baseline="central">reads line by line</text></g>
+      <line x1="292" y1="80" x2="324" y2="80" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a1)"/>
+      <g class="c-purple"><rect x="324" y="58" width="110" height="44" rx="8" stroke-width="0.5"/><text class="th" x="379" y="80" text-anchor="middle" dominant-baseline="central">Bytecode</text><text class="ts" x="379" y="96" text-anchor="middle" dominant-baseline="central">compiled (.pyc)</text></g>
+      <line x1="434" y1="80" x2="466" y2="80" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a1)"/>
+      <g class="c-teal"><rect x="466" y="58" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="516" y="80" text-anchor="middle" dominant-baseline="central">PVM runs</text><text class="ts" x="516" y="96" text-anchor="middle" dominant-baseline="central">executes code</text></g>
+      <line x1="566" y1="80" x2="598" y2="80" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a1)"/>
+      <g class="c-green"><rect x="598" y="58" width="62" height="44" rx="8" stroke-width="0.5"/><text class="th" x="629" y="80" text-anchor="middle" dominant-baseline="central">Output</text></g>
+    </svg>
+    <div class="flow-desc">Python is <strong>interpreted</strong> — no compile step needed. You run <code>python file.py</code> and the interpreter handles everything.</div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="section-tag tag-what">What is Python?</div>
+      <div class="card"><div class="card-body">Python is a high-level, dynamically-typed, interpreted language. For QA/SDET roles, it's the #1 language for automation scripts, test frameworks (pytest), and API testing tools.</div></div>
+    </div>
+    <div>
+      <div class="section-tag tag-why">Why Python for QA?</div>
+      <div class="card"><div class="card-body">Simple readable syntax → faster test writing. Huge ecosystem (pytest, selenium, requests). Cross-platform. Used in Selenium, Appium, Robot Framework, and CI/CD pipelines.</div></div>
+    </div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — Variables & print()</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Variables — no type declaration needed!
+test_name = "Login Test"       # str
+test_count = 5                  # int
+pass_rate = 98.5               # float
+is_passed = True               # bool
+
+print("Test:", test_name)
+print("Pass rate:", pass_rate, "%")
+print(f"Status: {is_passed}")    # f-string (preferred)</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — type() & input()</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Check data types — useful for debugging test data
+url = "https://api.example.com"
+print(type(url))            # &lt;class 'str'&gt;
+print(type(42))              # &lt;class 'int'&gt;
+
+# Input from user (used in CLI test scripts)
+env = input("Enter env (dev/qa/prod): ")
+print(f"Running tests on: {env}")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — Multiple assignment & swapping</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Multiple assignment (common in test data setup)
+user, password, role = "admin", "pass123", "superuser"
+
+# Swap variables — Python's elegant way
+a, b = 10, 20
+a, b = b, a
+print(a, b)    # 20 10</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — Type conversion (casting)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># REAL QA SCENARIO: API returns numbers as strings
+api_response_count = "150"         # string from JSON
+actual_count = int(api_response_count)
+
+print(actual_count + 10)           # 160 ✅
+# print(api_response_count + 10)   # TypeError ❌
+
+score = float("99.9")             # str → float
+text  = str(42)                   # int → str</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — Comments & documentation strings</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Single-line comment — for quick notes
+
+"""
+Module docstring — describes the test script.
+Author: QA Team
+Purpose: Login test suite examples
+"""
+
+def test_login():
+    """Verify valid user can log in successfully."""
+    pass   # placeholder — fill in logic later</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: Is Python compiled or interpreted?</span>Interpreted — Python reads and executes line by line at runtime, no manual compilation needed.</li>
+        <li><span class="interview-q">Q: What is dynamic typing?</span>You don't declare variable types; Python infers at runtime. <code>x = 5</code> then <code>x = "hello"</code> is valid.</li>
+        <li><span class="interview-q">Q: Why f-strings over format()?</span>f-strings (Python 3.6+) are faster, more readable, and the industry standard for modern Python.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-best">Best Practices ✓</div>
+      <ul class="bp-list">
+        <li>Use <code>snake_case</code> for variables/functions (PEP 8)</li>
+        <li>Prefer f-strings over <code>%</code> or <code>.format()</code></li>
+        <li>Always use meaningful variable names</li>
+        <li>Add docstrings to every test function</li>
+        <li>Use <code>CONSTANTS</code> in UPPER_CASE</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="one-col" style="margin-top:14px">
+    <div class="section-tag tag-mistake">Common Mistakes + Fixes</div>
+    <div class="mistake-item">
+      <div class="mistake-bad"><span class="mistake-label bad-label">❌ WRONG</span><code>count = "5"; total = count + 10  # TypeError!</code></div>
+      <div class="mistake-good"><span class="mistake-label good-label">✅ FIX</span><code>count = "5"; total = int(count) + 10  # Always cast API string responses</code></div>
+    </div>
+    <div class="mistake-item">
+      <div class="mistake-bad"><span class="mistake-label bad-label">❌ WRONG</span><code>print("Value: " + 42)  # TypeError: can't concat int to str</code></div>
+      <div class="mistake-good"><span class="mistake-label good-label">✅ FIX</span><code>print(f"Value: {42}")  # Use f-string for mixed types</code></div>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()" id="prev-btn-0" disabled>← Previous</button>
+    <span class="session-counter" id="counter-0">Session 1 / 10</span>
+    <button class="nav-btn primary" onclick="nextTab()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 2 ═══════════════ -->
+<div class="session-panel" id="panel-1">
+  <div class="session-title">Session 2 — Strings & String Operations</div>
+  <div class="session-desc">String methods · Slicing · Formatting · Multiline · Regex intro · QA use cases</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 140" role="img">
+      <title>String indexing diagram</title>
+      <desc>Visual showing positive and negative indexing of a Python string</desc>
+      <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <text class="th" x="340" y="24" text-anchor="middle" dominant-baseline="central">String indexing: s = "PYTHON"</text>
+      <g class="c-blue"><rect x="50" y="40" width="80" height="44" rx="6" stroke-width="0.5"/><text class="th" x="90" y="62" text-anchor="middle" dominant-baseline="central">P</text></g>
+      <g class="c-blue"><rect x="140" y="40" width="80" height="44" rx="6" stroke-width="0.5"/><text class="th" x="180" y="62" text-anchor="middle" dominant-baseline="central">Y</text></g>
+      <g class="c-blue"><rect x="230" y="40" width="80" height="44" rx="6" stroke-width="0.5"/><text class="th" x="270" y="62" text-anchor="middle" dominant-baseline="central">T</text></g>
+      <g class="c-blue"><rect x="320" y="40" width="80" height="44" rx="6" stroke-width="0.5"/><text class="th" x="360" y="62" text-anchor="middle" dominant-baseline="central">H</text></g>
+      <g class="c-blue"><rect x="410" y="40" width="80" height="44" rx="6" stroke-width="0.5"/><text class="th" x="450" y="62" text-anchor="middle" dominant-baseline="central">O</text></g>
+      <g class="c-blue"><rect x="500" y="40" width="80" height="44" rx="6" stroke-width="0.5"/><text class="th" x="540" y="62" text-anchor="middle" dominant-baseline="central">N</text></g>
+      <text class="ts" x="90" y="100" text-anchor="middle">+0 / -6</text>
+      <text class="ts" x="180" y="100" text-anchor="middle">+1 / -5</text>
+      <text class="ts" x="270" y="100" text-anchor="middle">+2 / -4</text>
+      <text class="ts" x="360" y="100" text-anchor="middle">+3 / -3</text>
+      <text class="ts" x="450" y="100" text-anchor="middle">+4 / -2</text>
+      <text class="ts" x="540" y="100" text-anchor="middle">+5 / -1</text>
+      <text class="ts" x="340" y="128" text-anchor="middle">s[0]='P'   s[-1]='N'   s[1:4]='YTH'   s[::-1]='NOHTYP'</text>
+    </svg>
+    <div class="flow-desc">Strings are <strong>immutable sequences</strong>. Every character has a positive index (0 from left) and negative index (-1 from right).</div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — Core string methods for QA</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">url = "  https://API.Example.COM/login  "
+
+# Cleaning test data — used constantly in QA
+clean = url.strip().lower()
+print(clean)         # https://api.example.com/login
+
+print(url.upper())   # uppercase
+print(url.strip())   # remove leading/trailing spaces
+print(url.replace("API", "api"))  # find & replace</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — Slicing & checking substrings</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">response = "ERROR: 404 Not Found - Page Missing"
+
+# Slicing: [start:end:step]
+print(response[0:5])       # ERROR
+print(response[7:10])      # 404
+print(response[::-1])      # reversed string
+
+# Check if substring exists (used in assertions)
+print("404" in response)    # True ✅
+print(response.startswith("ERROR"))  # True
+print(response.endswith("Missing")) # True</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — split() and join() for test data</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># CSV test data parsing — real QA scenario
+test_row = "testuser,password123,admin,active"
+fields = test_row.split(",")
+print(fields)          # ['testuser', 'password123', 'admin', 'active']
+print(fields[0])       # testuser
+print(fields[2])       # admin
+
+# join — build URL path from parts
+parts = ["api", "v2", "users", "login"]
+path = "/".join(parts)
+print(path)             # api/v2/users/login</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — f-strings (advanced)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">test_id  = "TC_001"
+status   = "PASSED"
+duration = 2.5678
+
+# Format numbers inside f-strings
+print(f"[{test_id}] Status: {status} | Time: {duration:.2f}s")
+# [TC_001] Status: PASSED | Time: 2.57s
+
+# Multiline f-string for test report log
+report = f"""
+Test ID  : {test_id}
+Status   : {status}
+Duration : {duration:.2f}s
+"""
+print(report)</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — count(), find(), len()</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">log = "FAIL: Login failed. FAIL: OTP failed. PASS: Logout"
+
+print(len(log))              # total characters
+print(log.count("FAIL"))    # 2 — how many failures
+print(log.find("PASS"))     # index of first "PASS"
+print(log.replace("FAIL", "[FAIL]"))  # highlight FAILs</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: Are strings mutable in Python?</span>No — strings are immutable. Methods like <code>upper()</code> return a NEW string, they don't modify the original.</li>
+        <li><span class="interview-q">Q: Difference between find() and index()?</span><code>find()</code> returns -1 if not found; <code>index()</code> raises a ValueError. Use <code>find()</code> in test assertions to avoid crashes.</li>
+        <li><span class="interview-q">Q: What is string slicing?</span><code>s[start:end:step]</code> extracts a substring. <code>s[::-1]</code> reverses. Used to extract tokens from API responses.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-mistake">Common Mistakes + Fixes</div>
+      <div class="mistake-item">
+        <div class="mistake-bad"><span class="mistake-label bad-label">❌ WRONG</span><code>s = "hello"; s[0] = "H"  # TypeError: immutable</code></div>
+        <div class="mistake-good"><span class="mistake-label good-label">✅ FIX</span><code>s = "H" + s[1:]  # Build a new string</code></div>
+      </div>
+      <div class="mistake-item">
+        <div class="mistake-bad"><span class="mistake-label bad-label">❌ WRONG</span><code>"404" in response  # Works! But...</code></div>
+        <div class="mistake-good"><span class="mistake-label good-label">✅ FIX</span><code>str(response).find("404") != -1  # Safer with int responses</code></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()">← Previous</button>
+    <span class="session-counter">Session 2 / 10</span>
+    <button class="nav-btn primary" onclick="nextTab()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 3 ═══════════════ -->
+<div class="session-panel" id="panel-2">
+  <div class="session-title">Session 3 — Control Flow</div>
+  <div class="session-desc">if/elif/else · for loops · while loops · break/continue/pass · Nested loops · Ternary</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 200" role="img">
+      <title>If-else flowchart</title>
+      <desc>Decision tree showing if, elif, else branching in Python</desc>
+      <defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-gray"><rect x="280" y="10" width="120" height="36" rx="18" stroke-width="0.5"/><text class="th" x="340" y="28" text-anchor="middle" dominant-baseline="central">Condition?</text></g>
+      <line x1="340" y1="46" x2="340" y2="80" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a3)"/>
+      <g class="c-amber"><polygon points="340,80 380,110 340,140 300,110" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/><text class="th" x="340" y="110" text-anchor="middle" dominant-baseline="central">if / elif</text></g>
+      <line x1="300" y1="110" x2="160" y2="110" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a3)"/>
+      <text class="ts" x="230" y="104">True</text>
+      <g class="c-teal"><rect x="60" y="88" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="110" y="110" text-anchor="middle" dominant-baseline="central">Run block</text></g>
+      <line x1="380" y1="110" x2="510" y2="110" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a3)"/>
+      <text class="ts" x="440" y="104">False</text>
+      <g class="c-coral"><rect x="510" y="88" width="110" height="44" rx="8" stroke-width="0.5"/><text class="th" x="565" y="110" text-anchor="middle" dominant-baseline="central">else block</text></g>
+      <line x1="110" y1="132" x2="110" y2="170" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a3)"/>
+      <line x1="565" y1="132" x2="565" y2="170" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a3)"/>
+      <g class="c-green"><rect x="260" y="158" width="160" height="36" rx="18" stroke-width="0.5"/><text class="th" x="340" y="176" text-anchor="middle" dominant-baseline="central">Continue execution</text></g>
+      <line x1="110" y1="170" x2="260" y2="176" stroke="var(--color-text-tertiary)" stroke-width="0.7" stroke-dasharray="3 3"/>
+      <line x1="565" y1="170" x2="420" y2="176" stroke="var(--color-text-tertiary)" stroke-width="0.7" stroke-dasharray="3 3"/>
+    </svg>
+    <div class="flow-desc">Every test assertion uses conditional logic. Python indentation (4 spaces) defines blocks — no curly braces needed.</div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — if/elif/else (test result logic)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">status_code = 404
+
+if status_code == 200:
+    print("✅ PASS — API responded OK")
+elif status_code == 401:
+    print("⚠️  AUTH FAIL — Unauthorized")
+elif status_code == 404:
+    print("❌ FAIL — Endpoint not found")
+else:
+    print(f"UNKNOWN status: {status_code}")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — for loop with range()</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Run a test 5 times (retry logic pattern)
+for attempt in range(1, 6):
+    print(f"Attempt {attempt}: Logging in...")
+
+# Iterate over test cases (data-driven testing)
+test_urls = ["/login", "/register", "/dashboard"]
+for url in test_urls:
+    print(f"Testing endpoint: {url}")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — while loop + break (polling)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># REAL QA PATTERN: Poll until job completes
+import time
+
+max_retries = 5
+attempt = 0
+job_done = False
+
+while attempt < max_retries:
+    attempt += 1
+    print(f"Poll #{attempt}...")
+    if attempt == 3:       # simulate job completing
+        job_done = True
+        break
+
+print("Done!" if job_done else "Timed out!")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — continue & enumerate()</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">test_cases = [
+    ("TC001", True),
+    ("TC002", False),   # skip failed
+    ("TC003", True),
+]
+
+for idx, (tc_id, is_active) in enumerate(test_cases, 1):
+    if not is_active:
+        print(f"  [{idx}] {tc_id} — SKIPPED")
+        continue
+    print(f"  [{idx}] {tc_id} — RUNNING")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — Ternary + nested condition</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Ternary: value_if_true if condition else value_if_false
+response_time = 1.8
+result = "PASS" if response_time < 2.0 else "FAIL"
+print(result)   # PASS
+
+# Nested: check status + body
+status = 200
+body = '{"user": "admin"}'
+if status == 200:
+    if "user" in body:
+        print("PASS: User found in response")</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: Difference between break and continue?</span><code>break</code> exits the loop entirely. <code>continue</code> skips the current iteration and moves to the next.</li>
+        <li><span class="interview-q">Q: What does range(1, 5) return?</span>1, 2, 3, 4 — end is exclusive. Used in retry loops in test automation.</li>
+        <li><span class="interview-q">Q: What is enumerate()?</span>Returns both index and value during iteration. Preferred over manual counter variables in test loops.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-best">Best Practices ✓</div>
+      <ul class="bp-list">
+        <li>Use <code>for ... in</code> over index-based loops</li>
+        <li>Avoid deeply nested ifs — extract to functions</li>
+        <li>Add max_retries to all while loops</li>
+        <li>Use ternary for simple yes/no assignments</li>
+        <li>Prefer <code>enumerate()</code> when index is needed</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()">← Previous</button>
+    <span class="session-counter">Session 3 / 10</span>
+    <button class="nav-btn primary" onclick="nextTab()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 4 ═══════════════ -->
+<div class="session-panel" id="panel-3">
+  <div class="session-title">Session 4 — Functions</div>
+  <div class="session-desc">def · Parameters · Return · Default args · *args/**kwargs · Lambda · Scope</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 150" role="img">
+      <title>Function anatomy diagram</title>
+      <desc>Parts of a Python function definition</desc>
+      <defs><marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <text class="th" x="340" y="22" text-anchor="middle">Anatomy of a Python function</text>
+      <g class="c-blue"><rect x="20" y="40" width="70" height="34" rx="6" stroke-width="0.5"/><text class="th" x="55" y="57" text-anchor="middle" dominant-baseline="central">def</text></g>
+      <g class="c-teal"><rect x="105" y="40" width="120" height="34" rx="6" stroke-width="0.5"/><text class="th" x="165" y="57" text-anchor="middle" dominant-baseline="central">function_name</text></g>
+      <g class="c-amber"><rect x="240" y="40" width="180" height="34" rx="6" stroke-width="0.5"/><text class="th" x="330" y="57" text-anchor="middle" dominant-baseline="central">(params, default=val)</text></g>
+      <g class="c-purple"><rect x="440" y="40" width="50" height="34" rx="6" stroke-width="0.5"/><text class="th" x="465" y="57" text-anchor="middle" dominant-baseline="central">:</text></g>
+      <g class="c-coral"><rect x="510" y="40" width="150" height="34" rx="6" stroke-width="0.5"/><text class="th" x="585" y="57" text-anchor="middle" dominant-baseline="central">indented body</text></g>
+      <text class="ts" x="55" y="96" text-anchor="middle">keyword</text>
+      <text class="ts" x="165" y="96" text-anchor="middle">name (snake_case)</text>
+      <text class="ts" x="330" y="96" text-anchor="middle">inputs (optional)</text>
+      <text class="ts" x="465" y="96" text-anchor="middle">colon</text>
+      <text class="ts" x="585" y="96" text-anchor="middle">4-space indent</text>
+      <text class="ts" x="340" y="130" text-anchor="middle">return value is optional — without it, Python returns None</text>
+    </svg>
+    <div class="flow-desc">Functions make tests <strong>reusable</strong> and <strong>maintainable</strong>. Each test step should be a named function in professional QA code.</div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — Basic function</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">def get_status_label(code):
+    """Convert HTTP status code to readable label."""
+    if code == 200: return "OK"
+    elif code == 404: return "Not Found"
+    elif code == 500: return "Server Error"
+    else: return "Unknown"
+
+print(get_status_label(200))    # OK
+print(get_status_label(404))    # Not Found</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — Default parameters (test helpers)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">def build_api_url(endpoint, base="https://qa.example.com", version="v1"):
+    return f"{base}/{version}/{endpoint}"
+
+print(build_api_url("users"))
+# https://qa.example.com/v1/users
+
+print(build_api_url("orders", version="v2"))
+# https://qa.example.com/v2/orders</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — *args and **kwargs</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># *args: variable number of positional arguments
+def log_test_steps(*steps):
+    for i, step in enumerate(steps, 1):
+        print(f"  Step {i}: {step}")
+
+log_test_steps("Open browser", "Go to URL", "Enter creds")
+
+# **kwargs: keyword arguments as dictionary
+def create_test_user(**details):
+    for key, val in details.items():
+        print(f"  {key}: {val}")
+
+create_test_user(name="Alice", role="admin", env="staging")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — Lambda functions</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Lambda: anonymous one-liner functions
+is_pass = lambda code: code == 200
+print(is_pass(200))   # True
+print(is_pass(500))   # False
+
+# Sort test cases by priority
+tests = [("TC3", 3), ("TC1", 1), ("TC2", 2)]
+tests.sort(key=lambda x: x[1])
+print(tests)  # [('TC1',1),('TC2',2),('TC3',3)]</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — Multiple return values (common in QA)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">def parse_response(response_text):
+    """Parse API response and return status + message."""
+    lines = response_text.split("|")
+    status = lines[0].strip()
+    message = lines[1].strip() if len(lines) > 1 else ""
+    return status, message    # returns a tuple
+
+s, m = parse_response("SUCCESS | User created")
+print(s)   # SUCCESS
+print(m)   # User created</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: What is *args vs **kwargs?</span><code>*args</code> collects extra positional args as a tuple; <code>**kwargs</code> collects keyword args as a dict.</li>
+        <li><span class="interview-q">Q: Can a function return multiple values?</span>Yes — Python returns a tuple. Unpack with <code>a, b = func()</code>. Common in test helper functions.</li>
+        <li><span class="interview-q">Q: What does a function return if no return statement?</span>Returns <code>None</code>. Always check return values in test assertions.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-best">Best Practices ✓</div>
+      <ul class="bp-list">
+        <li>One function = one responsibility (SRP)</li>
+        <li>Always add docstrings to test functions</li>
+        <li>Avoid mutable default args like <code>def f(x=[])</code></li>
+        <li>Use keyword args when calling for clarity</li>
+        <li>Keep functions under 20 lines for readability</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()">← Previous</button>
+    <span class="session-counter">Session 4 / 10</span>
+    <button class="nav-btn primary" onclick="nextTab()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 5 ═══════════════ -->
+<div class="session-panel" id="panel-4">
+  <div class="session-title">Session 5 — Collections</div>
+  <div class="session-desc">List · Tuple · Set · Dictionary · List comprehension · When to use which</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 130" role="img">
+      <title>Python collections comparison</title>
+      <desc>Visual comparison of list tuple set and dict</desc>
+      <text class="th" x="340" y="22" text-anchor="middle">Python Collections — At a Glance</text>
+      <g class="c-blue"><rect x="20" y="40" width="150" height="70" rx="8" stroke-width="0.5"/><text class="th" x="95" y="64" text-anchor="middle" dominant-baseline="central">list  [  ]</text><text class="ts" x="95" y="84" text-anchor="middle">ordered, mutable</text><text class="ts" x="95" y="100" text-anchor="middle">duplicates ✓</text></g>
+      <g class="c-amber"><rect x="185" y="40" width="150" height="70" rx="8" stroke-width="0.5"/><text class="th" x="260" y="64" text-anchor="middle" dominant-baseline="central">tuple  (  )</text><text class="ts" x="260" y="84" text-anchor="middle">ordered, immutable</text><text class="ts" x="260" y="100" text-anchor="middle">duplicates ✓</text></g>
+      <g class="c-teal"><rect x="350" y="40" width="150" height="70" rx="8" stroke-width="0.5"/><text class="th" x="425" y="64" text-anchor="middle" dominant-baseline="central">set  {  }</text><text class="ts" x="425" y="84" text-anchor="middle">unordered, mutable</text><text class="ts" x="425" y="100" text-anchor="middle">no duplicates ✓</text></g>
+      <g class="c-purple"><rect x="515" y="40" width="150" height="70" rx="8" stroke-width="0.5"/><text class="th" x="590" y="64" text-anchor="middle" dominant-baseline="central">dict  {k:v}</text><text class="ts" x="590" y="84" text-anchor="middle">key-value pairs</text><text class="ts" x="590" y="100" text-anchor="middle">ordered (3.7+) ✓</text></g>
+    </svg>
+    <div class="flow-desc">Choose based on need: <strong>list</strong> for ordered sequences, <strong>tuple</strong> for constants, <strong>set</strong> for unique items, <strong>dict</strong> for key-value data (JSON, configs).</div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — List operations (test case management)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">failed_tests = ["TC001", "TC003", "TC007"]
+
+failed_tests.append("TC010")     # add to end
+failed_tests.insert(0, "TC000")  # add at index 0
+failed_tests.remove("TC003")    # remove by value
+print(failed_tests[-1])         # last item
+print(len(failed_tests))         # count
+failed_tests.sort()              # sort in place</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — Dictionary (JSON / config data)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># API response as dict — the most common QA pattern
+user = {
+    "id": 101,
+    "name": "Alice",
+    "role": "admin",
+    "active": True
+}
+
+print(user["name"])           # Alice
+print(user.get("email", "N/A")) # safe get with default
+user["email"] = "a@test.com"  # add key
+print(user.keys())             # dict_keys([...])
+print("role" in user)          # True</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — Tuple (immutable test data)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Tuples for fixed config — won't be modified
+VALID_STATUS_CODES = (200, 201, 204)
+ERROR_CODES = (400, 401, 403, 404, 500)
+
+response_code = 201
+print(response_code in VALID_STATUS_CODES)  # True
+print(response_code in ERROR_CODES)         # False
+
+# Tuple unpacking (coordinate / pair data)
+browser, version = ("Chrome", "120")
+print(f"Testing on {browser} {version}")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — Set (deduplication)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># QA use case: find unique failed test IDs across runs
+run1_fails = {"TC001", "TC003", "TC005"}
+run2_fails = {"TC003", "TC005", "TC008"}
+
+both_fails = run1_fails & run2_fails   # intersection
+all_fails  = run1_fails | run2_fails   # union
+only_run1  = run1_fails - run2_fails   # difference
+
+print("Consistently failing:", both_fails)
+print("All unique failures:", all_fails)</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — List comprehension (power feature)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Regular way
+failed = []
+for tc in ["TC1", "TC2", "TC3"]:
+    failed.append(tc + "_FAIL")
+
+# Pythonic way — list comprehension
+failed = [tc + "_FAIL" for tc in ["TC1", "TC2", "TC3"]]
+
+# With filter: only failed (status False)
+results = [("TC1", True), ("TC2", False), ("TC3", False)]
+failures = [tc for tc, passed in results if not passed]
+print(failures)  # ['TC2', 'TC3']</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: List vs Tuple?</span>List is mutable (changeable). Tuple is immutable (fixed). Use tuples for constant test data like status codes.</li>
+        <li><span class="interview-q">Q: dict.get() vs dict[key]?</span><code>get()</code> returns a default value if key missing; <code>[key]</code> raises KeyError. Always use <code>get()</code> when parsing API responses.</li>
+        <li><span class="interview-q">Q: What is a list comprehension?</span>A concise one-line way to create lists. <code>[expr for x in iterable if condition]</code>. More readable and faster than a loop.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-best">Best Practices ✓</div>
+      <ul class="bp-list">
+        <li>Use <code>dict.get(key, default)</code> for safe access</li>
+        <li>Use tuples for fixed test data constants</li>
+        <li>Use sets to remove duplicates in test results</li>
+        <li>Prefer list comprehensions over map/filter</li>
+        <li>Use <code>isinstance(x, list)</code> to type-check inputs</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()">← Previous</button>
+    <span class="session-counter">Session 5 / 10</span>
+    <button class="nav-btn primary" onclick="nextTab()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 6 ═══════════════ -->
+<div class="session-panel" id="panel-5">
+  <div class="session-title">Session 6 — Object-Oriented Programming (OOP)</div>
+  <div class="session-desc">Class · Object · __init__ · self · Inheritance · Encapsulation · Polymorphism · Page Object Model</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 170" role="img">
+      <title>OOP pillars diagram</title>
+      <desc>The four pillars of OOP mapped to QA usage</desc>
+      <text class="th" x="340" y="22" text-anchor="middle">OOP Four Pillars → QA Application</text>
+      <g class="c-blue"><rect x="20" y="40" width="148" height="110" rx="10" stroke-width="0.5"/>
+        <text class="th" x="94" y="66" text-anchor="middle" dominant-baseline="central">Encapsulation</text>
+        <text class="ts" x="94" y="86" text-anchor="middle">Hide internal logic</text>
+        <text class="ts" x="94" y="104" text-anchor="middle">→ Page Objects hide</text>
+        <text class="ts" x="94" y="120" text-anchor="middle">locator details</text></g>
+      <g class="c-teal"><rect x="183" y="40" width="148" height="110" rx="10" stroke-width="0.5"/>
+        <text class="th" x="257" y="66" text-anchor="middle" dominant-baseline="central">Inheritance</text>
+        <text class="ts" x="257" y="86" text-anchor="middle">Reuse parent code</text>
+        <text class="ts" x="257" y="104" text-anchor="middle">→ BasePage →</text>
+        <text class="ts" x="257" y="120" text-anchor="middle">LoginPage</text></g>
+      <g class="c-amber"><rect x="346" y="40" width="148" height="110" rx="10" stroke-width="0.5"/>
+        <text class="th" x="420" y="66" text-anchor="middle" dominant-baseline="central">Polymorphism</text>
+        <text class="ts" x="420" y="86" text-anchor="middle">Same method, diff</text>
+        <text class="ts" x="420" y="104" text-anchor="middle">→ click() works on</text>
+        <text class="ts" x="420" y="120" text-anchor="middle">any element type</text></g>
+      <g class="c-purple"><rect x="509" y="40" width="152" height="110" rx="10" stroke-width="0.5"/>
+        <text class="th" x="585" y="66" text-anchor="middle" dominant-baseline="central">Abstraction</text>
+        <text class="ts" x="585" y="86" text-anchor="middle">Expose only needed</text>
+        <text class="ts" x="585" y="104" text-anchor="middle">→ test calls only</text>
+        <text class="ts" x="585" y="120" text-anchor="middle">login(), not details</text></g>
+    </svg>
+    <div class="flow-desc">OOP is the foundation of the <strong>Page Object Model (POM)</strong> — the industry-standard design pattern for Selenium/Playwright test automation.</div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — Class & __init__ (basic)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">class TestCase:
+    """Represents a single test case."""
+    
+    def __init__(self, tc_id, title, priority="Medium"):
+        self.tc_id    = tc_id
+        self.title    = title
+        self.priority = priority
+        self.status   = "NOT RUN"   # default
+    
+    def run(self):
+        self.status = "PASSED"
+        print(f"[{self.tc_id}] {self.title} → {self.status}")
+
+tc = TestCase("TC001", "Login with valid creds", "High")
+tc.run()   # [TC001] Login with valid creds → PASSED</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — Inheritance (BasePage pattern)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">class BasePage:
+    """All page objects inherit from this."""
+    def __init__(self, driver):
+        self.driver = driver
+    
+    def get_title(self):
+        return self.driver.title()    # shared method
+    
+    def click(self, locator):
+        self.driver.find_element(locator).click()
+
+class LoginPage(BasePage):          # inherits BasePage
+    def login(self, user, pwd):
+        self.click("#username")    # uses parent method
+        self.click("#password")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — Class method & static method</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">class TestReport:
+    total = 0   # class variable (shared)
+    
+    def __init__(self, name):
+        self.name = name
+        TestReport.total += 1
+    
+    @classmethod
+    def get_total(cls):
+        return cls.total    # access class variable
+    
+    @staticmethod
+    def validate_name(name):
+        return bool(name) and name.startswith("TC")
+
+print(TestReport.validate_name("TC001"))  # True</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — __str__ and __repr__</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">class APIResponse:
+    def __init__(self, status, body):
+        self.status = status
+        self.body   = body
+    
+    def __str__(self):     # for print()
+        return f"Response({self.status}): {self.body}"
+    
+    def __repr__(self):    # for debugging
+        return f"APIResponse(status={self.status!r})"
+
+resp = APIResponse(200, "{'user':'admin'}")
+print(resp)   # Response(200): {'user':'admin'}</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — Real Page Object Model (POM)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># ─── pages/login_page.py ───────────────────
+class LoginPage:
+    # Locators — hidden from test scripts
+    USERNAME = "#username"
+    PASSWORD = "#password"
+    SUBMIT   = "#login-btn"
+    ERROR_MSG= ".error-text"
+    
+    def __init__(self, driver):
+        self.driver = driver
+    
+    def login(self, username, password):
+        """High-level action used in test scripts."""
+        self.driver.find(self.USERNAME).send_keys(username)
+        self.driver.find(self.PASSWORD).send_keys(password)
+        self.driver.find(self.SUBMIT).click()</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: What is self in Python?</span><code>self</code> refers to the current instance. It's how methods access instance variables — Python passes it automatically.</li>
+        <li><span class="interview-q">Q: Why use OOP in test automation?</span>POM pattern — encapsulates locators, reuses code via inheritance, makes tests readable and maintainable.</li>
+        <li><span class="interview-q">Q: @classmethod vs @staticmethod?</span><code>@classmethod</code> receives <code>cls</code> (class reference); <code>@staticmethod</code> is a plain utility function — no class/instance access.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-best">Best Practices ✓</div>
+      <ul class="bp-list">
+        <li>Always implement Page Object Model (POM)</li>
+        <li>Never hardcode locators in test scripts</li>
+        <li>Use <code>BasePage</code> for shared driver utilities</li>
+        <li>Add <code>__str__</code> to make debug logs readable</li>
+        <li>Keep constructors simple — no logic in <code>__init__</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()">← Previous</button>
+    <span class="session-counter">Session 6 / 10</span>
+    <button class="nav-btn primary" onclick="nextTab()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 7 ═══════════════ -->
+<div class="session-panel" id="panel-6">
+  <div class="session-title">Session 7 — File I/O</div>
+  <div class="session-desc">open() · read/write modes · with statement · CSV · JSON · os module · Test data files</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 120" role="img">
+      <title>File modes diagram</title>
+      <desc>Python file open modes and their uses</desc>
+      <text class="th" x="340" y="20" text-anchor="middle">File Open Modes</text>
+      <g class="c-blue"><rect x="20" y="35" width="90" height="50" rx="7" stroke-width="0.5"/><text class="th" x="65" y="57" text-anchor="middle" dominant-baseline="central">"r"</text><text class="ts" x="65" y="73" text-anchor="middle">read only</text></g>
+      <g class="c-teal"><rect x="125" y="35" width="90" height="50" rx="7" stroke-width="0.5"/><text class="th" x="170" y="57" text-anchor="middle" dominant-baseline="central">"w"</text><text class="ts" x="170" y="73" text-anchor="middle">write (overwrite)</text></g>
+      <g class="c-amber"><rect x="230" y="35" width="90" height="50" rx="7" stroke-width="0.5"/><text class="th" x="275" y="57" text-anchor="middle" dominant-baseline="central">"a"</text><text class="ts" x="275" y="73" text-anchor="middle">append</text></g>
+      <g class="c-purple"><rect x="335" y="35" width="90" height="50" rx="7" stroke-width="0.5"/><text class="th" x="380" y="57" text-anchor="middle" dominant-baseline="central">"r+"</text><text class="ts" x="380" y="73" text-anchor="middle">read + write</text></g>
+      <g class="c-coral"><rect x="440" y="35" width="90" height="50" rx="7" stroke-width="0.5"/><text class="th" x="485" y="57" text-anchor="middle" dominant-baseline="central">"rb"</text><text class="ts" x="485" y="73" text-anchor="middle">binary read</text></g>
+      <g class="c-gray"><rect x="545" y="35" width="115" height="50" rx="7" stroke-width="0.5"/><text class="th" x="602" y="57" text-anchor="middle" dominant-baseline="central">"x"</text><text class="ts" x="602" y="73" text-anchor="middle">create (fail if exists)</text></g>
+      <text class="ts" x="340" y="108" text-anchor="middle">Always use   with open(...)   — it auto-closes files even if an error occurs</text>
+    </svg>
+    <div class="flow-desc">File I/O is critical in QA: reading test data (CSV/JSON), writing test reports, reading config files, and logging.</div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — Read & write text files</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Write a test log file
+with open("test_log.txt", "w") as f:
+    f.write("TC001 → PASSED\n")
+    f.write("TC002 → FAILED\n")
+
+# Read it back
+with open("test_log.txt", "r") as f:
+    content = f.read()
+    print(content)
+
+# Append to log (don't overwrite)
+with open("test_log.txt", "a") as f:
+    f.write("TC003 → PASSED\n")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — CSV for data-driven testing</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">import csv
+
+# Write test data to CSV
+with open("users.csv", "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["username", "password", "role"])
+    writer.writerow(["admin", "admin123", "superuser"])
+    writer.writerow(["user1", "pass456", "viewer"])
+
+# Read CSV and iterate (data-driven test pattern)
+with open("users.csv") as f:
+    for row in csv.DictReader(f):
+        print(f"Login as: {row['username']} ({row['role']})")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — JSON (API test data)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">import json
+
+# Save test config as JSON
+config = {"base_url": "https://qa.example.com",
+          "timeout": 30, "retries": 3}
+
+with open("config.json", "w") as f:
+    json.dump(config, f, indent=2)
+
+# Read JSON config
+with open("config.json") as f:
+    cfg = json.load(f)
+    print(cfg["base_url"])    # https://qa.example.com
+
+# Parse API response string to dict
+response_str = '{"status": 200, "user": "admin"}'
+data = json.loads(response_str)
+print(data["user"])          # admin</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — os module (path & file ops)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">import os
+
+# Check if test data file exists before reading
+path = "test_data/users.csv"
+if os.path.exists(path):
+    print("File found — loading test data")
+else:
+    print("Test data file missing!")
+
+# Create directory for test reports
+os.makedirs("reports/screenshots", exist_ok=True)
+
+# Get env variable (CI/CD pipeline)
+env = os.getenv("TEST_ENV", "dev")
+print(f"Environment: {env}")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — readlines() + logging pattern</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Read file line by line (large log files)
+with open("test_log.txt", "r") as f:
+    lines = f.readlines()   # list of lines
+
+failed = [l.strip() for l in lines if "FAILED" in l]
+print(f"Failures: {len(failed)}")
+for f in failed:
+    print(f"  → {f}")</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: Why use "with open" instead of open()?</span>Context manager auto-closes the file — even if an exception occurs. Prevents resource leaks.</li>
+        <li><span class="interview-q">Q: json.load() vs json.loads()?</span><code>load()</code> reads from a file object. <code>loads()</code> parses a JSON string. Remember: s = string.</li>
+        <li><span class="interview-q">Q: How do you read test data in QA?</span>CSV via <code>csv.DictReader</code> for tabular data, JSON for API payloads. Both used in data-driven testing.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-best">Best Practices ✓</div>
+      <ul class="bp-list">
+        <li>Always use <code>with open()</code> — never <code>f.close()</code></li>
+        <li>Use <code>os.path.exists()</code> before reading files</li>
+        <li>Store test data in <code>/test_data/</code> folder</li>
+        <li>Use <code>exist_ok=True</code> in <code>os.makedirs()</code></li>
+        <li>Use <code>json.dumps(indent=2)</code> for readable output</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()">← Previous</button>
+    <span class="session-counter">Session 7 / 10</span>
+    <button class="nav-btn primary" onclick="nextTab()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 8 ═══════════════ -->
+<div class="session-panel" id="panel-7">
+  <div class="session-title">Session 8 — Exception Handling</div>
+  <div class="session-desc">try/except/else/finally · raise · Custom exceptions · Assertions · Logging module</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 150" role="img">
+      <title>Exception handling flow</title>
+      <desc>Try except else finally execution flow</desc>
+      <defs><marker id="a8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <g class="c-blue"><rect x="280" y="10" width="120" height="36" rx="8" stroke-width="0.5"/><text class="th" x="340" y="28" text-anchor="middle" dominant-baseline="central">try: block</text></g>
+      <line x1="280" y1="28" x2="160" y2="68" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a8)"/>
+      <text class="ts" x="195" y="52">error?</text>
+      <line x1="400" y1="28" x2="520" y2="68" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a8)"/>
+      <text class="ts" x="465" y="52">no error</text>
+      <g class="c-red"><rect x="60" y="68" width="100" height="36" rx="8" stroke-width="0.5"/><text class="th" x="110" y="86" text-anchor="middle" dominant-baseline="central">except:</text></g>
+      <g class="c-teal"><rect x="480" y="68" width="100" height="36" rx="8" stroke-width="0.5"/><text class="th" x="530" y="86" text-anchor="middle" dominant-baseline="central">else:</text></g>
+      <line x1="110" y1="104" x2="270" y2="120" stroke="var(--color-text-tertiary)" stroke-width="0.8" stroke-dasharray="3 3"/>
+      <line x1="530" y1="104" x2="410" y2="120" stroke="var(--color-text-tertiary)" stroke-width="0.8" stroke-dasharray="3 3"/>
+      <g class="c-amber"><rect x="265" y="110" width="150" height="36" rx="18" stroke-width="0.5"/><text class="th" x="340" y="128" text-anchor="middle" dominant-baseline="central">finally: (always)</text></g>
+    </svg>
+    <div class="flow-desc"><code>finally</code> runs no matter what — perfect for cleanup (closing browser, closing DB connection) in test teardown.</div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — Basic try/except</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># REAL QA: Handle API connection errors
+def get_user_data(user_id):
+    try:
+        # simulate API call
+        if user_id < 0:
+            raise ValueError("User ID must be positive")
+        return {"id": user_id, "name": "Alice"}
+    except ValueError as e:
+        print(f"Validation error: {e}")
+        return None
+
+print(get_user_data(-1))   # Validation error: User ID must be positive
+print(get_user_data(5))    # {'id': 5, 'name': 'Alice'}</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — try/except/else/finally</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">driver = None
+try:
+    print("Opening browser...")
+    result = 100 / 5       # no error here
+except ZeroDivisionError:
+    print("Math error!")
+else:
+    print(f"Test passed! Result: {result}")  # runs if no error
+finally:
+    print("Closing browser (teardown)")   # ALWAYS runs</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — Multiple exceptions</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">def parse_test_data(data, key):
+    try:
+        value = data[key]          # may raise KeyError
+        result = 100 / value      # may raise ZeroDivisionError
+        return result
+    except KeyError:
+        print(f"Key '{key}' not in test data")
+    except ZeroDivisionError:
+        print("Division by zero in test data")
+    except Exception as e:
+        print(f"Unexpected: {e}")   # catch-all
+
+parse_test_data({"x": 0}, "x")   # ZeroDivisionError
+parse_test_data({}, "x")         # KeyError</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — Custom exception class</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Custom exception for test framework errors
+class TestDataError(Exception):
+    """Raised when test data file is invalid."""
+    def __init__(self, filename, reason):
+        self.filename = filename
+        super().__init__(f"Invalid data in '{filename}': {reason}")
+
+def load_data(filename):
+    if not filename.endswith(".csv"):
+        raise TestDataError(filename, "only .csv files are supported")
+
+try:
+    load_data("users.xlsx")
+except TestDataError as e:
+    print(e)</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — Python assert (test assertions)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># assert: lightweight in-code test assertions
+status_code = 200
+response_body = '{"user": "admin", "active": true}'
+
+assert status_code == 200, "Expected 200 OK"
+assert "user" in response_body, "user key missing"
+assert len(response_body) > 0, "Empty response body"
+
+print("All assertions passed ✅")
+# In pytest, use: assert actual == expected</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: When does "finally" NOT run?</span>Only when <code>os._exit()</code> or a hard crash occurs. In all normal cases — even with exceptions — finally runs.</li>
+        <li><span class="interview-q">Q: except Exception vs bare except?</span>Always use <code>except Exception</code> — bare <code>except</code> also catches SystemExit and KeyboardInterrupt, which is dangerous.</li>
+        <li><span class="interview-q">Q: What is assert used for in tests?</span>To verify expected outcomes. In pytest, a failing <code>assert</code> raises <code>AssertionError</code> and marks the test as FAILED.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-best">Best Practices ✓</div>
+      <ul class="bp-list">
+        <li>Always catch specific exceptions first</li>
+        <li>Use <code>finally</code> for browser/DB cleanup</li>
+        <li>Never silence exceptions with empty <code>except: pass</code></li>
+        <li>Add context to <code>raise</code> messages</li>
+        <li>Use custom exceptions for QA framework errors</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()">← Previous</button>
+    <span class="session-counter">Session 8 / 10</span>
+    <button class="nav-btn primary" onclick="nextTab()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 9 ═══════════════ -->
+<div class="session-panel" id="panel-8">
+  <div class="session-title">Session 9 — Modules, Packages & Libraries</div>
+  <div class="session-desc">import · from · pip · os · sys · re · datetime · random · Standard library for QA</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 130" role="img">
+      <title>Python module system</title>
+      <desc>How imports work in Python projects</desc>
+      <defs><marker id="a9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <text class="th" x="340" y="18" text-anchor="middle">Python import system</text>
+      <g class="c-blue"><rect x="20" y="35" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="85" y="57" text-anchor="middle" dominant-baseline="central">Your script</text><text class="ts" x="85" y="73" text-anchor="middle">test_login.py</text></g>
+      <line x1="150" y1="60" x2="190" y2="60" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a9)"/>
+      <g class="c-teal"><rect x="190" y="35" width="140" height="50" rx="8" stroke-width="0.5"/><text class="th" x="260" y="57" text-anchor="middle" dominant-baseline="central">import module</text><text class="ts" x="260" y="73" text-anchor="middle">import os, json, re</text></g>
+      <line x1="330" y1="60" x2="370" y2="60" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a9)"/>
+      <g class="c-amber"><rect x="370" y="35" width="140" height="50" rx="8" stroke-width="0.5"/><text class="th" x="440" y="57" text-anchor="middle" dominant-baseline="central">Python resolves</text><text class="ts" x="440" y="73" text-anchor="middle">stdlib → installed → local</text></g>
+      <line x1="510" y1="60" x2="550" y2="60" stroke="var(--color-text-tertiary)" stroke-width="1" marker-end="url(#a9)"/>
+      <g class="c-green"><rect x="550" y="35" width="110" height="50" rx="8" stroke-width="0.5"/><text class="th" x="605" y="57" text-anchor="middle" dominant-baseline="central">Module loaded</text><text class="ts" x="605" y="73" text-anchor="middle">cached in sys</text></g>
+      <text class="ts" x="340" y="110" text-anchor="middle">pip install package_name   → installs third-party packages (requests, pytest, selenium)</text>
+    </svg>
+    <div class="flow-desc">Python's standard library is huge. Master <code>os, sys, json, re, datetime, random</code> — used daily in QA automation.</div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — datetime (test timestamps)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">from datetime import datetime, timedelta
+
+now = datetime.now()
+print(now.strftime("%Y-%m-%d %H:%M:%S"))
+# 2024-01-15 10:30:45
+
+# Test report filename with timestamp
+filename = f"report_{now.strftime('%Y%m%d_%H%M%S')}.html"
+print(filename)   # report_20240115_103045.html
+
+# Calculate test duration
+start = datetime.now()
+# ... run tests ...
+end = start + timedelta(seconds=30)   # simulate 30s
+print(f"Duration: {(end-start).seconds}s")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — re module (regex for QA)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">import re
+
+# Validate email format in registration test
+email = "testuser@example.com"
+pattern = r"^[\w\.-]+@[\w\.-]+\.\w{2,}$"
+print(bool(re.match(pattern, email)))   # True
+
+# Extract error code from log
+log = "CRITICAL ERROR [code=ERR_502] at module login"
+match = re.search(r"code=([\w_]+)", log)
+if match:
+    print(f"Error code: {match.group(1)}")   # ERR_502</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — random (test data generation)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">import random
+import string
+
+# Generate random test username
+def random_user(length=8):
+    chars = string.ascii_lowercase + string.digits
+    return "user_" + "".join(random.choices(chars, k=length))
+
+print(random_user())   # user_a3x9mk2p
+
+# Pick random test data from list
+browsers = ["chrome", "firefox", "edge"]
+print(random.choice(browsers))   # random browser
+print(random.randint(1000, 9999)) # random 4-digit ID</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — sys module</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">import sys
+
+# Command-line args: python test_run.py --env=staging
+print(sys.argv)    # ['test_run.py', '--env=staging']
+print(sys.version) # Python version info
+
+# Exit script with non-zero code (CI/CD fail signal)
+failed_count = 3
+if failed_count > 0:
+    print(f"{failed_count} tests failed!")
+    sys.exit(1)    # non-zero = failure in CI</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — logging module (replace print)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">import logging
+
+# Setup: level, format, output file
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    filename="test_run.log"
+)
+
+logging.info("Test suite started")
+logging.warning("Slow response: 3.5s (threshold 2s)")
+logging.error("TC005 FAILED: Expected 200, got 500")
+logging.debug("Request body: {'user': 'admin'}")  # hidden at INFO level
+# Output goes to test_run.log, not just console</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: import X vs from X import Y?</span><code>import X</code> loads the module; use as <code>X.func()</code>. <code>from X import Y</code> imports directly; use as <code>Y()</code>.</li>
+        <li><span class="interview-q">Q: Why use logging over print()?</span>Logging has levels (DEBUG/INFO/ERROR), can write to files, and is configurable — print can't be controlled in CI/CD pipelines.</li>
+        <li><span class="interview-q">Q: What is sys.exit(1) used for?</span>Exits the script with code 1 — CI/CD systems (Jenkins, GitHub Actions) treat non-zero exit as a build failure.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-best">Best Practices ✓</div>
+      <ul class="bp-list">
+        <li>Replace <code>print()</code> with <code>logging</code> in production tests</li>
+        <li>Set <code>logging.INFO</code> for CI, <code>DEBUG</code> locally</li>
+        <li>Use <code>sys.exit(1)</code> to signal failure to CI/CD</li>
+        <li>Use <code>random.choice()</code> for browser cross-testing</li>
+        <li>Use <code>re</code> for dynamic error code extraction</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()">← Previous</button>
+    <span class="session-counter">Session 9 / 10</span>
+    <button class="nav-btn primary" onclick="nextTab()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SESSION 10 ═══════════════ -->
+<div class="session-panel" id="panel-9">
+  <div class="session-title">Session 10 — Real-World QA Framework</div>
+  <div class="session-desc">pytest basics · Fixtures · Conftest · Parametrize · Assertions · Project structure · CI/CD integration</div>
+
+  <div class="diagram-area">
+    <svg width="100%" viewBox="0 0 680 170" role="img">
+      <title>QA project structure diagram</title>
+      <desc>Professional QA automation project folder structure</desc>
+      <text class="th" x="100" y="22" text-anchor="start">📁 QA Project Structure</text>
+      <g class="c-gray"><rect x="20" y="35" width="300" height="130" rx="8" stroke-width="0.5"/></g>
+      <text class="ts" x="36" y="58">project_root/</text>
+      <text class="ts" x="50" y="76">├── tests/</text>
+      <text class="ts" x="66" y="92">├── test_login.py</text>
+      <text class="ts" x="66" y="108">├── test_api.py</text>
+      <text class="ts" x="50" y="124">├── pages/  (Page Objects)</text>
+      <text class="ts" x="50" y="140">├── test_data/  (CSV/JSON)</text>
+      <text class="ts" x="50" y="156">└── conftest.py</text>
+      <g class="c-blue"><rect x="350" y="35" width="300" height="60" rx="8" stroke-width="0.5"/>
+        <text class="th" x="500" y="58" text-anchor="middle" dominant-baseline="central">conftest.py</text>
+        <text class="ts" x="500" y="76" text-anchor="middle">Shared fixtures (driver, config)</text></g>
+      <g class="c-teal"><rect x="350" y="105" width="300" height="60" rx="8" stroke-width="0.5"/>
+        <text class="th" x="500" y="128" text-anchor="middle" dominant-baseline="central">pytest.ini / pyproject.toml</text>
+        <text class="ts" x="500" y="146" text-anchor="middle">Markers, paths, settings</text></g>
+    </svg>
+    <div class="flow-desc">This is how real QA teams structure projects. <code>conftest.py</code> is pytest's dependency injection system — all shared setup lives here.</div>
+  </div>
+
+  <div class="section-tag tag-how">Hands-On Examples</div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 1 — First pytest test</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># tests/test_login.py
+# Run with: pytest tests/test_login.py -v
+
+def test_valid_login():
+    """TC001: Valid user should log in successfully."""
+    username = "admin"
+    password = "admin123"
+    expected = "Dashboard"
+    
+    # Simulated login logic
+    result = "Dashboard"   # replace with actual driver call
+    
+    assert result == expected, f"Expected '{expected}', got '{result}'"
+
+def test_invalid_login():
+    """TC002: Wrong password should show error."""
+    result = "Invalid credentials"  # simulated
+    assert "Invalid" in result</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 2 — conftest.py (shared fixtures)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># conftest.py — shared across ALL test files
+import pytest
+
+@pytest.fixture
+def test_config():
+    """Provide test environment config."""
+    return {
+        "base_url": "https://qa.example.com",
+        "timeout": 30,
+        "user": "testadmin"
+    }
+
+@pytest.fixture
+def sample_user():
+    user = {"name": "Alice", "role": "admin"}
+    yield user   # setup
+    print("Cleanup after test")  # teardown</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 3 — Using fixtures in tests</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python"># Fixtures injected by name — pytest's dependency injection
+def test_config_has_url(test_config):
+    assert "base_url" in test_config
+    assert test_config["base_url"].startswith("https")
+
+def test_user_is_admin(sample_user):
+    assert sample_user["role"] == "admin"
+    assert sample_user["name"] != ""
+
+def test_multiple_fixtures(test_config, sample_user):
+    url = test_config["base_url"]
+    user = sample_user["name"]
+    assert url and user   # both available!</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 4 — @pytest.mark.parametrize (DDT)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">import pytest
+
+# Data-driven testing — run same test with multiple inputs
+@pytest.mark.parametrize("username, password, expected", [
+    ("admin",    "admin123", True),     # valid
+    ("admin",    "wrongpwd", False),    # wrong pwd
+    ("",          "admin123", False),    # empty user
+    ("admin",    "",         False),    # empty pwd
+])
+def test_login_combinations(username, password, expected):
+    # Simulate login check
+    result = (username == "admin" and password == "admin123")
+    assert result == expected</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-label">Example 5 — Markers, skip, xfail</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+    <pre><code class="language-python">import pytest
+
+@pytest.mark.smoke              # custom marker
+def test_homepage_loads():
+    assert True   # placeholder
+
+@pytest.mark.skip(reason="Feature not built yet")
+def test_payment_flow():
+    pass
+
+@pytest.mark.xfail(reason="Known bug BUG-1234")
+def test_export_pdf():
+    assert False   # expected to fail — marked xfail
+
+# Run only smoke tests:  pytest -m smoke
+# Run with verbose:      pytest -v
+# Generate HTML report:  pytest --html=report.html</code></pre>
+  </div>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <div class="section-tag tag-inter">Interview One-Liners</div>
+      <ul class="interview-list">
+        <li><span class="interview-q">Q: What is a pytest fixture?</span>A reusable setup function injected into tests by name. Replaces setUp/tearDown from unittest. Supports scope (function/class/module/session).</li>
+        <li><span class="interview-q">Q: What is conftest.py?</span>A special pytest file for sharing fixtures across test files. No import needed — pytest auto-discovers it.</li>
+        <li><span class="interview-q">Q: What is @pytest.mark.parametrize?</span>Runs a test function multiple times with different data sets. The foundation of Data-Driven Testing (DDT) in pytest.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="section-tag tag-best">Best Practices ✓</div>
+      <ul class="bp-list">
+        <li>Prefix all test functions with <code>test_</code></li>
+        <li>One assert concept per test function</li>
+        <li>Use fixtures for all setup/teardown</li>
+        <li>Use parametrize for data-driven tests</li>
+        <li>Add markers (smoke/regression) for selective runs</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="one-col" style="margin-top:14px">
+    <div class="section-tag tag-where">Where to go next?</div>
+    <div class="card">
+      <div class="card-body">
+        <strong>Your SDET learning roadmap after this course:</strong><br><br>
+        1. <strong>pytest + Selenium</strong> → Web UI automation with Page Object Model<br>
+        2. <strong>requests library</strong> → REST API testing (GET, POST, PUT, DELETE)<br>
+        3. <strong>Playwright/Python</strong> → Modern browser automation<br>
+        4. <strong>pytest-bdd</strong> → BDD with Gherkin (Given/When/Then)<br>
+        5. <strong>Docker + CI/CD</strong> → Run tests in GitHub Actions / Jenkins<br>
+        6. <strong>Allure Reports</strong> → Beautiful HTML test reports
+      </div>
+    </div>
+  </div>
+
+  <div class="session-footer">
+    <button class="nav-btn" onclick="prevTab()">← Previous</button>
+    <span class="session-counter">Session 10 / 10 — Course Complete! 🎉</span>
+    <button class="nav-btn primary" onclick="sendPrompt('I finished all 10 Python QA sessions. What should I learn next for SDET roles?')">What next? ↗</button>
+  </div>
+</div>
+
+<script>
+let current = 0;
+const total = 10;
+
+function switchTab(idx) {
+  document.querySelectorAll('.session-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + idx).classList.add('active');
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  current = idx;
+  const pct = Math.round(((idx + 1) / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = 'Session ' + (idx+1) + ' of ' + total;
+  document.querySelectorAll('.tab-btn')[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+function nextTab() {
+  if (current < total - 1) switchTab(current + 1);
+}
+
+function prevTab() {
+  if (current > 0) switchTab(current - 1);
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrap').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied!';
+    setTimeout(() => btn.textContent = 'copy', 1500);
+  });
+}
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+
+

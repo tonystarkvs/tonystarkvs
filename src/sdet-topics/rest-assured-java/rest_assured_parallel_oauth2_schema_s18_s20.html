@@ -1,0 +1,1897 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REST Assured: Parallel Runs, OAuth2 & Schema Validation (Sessions 18 to 20)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,'Segoe UI',sans-serif);font-size:13px;color:var(--color-text-primary);background:transparent}
+.wrap{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.topbar{background:var(--color-background-secondary);padding:10px 14px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.badges{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.bdg{font-size:11px;font-weight:500;padding:3px 10px;border-radius:var(--border-radius-md);letter-spacing:.3px}
+.bi{background:var(--color-background-info);color:var(--color-text-info);border:0.5px solid var(--color-border-info)}
+.bg{background:var(--color-background-success);color:var(--color-text-success);border:0.5px solid var(--color-border-success)}
+.bw{background:var(--color-background-warning);color:var(--color-text-warning);border:0.5px solid var(--color-border-warning)}
+.stab-row{display:flex;overflow-x:auto;scrollbar-width:none;gap:2px}
+.stab-row::-webkit-scrollbar{display:none}
+.stab{flex-shrink:0;padding:8px 20px;font-size:11px;font-weight:500;cursor:pointer;border-radius:6px 6px 0 0;border:0.5px solid var(--color-border-secondary);border-bottom:none;color:var(--color-text-secondary);background:transparent;white-space:nowrap;user-select:none;transition:color .15s,background .15s}
+.stab:hover{color:var(--color-text-primary);background:var(--color-background-primary)}
+.stab.active{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-info);border-bottom:2px solid var(--color-background-primary);font-weight:500}
+.stab.done::after{content:' ✓';color:var(--color-text-success);font-size:9px}
+.session{display:none;background:var(--color-background-primary)}
+.session.active{display:block}
+.sp{padding:16px}
+.sec{font-size:10px;font-weight:500;letter-spacing:1.2px;color:var(--color-text-info);text-transform:uppercase;margin:20px 0 8px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+.ovg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.ovc{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px}
+.ov-ic{font-size:18px;margin-bottom:4px}
+.ov-t{font-size:10px;font-weight:500;color:var(--color-text-info);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.ov-tx{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.kw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.kwi{background:var(--color-background-secondary);border-left:2px solid var(--color-border-info);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:7px 10px}
+.kw-k{font-family:var(--font-mono);font-size:11px;color:var(--color-text-info);font-weight:500;margin-bottom:2px}
+.kw-v{font-size:11px;color:var(--color-text-secondary);line-height:1.45}
+.ol-list{display:flex;flex-direction:column;gap:5px}
+.ol{background:var(--color-background-secondary);border-left:2px solid var(--color-border-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:7px 12px;font-size:11px;color:var(--color-text-primary);line-height:1.5}
+.ol b{color:var(--color-text-info)}
+.arch-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;margin-bottom:8px}
+.arch-t{font-size:12px;font-weight:500;color:var(--color-text-warning);margin-bottom:8px}
+.arch{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);line-height:1.8;white-space:pre;overflow-x:auto}
+.arch .hl{color:#56d364}.arch .bl{color:#79c0ff}.arch .or{color:#ffa657}.arch .pk{color:#d2a8ff}.arch .rd{color:#ff7b72}.arch .cm{color:#6e7681;font-style:italic}
+.code-area{background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary)}
+.ctbar{display:flex;gap:2px;padding:8px 8px 0;overflow-x:auto;scrollbar-width:none;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ctbar::-webkit-scrollbar{display:none}
+.ct{flex-shrink:0;padding:5px 12px;font-size:11px;cursor:pointer;border-radius:5px 5px 0 0;border:0.5px solid var(--color-border-secondary);border-bottom:none;color:var(--color-text-secondary);background:var(--color-background-primary);white-space:nowrap;font-weight:500;user-select:none;transition:color .15s}
+.ct:hover{color:var(--color-text-primary)}
+.ct.active{background:#0d1117;color:#e6edf3;border-color:var(--color-border-info);border-bottom:2px solid #0d1117}
+.fn-hdr{background:#0d1117;padding:5px 14px;font-family:var(--font-mono);font-size:11px;color:#79c0ff;border-bottom:0.5px solid #30363d}
+.cblk{display:none;padding:14px 16px;font-size:11.5px;line-height:1.8;color:#e6edf3;white-space:pre;overflow-x:auto;font-family:var(--font-mono);background:#0d1117;min-height:260px}
+.cblk.active{display:block}
+.kw{color:#ff7b72}.cls{color:#ffa657}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cmt{color:#6e7681;font-style:italic}.num{color:#79c0ff}.ann{color:#56d364}.vr{color:#e6edf3}
+.cl{display:flex;flex-direction:column;gap:5px}
+.ci{display:flex;align-items:flex-start;gap:8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:11px;color:var(--color-text-primary);line-height:1.5}
+.ck{color:var(--color-text-success);font-size:14px;flex-shrink:0;margin-top:1px}
+.qa-list{display:flex;flex-direction:column;gap:7px}
+.qi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.qq{background:var(--color-background-primary);padding:9px 14px;font-size:11px;font-weight:500;color:var(--color-text-info);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.qq:hover{background:var(--color-background-secondary)}
+.qtg{color:var(--color-text-secondary);font-size:15px;transition:transform .2s;flex-shrink:0}
+.qa-a{padding:0 14px;max-height:0;overflow:hidden;font-size:11px;color:var(--color-text-secondary);line-height:1.65;transition:max-height .3s ease,padding .3s}
+.qa-a.open{padding:10px 14px;max-height:400px}
+.pbar{background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary);padding:10px 14px;display:flex;align-items:center;gap:12px}
+.pw{flex:1;background:var(--color-border-tertiary);height:5px;border-radius:999px;overflow:hidden}
+.pf{height:100%;background:var(--color-text-info);border-radius:999px;transition:width .4s}
+.pt{font-size:11px;color:var(--color-text-secondary);white-space:nowrap}
+.nvb{display:flex;gap:6px}
+.nb{background:transparent;border:0.5px solid var(--color-border-secondary);color:var(--color-text-primary);padding:5px 14px;border-radius:var(--border-radius-md);font-size:11px;cursor:pointer;font-weight:500}
+.nb:hover{background:var(--color-background-secondary)}
+code{background:var(--color-background-secondary);color:var(--color-text-info);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:11px}
+.mcard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px}
+.mcard{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px}
+.mc-t{font-size:11px;font-weight:500;margin-bottom:5px}
+.mc-p{font-size:11px;color:var(--color-text-success);line-height:1.55}
+.mc-c{font-size:11px;color:var(--color-text-danger);line-height:1.55}
+</style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+  <div class="wrap">
+<div class="topbar">
+  <div class="badges">
+    <div class="bdg bi">🚀 Advanced REST Assured — S18 to S20</div>
+    <div class="bdg bg">Parallel Tests · OAuth2 Refresh · JSON Schema</div>
+    <div class="bdg bw">Fresh Start · Zero Cache</div>
+  </div>
+  <div class="stab-row" id="stabRow">
+    <div class="stab active" data-si="0">S18: Parallel Test Execution</div>
+    <div class="stab" data-si="1">S19: OAuth2 Token Refresh</div>
+    <div class="stab" data-si="2">S20: JSON Schema Validation</div>
+  </div>
+</div>
+
+<!-- ════════════════════ S18 ════════════════════ -->
+<div class="session active" id="session-0">
+<div class="sp">
+
+<div class="sec">Overview — What / Why / When / Where / How</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">⚡</div><div class="ov-t">What</div><div class="ov-tx">Parallel execution = running multiple REST Assured test methods or classes simultaneously in separate threads, slashing total test suite runtime.</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">API tests are I/O-bound (HTTP calls, network wait). Running 100 tests sequentially may take 5 minutes; in parallel with 10 threads, same suite completes in ~30 seconds.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Use in CI/CD pipelines when test suite grows beyond 50 tests and sequential run time exceeds 2–3 minutes. Enable after test independence is confirmed.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx">Configured in <code>testng.xml</code> with <code>parallel</code> and <code>thread-count</code> attributes. REST Assured itself is stateless per request — safe for parallel use.</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Set <code>parallel="methods"</code> in testng.xml → avoid shared mutable state → use <code>ThreadLocal</code> for per-thread data → configure <code>RestAssuredConfig</code> per request.</div></div>
+</div>
+
+<div class="sec">Keyword Glossary</div>
+<div class="kw-grid">
+  <div class="kwi"><div class="kw-k">parallel="methods"</div><div class="kw-v">TestNG attribute: each <code>@Test</code> method runs in its own thread simultaneously.</div></div>
+  <div class="kwi"><div class="kw-k">parallel="classes"</div><div class="kw-v">TestNG attribute: each test class runs in its own thread; methods within a class run sequentially.</div></div>
+  <div class="kwi"><div class="kw-k">thread-count</div><div class="kw-v">Number of threads in the TestNG thread pool (e.g. 5 means 5 tests run at once).</div></div>
+  <div class="kwi"><div class="kw-k">ThreadLocal&lt;T&gt;</div><div class="kw-v">Java class providing per-thread variable storage — each thread gets its own isolated copy. Essential for thread-safe token/config sharing.</div></div>
+  <div class="kwi"><div class="kw-k">Race condition</div><div class="kw-v">Bug where two threads read/write shared state simultaneously causing unpredictable results — the #1 parallel testing problem.</div></div>
+  <div class="kwi"><div class="kw-k">RequestSpecification</div><div class="kw-v">REST Assured object bundling baseURI, headers, auth — create a new instance per test thread, never share across threads.</div></div>
+  <div class="kwi"><div class="kw-k">RestAssured.baseURI</div><div class="kw-v">Static field on RestAssured class — NOT thread-safe. One thread changing it affects all threads. Use request-level config instead.</div></div>
+  <div class="kwi"><div class="kw-k">synchronized</div><div class="kw-v">Java keyword making a block/method accessible by only one thread at a time — used for shared resource protection like token stores.</div></div>
+  <div class="kwi"><div class="kw-k">AtomicReference</div><div class="kw-v">Thread-safe wrapper for an object reference — compareAndSet() allows lock-free atomic updates to shared variables.</div></div>
+  <div class="kwi"><div class="kw-k">data-provider parallel</div><div class="kw-v">TestNG feature: <code>@DataProvider(parallel=true)</code> runs the same test method with different data in parallel threads.</div></div>
+</div>
+
+<div class="sec">Architecture — Parallel Execution Flow</div>
+<div class="arch-box">
+  <div class="arch-t">TestNG parallel execution model with REST Assured</div>
+  <div class="arch"><span class="hl">testng.xml config:</span>
+  <span class="bl">&lt;suite parallel="methods" thread-count="5"&gt;</span>
+         <span class="or">│</span>
+         <span class="or">▼</span>
+  <span class="or">TestNG Thread Pool  (5 worker threads)</span>
+  <span class="cm"> ┌──────────┬──────────┬──────────┬──────────┬──────────┐</span>
+  <span class="cm"> │ Thread-1 │ Thread-2 │ Thread-3 │ Thread-4 │ Thread-5 │</span>
+  <span class="cm"> └──────────┴──────────┴──────────┴──────────┴──────────┘</span>
+  <span class="bl">testGetUser() testCreatePost() testDeleteUser() testUpdateUser() testListPosts()</span>
+         <span class="or">│              │               │              │              │</span>
+         <span class="or">▼              ▼               ▼              ▼              ▼</span>
+  <span class="hl">Each thread creates its OWN RestAssured request — no shared state</span>
+
+<span class="rd">⛔ DANGER — shared static state (causes race conditions):</span>
+  <span class="rd">RestAssured.baseURI = "..."   ← ONE static field, ALL threads read/write it</span>
+  <span class="rd">static String token = "..."   ← mutable shared token — thread 2 overwrites it</span>
+
+<span class="hl">✅ SAFE — per-request config (no sharing):</span>
+  <span class="pk">given().baseUri("...").header("Auth","Bearer "+getToken())</span>
+  <span class="pk">ThreadLocal&lt;String&gt; token → each thread has its own isolated copy</span>
+
+<span class="or">KEY RULE: API tests are STATELESS per HTTP call.
+Make your test code equally stateless — no shared mutable variables.</span></div>
+</div>
+<div class="arch-box">
+  <div class="arch-t">ThreadLocal pattern — safe per-thread token storage</div>
+  <div class="arch"><span class="cm">Without ThreadLocal (UNSAFE):</span>
+<span class="rd">  static String token;   // Thread-1 sets "abc", Thread-2 sets "xyz"</span>
+<span class="rd">  // Thread-1 reads "xyz" instead of "abc" → auth fails!</span>
+
+<span class="cm">With ThreadLocal (SAFE):</span>
+<span class="hl">  ThreadLocal&lt;String&gt; TOKEN = new ThreadLocal&lt;&gt;();</span>
+  <span class="bl">Thread-1: TOKEN.set("abc")  →  Thread-1: TOKEN.get() = "abc" ✓</span>
+  <span class="bl">Thread-2: TOKEN.set("xyz")  →  Thread-2: TOKEN.get() = "xyz" ✓</span>
+  <span class="cm">// Each thread reads only its own value — completely isolated</span>
+
+<span class="or">ThreadLocal lifecycle in @BeforeMethod / @AfterMethod:</span>
+  <span class="pk">@BeforeMethod → TOKEN.set(fetchNewToken())</span>
+  <span class="pk">@Test        → given().header("Auth", "Bearer " + TOKEN.get())</span>
+  <span class="pk">@AfterMethod → TOKEN.remove()  ← IMPORTANT: prevents memory leak</span></div>
+</div>
+
+<div class="sec">Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>parallel="methods"</b> in testng.xml runs each @Test method in its own thread — the most granular parallelism, best for I/O-bound REST API tests.</div>
+  <div class="ol"><b>RestAssured.baseURI</b> is a static field — NOT thread-safe — setting it in one thread affects all parallel threads; always use <code>given().baseUri()</code> per request instead.</div>
+  <div class="ol"><b>ThreadLocal&lt;T&gt;</b> gives each thread its own isolated copy of a variable — used to store auth tokens, request specs, or user credentials safely across parallel tests.</div>
+  <div class="ol"><b>Race condition</b> = when two threads read and modify the same shared variable simultaneously causing unpredictable behavior — eliminated by making each test fully self-contained.</div>
+  <div class="ol"><b>@DataProvider(parallel=true)</b> is TestNG's way to run the same test with different data sets in parallel — ideal for testing multiple user roles or environments simultaneously.</div>
+  <div class="ol"><b>Thread pool size</b> (thread-count) should be set based on available CPU cores × 2 for I/O-bound tests — too many threads causes overhead; typical range is 5–15 for REST API suites.</div>
+</div>
+
+<div class="sec">Code Examples — Parallel Execution</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s18">
+    <div class="ct active" data-ci="0" data-cs="s18">testng-parallel.xml</div>
+    <div class="ct" data-ci="1" data-cs="s18">BaseParallelTest.java</div>
+    <div class="ct" data-ci="2" data-cs="s18">ThreadLocalTokenTest.java</div>
+    <div class="ct" data-ci="3" data-cs="s18">DataProviderParallelTest.java</div>
+    <div class="ct" data-ci="4" data-cs="s18">ParallelClassesTest.java</div>
+    <div class="ct" data-ci="5" data-cs="s18">AtomicTokenManagerTest.java</div>
+  </div>
+  <div class="fn-hdr" id="fh-s18">testng-parallel.xml</div>
+  <div id="s18-c0" class="cblk active"><span class="cmt">&lt;!-- testng-parallel.xml
+     TestNG suite configuration for parallel API test execution
+     parallel="methods" = each @Test method runs in its own thread
+     thread-count="5"   = 5 threads run simultaneously
+     Adjust thread-count based on: CPU cores, network capacity, test count --&gt;</span>
+&lt;?<span class="cls">xml</span> version=<span class="str">"1.0"</span> encoding=<span class="str">"UTF-8"</span>?&gt;
+&lt;!DOCTYPE suite SYSTEM <span class="str">"http://testng.org/testng-1.0.dtd"</span>&gt;
+
+&lt;<span class="cls">suite</span> name=<span class="str">"REST-Assured-Parallel-Suite"</span>
+       <span class="ann">parallel</span>=<span class="str">"methods"</span>
+       <span class="ann">thread-count</span>=<span class="str">"5"</span>
+       verbose=<span class="str">"1"</span>&gt;
+  <span class="cmt">&lt;!--
+    parallel options:
+      "methods"  = each @Test method = one thread   ← best for API tests
+      "classes"  = each test class   = one thread
+      "tests"    = each &lt;test&gt; tag   = one thread
+      "instances"= each class instance = one thread
+  --&gt;</span>
+
+  &lt;<span class="cls">test</span> name=<span class="str">"User API Tests"</span>&gt;
+    &lt;<span class="cls">classes</span>&gt;
+      &lt;<span class="cls">class</span> name=<span class="str">"tests.UserApiTest"</span>/&gt;
+      &lt;<span class="cls">class</span> name=<span class="str">"tests.PostApiTest"</span>/&gt;
+    &lt;/<span class="cls">classes</span>&gt;
+  &lt;/<span class="cls">test</span>&gt;
+
+  &lt;<span class="cls">test</span> name=<span class="str">"Order API Tests"</span>&gt;
+    &lt;<span class="cls">classes</span>&gt;
+      &lt;<span class="cls">class</span> name=<span class="str">"tests.OrderApiTest"</span>/&gt;
+    &lt;/<span class="cls">classes</span>&gt;
+  &lt;/<span class="cls">test</span>&gt;
+
+&lt;/<span class="cls">suite</span>&gt;
+
+<span class="cmt">&lt;!-- PARALLEL PER &lt;test&gt; TAG (different parallelism level):
+&lt;suite name="Suite" parallel="tests" thread-count="3"&gt;
+  &lt;test name="Regression"&gt;...&lt;/test&gt;   ← Thread 1
+  &lt;test name="Smoke"&gt;...&lt;/test&gt;        ← Thread 2
+  &lt;test name="Integration"&gt;...&lt;/test&gt;  ← Thread 3
+&lt;/suite&gt;
+--&gt;
+
+<span class="cmt">&lt;!-- Maven Surefire plugin config to use testng-parallel.xml:
+&lt;plugin&gt;
+  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+  &lt;configuration&gt;
+    &lt;suiteXmlFiles&gt;
+      &lt;suiteXmlFile&gt;src/test/resources/testng-parallel.xml&lt;/suiteXmlFile&gt;
+    &lt;/suiteXmlFiles&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;
+--&gt;</div>
+  <div id="s18-c1" class="cblk"><span class="cmt">// BaseParallelTest.java
+// Thread-safe base class for all parallel REST Assured tests
+// Key rule: never use RestAssured.baseURI static field in parallel tests
+// Use given().baseUri() per request OR RequestSpecBuilder per thread</span>
+<span class="kw">import</span> <span class="cls">io.restassured.builder.RequestSpecBuilder</span>;
+<span class="kw">import</span> <span class="cls">io.restassured.specification.RequestSpecification</span>;
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.*</span>;
+
+<span class="kw">public class</span> <span class="cls">BaseParallelTest</span> {
+
+    <span class="cmt">// ⛔ WRONG: static field — NOT thread-safe
+    // static String baseUri = "https://..."; // all threads share this!</span>
+
+    <span class="cmt">// ✅ CORRECT: ThreadLocal — each thread has its own RequestSpecification
+    // ThreadLocal = Java class providing per-thread variable storage</span>
+    <span class="kw">protected static</span> <span class="cls">ThreadLocal</span>&lt;<span class="cls">RequestSpecification</span>&gt; <span class="vr">reqSpec</span> =
+        <span class="kw">new</span> <span class="cls">ThreadLocal</span>&lt;&gt;();
+
+    <span class="ann">@BeforeMethod</span>
+    <span class="cmt">// @BeforeMethod runs before EACH @Test, in the SAME thread as the test
+    // This is the correct place to set up per-thread state</span>
+    <span class="kw">public void</span> <span class="fn">setupPerThread</span>() {
+
+        <span class="cmt">// Build a new RequestSpec per thread — fully isolated
+        // RequestSpecBuilder = fluent builder for RequestSpecification</span>
+        <span class="cls">RequestSpecification</span> <span class="vr">spec</span> = <span class="kw">new</span> <span class="cls">RequestSpecBuilder</span>()
+            .setBaseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .addHeader(<span class="str">"Accept"</span>, <span class="str">"application/json"</span>)
+            .addHeader(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>)
+            .build();
+
+        <span class="cmt">// ThreadLocal.set() = store the spec for THIS thread only</span>
+        <span class="vr">reqSpec</span>.set(<span class="vr">spec</span>);
+        <span class="cls">System</span>.out.println(
+            <span class="str">"[Thread-"</span> + <span class="cls">Thread</span>.currentThread().getId() + <span class="str">"] Setup done"</span>);
+    }
+
+    <span class="ann">@AfterMethod</span>
+    <span class="kw">public void</span> <span class="fn">cleanupPerThread</span>() {
+        <span class="cmt">// ThreadLocal.remove() = CRITICAL — prevents memory leak
+        // Without this, thread pool threads keep holding old values forever</span>
+        <span class="vr">reqSpec</span>.remove();
+    }
+
+    <span class="cmt">// Helper method — each test calls this to get its own spec</span>
+    <span class="kw">protected</span> <span class="cls">RequestSpecification</span> <span class="fn">spec</span>() {
+        <span class="kw">return</span> given(<span class="vr">reqSpec</span>.get());
+        <span class="cmt">// given(spec) = creates a new request using the thread-local spec
+        // given() is thread-safe — creates a new request object each call</span>
+    }
+}
+
+<span class="cmt">// ─── Usage in test class ────────────────────────────────────────────────
+// public class UserApiTest extends BaseParallelTest {
+//
+//   @Test  ← Runs in Thread-1
+//   public void getUser1() {
+//     spec().when().get("/users/1").then().statusCode(200);
+//   }
+//
+//   @Test  ← Runs in Thread-2 simultaneously
+//   public void getUser2() {
+//     spec().when().get("/users/2").then().statusCode(200);
+//   }
+// }</span></div>
+  <div id="s18-c2" class="cblk"><span class="cmt">// ThreadLocalTokenTest.java
+// Demonstrates ThreadLocal pattern for parallel tests requiring auth tokens
+// Each thread fetches its own token — no sharing, no race conditions</span>
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.*</span>;
+
+<span class="kw">public class</span> <span class="cls">ThreadLocalTokenTest</span> {
+
+    <span class="cmt">// ThreadLocal&lt;String&gt; = per-thread String storage
+    // Each thread calls get()/set()/remove() on its own isolated copy</span>
+    <span class="kw">private static final</span> <span class="cls">ThreadLocal</span>&lt;<span class="cls">String</span>&gt; <span class="vr">TOKEN</span> =
+        <span class="kw">new</span> <span class="cls">ThreadLocal</span>&lt;&gt;();
+
+    <span class="kw">private static final</span> <span class="cls">ThreadLocal</span>&lt;<span class="cls">String</span>&gt; <span class="vr">USER_ID</span> =
+        <span class="kw">new</span> <span class="cls">ThreadLocal</span>&lt;&gt;();
+    <span class="cmt">// Multiple ThreadLocals per test class — one per per-thread resource</span>
+
+    <span class="ann">@BeforeMethod</span>
+    <span class="kw">public void</span> <span class="fn">authenticateThisThread</span>() {
+        <span class="cmt">// Simulate fetching a token for this thread's user
+        // In real project: call login API → extract token</span>
+        <span class="cls">String</span> <span class="vr">token</span> = <span class="fn">fetchTokenFromApi</span>();
+
+        <span class="cmt">// TOKEN.set() = stores token ONLY for this thread
+        // Thread-1 sets "tokenA", Thread-2 sets "tokenB" — no collision</span>
+        TOKEN.set(<span class="vr">token</span>);
+
+        <span class="cls">System</span>.out.printf(<span class="str">"[Thread-%d] Token set: %s%n"</span>,
+            <span class="cls">Thread</span>.currentThread().getId(), <span class="vr">token</span>);
+    }
+
+    <span class="ann">@AfterMethod</span>
+    <span class="kw">public void</span> <span class="fn">clearThreadData</span>() {
+        TOKEN.remove();   <span class="cmt">// prevent memory leak in thread pool</span>
+        USER_ID.remove();
+    }
+
+    <span class="kw">private</span> <span class="cls">String</span> <span class="fn">fetchTokenFromApi</span>() {
+        <span class="cmt">// Real implementation: POST /auth/login → extract JWT
+        // Using thread ID as mock token for demonstration</span>
+        <span class="kw">return</span> <span class="str">"mock-token-thread-"</span> + <span class="cls">Thread</span>.currentThread().getId();
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testGetUsersWithToken</span>() {
+        <span class="cls">String</span> <span class="vr">token</span> = TOKEN.get();
+        <span class="cmt">// TOKEN.get() = retrieves THIS thread's token only</span>
+
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .header(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> + <span class="vr">token</span>)
+        .when()
+            .get(<span class="str">"/users"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"size()"</span>, equalTo(<span class="num">10</span>));
+
+        <span class="cls">System</span>.out.printf(<span class="str">"[Thread-%d] Test passed with token: %s%n"</span>,
+            <span class="cls">Thread</span>.currentThread().getId(), <span class="vr">token</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testGetPostsWithToken</span>() {
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .header(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> + TOKEN.get())
+        .when()
+            .get(<span class="str">"/posts"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"size()"</span>, greaterThan(<span class="num">0</span>));
+    }
+}</div>
+  <div id="s18-c3" class="cblk"><span class="cmt">// DataProviderParallelTest.java
+// @DataProvider(parallel=true) = run same test with multiple data sets in parallel
+// Each data row runs in its own thread — perfect for multi-user, multi-env tests</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.*</span>;
+
+<span class="kw">public class</span> <span class="cls">DataProviderParallelTest</span> {
+
+    <span class="ann">@DataProvider</span>(name = <span class="str">"userIds"</span>, parallel = <span class="kw">true</span>)
+    <span class="cmt">// @DataProvider(parallel=true) = each data row runs in a separate thread
+    // Returns Object[][] — each inner array is one set of test parameters</span>
+    <span class="kw">public</span> Object[][] <span class="fn">provideUserIds</span>() {
+        <span class="kw">return new</span> Object[][] {
+            { <span class="num">1</span>, <span class="str">"Leanne Graham"</span>   },  <span class="cmt">// row 1 → Thread A</span>
+            { <span class="num">2</span>, <span class="str">"Ervin Howell"</span>    },  <span class="cmt">// row 2 → Thread B</span>
+            { <span class="num">3</span>, <span class="str">"Clementine Bauch"</span>},  <span class="cmt">// row 3 → Thread C</span>
+            { <span class="num">4</span>, <span class="str">"Patricia Lebsack"</span>},  <span class="cmt">// row 4 → Thread D</span>
+            { <span class="num">5</span>, <span class="str">"Chelsey Dietrich"</span>},  <span class="cmt">// row 5 → Thread E</span>
+        };
+        <span class="cmt">// All 5 rows run concurrently — 5x faster than sequential</span>
+    }
+
+    <span class="ann">@Test</span>(dataProvider = <span class="str">"userIds"</span>)
+    <span class="cmt">// dataProvider="userIds" links this test to the DataProvider above
+    // Test method receives each row's values as parameters</span>
+    <span class="kw">public void</span> <span class="fn">verifyUserName</span>(<span class="kw">int</span> <span class="vr">userId</span>, <span class="cls">String</span> <span class="vr">expectedName</span>) {
+
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .when()
+            .get(<span class="str">"/users/"</span> + <span class="vr">userId</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"name"</span>, equalTo(<span class="vr">expectedName</span>));
+
+        <span class="cls">System</span>.out.printf(
+            <span class="str">"[Thread-%d] User %d verified: %s%n"</span>,
+            <span class="cls">Thread</span>.currentThread().getId(), <span class="vr">userId</span>, <span class="vr">expectedName</span>
+        );
+    }
+
+    <span class="ann">@DataProvider</span>(name = <span class="str">"endpoints"</span>, parallel = <span class="kw">true</span>)
+    <span class="kw">public</span> Object[][] <span class="fn">provideEndpoints</span>() {
+        <span class="kw">return new</span> Object[][] {
+            { <span class="str">"/users"</span>,  <span class="num">200</span>, <span class="num">10</span>  },
+            { <span class="str">"/posts"</span>,  <span class="num">200</span>, <span class="num">100</span> },
+            { <span class="str">"/todos"</span>,  <span class="num">200</span>, <span class="num">200</span> },
+            { <span class="str">"/albums"</span>, <span class="num">200</span>, <span class="num">100</span> },
+        };
+    }
+
+    <span class="ann">@Test</span>(dataProvider = <span class="str">"endpoints"</span>)
+    <span class="kw">public void</span> <span class="fn">smokeSmokeEndpoints</span>(<span class="cls">String</span> <span class="vr">path</span>, <span class="kw">int</span> <span class="vr">status</span>, <span class="kw">int</span> <span class="vr">count</span>) {
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .when()
+            .get(<span class="vr">path</span>)
+        .then()
+            .statusCode(<span class="vr">status</span>)
+            .body(<span class="str">"size()"</span>, equalTo(<span class="vr">count</span>));
+
+        <span class="cls">System</span>.out.printf(<span class="str">"[Thread-%d] %s → %d items ✓%n"</span>,
+            <span class="cls">Thread</span>.currentThread().getId(), <span class="vr">path</span>, <span class="vr">count</span>);
+    }
+}</div>
+  <div id="s18-c4" class="cblk"><span class="cmt">// ParallelClassesTest.java
+// parallel="classes" — each test class runs on its own dedicated thread
+// Methods within the same class still run sequentially
+// Best for: tests with class-level shared setup (@BeforeClass)</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.*</span>;
+
+<span class="cmt">// Class 1 — runs entirely on Thread A</span>
+<span class="kw">public class</span> <span class="cls">UserClassTest</span> {
+
+    <span class="kw">private</span> <span class="cls">String</span> <span class="vr">baseUri</span>;
+    <span class="cmt">// Instance variable (not static) — safe with parallel="classes"
+    // Each class instance has its own baseUri — no sharing between classes</span>
+
+    <span class="ann">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">classSetup</span>() {
+        <span class="vr">baseUri</span> = <span class="str">"https://jsonplaceholder.typicode.com"</span>;
+        <span class="cls">System</span>.out.println(<span class="str">"[Thread-"</span>+<span class="cls">Thread</span>.currentThread().getId()
+            +<span class="str">"] UserClassTest starting"</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">getUser1</span>() {
+        given().baseUri(<span class="vr">baseUri</span>).when().get(<span class="str">"/users/1"</span>).then().statusCode(<span class="num">200</span>);
+    }
+
+    <span class="ann">@Test</span>(dependsOnMethods = <span class="str">"getUser1"</span>)
+    <span class="cmt">// dependsOnMethods works fine within a class — still sequential inside the class</span>
+    <span class="kw">public void</span> <span class="fn">getUser2</span>() {
+        given().baseUri(<span class="vr">baseUri</span>).when().get(<span class="str">"/users/2"</span>).then().statusCode(<span class="num">200</span>);
+    }
+}
+
+<span class="cmt">// Class 2 — runs entirely on Thread B (simultaneously with UserClassTest)</span>
+<span class="kw">class</span> <span class="cls">PostClassTest</span> {
+
+    <span class="kw">private</span> <span class="cls">String</span> <span class="vr">baseUri</span>;
+
+    <span class="ann">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">classSetup</span>() {
+        <span class="vr">baseUri</span> = <span class="str">"https://jsonplaceholder.typicode.com"</span>;
+        <span class="cls">System</span>.out.println(<span class="str">"[Thread-"</span>+<span class="cls">Thread</span>.currentThread().getId()
+            +<span class="str">"] PostClassTest starting"</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">getPosts</span>() {
+        given().baseUri(<span class="vr">baseUri</span>).when().get(<span class="str">"/posts"</span>).then().statusCode(<span class="num">200</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">createPost</span>() {
+        given().baseUri(<span class="vr">baseUri</span>).contentType(<span class="str">"application/json"</span>)
+            .body(<span class="str">"{ \"title\":\"test\", \"userId\":1 }"</span>)
+        .when().post(<span class="str">"/posts"</span>).then().statusCode(<span class="num">201</span>);
+    }
+}</div>
+  <div id="s18-c5" class="cblk"><span class="cmt">// AtomicTokenManagerTest.java
+// Singleton token manager using AtomicReference for thread-safe shared state
+// AtomicReference = lock-free thread-safe object wrapper
+// Use when ALL threads share ONE token (e.g. service account auth)</span>
+<span class="kw">import</span> <span class="cls">java.util.concurrent.atomic.AtomicReference</span>;
+<span class="cmt">// AtomicReference = thread-safe wrapper for an object reference</span>
+<span class="kw">import</span> <span class="cls">java.util.concurrent.locks.ReentrantReadWriteLock</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.*</span>;
+
+<span class="cmt">// Singleton TokenManager — shared across all test threads</span>
+<span class="kw">class</span> <span class="cls">TokenManager</span> {
+
+    <span class="kw">private static final</span> <span class="cls">TokenManager</span> <span class="vr">INSTANCE</span> = <span class="kw">new</span> <span class="cls">TokenManager</span>();
+    <span class="kw">public static</span> <span class="cls">TokenManager</span> <span class="fn">getInstance</span>() { <span class="kw">return</span> <span class="vr">INSTANCE</span>; }
+    <span class="kw">private</span> <span class="cls">TokenManager</span>() {}
+
+    <span class="cmt">// AtomicReference = thread-safe holder for the token String
+    // compareAndSet() = atomic read-check-write, no race condition</span>
+    <span class="kw">private final</span> <span class="cls">AtomicReference</span>&lt;<span class="cls">String</span>&gt; <span class="vr">token</span> =
+        <span class="kw">new</span> <span class="cls">AtomicReference</span>&lt;&gt;(<span class="kw">null</span>);
+
+    <span class="kw">private final</span> <span class="cls">AtomicReference</span>&lt;<span class="cls">Long</span>&gt; <span class="vr">expiry</span> =
+        <span class="kw">new</span> <span class="cls">AtomicReference</span>&lt;&gt;(<span class="num">0L</span>);
+
+    <span class="kw">private final</span> <span class="cls">ReentrantReadWriteLock</span> <span class="vr">lock</span> =
+        <span class="kw">new</span> <span class="cls">ReentrantReadWriteLock</span>();
+    <span class="cmt">// ReentrantReadWriteLock = multiple readers allowed, only one writer at a time</span>
+
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getToken</span>() {
+        <span class="vr">lock</span>.readLock().lock();
+        <span class="kw">try</span> {
+            <span class="kw">if</span> (<span class="vr">token</span>.get() == <span class="kw">null</span> || <span class="fn">isExpired</span>()) {
+                <span class="vr">lock</span>.readLock().unlock();
+                <span class="vr">lock</span>.writeLock().lock();
+                <span class="kw">try</span> {
+                    <span class="cmt">// Double-check after acquiring write lock</span>
+                    <span class="kw">if</span> (<span class="vr">token</span>.get() == <span class="kw">null</span> || <span class="fn">isExpired</span>()) {
+                        <span class="fn">refresh</span>();
+                    }
+                } <span class="kw">finally</span> {
+                    <span class="vr">lock</span>.writeLock().unlock();
+                    <span class="vr">lock</span>.readLock().lock();
+                }
+            }
+            <span class="kw">return</span> <span class="vr">token</span>.get();
+        } <span class="kw">finally</span> {
+            <span class="vr">lock</span>.readLock().unlock();
+        }
+    }
+
+    <span class="kw">private boolean</span> <span class="fn">isExpired</span>() {
+        <span class="kw">return</span> <span class="cls">System</span>.currentTimeMillis() > <span class="vr">expiry</span>.get();
+    }
+
+    <span class="kw">private void</span> <span class="fn">refresh</span>() {
+        <span class="cmt">// In real project: call login API, extract JWT, set expiry from exp claim</span>
+        <span class="cls">String</span> <span class="vr">newToken</span> = <span class="str">"fresh-token-"</span> + <span class="cls">System</span>.currentTimeMillis();
+        <span class="vr">token</span>.set(<span class="vr">newToken</span>);
+        <span class="vr">expiry</span>.set(<span class="cls">System</span>.currentTimeMillis() + <span class="num">3600_000L</span>); <span class="cmt">// 1 hour</span>
+        <span class="cls">System</span>.out.println(<span class="str">"[TokenManager] Refreshed: "</span> + <span class="vr">newToken</span>);
+    }
+}
+
+<span class="kw">public class</span> <span class="cls">AtomicTokenManagerTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testWithSharedToken</span>() {
+        <span class="cls">String</span> <span class="vr">token</span> = <span class="cls">TokenManager</span>.getInstance().getToken();
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .header(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> + <span class="vr">token</span>)
+        .when().get(<span class="str">"/users"</span>)
+        .then().statusCode(<span class="num">200</span>);
+    }
+}</div>
+</div>
+
+<div class="sec">Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Never use <code>RestAssured.baseURI</code>, <code>RestAssured.port</code>, or any static RestAssured field in parallel tests — they are shared across all threads. Use <code>given().baseUri()</code> per request.</div>
+  <div class="ci"><span class="ck">✔</span> Always call <code>ThreadLocal.remove()</code> in <code>@AfterMethod</code> — thread pool threads are reused, so old ThreadLocal values persist indefinitely causing memory leaks and stale data bugs.</div>
+  <div class="ci"><span class="ck">✔</span> Prefer <code>parallel="methods"</code> for API tests — HTTP calls are I/O-bound, so method-level parallelism maximises CPU utilisation without needing extra test class structure.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>@DataProvider(parallel=true)</code> for data-driven API tests — it's the cleanest way to run the same endpoint across multiple users, IDs, or environments in parallel.</div>
+  <div class="ci"><span class="ck">✔</span> Set <code>thread-count</code> to 5–10 for REST API suites — higher counts give diminishing returns beyond the server's connection pool limit and may cause 429 Too Many Requests.</div>
+</div>
+
+<div class="sec">Interview Q&amp;A</div>
+<div class="qa-list">
+  <div class="qi"><div class="qq">Q1: Why is RestAssured.baseURI unsafe for parallel tests? <span class="qtg">+</span></div><div class="qa-a">RestAssured.baseURI is a public static field — a single shared value across the JVM. Thread-1 might set it to "https://staging.api.com" while Thread-2 sets it to "https://prod.api.com". Thread-1 then reads "https://prod.api.com" — the wrong value. Solution: use given().baseUri() inline per request, or store a per-thread RequestSpecification in a ThreadLocal.</div></div>
+  <div class="qi"><div class="qq">Q2: What is a race condition in parallel testing and how do you avoid it? <span class="qtg">+</span></div><div class="qa-a">A race condition occurs when two threads read and write the same variable simultaneously with unpredictable interleaving — e.g. both threads read token="old", both try to refresh, one overwrites the other. Avoid by: (1) ThreadLocal for per-thread values, (2) AtomicReference for shared values with compare-and-set, (3) synchronized blocks for critical sections, (4) making test methods fully self-contained with no shared mutable state.</div></div>
+  <div class="qi"><div class="qq">Q3: What is the difference between parallel="methods" and parallel="classes"? <span class="qtg">+</span></div><div class="qa-a">parallel="methods" runs each @Test method in a separate thread — maximum parallelism, all methods of all classes run concurrently. parallel="classes" runs each test class in its own thread, but methods within a class run sequentially. Use "methods" for independent API tests. Use "classes" when tests within a class have ordering dependencies (dependsOnMethods) but tests in different classes are independent.</div></div>
+  <div class="qi"><div class="qq">Q4: How does @DataProvider(parallel=true) work? <span class="qtg">+</span></div><div class="qa-a">@DataProvider(parallel=true) tells TestNG to run each data row in a separate thread from the thread pool. The test method is invoked once per data row — all invocations run concurrently. The thread-count attribute in testng.xml controls the thread pool size. Data rows must be fully independent — avoid shared state between data iterations. Perfect for testing multiple user IDs, environments, or API endpoints simultaneously.</div></div>
+  <div class="qi"><div class="qq">Q5: When should you NOT run REST Assured tests in parallel? <span class="qtg">+</span></div><div class="qa-a">Avoid parallel execution when: (1) tests have sequential dependencies (CRUD chains where step 2 depends on step 1 data), (2) tests share a unique resource (single test user account), (3) the API has rate limiting that rejects concurrent requests, (4) tests clean up shared data (one test deletes data another test needs), or (5) the API server is a single-threaded local dev server that can't handle concurrent connections.</div></div>
+</div>
+
+</div></div>
+
+<!-- ════════════════════ S19 ════════════════════ -->
+<div class="session" id="session-1">
+<div class="sp">
+
+<div class="sec">Overview — What / Why / When / Where / How</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">🔑</div><div class="ov-t">What</div><div class="ov-tx">OAuth2 token refresh = automatically obtaining a new access token before the old one expires — keeping a long-running test suite authenticated throughout execution.</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">Access tokens expire (typically 1 hour). A 500-test suite may run for 2+ hours. Without refresh, tests start failing with 401 Unauthorized midway — silently breaking coverage.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Needed for any test suite longer than the token's expiry window — usually 3600 seconds. Check token expiry in <code>@BeforeMethod</code> and refresh proactively before expiry.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx">Implement in a <code>TokenManager</code> utility class. Called from <code>@BeforeSuite</code>, <code>@BeforeClass</code>, or <code>@BeforeMethod</code> depending on token lifetime vs test count.</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Store token + expiry timestamp. Before each request, check if <code>currentTime + buffer &gt; expiry</code>. If so, call the login/refresh endpoint → store new token → continue.</div></div>
+</div>
+
+<div class="sec">Keyword Glossary</div>
+<div class="kw-grid">
+  <div class="kwi"><div class="kw-k">OAuth2</div><div class="kw-v">Authorization framework — client gets an access token from an auth server and passes it in every API request header.</div></div>
+  <div class="kwi"><div class="kw-k">Access Token</div><div class="kw-v">Short-lived credential (JWT or opaque) sent in Authorization: Bearer header — typically expires in 1 hour.</div></div>
+  <div class="kwi"><div class="kw-k">Refresh Token</div><div class="kw-v">Long-lived credential (days/weeks) used exclusively to obtain a new access token without re-entering credentials.</div></div>
+  <div class="kwi"><div class="kw-k">JWT (JSON Web Token)</div><div class="kw-v">Self-contained token with header.payload.signature — payload contains <code>exp</code> claim (expiry as Unix timestamp).</div></div>
+  <div class="kwi"><div class="kw-k">exp claim</div><div class="kw-v">JWT payload field holding expiry as Unix epoch seconds — parse it to know exactly when the token expires.</div></div>
+  <div class="kwi"><div class="kw-k">grant_type</div><div class="kw-v">OAuth2 request field specifying the flow — <code>password</code> for direct credentials, <code>refresh_token</code> for token refresh.</div></div>
+  <div class="kwi"><div class="kw-k">client_credentials</div><div class="kw-v">OAuth2 grant type for service-to-service auth — no user involved, app authenticates with client_id + client_secret.</div></div>
+  <div class="kwi"><div class="kw-k">@BeforeSuite</div><div class="kw-v">TestNG annotation — runs once before the entire test suite. Use for initial token fetch shared across all tests.</div></div>
+  <div class="kwi"><div class="kw-k">buffer window</div><div class="kw-v">Refresh the token X seconds BEFORE actual expiry — prevents edge case where token expires mid-request.</div></div>
+  <div class="kwi"><div class="kw-k">synchronized</div><div class="kw-v">Java keyword ensuring only one thread executes the token refresh block — prevents multiple parallel threads from refreshing simultaneously.</div></div>
+</div>
+
+<div class="sec">OAuth2 Token Refresh Architecture</div>
+<div class="arch-box">
+  <div class="arch-t">OAuth2 flow — initial auth + automatic refresh in test suite</div>
+  <div class="arch"><span class="hl">INITIAL AUTH (@BeforeSuite):</span>
+<span class="bl">  Test Framework  →  POST /oauth/token  →  Auth Server</span>
+  <span class="or">  body: { grant_type:password, username, password, client_id, client_secret }</span>
+           <span class="or">                             ↓</span>
+  <span class="bl">  Auth Server  →  Response: { access_token, refresh_token, expires_in:3600 }</span>
+  <span class="pk">  Store: TOKEN = access_token, EXPIRY = now() + 3600s, REFRESH = refresh_token</span>
+
+<span class="hl">TEST EXECUTION FLOW (@BeforeMethod check):</span>
+<span class="cm">  ┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="cm">  │                     BEFORE EACH TEST                           │</span>
+<span class="cm">  │                                                                 │</span>
+<span class="cm">  │   currentTime + 60s &lt; EXPIRY?                                  │</span>
+<span class="bl">  │        YES → use TOKEN as-is → proceed to test                 │</span>
+<span class="or">  │        NO  → REFRESH NEEDED                                    │</span>
+<span class="cm">  │              ├── POST /oauth/token  { grant_type:refresh_token, │</span>
+<span class="cm">  │              │                        refresh_token:REFRESH }   │</span>
+<span class="cm">  │              ├── Extract new access_token + expires_in         │</span>
+<span class="cm">  │              ├── Update TOKEN, update EXPIRY                    │</span>
+<span class="cm">  │              └── proceed to test with new TOKEN                 │</span>
+<span class="cm">  └─────────────────────────────────────────────────────────────────┘</span>
+
+<span class="hl">PARALLEL SAFETY:</span>
+  <span class="pk">synchronized block → only ONE thread refreshes at a time</span>
+  <span class="pk">Double-check after lock → prevent duplicate refreshes</span>
+  <span class="pk">AtomicReference → lock-free token read in hot path</span></div>
+</div>
+<div class="arch-box">
+  <div class="arch-t">JWT expiry parsing — decode exp claim without a library</div>
+  <div class="arch"><span class="hl">JWT structure:</span>  <span class="bl">header.payload.signature</span>
+  <span class="or">eyJhbGciOiJIUzI1NiJ9</span>.<span class="pk">eyJzdWIiOiJ1c2VyMSIsImV4cCI6MTcwNTAwMDAwMH0</span>.<span class="bl">sig</span>
+
+<span class="hl">Decode exp from payload (base64url):</span>
+  <span class="or">String[] parts = token.split("\\.");</span>
+  <span class="or">String payload = new String(Base64.getUrlDecoder().decode(parts[1]));</span>
+  <span class="cm">// payload = { "sub":"user1", "exp":1705000000 }</span>
+  <span class="pk">long exp = JsonPath.from(payload).getLong("exp");</span>
+  <span class="pk">// exp is Unix epoch seconds → multiply by 1000 for milliseconds</span>
+  <span class="hl">long expiryMs = exp * 1000L;   // compare against System.currentTimeMillis()</span></div>
+</div>
+
+<div class="sec">Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>access_token</b> expires typically in 3600 seconds — a long test suite must proactively refresh it before expiry to avoid 401 Unauthorized failures mid-suite.</div>
+  <div class="ol"><b>Refresh token</b> is a long-lived credential used only to obtain a new access token — sent with <code>grant_type=refresh_token</code> to the auth server's token endpoint.</div>
+  <div class="ol"><b>Buffer window</b> = refresh the token 60 seconds BEFORE actual expiry — prevents edge cases where a token expires between the check and the actual API call.</div>
+  <div class="ol"><b>@BeforeSuite</b> fetches the initial token once for the entire suite; <code>@BeforeMethod</code> checks expiry and refreshes if needed — together they handle any suite duration.</div>
+  <div class="ol"><b>synchronized(lock)</b> in the refresh method ensures only one thread calls the auth endpoint at a time — without it, 10 parallel threads would each fire a separate refresh simultaneously.</div>
+  <div class="ol"><b>JWT exp claim</b> = Unix timestamp in the token payload — decode the base64url payload, extract <code>exp</code>, compare with current time to determine if refresh is needed.</div>
+</div>
+
+<div class="sec">Code Examples — OAuth2 Token Refresh</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s19">
+    <div class="ct active" data-ci="0" data-cs="s19">TokenManager.java</div>
+    <div class="ct" data-ci="1" data-cs="s19">OAuth2LoginTest.java</div>
+    <div class="ct" data-ci="2" data-cs="s19">BaseAuthTest.java</div>
+    <div class="ct" data-ci="3" data-cs="s19">JwtExpiryParserTest.java</div>
+    <div class="ct" data-ci="4" data-cs="s19">RefreshTokenFlowTest.java</div>
+    <div class="ct" data-ci="5" data-cs="s19">ClientCredentialsTest.java</div>
+  </div>
+  <div class="fn-hdr" id="fh-s19">TokenManager.java</div>
+  <div id="s19-c0" class="cblk active"><span class="cmt">// TokenManager.java
+// Thread-safe singleton managing OAuth2 access + refresh token lifecycle
+// Handles: initial fetch, expiry check, proactive refresh, parallel safety
+// Pattern: lazy initialization + double-checked locking</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import</span> <span class="cls">java.util.Base64</span>;
+
+<span class="kw">public class</span> <span class="cls">TokenManager</span> {
+
+    <span class="cmt">// Singleton instance — one TokenManager for the entire test suite</span>
+    <span class="kw">private static</span> <span class="cls">TokenManager</span> <span class="vr">instance</span>;
+    <span class="kw">private static final</span> Object <span class="vr">INIT_LOCK</span> = <span class="kw">new</span> Object();
+
+    <span class="kw">private volatile</span> <span class="cls">String</span>  <span class="vr">accessToken</span>;
+    <span class="cmt">// volatile = ensures all threads see the latest written value immediately</span>
+    <span class="kw">private volatile</span> <span class="cls">String</span>  <span class="vr">refreshToken</span>;
+    <span class="kw">private volatile</span> <span class="kw">long</span>   <span class="vr">expiryMs</span>;
+    <span class="cmt">// expiryMs = System.currentTimeMillis() + expires_in * 1000</span>
+
+    <span class="kw">private static final long</span> <span class="vr">BUFFER_MS</span> = <span class="num">60_000L</span>;
+    <span class="cmt">// BUFFER_MS = refresh 60 seconds before actual expiry
+    // Prevents edge case: token valid at check but expired during API call</span>
+
+    <span class="cmt">// Auth server configuration</span>
+    <span class="kw">private static final</span> <span class="cls">String</span> <span class="vr">TOKEN_URL</span>    = <span class="str">"https://auth.example.com/oauth/token"</span>;
+    <span class="kw">private static final</span> <span class="cls">String</span> <span class="vr">CLIENT_ID</span>    = System.getenv(<span class="str">"CLIENT_ID"</span>);
+    <span class="kw">private static final</span> <span class="cls">String</span> <span class="vr">CLIENT_SECRET</span>= System.getenv(<span class="str">"CLIENT_SECRET"</span>);
+    <span class="cmt">// System.getenv() = read from environment variable — never hardcode secrets!</span>
+    <span class="kw">private static final</span> <span class="cls">String</span> <span class="vr">USERNAME</span>     = System.getenv(<span class="str">"TEST_USERNAME"</span>);
+    <span class="kw">private static final</span> <span class="cls">String</span> <span class="vr">PASSWORD</span>     = System.getenv(<span class="str">"TEST_PASSWORD"</span>);
+
+    <span class="kw">private</span> <span class="cls">TokenManager</span>() {}
+
+    <span class="kw">public static</span> <span class="cls">TokenManager</span> <span class="fn">getInstance</span>() {
+        <span class="kw">if</span> (<span class="vr">instance</span> == <span class="kw">null</span>) {
+            <span class="kw">synchronized</span> (<span class="vr">INIT_LOCK</span>) {
+                <span class="kw">if</span> (<span class="vr">instance</span> == <span class="kw">null</span>) {
+                    <span class="vr">instance</span> = <span class="kw">new</span> <span class="cls">TokenManager</span>();
+                    <span class="vr">instance</span>.<span class="fn">fetchInitialToken</span>();
+                    <span class="cmt">// Double-checked locking: check null twice around synchronized
+                    // Prevents multiple threads from each creating a new instance</span>
+                }
+            }
+        }
+        <span class="kw">return</span> <span class="vr">instance</span>;
+    }
+
+    <span class="kw">public synchronized</span> <span class="cls">String</span> <span class="fn">getToken</span>() {
+        <span class="cmt">// synchronized = only one thread executes this at a time
+        // Prevents two parallel threads both refreshing simultaneously</span>
+        <span class="kw">if</span> (<span class="fn">isExpiringSoon</span>()) {
+            <span class="fn">refresh</span>();
+        }
+        <span class="kw">return</span> <span class="vr">accessToken</span>;
+    }
+
+    <span class="kw">private boolean</span> <span class="fn">isExpiringSoon</span>() {
+        <span class="kw">return</span> System.currentTimeMillis() + <span class="vr">BUFFER_MS</span> >= <span class="vr">expiryMs</span>;
+        <span class="cmt">// true if current time + 60s buffer reaches or passes expiry</span>
+    }
+
+    <span class="kw">private void</span> <span class="fn">fetchInitialToken</span>() {
+        <span class="cls">String</span> <span class="vr">response</span> = given()
+            .contentType(<span class="str">"application/x-www-form-urlencoded"</span>)
+            .formParam(<span class="str">"grant_type"</span>,    <span class="str">"password"</span>)
+            .formParam(<span class="str">"username"</span>,       <span class="vr">USERNAME</span>)
+            .formParam(<span class="str">"password"</span>,       <span class="vr">PASSWORD</span>)
+            .formParam(<span class="str">"client_id"</span>,     <span class="vr">CLIENT_ID</span>)
+            .formParam(<span class="str">"client_secret"</span>, <span class="vr">CLIENT_SECRET</span>)
+        .when()
+            .post(<span class="vr">TOKEN_URL</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .extract().asString();
+
+        <span class="fn">parseAndStore</span>(<span class="vr">response</span>);
+        System.out.println(<span class="str">"[TokenManager] Initial token fetched"</span>);
+    }
+
+    <span class="kw">private void</span> <span class="fn">refresh</span>() {
+        <span class="cls">String</span> <span class="vr">response</span> = given()
+            .contentType(<span class="str">"application/x-www-form-urlencoded"</span>)
+            .formParam(<span class="str">"grant_type"</span>,    <span class="str">"refresh_token"</span>)
+            <span class="cmt">// grant_type=refresh_token = OAuth2 token refresh flow</span>
+            .formParam(<span class="str">"refresh_token"</span>, <span class="vr">refreshToken</span>)
+            .formParam(<span class="str">"client_id"</span>,     <span class="vr">CLIENT_ID</span>)
+            .formParam(<span class="str">"client_secret"</span>, <span class="vr">CLIENT_SECRET</span>)
+        .when()
+            .post(<span class="vr">TOKEN_URL</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .extract().asString();
+
+        <span class="fn">parseAndStore</span>(<span class="vr">response</span>);
+        System.out.println(<span class="str">"[TokenManager] Token refreshed at: "</span>
+            + System.currentTimeMillis());
+    }
+
+    <span class="kw">private void</span> <span class="fn">parseAndStore</span>(<span class="cls">String</span> <span class="vr">json</span>) {
+        <span class="cls">JsonPath</span> <span class="vr">jp</span>     = JsonPath.from(<span class="vr">json</span>);
+        <span class="vr">accessToken</span>     = <span class="vr">jp</span>.getString(<span class="str">"access_token"</span>);
+        <span class="vr">refreshToken</span>     = <span class="vr">jp</span>.getString(<span class="str">"refresh_token"</span>);
+        <span class="kw">int</span> <span class="vr">expiresIn</span>   = <span class="vr">jp</span>.getInt(<span class="str">"expires_in"</span>);
+        <span class="cmt">// expires_in = seconds until access_token expires (typically 3600)</span>
+        <span class="vr">expiryMs</span> = System.currentTimeMillis() + (<span class="vr">expiresIn</span> * <span class="num">1000L</span>);
+        <span class="cmt">// Convert to milliseconds and add to current time for absolute expiry</span>
+    }
+}</div>
+  <div id="s19-c1" class="cblk"><span class="cmt">// OAuth2LoginTest.java
+// Demonstrates calling an OAuth2 login endpoint to get initial token
+// Shows: password grant, bearer token usage, and token fields extraction</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">OAuth2LoginTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">fetchTokenWithPasswordGrant</span>() {
+
+        <span class="cmt">// OAuth2 Password Grant — authenticate with username + password
+        // application/x-www-form-urlencoded = form-encoded body (not JSON)
+        // OAuth2 token endpoints expect form params, NOT JSON body</span>
+        <span class="cls">Response</span> <span class="vr">res</span> = given()
+            .baseUri(<span class="str">"https://api.example.com"</span>)
+            .contentType(<span class="str">"application/x-www-form-urlencoded"</span>)
+            .formParam(<span class="str">"grant_type"</span>,    <span class="str">"password"</span>)
+            <span class="cmt">// grant_type="password" = Resource Owner Password Credentials grant</span>
+            .formParam(<span class="str">"username"</span>,       <span class="str">"testuser@company.com"</span>)
+            .formParam(<span class="str">"password"</span>,       <span class="str">"securePass123"</span>)
+            .formParam(<span class="str">"client_id"</span>,      <span class="str">"test-client-id"</span>)
+            .formParam(<span class="str">"client_secret"</span>,  <span class="str">"test-client-secret"</span>)
+            .formParam(<span class="str">"scope"</span>,          <span class="str">"read write"</span>)
+            <span class="cmt">// scope = space-separated list of permissions to request</span>
+        .when()
+            .post(<span class="str">"/oauth/token"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"access_token"</span>,  notNullValue())
+            .body(<span class="str">"token_type"</span>,    equalTo(<span class="str">"Bearer"</span>))
+            .body(<span class="str">"expires_in"</span>,   greaterThan(<span class="num">0</span>))
+            .extract().response();
+
+        <span class="cls">JsonPath</span> <span class="vr">jp</span> = <span class="vr">res</span>.jsonPath();
+        <span class="cls">String</span>  <span class="vr">accessToken</span>  = <span class="vr">jp</span>.getString(<span class="str">"access_token"</span>);
+        <span class="cls">String</span>  <span class="vr">refreshToken</span> = <span class="vr">jp</span>.getString(<span class="str">"refresh_token"</span>);
+        <span class="kw">int</span>     <span class="vr">expiresIn</span>    = <span class="vr">jp</span>.getInt(<span class="str">"expires_in"</span>);
+        <span class="cls">String</span>  <span class="vr">tokenType</span>    = <span class="vr">jp</span>.getString(<span class="str">"token_type"</span>);
+        <span class="cmt">// token_type = "Bearer" — used to construct Authorization header</span>
+
+        System.out.println(<span class="str">"Token type  : "</span> + <span class="vr">tokenType</span>);
+        System.out.printf(<span class="str">"Expires in  : %d seconds (%.1f minutes)%n"</span>,
+            <span class="vr">expiresIn</span>, <span class="vr">expiresIn</span> / <span class="num">60.0</span>);
+        System.out.println(<span class="str">"Access token: "</span> + <span class="vr">accessToken</span>.substring(<span class="num">0</span>,<span class="num">20</span>) + <span class="str">"..."</span>);
+
+        <span class="cmt">// Use the token in a subsequent API call</span>
+        given()
+            .baseUri(<span class="str">"https://api.example.com"</span>)
+            .auth().oauth2(<span class="vr">accessToken</span>)
+            <span class="cmt">// auth().oauth2(token) = adds Authorization: Bearer {token} header
+            // REST Assured handles the "Bearer " prefix automatically</span>
+        .when()
+            .get(<span class="str">"/api/users/me"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>);
+
+        Assert.assertNotNull(<span class="vr">accessToken</span>);
+        Assert.assertTrue(<span class="vr">expiresIn</span> > <span class="num">0</span>);
+    }
+}</div>
+  <div id="s19-c2" class="cblk"><span class="cmt">// BaseAuthTest.java
+// Base class with @BeforeSuite (initial fetch) + @BeforeMethod (expiry check)
+// All test classes extend this to get automatic token management</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.*</span>;
+
+<span class="kw">public abstract class</span> <span class="cls">BaseAuthTest</span> {
+
+    <span class="cmt">// Shared across all test classes (volatile for thread visibility)</span>
+    <span class="kw">protected static volatile</span> <span class="cls">String</span>  <span class="vr">accessToken</span>;
+    <span class="kw">protected static volatile</span> <span class="cls">String</span>  <span class="vr">refreshToken</span>;
+    <span class="kw">protected static volatile</span> <span class="kw">long</span>   <span class="vr">tokenExpiryMs</span>;
+    <span class="kw">private  static final</span>    Object <span class="vr">LOCK</span> = <span class="kw">new</span> Object();
+
+    <span class="ann">@BeforeSuite</span>(alwaysRun = <span class="kw">true</span>)
+    <span class="cmt">// @BeforeSuite = runs ONCE before the entire test suite
+    // alwaysRun=true = execute even if other config methods fail</span>
+    <span class="kw">public void</span> <span class="fn">initialAuthentication</span>() {
+        <span class="kw">synchronized</span> (<span class="vr">LOCK</span>) {
+            <span class="fn">doLogin</span>();
+        }
+        System.out.println(<span class="str">"[Suite] Authentication complete"</span>);
+    }
+
+    <span class="ann">@BeforeMethod</span>(alwaysRun = <span class="kw">true</span>)
+    <span class="cmt">// @BeforeMethod = runs before EACH @Test — check token here</span>
+    <span class="kw">public void</span> <span class="fn">ensureTokenValid</span>() {
+        <span class="kw">if</span> (<span class="fn">isTokenExpiringSoon</span>()) {
+            <span class="kw">synchronized</span> (<span class="vr">LOCK</span>) {
+                <span class="cmt">// Double-check inside synchronized block
+                // Another thread may have already refreshed while we waited</span>
+                <span class="kw">if</span> (<span class="fn">isTokenExpiringSoon</span>()) {
+                    System.out.println(<span class="str">"[Token] Refreshing before test..."</span>);
+                    <span class="fn">doRefresh</span>();
+                }
+            }
+        }
+    }
+
+    <span class="kw">private boolean</span> <span class="fn">isTokenExpiringSoon</span>() {
+        <span class="kw">long</span> <span class="vr">now</span> = System.currentTimeMillis();
+        <span class="kw">return</span> <span class="vr">now</span> + <span class="num">60_000L</span> >= <span class="vr">tokenExpiryMs</span>;
+        <span class="cmt">// Refresh if within 60 seconds of expiry</span>
+    }
+
+    <span class="kw">private void</span> <span class="fn">doLogin</span>() {
+        <span class="cls">String</span> <span class="vr">body</span> = given()
+            .baseUri(<span class="str">"https://api.example.com"</span>)
+            .contentType(<span class="str">"application/x-www-form-urlencoded"</span>)
+            .formParam(<span class="str">"grant_type"</span>,    <span class="str">"password"</span>)
+            .formParam(<span class="str">"username"</span>,       System.getenv(<span class="str">"API_USER"</span>))
+            .formParam(<span class="str">"password"</span>,       System.getenv(<span class="str">"API_PASS"</span>))
+            .formParam(<span class="str">"client_id"</span>,      System.getenv(<span class="str">"CLIENT_ID"</span>))
+            .formParam(<span class="str">"client_secret"</span>,  System.getenv(<span class="str">"CLIENT_SECRET"</span>))
+        .when()
+            .post(<span class="str">"/oauth/token"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .extract().asString();
+
+        <span class="fn">parseTokenResponse</span>(<span class="vr">body</span>);
+    }
+
+    <span class="kw">private void</span> <span class="fn">doRefresh</span>() {
+        <span class="cls">String</span> <span class="vr">body</span> = given()
+            .baseUri(<span class="str">"https://api.example.com"</span>)
+            .contentType(<span class="str">"application/x-www-form-urlencoded"</span>)
+            .formParam(<span class="str">"grant_type"</span>,    <span class="str">"refresh_token"</span>)
+            .formParam(<span class="str">"refresh_token"</span>, <span class="vr">refreshToken</span>)
+            .formParam(<span class="str">"client_id"</span>,      System.getenv(<span class="str">"CLIENT_ID"</span>))
+            .formParam(<span class="str">"client_secret"</span>,  System.getenv(<span class="str">"CLIENT_SECRET"</span>))
+        .when()
+            .post(<span class="str">"/oauth/token"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .extract().asString();
+
+        <span class="fn">parseTokenResponse</span>(<span class="vr">body</span>);
+        System.out.println(<span class="str">"[Token] Refreshed successfully"</span>);
+    }
+
+    <span class="kw">private void</span> <span class="fn">parseTokenResponse</span>(<span class="cls">String</span> <span class="vr">json</span>) {
+        <span class="cls">JsonPath</span> <span class="vr">jp</span>  = JsonPath.from(<span class="vr">json</span>);
+        <span class="vr">accessToken</span>  = <span class="vr">jp</span>.getString(<span class="str">"access_token"</span>);
+        <span class="vr">refreshToken</span> = <span class="vr">jp</span>.getString(<span class="str">"refresh_token"</span>);
+        <span class="kw">int</span> <span class="vr">exp</span>      = <span class="vr">jp</span>.getInt(<span class="str">"expires_in"</span>);
+        <span class="vr">tokenExpiryMs</span> = System.currentTimeMillis() + (<span class="vr">exp</span> * <span class="num">1000L</span>);
+    }
+}</div>
+  <div id="s19-c3" class="cblk"><span class="cmt">// JwtExpiryParserTest.java
+// Demonstrates reading JWT exp claim WITHOUT an external JWT library
+// Uses Base64 URL decoding + JsonPath to extract expiry timestamp</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="kw">import</span> <span class="cls">java.util.Base64</span>;
+<span class="cmt">// Base64 = Java built-in class for encoding/decoding</span>
+<span class="kw">import</span> <span class="cls">java.nio.charset.StandardCharsets</span>;
+<span class="kw">import</span> <span class="cls">java.time.Instant</span>;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">JwtExpiryParserTest</span> {
+
+    <span class="cmt">// Example JWT (header.payload.signature)
+    // In real tests: extract this from your login API response</span>
+    <span class="kw">private static final</span> <span class="cls">String</span> <span class="vr">SAMPLE_JWT</span> =
+        <span class="str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"</span>
+        + <span class="str">"."</span>
+        + <span class="str">"eyJzdWIiOiJ1c2VyMSIsImV4cCI6OTk5OTk5OTk5OX0"</span>
+        + <span class="str">"."</span>
+        + <span class="str">"signature"</span>;
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">parseJwtExpiryWithoutLibrary</span>() {
+
+        <span class="cmt">// JWT = 3 Base64URL-encoded parts separated by "."
+        // header.payload.signature
+        // We only need the payload (index 1)</span>
+        <span class="cls">String</span>[] <span class="vr">parts</span> = <span class="vr">SAMPLE_JWT</span>.split(<span class="str">"\\."</span>);
+        <span class="cmt">// split("\\.") = split on literal dot (escaped for regex)</span>
+
+        <span class="cls">String</span> <span class="vr">payloadEncoded</span> = <span class="vr">parts</span>[<span class="num">1</span>];
+        <span class="cmt">// parts[1] = Base64URL-encoded payload section</span>
+
+        <span class="cmt">// Base64.getUrlDecoder() = handles base64url (- and _ instead of + and /)
+        // Regular Base64.getDecoder() fails on JWT — must use URL decoder</span>
+        <span class="kw">byte</span>[] <span class="vr">decodedBytes</span> = Base64.getUrlDecoder().decode(
+            <span class="fn">addPadding</span>(<span class="vr">payloadEncoded</span>)
+        );
+        <span class="cls">String</span> <span class="vr">payload</span> = <span class="kw">new</span> <span class="cls">String</span>(<span class="vr">decodedBytes</span>, StandardCharsets.UTF_8);
+        <span class="cmt">// payload = raw JSON string: {"sub":"user1","exp":9999999999}</span>
+
+        System.out.println(<span class="str">"Decoded payload: "</span> + <span class="vr">payload</span>);
+
+        <span class="cmt">// Use JsonPath to extract the exp claim value</span>
+        <span class="kw">long</span> <span class="vr">expEpochSeconds</span> = JsonPath.from(<span class="vr">payload</span>).getLong(<span class="str">"exp"</span>);
+        <span class="cmt">// exp = Unix timestamp in SECONDS (not milliseconds)</span>
+
+        <span class="kw">long</span> <span class="vr">expiryMs</span> = <span class="vr">expEpochSeconds</span> * <span class="num">1000L</span>;
+        <span class="cmt">// Convert to milliseconds for comparison with System.currentTimeMillis()</span>
+
+        <span class="kw">long</span> <span class="vr">nowMs</span>     = System.currentTimeMillis();
+        <span class="kw">boolean</span> <span class="vr">valid</span>  = <span class="vr">nowMs</span> < <span class="vr">expiryMs</span>;
+        <span class="kw">long</span> <span class="vr">secondsLeft</span> = (<span class="vr">expiryMs</span> - <span class="vr">nowMs</span>) / <span class="num">1000</span>;
+
+        System.out.printf(<span class="str">"exp epoch : %d%n"</span>,    <span class="vr">expEpochSeconds</span>);
+        System.out.printf(<span class="str">"Valid     : %b%n"</span>,    <span class="vr">valid</span>);
+        System.out.printf(<span class="str">"Expires in: %d sec%n"</span>, <span class="vr">secondsLeft</span>);
+        System.out.printf(<span class="str">"Expiry at : %s%n"</span>,
+            Instant.ofEpochMilli(<span class="vr">expiryMs</span>).toString());
+
+        Assert.assertTrue(<span class="vr">valid</span>, <span class="str">"Token must not be expired"</span>);
+    }
+
+    <span class="kw">private</span> <span class="cls">String</span> <span class="fn">addPadding</span>(<span class="cls">String</span> <span class="vr">base64Url</span>) {
+        <span class="cmt">// Base64URL strings may omit trailing "=" padding
+        // Java's decoder requires correct padding — add it back</span>
+        <span class="kw">int</span> <span class="vr">missing</span> = (<span class="num">4</span> - <span class="vr">base64Url</span>.length() % <span class="num">4</span>) % <span class="num">4</span>;
+        <span class="kw">return</span> <span class="vr">base64Url</span> + <span class="str">"="</span>.repeat(<span class="vr">missing</span>);
+        <span class="cmt">// "=".repeat(n) = add n equals signs for proper base64 padding</span>
+    }
+}</div>
+  <div id="s19-c4" class="cblk"><span class="cmt">// RefreshTokenFlowTest.java
+// Demonstrates the full refresh_token grant — use when access token expires
+// No re-authentication needed — exchange refresh token for new access token</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">RefreshTokenFlowTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">refreshExpiredToken</span>() {
+
+        <span class="cmt">// Step 1: Simulate having a stored refresh_token from a previous login</span>
+        <span class="cls">String</span> <span class="vr">storedRefreshToken</span> = System.getenv(<span class="str">"STORED_REFRESH_TOKEN"</span>);
+        <span class="cmt">// In real tests: this comes from your initial login response</span>
+
+        <span class="cmt">// Step 2: Exchange refresh token for a new access token
+        // grant_type=refresh_token = tell auth server to issue new access token
+        // No username/password needed — refresh_token is the credential</span>
+        <span class="cls">Response</span> <span class="vr">res</span> = given()
+            .baseUri(<span class="str">"https://api.example.com"</span>)
+            .contentType(<span class="str">"application/x-www-form-urlencoded"</span>)
+            .formParam(<span class="str">"grant_type"</span>,    <span class="str">"refresh_token"</span>)
+            <span class="cmt">// grant_type=refresh_token = OAuth2 token refresh flow</span>
+            .formParam(<span class="str">"refresh_token"</span>, <span class="vr">storedRefreshToken</span>)
+            <span class="cmt">// refresh_token = the long-lived token from the original login</span>
+            .formParam(<span class="str">"client_id"</span>,      System.getenv(<span class="str">"CLIENT_ID"</span>))
+            .formParam(<span class="str">"client_secret"</span>,  System.getenv(<span class="str">"CLIENT_SECRET"</span>))
+        .when()
+            .post(<span class="str">"/oauth/token"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"access_token"</span>,  notNullValue())
+            .body(<span class="str">"expires_in"</span>,   greaterThan(<span class="num">0</span>))
+            .extract().response();
+
+        <span class="cls">JsonPath</span> <span class="vr">jp</span>        = <span class="vr">res</span>.jsonPath();
+        <span class="cls">String</span> <span class="vr">newAccess</span>   = <span class="vr">jp</span>.getString(<span class="str">"access_token"</span>);
+        <span class="cls">String</span> <span class="vr">newRefresh</span>  = <span class="vr">jp</span>.getString(<span class="str">"refresh_token"</span>);
+        <span class="cmt">// Some auth servers rotate the refresh token too — always update it</span>
+        <span class="kw">int</span>    <span class="vr">expiresIn</span>   = <span class="vr">jp</span>.getInt(<span class="str">"expires_in"</span>);
+
+        System.out.println(<span class="str">"New access token : "</span> + <span class="vr">newAccess</span>.substring(<span class="num">0</span>,<span class="num">20</span>) + <span class="str">"..."</span>);
+        System.out.println(<span class="str">"Expires in       : "</span> + <span class="vr">expiresIn</span> + <span class="str">"s"</span>);
+
+        <span class="cmt">// Step 3: Use the new access token for API calls</span>
+        given()
+            .baseUri(<span class="str">"https://api.example.com"</span>)
+            .auth().oauth2(<span class="vr">newAccess</span>)
+            <span class="cmt">// auth().oauth2(token) = Authorization: Bearer {newAccess}</span>
+        .when()
+            .get(<span class="str">"/api/profile"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>);
+
+        Assert.assertNotNull(<span class="vr">newAccess</span>);
+    }
+}</div>
+  <div id="s19-c5" class="cblk"><span class="cmt">// ClientCredentialsTest.java
+// OAuth2 client_credentials grant — for service-to-service authentication
+// No user involvement: app authenticates with client_id + client_secret
+// Common in microservices: Service A calls Service B's API</span>
+<span class="kw">import</span> <span class="cls">io.restassured.path.json.JsonPath</span>;
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">ClientCredentialsTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">authenticateWithClientCredentials</span>() {
+
+        <span class="cmt">// Client Credentials Grant — no user, no password
+        // client_id + client_secret identify the application itself
+        // auth().preemptive().basic() = sends Basic auth header automatically
+        // Some auth servers prefer Basic auth for client credentials</span>
+        <span class="cls">Response</span> <span class="vr">res</span> = given()
+            .baseUri(<span class="str">"https://auth.example.com"</span>)
+            .contentType(<span class="str">"application/x-www-form-urlencoded"</span>)
+            .auth().preemptive().basic(
+                System.getenv(<span class="str">"CLIENT_ID"</span>),
+                System.getenv(<span class="str">"CLIENT_SECRET"</span>)
+            )
+            <span class="cmt">// preemptive().basic() = sends Authorization: Basic header immediately
+            // without waiting for a 401 challenge from the server</span>
+            .formParam(<span class="str">"grant_type"</span>, <span class="str">"client_credentials"</span>)
+            <span class="cmt">// grant_type=client_credentials = machine-to-machine auth flow</span>
+            .formParam(<span class="str">"scope"</span>,      <span class="str">"api:read api:write"</span>)
+        .when()
+            .post(<span class="str">"/oauth/token"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(<span class="str">"access_token"</span>,  notNullValue())
+            .body(<span class="str">"token_type"</span>,    equalTo(<span class="str">"Bearer"</span>))
+            .body(<span class="str">"expires_in"</span>,   greaterThan(<span class="num">0</span>))
+            .body(<span class="str">"scope"</span>,         notNullValue())
+            .extract().response();
+
+        <span class="cls">JsonPath</span> <span class="vr">jp</span>        = <span class="vr">res</span>.jsonPath();
+        <span class="cls">String</span>  <span class="vr">token</span>      = <span class="vr">jp</span>.getString(<span class="str">"access_token"</span>);
+        <span class="kw">int</span>    <span class="vr">expiresIn</span>  = <span class="vr">jp</span>.getInt(<span class="str">"expires_in"</span>);
+
+        System.out.println(<span class="str">"CC Token expires in: "</span> + <span class="vr">expiresIn</span> + <span class="str">"s"</span>);
+
+        <span class="cmt">// Calculate absolute expiry for refresh scheduling</span>
+        <span class="kw">long</span> <span class="vr">expiryMs</span> = System.currentTimeMillis() + (<span class="vr">expiresIn</span> * <span class="num">1000L</span>);
+        System.out.println(<span class="str">"Expires at (epoch ms): "</span> + <span class="vr">expiryMs</span>);
+
+        <span class="cmt">// Use token to call a protected API endpoint</span>
+        given()
+            .baseUri(<span class="str">"https://api.example.com"</span>)
+            .header(<span class="str">"Authorization"</span>, <span class="str">"Bearer "</span> + <span class="vr">token</span>)
+        .when()
+            .get(<span class="str">"/api/data"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>);
+
+        Assert.assertNotNull(<span class="vr">token</span>);
+        Assert.assertTrue(<span class="vr">expiresIn</span> > <span class="num">0</span>);
+    }
+}</div>
+</div>
+
+<div class="sec">Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Always read credentials from environment variables (<code>System.getenv()</code>) — never hardcode client_id, client_secret, or passwords in test code or version control.</div>
+  <div class="ci"><span class="ck">✔</span> Use a 60-second buffer window — refresh the token before it actually expires. A token valid at check time may expire during the API call's network round-trip.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>synchronized</code> around the refresh block with double-checked locking — prevents N parallel threads each firing a separate refresh request simultaneously.</div>
+  <div class="ci"><span class="ck">✔</span> Update the refresh_token every time you receive a new one — some OAuth2 servers rotate refresh tokens on each use; storing the old one will cause future refresh calls to fail.</div>
+  <div class="ci"><span class="ck">✔</span> Declare <code>accessToken</code> and <code>refreshToken</code> as <code>volatile</code> when shared across threads — ensures all threads immediately see any value written by another thread.</div>
+</div>
+
+<div class="sec">Interview Q&amp;A</div>
+<div class="qa-list">
+  <div class="qi"><div class="qq">Q1: How do you handle OAuth2 token expiry in a long test suite? <span class="qtg">+</span></div><div class="qa-a">Create a TokenManager singleton with fetchInitialToken() called in @BeforeSuite and a getToken() method that checks isExpiringSoon() before every return. Store the token expiry as System.currentTimeMillis() + expires_in*1000. Add a 60-second buffer. Use synchronized to prevent parallel threads from each refreshing simultaneously. Call getToken() in @BeforeMethod or directly in each test's given() block.</div></div>
+  <div class="qi"><div class="qq">Q2: What is the difference between password grant and client_credentials grant? <span class="qtg">+</span></div><div class="qa-a">Password grant (grant_type=password) authenticates a real user — requires username + password alongside client credentials. Returns both access_token and refresh_token. Client credentials grant (grant_type=client_credentials) authenticates the application itself — no user involved, just client_id + client_secret. Returns access_token but typically no refresh_token (re-authenticate to get a new token). Use client_credentials for microservice-to-microservice API testing.</div></div>
+  <div class="qi"><div class="qq">Q3: Why use volatile for shared token fields? <span class="qtg">+</span></div><div class="qa-a">Without volatile, Java's memory model allows each thread to cache a variable's value in its local CPU cache. Thread-1 may update accessToken but Thread-2 still reads the stale cached value. volatile forces all reads/writes to go directly to main memory — guaranteeing all threads see the latest written value immediately. It doesn't make compound operations atomic (for that you need synchronized or AtomicReference), but it ensures visibility for simple assignment and read operations.</div></div>
+  <div class="qi"><div class="qq">Q4: How do you parse the JWT exp claim without adding an external JWT library? <span class="qtg">+</span></div><div class="qa-a">Split the JWT on "\\." to get [header, payload, signature]. Take parts[1] (payload). Add base64url padding if needed (4-length % 4 equals signs). Decode with Base64.getUrlDecoder().decode() — must use URL decoder not standard (JWT uses - and _ not + and /). Convert bytes to String. Use JsonPath.from(payload).getLong("exp") to extract the exp value. Multiply by 1000L to convert Unix seconds to Java milliseconds for comparison with System.currentTimeMillis().</div></div>
+  <div class="qi"><div class="qq">Q5: What is double-checked locking and why is it needed for token refresh? <span class="qtg">+</span></div><div class="qa-a">Double-checked locking = check the condition BEFORE acquiring the lock (fast path — no synchronization overhead for most calls), then check AGAIN INSIDE the synchronized block. Pattern: if(expired){synchronized(lock){if(expired){refresh();}}}. The second check is critical: Thread-1 and Thread-2 both pass the outer check simultaneously, Thread-1 acquires the lock and refreshes, Thread-2 then acquires the lock — without the inner check, Thread-2 would refresh again unnecessarily, causing double network calls to the auth server.</div></div>
+</div>
+
+</div></div>
+
+<!-- ════════════════════ S20 ════════════════════ -->
+<div class="session" id="session-2">
+<div class="sp">
+
+<div class="sec">Overview — What / Why / When / Where / How</div>
+<div class="ovg">
+  <div class="ovc"><div class="ov-ic">📋</div><div class="ov-t">What</div><div class="ov-tx">JSON Schema validation = asserting that a response's JSON structure matches a predefined schema contract — field names, data types, required fields, and value constraints.</div></div>
+  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">Body assertions check individual values. Schema validation checks the complete contract — catching type changes (int → string), missing required fields, and structural regressions.</div></div>
+  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Add schema validation to every critical endpoint after the first passing test. Run in CI to catch API contract breaking changes before they reach production.</div></div>
+  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx">In REST Assured's <code>then()</code> chain: <code>.body(matchesJsonSchemaInClasspath("schema.json"))</code>. Schema files live in <code>src/test/resources/schemas/</code>.</div></div>
+  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Add <code>rest-assured:json-schema-validator</code> dependency. Write JSON Schema file. Use <code>matchesJsonSchemaInClasspath()</code> matcher in the then() assertion chain.</div></div>
+</div>
+
+<div class="sec">Keyword Glossary</div>
+<div class="kw-grid">
+  <div class="kwi"><div class="kw-k">JSON Schema</div><div class="kw-v">A JSON document describing the expected structure of another JSON document — defines types, required fields, formats, and constraints.</div></div>
+  <div class="kwi"><div class="kw-k">$schema</div><div class="kw-v">Top-level JSON Schema field declaring which draft version is used — e.g. <code>"https://json-schema.org/draft/2020-12/schema"</code>.</div></div>
+  <div class="kwi"><div class="kw-k">properties</div><div class="kw-v">JSON Schema keyword: defines the expected fields of an object with their type and constraints.</div></div>
+  <div class="kwi"><div class="kw-k">required</div><div class="kw-v">JSON Schema keyword: array of field names that must be present in the JSON response — validation fails if any are missing.</div></div>
+  <div class="kwi"><div class="kw-k">type</div><div class="kw-v">JSON Schema constraint: valid values are <code>string</code>, <code>integer</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>null</code>.</div></div>
+  <div class="kwi"><div class="kw-k">format</div><div class="kw-v">JSON Schema field: validates string format — <code>email</code>, <code>uri</code>, <code>date-time</code>, <code>uuid</code>. Note: format validation is not enforced by default in all validators.</div></div>
+  <div class="kwi"><div class="kw-k">$ref</div><div class="kw-v">JSON Schema: reference to a reusable schema definition — e.g. <code>{"$ref":"#/$defs/Address"}</code> reuses the Address schema definition.</div></div>
+  <div class="kwi"><div class="kw-k">matchesJsonSchemaInClasspath</div><div class="kw-v">REST Assured static import matcher — validates response body against a JSON Schema file on the classpath.</div></div>
+  <div class="kwi"><div class="kw-k">json-schema-validator</div><div class="kw-v">REST Assured add-on module: <code>io.rest-assured:json-schema-validator</code> — provides schema validation matchers.</div></div>
+  <div class="kwi"><div class="kw-k">additionalProperties</div><div class="kw-v">JSON Schema keyword: <code>false</code> = reject any JSON fields not declared in properties. <code>true</code> = allow any extra fields.</div></div>
+</div>
+
+<div class="sec">JSON Schema Validation Architecture</div>
+<div class="arch-box">
+  <div class="arch-t">How schema validation works in REST Assured</div>
+  <div class="arch"><span class="hl">TEST CODE:</span>
+  given().when().get("/users/1")
+  .then()
+  .<span class="bl">body(matchesJsonSchemaInClasspath("schemas/user-schema.json"))</span>
+                        <span class="or">│</span>
+                        <span class="or">▼</span>
+<span class="hl">json-schema-validator module (Everit / NetworkNT under hood):</span>
+  <span class="pk">1. Load schema file from classpath (src/test/resources/schemas/)</span>
+  <span class="pk">2. Parse response JSON body</span>
+  <span class="pk">3. Validate each property: type ✓, required ✓, format ✓, constraints ✓</span>
+  <span class="pk">4. Collect all violations</span>
+  <span class="pk">5. Throw AssertionError listing every schema violation if any found</span>
+
+<span class="hl">user-schema.json catches these real-world regressions:</span>
+  <span class="rd">✘ "id" changed from integer to string  → type mismatch</span>
+  <span class="rd">✘ "email" field removed from response  → required field missing</span>
+  <span class="rd">✘ "address" changed from object to null → type mismatch</span>
+  <span class="rd">✘ new required field "status" not present → required violation</span>
+  <span class="hl">✔ All caught AUTOMATICALLY without writing individual body() assertions</span></div>
+</div>
+<div class="arch-box">
+  <div class="arch-t">JSON Schema structure — flat, nested, and array schemas</div>
+  <div class="arch"><span class="hl">FLAT OBJECT schema (user-schema.json):</span>
+<span class="bl">{</span>
+<span class="bl">  "$schema": "http://json-schema.org/draft-07/schema#",</span>  <span class="cm">← schema version</span>
+<span class="bl">  "type": "object",</span>                                       <span class="cm">← root must be object</span>
+<span class="bl">  "required": ["id", "name", "email"],</span>                    <span class="cm">← mandatory fields</span>
+<span class="bl">  "properties": {</span>
+<span class="bl">    "id":    { "type": "integer", "minimum": 1 },</span>         <span class="cm">← integer ≥ 1</span>
+<span class="bl">    "name":  { "type": "string",  "minLength": 1 },</span>       <span class="cm">← non-empty string</span>
+<span class="bl">    "email": { "type": "string",  "format": "email" }</span>     <span class="cm">← email format</span>
+<span class="bl">  },</span>
+<span class="bl">  "additionalProperties": false</span>                           <span class="cm">← no extra fields</span>
+<span class="bl">}</span>
+
+<span class="hl">ARRAY SCHEMA (users-list-schema.json):</span>
+<span class="bl">{</span>
+<span class="bl">  "type": "array",</span>                                        <span class="cm">← root is array</span>
+<span class="bl">  "items": { "$ref": "#/$defs/User" },</span>                    <span class="cm">← each element is User</span>
+<span class="bl">  "minItems": 1,</span>                                          <span class="cm">← at least one user</span>
+<span class="bl">  "$defs": { "User": { ... user schema ... } }</span>            <span class="cm">← reusable definition</span>
+<span class="bl">}</span></div>
+</div>
+
+<div class="sec">Interview One-Liners</div>
+<div class="ol-list">
+  <div class="ol"><b>JSON Schema validation</b> validates the complete response contract — field names, data types, required fields, and value constraints — in one assertion, replacing dozens of individual body() checks.</div>
+  <div class="ol"><b>matchesJsonSchemaInClasspath("schema.json")</b> = REST Assured matcher that loads a schema file from <code>src/test/resources</code> and validates the full response JSON against it.</div>
+  <div class="ol"><b>"required":["id","email"]</b> = the most critical JSON Schema keyword — it explicitly fails the test if any listed field is absent from the response, catching API regressions immediately.</div>
+  <div class="ol"><b>additionalProperties: false</b> = rejects any JSON response fields not declared in the schema — enforces that the API contract is exact and doesn't silently add undocumented fields.</div>
+  <div class="ol"><b>$ref and $defs</b> = JSON Schema's composition mechanism — define a reusable sub-schema once in <code>$defs</code> and reference it multiple times across the schema file to avoid repetition.</div>
+  <div class="ol"><b>Schema-first API contract testing</b> = generate schemas from OpenAPI/Swagger spec → use in tests — any API breaking change immediately fails the schema assertion before it reaches consumers.</div>
+</div>
+
+<div class="sec">Code Examples — JSON Schema Validation</div>
+<div class="code-area">
+  <div class="ctbar" id="ct-s20">
+    <div class="ct active" data-ci="0" data-cs="s20">user-schema.json</div>
+    <div class="ct" data-ci="1" data-cs="s20">users-list-schema.json</div>
+    <div class="ct" data-ci="2" data-cs="s20">SchemaValidationTest.java</div>
+    <div class="ct" data-ci="3" data-cs="s20">NestedSchemaTest.java</div>
+    <div class="ct" data-ci="4" data-cs="s20">SchemaFromStringTest.java</div>
+    <div class="ct" data-ci="5" data-cs="s20">OpenApiSchemaTest.java</div>
+  </div>
+  <div class="fn-hdr" id="fh-s20">user-schema.json (src/test/resources/schemas/)</div>
+  <div id="s20-c0" class="cblk active"><span class="cmt">// user-schema.json
+// JSON Schema for a single User API response
+// Draft-07 is the most widely supported draft by Java validators
+// Place in: src/test/resources/schemas/user-schema.json</span>
+{
+  <span class="str">"$schema"</span>: <span class="str">"http://json-schema.org/draft-07/schema#"</span>,
+  <span class="cmt">// $schema = declares which JSON Schema version this file uses</span>
+
+  <span class="str">"title"</span>: <span class="str">"User API Response Schema"</span>,
+  <span class="str">"description"</span>: <span class="str">"Validates the structure of GET /users/{id} response"</span>,
+
+  <span class="str">"type"</span>: <span class="str">"object"</span>,
+  <span class="cmt">// type=object = root response must be a JSON object {}</span>
+
+  <span class="str">"required"</span>: [<span class="str">"id"</span>, <span class="str">"name"</span>, <span class="str">"username"</span>, <span class="str">"email"</span>, <span class="str">"address"</span>],
+  <span class="cmt">// required = these fields MUST exist in the response
+  // Test FAILS if any required field is missing from the JSON</span>
+
+  <span class="str">"properties"</span>: {
+
+    <span class="str">"id"</span>: {
+      <span class="str">"type"</span>: <span class="str">"integer"</span>,
+      <span class="cmt">// type=integer = field must be a whole number, not string</span>
+      <span class="str">"minimum"</span>: <span class="num">1</span>
+      <span class="cmt">// minimum=1 = value must be at least 1 (no zero or negative IDs)</span>
+    },
+
+    <span class="str">"name"</span>: {
+      <span class="str">"type"</span>: <span class="str">"string"</span>,
+      <span class="str">"minLength"</span>: <span class="num">1</span>
+      <span class="cmt">// minLength=1 = name must not be an empty string ""</span>
+    },
+
+    <span class="str">"username"</span>: {
+      <span class="str">"type"</span>: <span class="str">"string"</span>,
+      <span class="str">"minLength"</span>: <span class="num">1</span>
+    },
+
+    <span class="str">"email"</span>: {
+      <span class="str">"type"</span>: <span class="str">"string"</span>,
+      <span class="str">"format"</span>: <span class="str">"email"</span>
+      <span class="cmt">// format=email = string must be a valid email address pattern
+      // Note: format validation requires enablement in some validators</span>
+    },
+
+    <span class="str">"phone"</span>: {
+      <span class="str">"type"</span>: <span class="str">"string"</span>
+      <span class="cmt">// phone is NOT in required[] — optional field</span>
+    },
+
+    <span class="str">"website"</span>: {
+      <span class="str">"type"</span>: <span class="str">"string"</span>
+    },
+
+    <span class="str">"address"</span>: {
+      <span class="str">"type"</span>: <span class="str">"object"</span>,
+      <span class="cmt">// address must be an object, not null or string</span>
+      <span class="str">"required"</span>: [<span class="str">"city"</span>, <span class="str">"street"</span>],
+      <span class="cmt">// Nested required — city and street must be in the address object</span>
+      <span class="str">"properties"</span>: {
+        <span class="str">"street"</span>:  { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"suite"</span>:   { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"city"</span>:    { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"zipcode"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"geo"</span>: {
+          <span class="str">"type"</span>: <span class="str">"object"</span>,
+          <span class="cmt">// geo nested inside address — 3 levels deep schema</span>
+          <span class="str">"required"</span>: [<span class="str">"lat"</span>, <span class="str">"lng"</span>],
+          <span class="str">"properties"</span>: {
+            <span class="str">"lat"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span> },
+            <span class="str">"lng"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span> }
+          }
+        }
+      }
+    },
+
+    <span class="str">"company"</span>: {
+      <span class="str">"type"</span>: <span class="str">"object"</span>,
+      <span class="str">"properties"</span>: {
+        <span class="str">"name"</span>:        { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"catchPhrase"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"bs"</span>:          { <span class="str">"type"</span>: <span class="str">"string"</span> }
+      }
+    }
+  }
+  <span class="cmt">// additionalProperties not set = defaults to true (extra fields allowed)
+  // To reject extra fields: "additionalProperties": false</span>
+}</div>
+  <div id="s20-c1" class="cblk"><span class="cmt">// users-list-schema.json
+// JSON Schema for GET /users — returns an ARRAY of user objects
+// Uses $ref + $defs for DRY (Don't Repeat Yourself) schema composition
+// Place in: src/test/resources/schemas/users-list-schema.json</span>
+{
+  <span class="str">"$schema"</span>: <span class="str">"http://json-schema.org/draft-07/schema#"</span>,
+  <span class="str">"title"</span>: <span class="str">"Users List Response Schema"</span>,
+
+  <span class="str">"type"</span>: <span class="str">"array"</span>,
+  <span class="cmt">// type=array = root JSON must be an array [], not an object {}</span>
+
+  <span class="str">"minItems"</span>: <span class="num">1</span>,
+  <span class="cmt">// minItems=1 = array must have at least 1 element (not empty)</span>
+
+  <span class="str">"items"</span>: {
+    <span class="str">"$ref"</span>: <span class="str">"#/$defs/User"</span>
+    <span class="cmt">// items = schema applied to EACH element of the array
+    // $ref = JSON Schema reference — points to User definition below
+    // #/$defs/User = local reference: look in $defs section for "User"</span>
+  },
+
+  <span class="str">"$defs"</span>: {
+    <span class="cmt">// $defs = reusable schema definitions (JSON Schema Draft 2019-09+)
+    // In Draft-07: use "definitions" instead of "$defs"</span>
+
+    <span class="str">"User"</span>: {
+      <span class="str">"type"</span>: <span class="str">"object"</span>,
+      <span class="str">"required"</span>: [<span class="str">"id"</span>, <span class="str">"name"</span>, <span class="str">"email"</span>, <span class="str">"address"</span>],
+      <span class="str">"properties"</span>: {
+        <span class="str">"id"</span>:       { <span class="str">"type"</span>: <span class="str">"integer"</span>, <span class="str">"minimum"</span>: <span class="num">1</span> },
+        <span class="str">"name"</span>:     { <span class="str">"type"</span>: <span class="str">"string"</span>,  <span class="str">"minLength"</span>: <span class="num">1</span> },
+        <span class="str">"username"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span>,  <span class="str">"minLength"</span>: <span class="num">1</span> },
+        <span class="str">"email"</span>:    { <span class="str">"type"</span>: <span class="str">"string"</span>,  <span class="str">"format"</span>: <span class="str">"email"</span> },
+        <span class="str">"phone"</span>:    { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"website"</span>:  { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"address"</span>:  { <span class="str">"$ref"</span>: <span class="str">"#/$defs/Address"</span> },
+        <span class="cmt">// Reference the Address definition — reused across schemas</span>
+        <span class="str">"company"</span>:  { <span class="str">"$ref"</span>: <span class="str">"#/$defs/Company"</span> }
+      }
+    },
+
+    <span class="str">"Address"</span>: {
+      <span class="str">"type"</span>: <span class="str">"object"</span>,
+      <span class="str">"required"</span>: [<span class="str">"street"</span>, <span class="str">"city"</span>],
+      <span class="str">"properties"</span>: {
+        <span class="str">"street"</span>:  { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"suite"</span>:   { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"city"</span>:    { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"zipcode"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"geo"</span>: {
+          <span class="str">"type"</span>: <span class="str">"object"</span>,
+          <span class="str">"required"</span>: [<span class="str">"lat"</span>, <span class="str">"lng"</span>],
+          <span class="str">"properties"</span>: {
+            <span class="str">"lat"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span> },
+            <span class="str">"lng"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span> }
+          }
+        }
+      }
+    },
+
+    <span class="str">"Company"</span>: {
+      <span class="str">"type"</span>: <span class="str">"object"</span>,
+      <span class="str">"properties"</span>: {
+        <span class="str">"name"</span>:        { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"catchPhrase"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span> },
+        <span class="str">"bs"</span>:          { <span class="str">"type"</span>: <span class="str">"string"</span> }
+      }
+    }
+  }
+}</div>
+  <div id="s20-c2" class="cblk"><span class="cmt">// SchemaValidationTest.java
+// Demonstrates matchesJsonSchemaInClasspath() — the primary REST Assured
+// JSON schema validation method
+// Requires: io.rest-assured:json-schema-validator in pom.xml</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">io.restassured.module.jsv.JsonSchemaValidator</span>.matchesJsonSchemaInClasspath;
+<span class="cmt">// matchesJsonSchemaInClasspath = static import from json-schema-validator module
+// This is the KEY import for REST Assured schema validation</span>
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.BeforeClass</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">SchemaValidationTest</span> {
+
+    <span class="ann">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">setup</span>() {
+        <span class="cmt">// RestAssured.baseURI fine in @BeforeClass — runs in main thread
+        // Only problematic if tests run in parallel AND @BeforeClass is called
+        // per-thread — which doesn't happen with parallel="methods"</span>
+        io.restassured.RestAssured.baseURI = <span class="str">"https://jsonplaceholder.typicode.com"</span>;
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">validateSingleUserSchema</span>() {
+
+        <span class="cmt">// matchesJsonSchemaInClasspath("schemas/user-schema.json")
+        // = loads schema from src/test/resources/schemas/user-schema.json
+        // = validates ENTIRE response body against that schema in one call</span>
+        given()
+        .when()
+            .get(<span class="str">"/users/1"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(matchesJsonSchemaInClasspath(<span class="str">"schemas/user-schema.json"</span>));
+            <span class="cmt">// If any schema violation found: test FAILS with a detailed message
+            // listing EVERY violation — field name, expected type, actual type</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">combineSchemaAndValueAssertions</span>() {
+
+        <span class="cmt">// Schema validation + regular body assertions together in one test
+        // Schema validates structure; body() validates specific values</span>
+        given()
+        .when()
+            .get(<span class="str">"/users/1"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .contentType(containsString(<span class="str">"application/json"</span>))
+            .body(matchesJsonSchemaInClasspath(<span class="str">"schemas/user-schema.json"</span>))
+            <span class="cmt">// Schema check first — catch structural issues</span>
+            .body(<span class="str">"id"</span>,   equalTo(<span class="num">1</span>))
+            .body(<span class="str">"name"</span>, equalTo(<span class="str">"Leanne Graham"</span>))
+            <span class="cmt">// Value checks after — confirm specific content</span>
+            .body(<span class="str">"address.city"</span>, notNullValue())
+            .time(lessThan(<span class="num">3000L</span>));
+            <span class="cmt">// time() = performance assertion — response under 3s</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">validateUsersListSchema</span>() {
+
+        given()
+        .when()
+            .get(<span class="str">"/users"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(matchesJsonSchemaInClasspath(<span class="str">"schemas/users-list-schema.json"</span>));
+            <span class="cmt">// users-list-schema.json validates: root is array, each element is User
+            // One assertion validates all 10 users' structure simultaneously</span>
+    }
+}</div>
+  <div id="s20-c3" class="cblk"><span class="cmt">// NestedSchemaTest.java
+// Shows schema validation for complex nested responses + additional pom.xml dep
+// Also demonstrates SchemaValidatorSettings for customizing behavior</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">io.restassured.module.jsv.JsonSchemaValidator</span>.*;
+<span class="kw">import</span> <span class="cls">io.restassured.module.jsv.JsonSchemaValidatorSettings</span>;
+<span class="cmt">// JsonSchemaValidatorSettings = configure schema validation behavior globally</span>
+<span class="kw">import</span> <span class="cls">com.github.fge.jsonschema.main.JsonSchemaFactory</span>;
+<span class="cmt">// JsonSchemaFactory = factory for the underlying Everit schema validator</span>
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.*</span>;
+
+<span class="kw">public class</span> <span class="cls">NestedSchemaTest</span> {
+
+    <span class="ann">@BeforeClass</span>
+    <span class="kw">public void</span> <span class="fn">configureSchemaValidation</span>() {
+
+        <span class="cmt">// Configure global schema validation settings — applies to all tests
+        // useDefaultDialect() = use the schema validator's default settings</span>
+        JsonSchemaValidator.settings = JsonSchemaValidatorSettings
+            .settings()
+            .with()
+            .jsonSchemaFactory(JsonSchemaFactory.byDefault())
+            .and()
+            .with()
+            .checkedValidation(<span class="kw">false</span>);
+            <span class="cmt">// checkedValidation(false) = unchecked (lenient) validation
+            // Useful when your schema has format keywords that are advisory only</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">validatePostCreationSchema</span>() {
+
+        <span class="cmt">// post-schema.json for POST /posts response validation</span>
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .contentType(<span class="str">"application/json"</span>)
+            .body(<span class="str">"{ \"title\":\"Chitti Post\", \"userId\":1, \"body\":\"test\" }"</span>)
+        .when()
+            .post(<span class="str">"/posts"</span>)
+        .then()
+            .statusCode(<span class="num">201</span>)
+            .body(matchesJsonSchemaInClasspath(<span class="str">"schemas/post-schema.json"</span>));
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">validateSchemaWithCustomConstraints</span>() {
+
+        <span class="cmt">// This demonstrates validating a response against a stricter schema
+        // strict-user-schema.json has additionalProperties: false</span>
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .when()
+            .get(<span class="str">"/users/1"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(matchesJsonSchemaInClasspath(<span class="str">"schemas/strict-user-schema.json"</span>));
+    }
+}
+
+<span class="cmt">/* pom.xml — dependencies needed for schema validation:
+
+&lt;dependency&gt;
+  &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+  &lt;artifactId&gt;json-schema-validator&lt;/artifactId&gt;
+  &lt;!-- SAME version as rest-assured --&gt;
+  &lt;version&gt;5.3.2&lt;/version&gt;
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+
+The json-schema-validator module bundles:
+  - io.rest-assured:json-schema-validator
+  - com.github.java-json-tools:json-schema-validator (Everit/FGE)
+  - com.github.java-json-tools:json-schema-core
+No additional dependencies needed!
+*/</span></div>
+  <div id="s20-c4" class="cblk"><span class="cmt">// SchemaFromStringTest.java
+// Demonstrates creating schema validation from a String or File object
+// Useful when schema is generated dynamically or loaded from external source</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">io.restassured.module.jsv.JsonSchemaValidator</span>.*;
+<span class="kw">import</span> <span class="cls">java.io.File</span>;
+<span class="kw">import</span> <span class="cls">java.io.InputStream</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">SchemaFromStringTest</span> {
+
+    <span class="cmt">// Inline schema as Java String — useful for simple/dynamic schemas</span>
+    <span class="kw">private static final</span> <span class="cls">String</span> <span class="vr">POST_SCHEMA</span> = <span class="str">"""
+        {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "required": ["id", "title", "body", "userId"],
+          "properties": {
+            "id":     { "type": "integer", "minimum": 1 },
+            "title":  { "type": "string",  "minLength": 1 },
+            "body":   { "type": "string" },
+            "userId": { "type": "integer", "minimum": 1 }
+          }
+        }
+        """</span>;
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">validateWithInlineStringSchema</span>() {
+
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .when()
+            .get(<span class="str">"/posts/1"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(matchesJsonSchema(<span class="vr">POST_SCHEMA</span>));
+            <span class="cmt">// matchesJsonSchema(String) = validate against schema given as a String
+            // Different from matchesJsonSchemaInClasspath which reads a file</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">validateWithFileSchema</span>() {
+
+        <span class="cmt">// matchesJsonSchema(File) = validate against schema given as java.io.File
+        // Use when schema is outside the classpath or generated at runtime</span>
+        File <span class="vr">schemaFile</span> = <span class="kw">new</span> File(<span class="str">"src/test/resources/schemas/user-schema.json"</span>);
+
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .when()
+            .get(<span class="str">"/users/1"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(matchesJsonSchema(<span class="vr">schemaFile</span>));
+            <span class="cmt">// matchesJsonSchema(File) — reads schema from File object</span>
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">validateWithInputStreamSchema</span>() {
+
+        <span class="cmt">// matchesJsonSchema(InputStream) — load schema from any stream source
+        // Useful for: remote schema fetch, classpath with custom loader, etc.</span>
+        InputStream <span class="vr">schemaStream</span> = getClass()
+            .getClassLoader()
+            .getResourceAsStream(<span class="str">"schemas/user-schema.json"</span>);
+        <span class="cmt">// getResourceAsStream = load file from classpath as InputStream</span>
+
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+        .when()
+            .get(<span class="str">"/users/1"</span>)
+        .then()
+            .statusCode(<span class="num">200</span>)
+            .body(matchesJsonSchema(<span class="vr">schemaStream</span>));
+            <span class="cmt">// matchesJsonSchema(InputStream) — stream-based schema loading</span>
+    }
+}</div>
+  <div id="s20-c5" class="cblk"><span class="cmt">// OpenApiSchemaTest.java
+// Demonstrates extracting schemas from OpenAPI/Swagger spec for contract testing
+// When you have an OpenAPI spec, generate schemas from it — source of truth
+// Also shows how to assert response against a known-good recorded response</span>
+<span class="kw">import static</span> <span class="cls">io.restassured.RestAssured</span>.given;
+<span class="kw">import static</span> <span class="cls">io.restassured.module.jsv.JsonSchemaValidator</span>.matchesJsonSchemaInClasspath;
+<span class="kw">import static</span> <span class="cls">org.hamcrest.Matchers</span>.*;
+<span class="kw">import</span> <span class="cls">io.restassured.response.Response</span>;
+<span class="kw">import</span> <span class="cls">org.testng.Assert</span>;
+<span class="kw">import</span> <span class="cls">org.testng.annotations.Test</span>;
+
+<span class="kw">public class</span> <span class="cls">OpenApiSchemaTest</span> {
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">fullContractTest</span>() {
+
+        <span class="cmt">// FULL CONTRACT TEST: validate schema AND specific values AND performance
+        // This is the industry-grade test pattern for API contract verification</span>
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .log().ifValidationFails()
+            <span class="cmt">// log().ifValidationFails() = only log on failure (clean CI output)</span>
+        .when()
+            .get(<span class="str">"/users/1"</span>)
+        .then()
+            <span class="cmt">// 1. HTTP contract</span>
+            .statusCode(<span class="num">200</span>)
+            .contentType(containsString(<span class="str">"application/json"</span>))
+
+            <span class="cmt">// 2. JSON Schema structural contract
+            //    Catches: missing fields, type changes, structural regressions</span>
+            .body(matchesJsonSchemaInClasspath(<span class="str">"schemas/user-schema.json"</span>))
+
+            <span class="cmt">// 3. Specific value assertions (business logic)
+            //    Catches: wrong data returned for the given ID</span>
+            .body(<span class="str">"id"</span>,            equalTo(<span class="num">1</span>))
+            .body(<span class="str">"name"</span>,          notNullValue())
+            .body(<span class="str">"email"</span>,         containsString(<span class="str">"@"</span>))
+            .body(<span class="str">"address.city"</span>,  notNullValue())
+
+            <span class="cmt">// 4. Performance SLA assertion
+            //    Catches: response time regression introduced by code changes</span>
+            .time(lessThan(<span class="num">3000L</span>));
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">schemaValidatePostEndpoint</span>() {
+
+        <span class="cmt">// Schema-driven POST contract test
+        // Step 1: Create resource
+        // Step 2: Validate response matches schema
+        // Step 3: Validate returned data matches sent data</span>
+        given()
+            .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .contentType(<span class="str">"application/json"</span>)
+            .body(<span class="str">"{ \"title\":\"Schema Test\", \"body\":\"content\", \"userId\":1 }"</span>)
+        .when()
+            .post(<span class="str">"/posts"</span>)
+        .then()
+            .statusCode(<span class="num">201</span>)
+            .body(matchesJsonSchemaInClasspath(<span class="str">"schemas/post-schema.json"</span>))
+            .body(<span class="str">"title"</span>,  equalTo(<span class="str">"Schema Test"</span>))
+            .body(<span class="str">"userId"</span>, equalTo(<span class="num">1</span>))
+            .body(<span class="str">"id"</span>,     notNullValue());
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">public void</span> <span class="fn">smokeSchemaAllEndpoints</span>() {
+
+        <span class="cmt">// Smoke test: validate schema for every critical endpoint
+        // Catches structural regressions across the entire API surface</span>
+        <span class="cls">String</span>[][] <span class="vr">endpoints</span> = {
+            { <span class="str">"/users/1"</span>,  <span class="str">"schemas/user-schema.json"</span>  },
+            { <span class="str">"/posts/1"</span>,  <span class="str">"schemas/post-schema.json"</span>  },
+        };
+
+        <span class="kw">for</span> (<span class="cls">String</span>[] <span class="vr">ep</span> : <span class="vr">endpoints</span>) {
+            given()
+                .baseUri(<span class="str">"https://jsonplaceholder.typicode.com"</span>)
+            .when()
+                .get(<span class="vr">ep</span>[<span class="num">0</span>])
+            .then()
+                .statusCode(<span class="num">200</span>)
+                .body(matchesJsonSchemaInClasspath(<span class="vr">ep</span>[<span class="num">1</span>]));
+
+            System.out.println(<span class="str">"Schema ✓ "</span> + <span class="vr">ep</span>[<span class="num">0</span>] + <span class="str">" vs "</span> + <span class="vr">ep</span>[<span class="num">1</span>]);
+        }
+    }
+}</div>
+</div>
+
+<div class="sec">Best Practices</div>
+<div class="cl">
+  <div class="ci"><span class="ck">✔</span> Always specify <code>"required"</code> explicitly in your schema — a schema without required fields only validates types but silently passes when fields go missing entirely.</div>
+  <div class="ci"><span class="ck">✔</span> Store schema files in <code>src/test/resources/schemas/</code> — one file per endpoint type. Name them after the resource: <code>user-schema.json</code>, <code>post-schema.json</code>, <code>order-schema.json</code>.</div>
+  <div class="ci"><span class="ck">✔</span> Use <code>$ref</code> and <code>$defs</code> to reuse sub-schemas — if Address appears in User and Order schemas, define it once and reference it to keep schemas DRY and consistent.</div>
+  <div class="ci"><span class="ck">✔</span> Run schema validation in CI — commit schemas to version control and treat schema violations the same as test failures. Schema diffs on PR review catch API breaking changes before merge.</div>
+  <div class="ci"><span class="ck">✔</span> Combine schema validation with value assertions in the same test — schema validates structure, body() validates content. Together they provide complete API contract coverage.</div>
+</div>
+
+<div class="sec">Interview Q&amp;A</div>
+<div class="qa-list">
+  <div class="qi"><div class="qq">Q1: What does JSON Schema validation catch that regular body() assertions don't? <span class="qtg">+</span></div><div class="qa-a">body() assertions check specific individual values. JSON Schema validation catches: (1) field type changes — id changed from integer to string, (2) required fields going missing — email removed from response, (3) structural changes — address changed from object to null, (4) value constraints — negative id, empty name string. One schema assertion replaces 20+ body() assertions while also catching structural regressions that no body() assertion would notice.</div></div>
+  <div class="qi"><div class="qq">Q2: What is the required pom.xml dependency for REST Assured schema validation? <span class="qtg">+</span></div><div class="qa-a">Add io.rest-assured:json-schema-validator (same version as rest-assured, e.g. 5.3.2) with scope=test. This module bundles the Everit/FGE JSON schema validator and provides the matchesJsonSchemaInClasspath() matcher. The static import is: import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;</div></div>
+  <div class="qi"><div class="qq">Q3: What is the difference between matchesJsonSchemaInClasspath and matchesJsonSchema? <span class="qtg">+</span></div><div class="qa-a">matchesJsonSchemaInClasspath("path") loads the schema file from the Java classpath — the file must be in src/test/resources. matchesJsonSchema(String) takes a schema as a Java String — useful for inline, dynamically generated, or environment-specific schemas. matchesJsonSchema(File) and matchesJsonSchema(InputStream) load from a file object or input stream respectively. All produce identical validation behavior; the difference is only the schema source.</div></div>
+  <div class="qi"><div class="qq">Q4: What does additionalProperties: false do in a JSON Schema? <span class="qtg">+</span></div><div class="qa-a">additionalProperties:false rejects any field in the JSON response that is NOT declared in the schema's properties section. This enforces an exact API contract — any field the API adds that isn't in your schema causes the test to fail. Without it (default: true), the schema is lenient about extra fields. Use false in strict contract testing where you want to detect any undocumented additions. Use true (or omit) when you only care about required fields and want to allow the API to add new fields freely.</div></div>
+  <div class="qi"><div class="qq">Q5: How do you generate JSON Schemas from an OpenAPI/Swagger specification? <span class="qtg">+</span></div><div class="qa-a">Tools: (1) openapi-generator-cli generates JSON schemas from OpenAPI component schemas. (2) Swagger UI and Swagger Parser can extract component schemas. (3) Manually copy the schema object from the OpenAPI spec — each component's "schema" section IS a JSON Schema. (4) Use json-schema-generator Maven plugin to generate schemas from POJO classes. Best practice: treat the OpenAPI spec as the single source of truth; generate both API implementation and test schemas from it to guarantee they stay in sync.</div></div>
+</div>
+
+</div></div>
+
+</div>
+<div class="pbar">
+  <div class="nvb">
+    <button class="nb" id="prevBtn">← Prev</button>
+    <button class="nb" id="nextBtn">Next →</button>
+  </div>
+  <div class="pw"><div class="pf" id="pf" style="width:33%"></div></div>
+  <div class="pt" id="pt">S18 / 3 — Parallel Test Execution</div>
+</div>
+</div>
+
+<script>
+(function(){
+  var cur=0;
+  var labels=[
+    'S18 / 3 — Parallel Test Execution',
+    'S19 / 3 — OAuth2 Token Refresh',
+    'S20 / 3 — JSON Schema Validation'
+  ];
+  var fileNames={
+    s18:['testng-parallel.xml','BaseParallelTest.java','ThreadLocalTokenTest.java','DataProviderParallelTest.java','ParallelClassesTest.java','AtomicTokenManagerTest.java'],
+    s19:['TokenManager.java','OAuth2LoginTest.java','BaseAuthTest.java','JwtExpiryParserTest.java','RefreshTokenFlowTest.java','ClientCredentialsTest.java'],
+    s20:['user-schema.json','users-list-schema.json','SchemaValidationTest.java','NestedSchemaTest.java','SchemaFromStringTest.java','OpenApiSchemaTest.java']
+  };
+
+  document.getElementById('stabRow').addEventListener('click',function(e){
+    var t=e.target.closest('.stab');
+    if(!t)return;
+    var si=parseInt(t.getAttribute('data-si'));
+    if(!isNaN(si))goS(si);
+  });
+  document.getElementById('prevBtn').addEventListener('click',function(){if(cur>0)goS(cur-1);});
+  document.getElementById('nextBtn').addEventListener('click',function(){if(cur<2)goS(cur+1);});
+
+  function goS(n){
+    cur=n;
+    document.querySelectorAll('.session').forEach(function(el,i){el.classList.toggle('active',i===n);});
+    document.querySelectorAll('#stabRow .stab').forEach(function(el,i){
+      el.classList.toggle('active',i===n);
+      if(i<n) el.classList.add('done'); else el.classList.remove('done');
+    });
+    document.getElementById('pf').style.width=(Math.round(((n+1)/3)*100))+'%';
+    document.getElementById('pt').textContent=labels[n];
+  }
+
+  document.querySelectorAll('.ctbar').forEach(function(bar){
+    bar.addEventListener('click',function(e){
+      var t=e.target.closest('.ct');
+      if(!t)return;
+      var ci=parseInt(t.getAttribute('data-ci'));
+      var cs=t.getAttribute('data-cs');
+      if(isNaN(ci)||!cs)return;
+      bar.querySelectorAll('.ct').forEach(function(c){c.classList.remove('active');});
+      t.classList.add('active');
+      var sess=bar.closest('.session');
+      sess.querySelectorAll('.cblk').forEach(function(b){b.classList.remove('active');});
+      var tgt=document.getElementById(cs+'-c'+ci);
+      if(tgt) tgt.classList.add('active');
+      var fh=document.getElementById('fh-'+cs);
+      if(fh&&fileNames[cs]&&fileNames[cs][ci]) fh.textContent=fileNames[cs][ci];
+    });
+  });
+
+  document.querySelectorAll('.qq').forEach(function(qq){
+    qq.addEventListener('click',function(){
+      qq.classList.toggle('open');
+      var a=qq.nextElementSibling;
+      if(a) a.classList.toggle('open');
+    });
+  });
+})();
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

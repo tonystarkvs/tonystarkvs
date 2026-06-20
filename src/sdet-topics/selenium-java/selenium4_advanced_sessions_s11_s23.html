@@ -1,0 +1,1798 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selenium 4 Advanced Concepts: Sessions 11 to 23</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+
+<style>
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --font-sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Cascadia Code','Fira Code','Consolas',monospace;
+  --color-text-primary:#1a1a2e;
+  --color-text-secondary:#555770;
+  --color-text-tertiary:#8e90a6;
+  --color-text-info:#3B82F6;
+  --color-text-warning:#D97706;
+  --color-text-success:#059669;
+  --color-text-danger:#DC2626;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f4f8;
+  --color-background-info:#EFF6FF;
+  --color-background-warning:#FFFBEB;
+  --color-background-success:#ECFDF5;
+  --color-background-danger:#FEF2F2;
+  --color-border-primary:#534AB7;
+  --color-border-secondary:#d1d1db;
+  --color-border-tertiary:#e4e4eb;
+  --color-border-info:#93C5FD;
+  --color-border-success:#6EE7B7;
+  --color-border-danger:#FCA5A5;
+  --border-radius-md:8px;
+  --border-radius-lg:12px
+}
+
+.wrap{padding:1rem 0}
+.tabs{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:1.5rem}
+.tab-btn{padding:5px 10px;font-size:11px;font-weight:500;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab-btn:hover{background:var(--color-background-secondary)}
+.tab-btn.active{background:var(--color-background-secondary);border-color:var(--color-border-primary);color:var(--color-text-primary)}
+.session{display:none}
+.session.active{display:block}
+.s-header{padding:1rem 1.25rem;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:1rem;background:var(--color-background-secondary)}
+.badge{display:inline-block;padding:2px 10px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500;margin-bottom:.5rem}
+.b1{background:var(--color-background-info);color:var(--color-text-info)}
+.b2{background:var(--color-background-warning);color:var(--color-text-warning)}
+.b3{background:var(--color-background-success);color:var(--color-text-success)}
+.b4{background:var(--color-background-danger);color:var(--color-text-danger)}
+.s-title{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.s-sub{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
+.flow-pills{display:flex;gap:6px;margin:1rem 0;flex-wrap:wrap}
+.pill{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary)}
+.card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:.8rem;background:var(--color-background-primary)}
+.card-title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:.6rem;display:flex;align-items:center;gap:8px}
+.card-title i{font-size:16px;color:var(--color-text-secondary)}
+.oneliner{background:var(--color-background-secondary);border-left:3px solid var(--color-border-info);padding:.6rem 1rem;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;margin-bottom:.5rem;font-size:13px;color:var(--color-text-secondary)}
+.oneliner strong{color:var(--color-text-primary);font-weight:500}
+pre{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.75rem 1rem;font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);overflow-x:auto;margin-bottom:.6rem;line-height:1.65}
+.kw{color:var(--color-text-info)}
+.cm{color:var(--color-text-secondary)}
+.str{color:var(--color-text-success)}
+.err-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.5rem}
+.err-box{padding:.6rem .8rem;border-radius:var(--border-radius-md);font-size:12px;line-height:1.6}
+.err-box.bad{background:var(--color-background-danger);border:0.5px solid var(--color-border-danger);color:var(--color-text-danger)}
+.err-box.good{background:var(--color-background-success);border:0.5px solid var(--color-border-success);color:var(--color-text-success)}
+.err-box p{font-weight:500;margin-bottom:3px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-secondary);margin-bottom:.4rem}
+.check-item i{color:var(--color-text-success);font-size:15px;flex-shrink:0;margin-top:1px}
+.nav-bar{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary)}
+.nav-btn{padding:6px 16px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer}
+.nav-btn:hover{background:var(--color-background-secondary)}
+.nav-btn:disabled{opacity:.35;cursor:default}
+.prog{font-size:12px;color:var(--color-text-secondary)}
+
+.c-purple rect{fill:#EEEDFE;stroke:#AFA9EC;stroke-width:1.5}
+.c-teal rect{fill:#E1F5EE;stroke:#5DCAA5;stroke-width:1.5}
+.c-amber rect{fill:#FAEEDA;stroke:#EF9F27;stroke-width:1.5}
+.c-coral rect{fill:#FAECE7;stroke:#F0997B;stroke-width:1.5}
+.c-gray rect{fill:#f4f4f8;stroke:#d1d1db;stroke-width:1.5}
+.c-red rect{fill:#FDE8E8;stroke:#DC3545;stroke-width:1.5}
+svg .th{font-weight:600;fill:var(--color-text-primary);font-family:var(--font-sans);font-size:13px}
+svg .ts{font-size:11px;fill:var(--color-text-secondary);font-family:var(--font-sans)}
+</style>
+
+<h2 class="sr-only">Selenium 4 Advanced Concepts: Sessions 11 to 23</h2>
+<div class="wrap">
+<div class="tabs" id="tabBar2"></div>
+<div id="sessions2"></div>
+</div>
+
+<script>
+const S=[
+{id:11,badge:"Sel4 Basics",bClass:"b1",
+title:"Selenium 4 — Setup, versioning & DesiredCapabilities",
+sub:"What changed · Maven setup · Options vs DesiredCapabilities · W3C caps",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What is the biggest architectural change in Selenium 4?",a:"Selenium 4 is fully W3C WebDriver standard compliant. It dropped the JSON Wire Protocol and uses pure W3C protocol — removing the need for DesiredCapabilities in most cases and replacing them with browser-specific Options classes."},
+{q:"Why is DesiredCapabilities deprecated in Selenium 4?",a:"DesiredCapabilities was a Selenium-custom protocol layer that no longer maps cleanly to W3C. In Selenium 4, you use browser-specific Options classes (ChromeOptions, FirefoxOptions) which are W3C-compliant and type-safe."},
+{q:"What are the key new features in Selenium 4?",a:"Selenium 4 brings: full W3C compliance, native CDP (Chrome DevTools Protocol) support, Relative Locators, improved Selenium Grid 4 (Docker-ready), newWindow()/newTab() API, and browser-specific Options replacing DesiredCapabilities."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 300" role="img"><title>Selenium 3 vs Selenium 4 key differences</title><desc>Side by side comparison of Selenium 3 and Selenium 4 architecture and features</desc><defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-gray"><rect x="20" y="20" width="290" height="36" rx="8" stroke-width="0.5"/><text class="th" x="165" y="42" text-anchor="middle" dominant-baseline="central">Selenium 3</text></g>
+<g class="c-teal"><rect x="370" y="20" width="290" height="36" rx="8" stroke-width="1"/><text class="th" x="515" y="42" text-anchor="middle" dominant-baseline="central">Selenium 4</text></g>
+<text class="ts" x="165" y="80" text-anchor="middle">JSON Wire Protocol</text>
+<text class="ts" x="515" y="80" text-anchor="middle">W3C WebDriver Protocol (native)</text>
+<text class="ts" x="165" y="102" text-anchor="middle">DesiredCapabilities (legacy)</text>
+<text class="ts" x="515" y="102" text-anchor="middle">Browser Options classes (type-safe)</text>
+<text class="ts" x="165" y="124" text-anchor="middle">No CDP support</text>
+<text class="ts" x="515" y="124" text-anchor="middle">Native CDP via DevTools API</text>
+<text class="ts" x="165" y="146" text-anchor="middle">No Relative Locators</text>
+<text class="ts" x="515" y="146" text-anchor="middle">Relative Locators (above/below/near)</text>
+<text class="ts" x="165" y="168" text-anchor="middle">No newWindow / newTab API</text>
+<text class="ts" x="515" y="168" text-anchor="middle">driver.switchTo().newWindow()</text>
+<text class="ts" x="165" y="190" text-anchor="middle">Selenium Grid 3 (Hub/Node)</text>
+<text class="ts" x="515" y="190" text-anchor="middle">Grid 4 — Docker + Kubernetes ready</text>
+<line x1="340" y1="20" x2="340" y2="210" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="4,3"/>
+<text class="ts" x="340" y="240" text-anchor="middle">pom.xml dependency</text>
+<g class="c-teal"><rect x="180" y="252" width="320" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="340" y="272" text-anchor="middle" dominant-baseline="central">selenium-java 4.x.x (use latest 4.x)</text></g>
+</svg>`,
+concepts:[
+{title:"pom.xml — Selenium 4 correct dependency",body:`<pre><code class="language-java">&lt;!-- Selenium 4 — single dependency, all browsers included --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.seleniumhq.selenium&lt;/groupId&gt;
+  &lt;artifactId&gt;selenium-java&lt;/artifactId&gt;
+  &lt;version&gt;4.21.0&lt;/version&gt; &lt;!-- use latest stable 4.x --&gt;
+&lt;/dependency&gt;
+
+// Selenium 4.6+ added Selenium Manager —
+// it auto-downloads matching browser driver!
+// No more manual System.setProperty for Chrome/Firefox/Edge
+WebDriver driver = new ChromeDriver(); // just works!</code></pre>`},
+{title:"DesiredCapabilities (Selenium 3) → Options (Selenium 4)",body:`<pre><code class="language-java">// SELENIUM 3 way — DesiredCapabilities (deprecated in Sel4):
+DesiredCapabilities caps = new DesiredCapabilities();
+caps.setBrowserName("chrome");
+caps.setCapability("acceptInsecureCerts", true);
+WebDriver driver = new ChromeDriver(caps); // works but deprecated
+
+// SELENIUM 4 way — ChromeOptions (W3C compliant, type-safe):
+ChromeOptions opts = new ChromeOptions();
+opts.setAcceptInsecureCerts(true);      // W3C standard method
+opts.addArguments("--start-maximized");
+WebDriver driver = new ChromeDriver(opts);</code></pre>`},
+{title:"Selenium Manager — zero driver setup (Sel 4.6+)",body:`<pre><code class="language-java">// Before Selenium 4.6: manual driver setup needed
+System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+
+// Selenium 4.6+ has built-in Selenium Manager that:
+// 1. Detects your installed browser version
+// 2. Downloads matching driver automatically
+// 3. Caches it locally for reuse
+
+// Chrome — no setup needed:
+WebDriver driver = new ChromeDriver();
+
+// Firefox — no setup needed:
+WebDriver driver = new FirefoxDriver();
+
+// Edge — no setup needed:
+WebDriver driver = new EdgeDriver();</code></pre>`},
+{title:"W3C Capabilities — standard vs extension",body:`<pre><code class="language-java">// W3C standard capabilities (supported by all browsers):
+ChromeOptions opts = new ChromeOptions();
+opts.setBrowserVersion("stable");           // W3C cap
+opts.setPlatformName("linux");              // W3C cap
+opts.setAcceptInsecureCerts(true);           // W3C cap
+opts.setPageLoadStrategy(PageLoadStrategy.EAGER); // W3C cap
+
+// Browser-extension capabilities (Chrome-specific):
+opts.addArguments("--headless=new");         // Chrome arg
+opts.addArguments("--window-size=1920,1080");
+opts.setExperimentalOption("excludeSwitches",
+    Arrays.asList("enable-automation"));       // hides "Chrome is controlled"</code></pre>`},
+{title:"RemoteWebDriver with Selenium 4 Grid",body:`<pre><code class="language-java">// Selenium 4 Grid — simplified, no hub/node XML config
+// Start: java -jar selenium-server-4.x.jar standalone
+
+ChromeOptions opts = new ChromeOptions();
+opts.addArguments("--headless=new");
+
+// Connect to Grid — same RemoteWebDriver API:
+URL gridUrl = new URL("http://grid-server:4444");
+WebDriver driver = new RemoteWebDriver(gridUrl, opts);
+
+// Selenium 4 Grid modes:
+// Standalone — single machine testing
+// Hub + Node — classic distributed
+// Distributed — microservices mode (Router/Distributor/Node)</code></pre>`}
+],
+mistakes:[
+{bad:"Using DesiredCapabilities for new Selenium 4 projects",good:"Use ChromeOptions/FirefoxOptions/EdgeOptions — they are W3C compliant, type-safe, and support all capabilities that DesiredCapabilities did plus more"},
+{bad:"System.setProperty for driver path in Selenium 4.6+",good:"Selenium Manager handles driver auto-download. Remove setProperty calls — they still work but are redundant and can cause version conflicts"}
+],
+checklist:["Use selenium-java 4.x — do NOT mix Sel3 and Sel4 jars in same pom","Options classes replace DesiredCapabilities — use ChromeOptions, FirefoxOptions, EdgeOptions","Selenium 4.6+ Selenium Manager auto-downloads correct driver — no manual setup","W3C compliance means browser drivers speak same protocol — more stable tests","setAcceptInsecureCerts(true) is the W3C way — not caps.setCapability('acceptSslCerts',true)"]
+},
+
+{id:12,badge:"Explicit Wait",bClass:"b1",
+title:"Explicit Wait — All Scenarios & Methods",
+sub:"WebDriverWait · ExpectedConditions · Custom conditions · Duration API",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What is explicit wait and when should you use it?",a:"Explicit wait waits for a specific condition on a specific element for a maximum duration, polling every 500ms. Use it when elements appear asynchronously — after AJAX calls, animations, or dynamic page loads."},
+{q:"How does WebDriverWait work internally?",a:"WebDriverWait extends FluentWait. It polls the given ExpectedCondition every 500ms until it returns a non-null/non-false result or the timeout expires, at which point it throws TimeoutException."},
+{q:"What is the new Duration API in Selenium 4 for waits?",a:"Selenium 4 uses java.time.Duration instead of TimeUnit. The constructor is new WebDriverWait(driver, Duration.ofSeconds(10)) — cleaner and more readable than the old (driver, 10, TimeUnit.SECONDS) syntax."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 260" role="img"><title>Explicit wait polling lifecycle</title><desc>Timeline showing WebDriverWait polling every 500ms until condition true or timeout</desc><defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-purple"><rect x="20" y="20" width="640" height="40" rx="6" stroke-width="0.5"/><text class="th" x="340" y="44" text-anchor="middle" dominant-baseline="central">WebDriverWait timeline (max 10 seconds, polling every 500ms)</text></g>
+<rect x="20" y="90" width="600" height="28" rx="4" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+<g class="c-gray"><rect x="20" y="90" width="90" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="65" y="108" text-anchor="middle" dominant-baseline="central">check → no</text></g>
+<g class="c-gray"><rect x="130" y="90" width="90" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="175" y="108" text-anchor="middle" dominant-baseline="central">check → no</text></g>
+<g class="c-gray"><rect x="240" y="90" width="90" height="28" rx="4" stroke-width="0.5"/><text class="ts" x="285" y="108" text-anchor="middle" dominant-baseline="central">check → no</text></g>
+<g class="c-teal"><rect x="350" y="90" width="120" height="28" rx="4" stroke-width="1"/><text class="th" x="410" y="108" text-anchor="middle" dominant-baseline="central">check → found!</text></g>
+<g class="c-coral"><rect x="500" y="90" width="120" height="28" rx="4" stroke-width="0.5"/><text class="th" x="560" y="108" text-anchor="middle" dominant-baseline="central">TimeoutException</text></g>
+<text class="ts" x="65" y="142" text-anchor="middle">0.5s</text>
+<text class="ts" x="175" y="142" text-anchor="middle">1.0s</text>
+<text class="ts" x="285" y="142" text-anchor="middle">1.5s</text>
+<text class="ts" x="410" y="142" text-anchor="middle">2.0s → returns</text>
+<text class="ts" x="560" y="142" text-anchor="middle">10s exceeded</text>
+<text class="ts" x="340" y="180" text-anchor="middle">Key constructor (Selenium 4):</text>
+<g class="c-teal"><rect x="100" y="192" width="480" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="340" y="212" text-anchor="middle" dominant-baseline="central">new WebDriverWait(driver, Duration.ofSeconds(10))</text></g>
+</svg>`,
+concepts:[
+{title:"WebDriverWait — Selenium 4 constructor (Duration API)",body:`<pre><code class="language-java">import java.time.Duration;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+// Selenium 4 — use Duration.of* (java.time API)
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+// With custom polling interval (Selenium 4):
+WebDriverWait wait2 = new WebDriverWait(driver,
+    Duration.ofSeconds(15),          // max timeout
+    Duration.ofMillis(300));          // poll every 300ms
+
+// Wait then find and interact in one line:
+wait.until(ExpectedConditions
+    .elementToBeClickable(By.id("submitBtn"))).click();
+
+// DEPRECATED Selenium 3 style — avoid in Sel4:
+// new WebDriverWait(driver, 10) — int constructor gone</code></pre>`},
+{title:"Visibility conditions — 4 variants explained",body:`<pre><code class="language-java">// 1. presenceOfElementLocated — in DOM, may not be visible
+wait.until(ExpectedConditions
+    .presenceOfElementLocated(By.id("hiddenEl")));
+
+// 2. visibilityOfElementLocated — in DOM AND visible
+WebElement el = wait.until(ExpectedConditions
+    .visibilityOfElementLocated(By.id("toast")));
+
+// 3. visibilityOf — already have the WebElement reference
+WebElement existingEl = driver.findElement(By.id("msg"));
+wait.until(ExpectedConditions.visibilityOf(existingEl));
+
+// 4. visibilityOfAllElementsLocatedBy — ALL must be visible
+List&lt;WebElement&gt; items = wait.until(ExpectedConditions
+    .visibilityOfAllElementsLocatedBy(By.cssSelector(".list-item")));
+System.out.println("Items loaded: " + items.size());</code></pre>`},
+{title:"Clickability, staleness, text conditions",body:`<pre><code class="language-java">// elementToBeClickable — visible + enabled (safest before click)
+wait.until(ExpectedConditions
+    .elementToBeClickable(By.id("addToCart"))).click();
+
+// invisibilityOfElementLocated — wait for spinner to vanish
+wait.until(ExpectedConditions
+    .invisibilityOfElementLocated(By.id("loadingSpinner")));
+
+// textToBePresentInElement — wait for dynamic text
+WebElement status = driver.findElement(By.id("status"));
+wait.until(ExpectedConditions
+    .textToBePresentInElement(status, "Order Confirmed"));
+
+// stalenessOf — wait for old element to detach from DOM
+WebElement oldTable = driver.findElement(By.id("dataTable"));
+driver.findElement(By.id("refresh")).click();
+wait.until(ExpectedConditions.stalenessOf(oldTable));
+// Now safe to re-find the fresh element</code></pre>`},
+{title:"URL and title conditions",body:`<pre><code class="language-java">// urlContains — wait for navigation to complete
+driver.findElement(By.id("loginBtn")).click();
+wait.until(ExpectedConditions.urlContains("dashboard"));
+
+// urlToBe — exact URL match
+wait.until(ExpectedConditions
+    .urlToBe("https://app.com/dashboard"));
+
+// titleContains — page title partial match
+wait.until(ExpectedConditions.titleContains("My Dashboard"));
+
+// titleIs — exact title match
+wait.until(ExpectedConditions
+    .titleIs("My Dashboard — MyApp"));
+
+// numberOfWindowsToBe — wait for popup to open
+driver.findElement(By.id("openPopup")).click();
+wait.until(ExpectedConditions.numberOfWindowsToBe(2));</code></pre>`},
+{title:"Custom ExpectedCondition — lambda approach",body:`<pre><code class="language-java">// Write your own condition when EC doesn't cover your case
+// Lambda style (clean, Selenium 4 friendly):
+
+// Wait until element has specific attribute value:
+wait.until(d -&gt; {
+    String val = d.findElement(By.id("progress"))
+                  .getAttribute("aria-valuenow");
+    return "100".equals(val);
+});
+
+// Wait until element count reaches expected number:
+wait.until(d -&gt; d.findElements(By.cssSelector(".row")).size() == 5);
+
+// Wait until JS variable is set:
+JavascriptExecutor js = (JavascriptExecutor) driver;
+wait.until(d -&gt; js.executeScript(
+    "return window.dataLoaded === true"));</code></pre>`}
+],
+mistakes:[
+{bad:"new WebDriverWait(driver, 10) — int timeout (removed in Selenium 4)",good:"Use Duration API: new WebDriverWait(driver, Duration.ofSeconds(10)) — the int constructor was removed in Selenium 4"},
+{bad:"Using visibilityOfElementLocated when element is never in DOM",good:"Use presenceOfElementLocated first to confirm DOM presence, then visibilityOf for visibility check — or stalenessOf after page refresh"}
+],
+checklist:["Always use Duration.ofSeconds() in Selenium 4 — int constructor is removed","elementToBeClickable is the safest precondition before any click()","Use invisibilityOf to wait for spinners/loaders to disappear before acting","stalenessOf is critical after table/list refresh — prevents StaleElementReferenceException","Lambda custom conditions handle any scenario EC doesn't cover out of the box"]
+},
+
+{id:13,badge:"FluentWait",bClass:"b1",
+title:"FluentWait — All Scenarios & Methods",
+sub:"Polling · Ignored exceptions · Custom conditions · Real-world usage",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"How is FluentWait different from WebDriverWait?",a:"WebDriverWait is a preconfigured FluentWait with 500ms polling and ignoring NotFoundException. FluentWait lets you configure everything: max time, polling frequency, exceptions to ignore, and custom error messages."},
+{q:"When would you use FluentWait over WebDriverWait?",a:"Use FluentWait for: elements with irregular load times (poll every 2s for up to 60s), scenarios where NoSuchElementException should be ignored, or when you need a custom failure message for debugging."},
+{q:"What does ignoring(NoSuchElementException.class) do in FluentWait?",a:"It tells FluentWait not to throw immediately if the element isn't found during polling — instead it quietly retries until the timeout. Without this, the first NoSuchElementException would end the wait immediately."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 280" role="img"><title>FluentWait configuration options</title><desc>Shows the four configuration axes of FluentWait: timeout, polling, ignored exceptions, message</desc><defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-purple"><rect x="250" y="20" width="180" height="44" rx="8" stroke-width="1"/><text class="th" x="340" y="46" text-anchor="middle" dominant-baseline="central">FluentWait</text></g>
+<line x1="200" y1="64" x2="100" y2="120" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<line x1="280" y1="64" x2="240" y2="120" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<line x1="400" y1="64" x2="440" y2="120" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<line x1="480" y1="64" x2="580" y2="120" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<g class="c-teal"><rect x="30" y="120" width="140" height="52" rx="8" stroke-width="0.5"/><text class="th" x="100" y="140" text-anchor="middle" dominant-baseline="central">.withTimeout()</text><text class="ts" x="100" y="158" text-anchor="middle" dominant-baseline="central">max wait time</text></g>
+<g class="c-teal"><rect x="185" y="120" width="120" height="52" rx="8" stroke-width="0.5"/><text class="th" x="245" y="140" text-anchor="middle" dominant-baseline="central">.pollingEvery()</text><text class="ts" x="245" y="158" text-anchor="middle" dominant-baseline="central">check interval</text></g>
+<g class="c-teal"><rect x="375" y="120" width="120" height="52" rx="8" stroke-width="0.5"/><text class="th" x="435" y="140" text-anchor="middle" dominant-baseline="central">.ignoring()</text><text class="ts" x="435" y="158" text-anchor="middle" dominant-baseline="central">skip exceptions</text></g>
+<g class="c-teal"><rect x="510" y="120" width="150" height="52" rx="8" stroke-width="0.5"/><text class="th" x="585" y="140" text-anchor="middle" dominant-baseline="central">.withMessage()</text><text class="ts" x="585" y="158" text-anchor="middle" dominant-baseline="central">custom fail msg</text></g>
+<text class="ts" x="340" y="220" text-anchor="middle">WebDriverWait = FluentWait with defaults (500ms poll, NotFoundException ignored)</text>
+</svg>`,
+concepts:[
+{title:"FluentWait — full configuration",body:`<pre><code class="language-java">import org.openqa.selenium.support.ui.FluentWait;
+import java.time.Duration;
+import java.util.function.Function;
+
+Wait&lt;WebDriver&gt; fluent = new FluentWait&lt;&gt;(driver)
+    .withTimeout(Duration.ofSeconds(30))        // max 30s total
+    .pollingEvery(Duration.ofSeconds(2))        // check every 2s
+    .ignoring(NoSuchElementException.class)     // skip not-found
+    .ignoring(StaleElementReferenceException.class) // skip stale
+    .withMessage("Element not found after 30s — check locator");
+
+// Use it with lambda:
+WebElement el = fluent.until(d -&gt;
+    d.findElement(By.id("dynamicResult")));
+
+// Or with ExpectedConditions:
+fluent.until(ExpectedConditions
+    .visibilityOfElementLocated(By.id("data")));</code></pre>`},
+{title:"FluentWait for slow-loading data tables",body:`<pre><code class="language-java">// Real scenario: data table loads over 20+ seconds (large dataset)
+Wait&lt;WebDriver&gt; tableWait = new FluentWait&lt;&gt;(driver)
+    .withTimeout(Duration.ofSeconds(60))
+    .pollingEvery(Duration.ofSeconds(3))
+    .ignoring(NoSuchElementException.class);
+
+// Wait until table has at least 10 rows:
+tableWait.until(d -&gt; {
+    List&lt;WebElement&gt; rows = d.findElements(
+        By.cssSelector("table#results tbody tr"));
+    return rows.size() &gt;= 10 ? rows : null;
+// returning null continues polling; non-null returns the value
+});</code></pre>`},
+{title:"FluentWait ignoring multiple exception types",body:`<pre><code class="language-java">// Chain multiple .ignoring() calls for resilient waits
+Wait&lt;WebDriver&gt; resilient = new FluentWait&lt;&gt;(driver)
+    .withTimeout(Duration.ofSeconds(20))
+    .pollingEvery(Duration.ofMillis(500))
+    .ignoring(NoSuchElementException.class)
+    .ignoring(StaleElementReferenceException.class)
+    .ignoring(ElementNotInteractableException.class);
+
+// Now safe against: DOM rebuilds, animations, element detach
+resilient.until(d -&gt; {
+    WebElement btn = d.findElement(By.id("submit"));
+    btn.click(); // retries if stale or not interactable
+    return true;
+});</code></pre>`},
+{title:"FluentWait for file download scenario",body:`<pre><code class="language-java">// Wait for downloaded file to appear on disk
+// FluentWait isn't WebDriver-specific — it works on anything
+FluentWait&lt;File&gt; fileWait = new FluentWait&lt;&gt;(new File("/downloads"))
+    .withTimeout(Duration.ofSeconds(60))
+    .pollingEvery(Duration.ofSeconds(2))
+    .withMessage("Download did not complete in 60 seconds");
+
+fileWait.until(downloadDir -&gt; {
+    File[] files = downloadDir.listFiles(
+        f -&gt; f.getName().endsWith(".pdf"));
+    return files != null &amp;&amp; files.length &gt; 0;
+});</code></pre>`},
+{title:"Custom reusable wait utility class",body:`<pre><code class="language-java">public class WaitUtils {
+    private WebDriver driver;
+
+    public WaitUtils(WebDriver driver) { this.driver = driver; }
+
+    public WebElement waitForVisible(By locator, int seconds) {
+        return new FluentWait&lt;&gt;(driver)
+            .withTimeout(Duration.ofSeconds(seconds))
+            .pollingEvery(Duration.ofMillis(500))
+            .ignoring(NoSuchElementException.class)
+            .until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    public boolean waitForTextInElement(By locator, String text) {
+        return new FluentWait&lt;&gt;(driver)
+            .withTimeout(Duration.ofSeconds(10))
+            .pollingEvery(Duration.ofMillis(300))
+            .ignoring(NoSuchElementException.class)
+            .until(ExpectedConditions
+                .textToBePresentInElementLocated(locator, text));
+    }
+}</code></pre>`}
+],
+mistakes:[
+{bad:"Returning false from FluentWait lambda — thinking it will retry",good:"Return null (not false) from FluentWait lambda to indicate 'not ready yet'. Returning false is a valid result and FluentWait returns it immediately without retrying"},
+{bad:"Using the same FluentWait instance for waits with different timeouts",good:"Create a new FluentWait instance per wait scenario, or use a WaitUtils factory method. Reusing the same instance can cause stale configuration"}
+],
+checklist:["Return null (not false) from lambda to continue polling","Chain multiple .ignoring() for resilient waits against DOM rebuilds","pollingEvery should be 1/20th of withTimeout for efficient polling","FluentWait works with any type T — not just WebDriver (e.g., File, API response)","withMessage() saves hours of debugging — always set a meaningful failure message"]
+},
+
+{id:14,badge:"ExpectedConditions",bClass:"b2",
+title:"All ExpectedConditions — Complete Reference",
+sub:"Visibility · Clickability · Text · URL · Frame · Alert · Custom",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"How many categories of ExpectedConditions are there?",a:"Approximately 7 categories: element presence/visibility, element state (clickable/selected/enabled), text content, URL/title conditions, frame/window conditions, alert conditions, and list-based conditions."},
+{q:"What is the difference between presenceOf and visibilityOf?",a:"presenceOfElementLocated only requires the element to be in the DOM — it could be hidden (display:none). visibilityOfElementLocated requires the element to be both in the DOM AND visible on screen (non-zero size, not hidden)."},
+{q:"Can you use AND/OR logic with ExpectedConditions?",a:"Yes — use ExpectedConditions.and() to combine multiple conditions with AND logic. For OR logic, use a custom lambda that checks multiple conditions. Example: wait.until(EC.and(EC.visibilityOf(el1), EC.elementToBeClickable(el2)))"}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 300" role="img"><title>ExpectedConditions categories overview</title><desc>Seven categories of ExpectedConditions grouped by type</desc><defs></defs>
+<text class="th" x="340" y="24" text-anchor="middle">ExpectedConditions — 7 categories</text>
+<g class="c-teal"><rect x="20" y="40" width="190" height="52" rx="8" stroke-width="0.5"/><text class="th" x="115" y="60" text-anchor="middle" dominant-baseline="central">Presence / Visibility</text><text class="ts" x="115" y="78" text-anchor="middle" dominant-baseline="central">presenceOf, visibilityOf</text></g>
+<g class="c-teal"><rect x="245" y="40" width="190" height="52" rx="8" stroke-width="0.5"/><text class="th" x="340" y="60" text-anchor="middle" dominant-baseline="central">Element state</text><text class="ts" x="340" y="78" text-anchor="middle" dominant-baseline="central">clickable, selected, enabled</text></g>
+<g class="c-teal"><rect x="470" y="40" width="190" height="52" rx="8" stroke-width="0.5"/><text class="th" x="565" y="60" text-anchor="middle" dominant-baseline="central">Text content</text><text class="ts" x="565" y="78" text-anchor="middle" dominant-baseline="central">textToBe, attributeContains</text></g>
+<g class="c-amber"><rect x="20" y="115" width="190" height="52" rx="8" stroke-width="0.5"/><text class="th" x="115" y="135" text-anchor="middle" dominant-baseline="central">URL / Title</text><text class="ts" x="115" y="153" text-anchor="middle" dominant-baseline="central">urlContains, titleIs</text></g>
+<g class="c-amber"><rect x="245" y="115" width="190" height="52" rx="8" stroke-width="0.5"/><text class="th" x="340" y="135" text-anchor="middle" dominant-baseline="central">Frame / Window</text><text class="ts" x="340" y="153" text-anchor="middle" dominant-baseline="central">frameToBeAvailable</text></g>
+<g class="c-amber"><rect x="470" y="115" width="190" height="52" rx="8" stroke-width="0.5"/><text class="th" x="565" y="135" text-anchor="middle" dominant-baseline="central">Alert</text><text class="ts" x="565" y="153" text-anchor="middle" dominant-baseline="central">alertIsPresent</text></g>
+<g class="c-purple"><rect x="130" y="190" width="420" height="52" rx="8" stroke-width="0.5"/><text class="th" x="340" y="210" text-anchor="middle" dominant-baseline="central">Compound conditions</text><text class="ts" x="340" y="228" text-anchor="middle" dominant-baseline="central">EC.and(), EC.or(), EC.not() + custom lambda</text></g>
+</svg>`,
+concepts:[
+{title:"Presence and visibility conditions — complete set",body:`<pre><code class="language-java">// 1. In DOM (may be hidden):
+EC.presenceOfElementLocated(By.id("el"))
+EC.presenceOfAllElementsLocatedBy(By.cssSelector(".item"))
+
+// 2. In DOM + visible:
+EC.visibilityOfElementLocated(By.id("el"))
+EC.visibilityOf(webElement)                    // already have reference
+EC.visibilityOfAllElementsLocatedBy(By.cssSelector(".row"))
+EC.visibilityOfAllElements(listOfElements)
+
+// 3. Invisible (hidden or removed):
+EC.invisibilityOfElementLocated(By.id("spinner"))
+EC.invisibilityOf(webElement)
+EC.invisibilityOfElementWithText(By.id("msg"), "Error")
+
+// 4. Number of elements:
+EC.numberOfElementsToBe(By.cssSelector(".row"), 5)
+EC.numberOfElementsToBeMoreThan(By.cssSelector(".row"), 3)
+EC.numberOfElementsToBeLessThan(By.cssSelector(".row"), 10)</code></pre>`},
+{title:"State conditions — clickable, selected, stale",body:`<pre><code class="language-java">// Clickable — visible AND enabled (best before click):
+EC.elementToBeClickable(By.id("btn"))
+EC.elementToBeClickable(webElement)
+
+// Selection state — checkboxes, radio, dropdowns:
+EC.elementToBeSelected(webElement)
+EC.elementSelectionStateToBe(webElement, true)   // must be checked
+EC.elementSelectionStateToBe(webElement, false)  // must be unchecked
+EC.elementToBeSelectedByLocator(By.id("chk"))    // locator variant
+
+// Staleness — wait for element to be removed from DOM:
+EC.stalenessOf(webElement)
+
+// Attribute checks:
+EC.attributeContains(By.id("el"), "class", "active")
+EC.attributeToBe(By.id("input"), "value", "hello")
+EC.attributeToBeNotEmpty(webElement, "value")</code></pre>`},
+{title:"Text and URL conditions",body:`<pre><code class="language-java">// Text in element:
+EC.textToBePresentInElement(webElement, "Success")
+EC.textToBePresentInElementLocated(By.id("msg"), "OK")
+EC.textToBePresentInElementValue(By.id("input"), "hello")
+EC.textMatches(By.id("el"), Pattern.compile("Order #\\d+"))
+
+// URL conditions:
+EC.urlContains("dashboard")
+EC.urlToBe("https://app.com/home")
+EC.urlMatches("https://app\\.com/order/\\d+")
+
+// Title conditions:
+EC.titleIs("My Dashboard")
+EC.titleContains("Dashboard")
+
+// Frame conditions:
+EC.frameToBeAvailableAndSwitchToIt("frameName")
+EC.frameToBeAvailableAndSwitchToIt(By.id("myFrame"))
+EC.frameToBeAvailableAndSwitchToIt(0) // by index</code></pre>`},
+{title:"Alert and window conditions",body:`<pre><code class="language-java">// Alert conditions:
+EC.alertIsPresent()
+
+// Window conditions:
+EC.numberOfWindowsToBe(2)
+
+// Real scenario — click triggers popup, wait, switch:
+driver.findElement(By.id("openPopup")).click();
+wait.until(EC.numberOfWindowsToBe(2));
+String mainHandle = driver.getWindowHandle();
+driver.getWindowHandles().forEach(h -&gt; {
+    if (!h.equals(mainHandle)) driver.switchTo().window(h);
+});
+wait.until(EC.titleContains("Popup"));
+
+// Real scenario — login triggers alert:
+wait.until(EC.alertIsPresent());
+driver.switchTo().alert().accept();</code></pre>`},
+{title:"Compound conditions — AND, OR, NOT",body:`<pre><code class="language-java">// AND — all conditions must pass simultaneously:
+wait.until(EC.and(
+    EC.visibilityOfElementLocated(By.id("header")),
+    EC.visibilityOfElementLocated(By.id("content")),
+    EC.elementToBeClickable(By.id("submitBtn"))
+));
+
+// OR — any one condition passes:
+wait.until(EC.or(
+    EC.visibilityOfElementLocated(By.id("successMsg")),
+    EC.visibilityOfElementLocated(By.id("errorMsg"))
+));
+
+// NOT — condition must be FALSE:
+wait.until(EC.not(
+    EC.visibilityOfElementLocated(By.id("spinner"))
+));
+
+// NOT is equivalent to invisibilityOf for spinners:
+wait.until(EC.not(EC.elementToBeClickable(By.id("disabledBtn"))));</code></pre>`}
+],
+mistakes:[
+{bad:"EC.visibilityOf() on a freshly-found element that could go stale",good:"Prefer EC.visibilityOfElementLocated(By...) — it re-finds the element each poll cycle, preventing StaleElementReferenceException during wait"},
+{bad:"EC.frameToBeAvailableAndSwitchToIt() — forgetting to switch back after",good:"Always call driver.switchTo().defaultContent() after interacting with iframe content — every element lookup after this still targets the frame context"}
+],
+checklist:["Use EC.and() when multiple elements must all be ready before proceeding","EC.textMatches() with regex is powerful for dynamic text like 'Order #12345'","EC.attributeContains() is perfect for CSS class-based state checks (e.g. 'active')","EC.frameToBeAvailableAndSwitchToIt() combines the wait and switch in one call","EC.not() is clean for 'wait until spinner is gone' scenarios"]
+},
+
+{id:15,badge:"Actions Class",bClass:"b2",
+title:"Actions Class — All Scenarios & Methods",
+sub:"Mouse · Keyboard · Drag-drop · Scroll · Multi-action chains",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What is the Actions class used for in Selenium 4?",a:"Actions simulates complex user gestures that can't be done with simple element.click() — hover, drag-and-drop, right-click, double-click, keyboard combinations, and scroll operations. In Selenium 4, it was enhanced with new scroll methods."},
+{q:"What is the difference between click() and Actions.click()?",a:"element.click() is a direct WebDriver command. Actions.click(element) builds an action chain — useful when you need to combine gestures (e.g., hover then click) or when dealing with elements requiring mouse positioning first."},
+{q:"What new scroll methods were added in Selenium 4 Actions?",a:"Selenium 4 added: scrollToElement(element), scrollByAmount(deltaX, deltaY), scrollFromOrigin(scrollOrigin, deltaX, deltaY) — all W3C WebDriver compliant and more reliable than JavaScript scrollIntoView."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 270" role="img"><title>Actions class method groups</title><desc>Groups showing mouse actions keyboard actions scroll actions and chain pattern</desc><defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-teal"><rect x="20" y="20" width="150" height="100" rx="8" stroke-width="0.5"/><text class="th" x="95" y="44" text-anchor="middle" dominant-baseline="central">Mouse actions</text><text class="ts" x="95" y="64" text-anchor="middle">click / doubleClick</text><text class="ts" x="95" y="82" text-anchor="middle">contextClick / hover</text><text class="ts" x="95" y="100" text-anchor="middle">dragAndDrop</text></g>
+<g class="c-teal"><rect x="195" y="20" width="150" height="100" rx="8" stroke-width="0.5"/><text class="th" x="270" y="44" text-anchor="middle" dominant-baseline="central">Keyboard</text><text class="ts" x="270" y="64" text-anchor="middle">sendKeys / keyDown</text><text class="ts" x="270" y="82" text-anchor="middle">keyUp / keyPress</text><text class="ts" x="270" y="100" text-anchor="middle">Ctrl+A, Ctrl+C</text></g>
+<g class="c-amber"><rect x="370" y="20" width="150" height="100" rx="8" stroke-width="0.5"/><text class="th" x="445" y="44" text-anchor="middle" dominant-baseline="central">Scroll (Sel 4)</text><text class="ts" x="445" y="64" text-anchor="middle">scrollToElement()</text><text class="ts" x="445" y="82" text-anchor="middle">scrollByAmount()</text><text class="ts" x="445" y="100" text-anchor="middle">scrollFromOrigin()</text></g>
+<g class="c-purple"><rect x="545" y="20" width="115" height="100" rx="8" stroke-width="0.5"/><text class="th" x="602" y="44" text-anchor="middle" dominant-baseline="central">Chain pattern</text><text class="ts" x="602" y="64" text-anchor="middle">build()</text><text class="ts" x="602" y="82" text-anchor="middle">perform()</text><text class="ts" x="602" y="100" text-anchor="middle">release()</text></g>
+<g class="c-gray"><rect x="20" y="150" width="640" height="44" rx="6" stroke-width="0.5"/><text class="ts" x="340" y="166" text-anchor="middle" dominant-baseline="central">Action chain pattern:</text><text class="ts" x="340" y="184" text-anchor="middle" dominant-baseline="central">new Actions(driver).moveToElement(el).click().sendKeys("text").perform()</text></g>
+</svg>`,
+concepts:[
+{title:"Mouse interactions — click, double, right-click, hover",body:`<pre><code class="language-java">Actions actions = new Actions(driver);
+
+// Simple click (with positioning):
+actions.click(driver.findElement(By.id("btn"))).perform();
+
+// Double-click (open file, select word):
+actions.doubleClick(driver.findElement(By.id("editBtn"))).perform();
+
+// Right-click (context menu):
+WebElement el = driver.findElement(By.id("listItem"));
+actions.contextClick(el).perform();
+// Now click menu option:
+wait.until(EC.visibilityOfElementLocated(By.id("deleteOption")));
+driver.findElement(By.id("deleteOption")).click();
+
+// Hover (mouseover — triggers dropdown/tooltip):
+WebElement nav = driver.findElement(By.id("navMenu"));
+actions.moveToElement(nav).perform();
+// Submenu is now visible:
+wait.until(EC.visibilityOfElementLocated(By.id("subMenu")));
+driver.findElement(By.id("subMenu")).click();</code></pre>`},
+{title:"Drag and drop — 3 methods",body:`<pre><code class="language-java">// Method 1: dragAndDrop(source, target)
+WebElement source = driver.findElement(By.id("draggable"));
+WebElement target = driver.findElement(By.id("droppable"));
+actions.dragAndDrop(source, target).perform();
+
+// Method 2: dragAndDropBy(source, xOffset, yOffset)
+actions.dragAndDropBy(source, 200, 0).perform(); // move 200px right
+
+// Method 3: manual click-hold-move-release (most reliable)
+actions.clickAndHold(source)
+       .moveToElement(target)
+       .release()
+       .perform();
+
+// Slow drag (some apps need this — use pause between steps):
+actions.clickAndHold(source)
+       .pause(Duration.ofMillis(500))   // Selenium 4 pause
+       .moveToElement(target)
+       .pause(Duration.ofMillis(300))
+       .release()
+       .perform();</code></pre>`},
+{title:"Keyboard shortcuts — Ctrl, Shift, Alt combinations",body:`<pre><code class="language-java">// Select all text in input (Ctrl+A):
+WebElement input = driver.findElement(By.id("searchBox"));
+actions.click(input)
+       .keyDown(Keys.CONTROL).sendKeys("a").keyUp(Keys.CONTROL)
+       .perform();
+
+// Copy selected text (Ctrl+C) then paste (Ctrl+V):
+actions.keyDown(Keys.CONTROL).sendKeys("c").keyUp(Keys.CONTROL)
+       .click(otherInput)
+       .keyDown(Keys.CONTROL).sendKeys("v").keyUp(Keys.CONTROL)
+       .perform();
+
+// Multi-select list items (Ctrl+Click each):
+actions.click(item1)
+       .keyDown(Keys.CONTROL).click(item2).click(item3)
+       .keyUp(Keys.CONTROL)
+       .perform();
+
+// Shift+Click range select:
+actions.click(firstRow)
+       .keyDown(Keys.SHIFT).click(lastRow)
+       .keyUp(Keys.SHIFT).perform();</code></pre>`},
+{title:"Scroll actions — Selenium 4 new API",body:`<pre><code class="language-java">import org.openqa.selenium.interactions.WheelInput.ScrollOrigin;
+
+// Scroll to element (new in Selenium 4 — W3C compliant):
+WebElement element = driver.findElement(By.id("footer"));
+actions.scrollToElement(element).perform();
+
+// Scroll by pixel amount from current viewport position:
+actions.scrollByAmount(0, 500).perform();  // scroll down 500px
+actions.scrollByAmount(0, -300).perform(); // scroll up 300px
+actions.scrollByAmount(200, 0).perform();  // scroll right 200px
+
+// ScrollFromOrigin — scroll from element position:
+ScrollOrigin origin = ScrollOrigin.fromElement(element);
+actions.scrollFromOrigin(origin, 0, 200).perform();
+
+// ScrollFromOrigin with offset from element:
+ScrollOrigin withOffset = ScrollOrigin.fromElement(element, 0, -50);
+actions.scrollFromOrigin(withOffset, 0, 300).perform();</code></pre>`},
+{title:"Complex action chains — real-world scenarios",body:`<pre><code class="language-java">// Tooltip test: hover → wait → read tooltip text
+WebElement helpIcon = driver.findElement(By.id("helpIcon"));
+actions.moveToElement(helpIcon).perform();
+wait.until(EC.visibilityOfElementLocated(By.cssSelector(".tooltip")));
+String tip = driver.findElement(By.cssSelector(".tooltip")).getText();
+
+// Slider: drag to specific position
+WebElement slider = driver.findElement(By.id("priceSlider"));
+int sliderWidth = slider.getSize().getWidth();
+actions.clickAndHold(slider)
+       .moveByOffset(sliderWidth / 2, 0) // move to 50%
+       .release().perform();
+
+// Canvas drawing: draw a line
+WebElement canvas = driver.findElement(By.id("drawCanvas"));
+actions.moveToElement(canvas, 100, 100)
+       .clickAndHold()
+       .moveByOffset(200, 0)
+       .moveByOffset(0, 200)
+       .release().perform();</code></pre>`}
+],
+mistakes:[
+{bad:"actions.dragAndDrop(source, target) fails on some apps",good:"Use clickAndHold → pause → moveToElement → release pattern for stubborn drag-drop. Some frameworks require the slow approach with pauses between steps"},
+{bad:"actions.moveToElement() not scrolling element into view",good:"Use actions.scrollToElement(element).perform() first in Selenium 4, then moveToElement. Scrolling and moving are separate operations"}
+],
+checklist:["Always call .perform() at the end — without it, nothing executes","Use pause(Duration) between action steps for animations that need settling time","scrollToElement() is the Selenium 4 W3C way — avoid JS scrollIntoView for actions chains","keyDown/keyUp must be balanced — unclosed keyDown keeps modifier held down","For drag-drop failures: try clickAndHold + pause(500ms) + move + pause + release"]
+},
+
+{id:16,badge:"JS Executor",bClass:"b2",
+title:"JavascriptExecutor — All Scenarios & Methods",
+sub:"executeScript · executeAsyncScript · scrolling · DOM manipulation · CDP",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What is JavascriptExecutor and why do we use it?",a:"JavascriptExecutor is a Selenium interface that runs arbitrary JavaScript in the browser context. We use it when Selenium's WebDriver API can't reach something: hidden elements, custom scroll, reading JS variables, triggering custom events, or bypassing Selenium's element interaction restrictions."},
+{q:"What is the difference between executeScript and executeAsyncScript?",a:"executeScript runs synchronous JS and returns immediately. executeAsyncScript runs async JS — Selenium waits for you to call the injected callback(result) function to signal completion, with a timeout set by driver.manage().timeouts().scriptTimeout()."},
+{q:"When would executeScript fail silently?",a:"If the JS throws an exception, Selenium wraps it in JavascriptException. If the JS returns undefined, Selenium returns null. If you return a WebElement from JS, Selenium wraps it as a WebElement — test these return types carefully."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 250" role="img"><title>JavascriptExecutor usage patterns</title><desc>Shows return types, argument passing, and sync vs async execution paths</desc><defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-purple"><rect x="230" y="20" width="220" height="44" rx="8" stroke-width="0.5"/><text class="th" x="340" y="46" text-anchor="middle" dominant-baseline="central">JavascriptExecutor (interface)</text></g>
+<line x1="280" y1="64" x2="180" y2="120" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<line x1="400" y1="64" x2="500" y2="120" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<g class="c-teal"><rect x="60" y="120" width="230" height="52" rx="8" stroke-width="0.5"/><text class="th" x="175" y="140" text-anchor="middle" dominant-baseline="central">executeScript(script, args)</text><text class="ts" x="175" y="158" text-anchor="middle" dominant-baseline="central">synchronous — returns immediately</text></g>
+<g class="c-amber"><rect x="390" y="120" width="240" height="52" rx="8" stroke-width="0.5"/><text class="th" x="510" y="140" text-anchor="middle" dominant-baseline="central">executeAsyncScript(script, args)</text><text class="ts" x="510" y="158" text-anchor="middle" dominant-baseline="central">waits for callback() invocation</text></g>
+<text class="ts" x="175" y="198" text-anchor="middle">returns: String, Long, Boolean,</text>
+<text class="ts" x="175" y="214" text-anchor="middle">WebElement, List, null</text>
+<text class="ts" x="510" y="198" text-anchor="middle">use for: AJAX, animations, timers</text>
+<text class="ts" x="510" y="214" text-anchor="middle">set scriptTimeout first</text>
+</svg>`,
+concepts:[
+{title:"executeScript — basic patterns and return types",body:`<pre><code class="language-java">JavascriptExecutor js = (JavascriptExecutor) driver;
+
+// Returns String:
+String url = (String) js.executeScript("return window.location.href");
+
+// Returns Long (numbers):
+Long scrollY = (Long) js.executeScript("return window.scrollY");
+
+// Returns Boolean:
+Boolean loaded = (Boolean) js.executeScript(
+    "return document.readyState === 'complete'");
+
+// Returns WebElement:
+WebElement active = (WebElement) js.executeScript(
+    "return document.activeElement");
+
+// Passing WebElement AS argument (arguments[0]):
+js.executeScript("arguments[0].click();", element);
+js.executeScript("arguments[0].style.border='3px solid red';", element);</code></pre>`},
+{title:"Scroll scenarios — 5 patterns",body:`<pre><code class="language-java">JavascriptExecutor js = (JavascriptExecutor) driver;
+
+// Scroll to bottom of page:
+js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+
+// Scroll to top:
+js.executeScript("window.scrollTo(0, 0)");
+
+// Scroll by relative amount:
+js.executeScript("window.scrollBy(0, 500)");  // down 500px
+
+// Scroll element into view (center):
+js.executeScript("arguments[0].scrollIntoView({block:'center'})", element);
+
+// Scroll inside an overflow div (not window):
+WebElement scrollDiv = driver.findElement(By.id("scrollableDiv"));
+js.executeScript("arguments[0].scrollTop += 300", scrollDiv);
+
+// PREFER Selenium 4 Actions scrollToElement() over JS for W3C compliance</code></pre>`},
+{title:"DOM manipulation and value setting",body:`<pre><code class="language-java">JavascriptExecutor js = (JavascriptExecutor) driver;
+WebElement dateInput = driver.findElement(By.id("datePicker"));
+
+// Set value on read-only or custom inputs:
+js.executeScript("arguments[0].value = '2024-12-25';", dateInput);
+
+// Remove readonly attribute:
+js.executeScript(
+    "arguments[0].removeAttribute('readonly')", dateInput);
+
+// Set attribute:
+js.executeScript(
+    "arguments[0].setAttribute('value', '999')", element);
+
+// Make hidden element visible:
+js.executeScript(
+    "arguments[0].style.display='block'", hiddenEl);
+
+// Highlight element for debugging:
+js.executeScript(
+    "arguments[0].style.outline='3px solid orange'", element);
+
+// Trigger custom event (React/Vue apps):
+js.executeScript(
+    "arguments[0].dispatchEvent(new Event('change'))", input);</code></pre>`},
+{title:"Reading JS state — page ready, custom vars",body:`<pre><code class="language-java">JavascriptExecutor js = (JavascriptExecutor) driver;
+
+// Check page load complete:
+wait.until(d -&gt; js.executeScript(
+    "return document.readyState").equals("complete"));
+
+// Check jQuery AJAX idle (if app uses jQuery):
+wait.until(d -&gt; (Boolean) js.executeScript(
+    "return jQuery.active === 0"));
+
+// Read custom JS variable set by app:
+String token = (String) js.executeScript(
+    "return window.authToken");
+
+// Get all local storage keys:
+String allKeys = (String) js.executeScript(
+    "return Object.keys(localStorage).toString()");
+
+// Read localStorage value:
+String userData = (String) js.executeScript(
+    "return localStorage.getItem('user')");</code></pre>`},
+{title:"executeAsyncScript — AJAX and animation waits",body:`<pre><code class="language-java">// Set script timeout FIRST:
+driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(30));
+
+JavascriptExecutor js = (JavascriptExecutor) driver;
+
+// Wait for an animation to complete using async script:
+js.executeAsyncScript(
+    "var callback = arguments[arguments.length - 1];" +
+    "setTimeout(callback, 2000);"  // wait 2s then signal done
+);
+
+// Wait for fetch/AJAX to resolve:
+js.executeAsyncScript(
+    "var done = arguments[arguments.length - 1];" +
+    "fetch('/api/data').then(r => r.json()).then(data => done(data))"
+);
+
+// The last argument is always the callback in executeAsyncScript
+// Call it to signal Selenium that async work is complete</code></pre>`}
+],
+mistakes:[
+{bad:"Using JS click (arguments[0].click()) as default approach for all clicks",good:"Use JS click only as a last resort when Selenium click fails (overlapping elements, hidden elements). Normal clicks should use element.click() for realistic user simulation"},
+{bad:"Not setting scriptTimeout before executeAsyncScript",good:"Always set driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(30)) before any executeAsyncScript call — without it, the default is 0 and will timeout immediately"}
+],
+checklist:["Cast driver to JavascriptExecutor before use: (JavascriptExecutor) driver","arguments[0] in JS script = first Java argument after the script string","executeAsyncScript: always call the last argument as callback to signal completion","Set scriptTimeout before all executeAsyncScript calls","Prefer Actions.scrollToElement() over JS scroll for Selenium 4 W3C compliance"]
+},
+
+{id:17,badge:"Robot Class",bClass:"b3",
+title:"Robot Class — All Scenarios & Methods",
+sub:"OS-level automation · keyboard · mouse · file upload · clipboard",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What is Robot class and how is it different from Selenium Actions?",a:"Robot class (java.awt.Robot) automates at the OS/native level — it controls the physical keyboard and mouse regardless of browser. Selenium Actions works within the browser context. Use Robot for: file upload dialogs, OS popups, and anything outside the browser DOM."},
+{q:"When would you use Robot class in a Selenium test?",a:"Use Robot for: native OS file upload dialogs (the Windows/Linux file picker), clipboard operations (copy/paste system-wide), keyboard shortcuts that browsers intercept before Selenium can handle them, and taking OS-level screenshots."},
+{q:"What are the limitations of Robot class in CI/CD?",a:"Robot requires a physical display — it fails in headless mode and on headless Linux servers. In CI/CD, use browser-based file upload workarounds (sendKeys to file input) or virtual display (Xvfb on Linux) instead of Robot for file dialogs."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 270" role="img"><title>Robot class vs Selenium Actions scope</title><desc>Shows Robot operates at OS level while Selenium Actions operates at browser level</desc><defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-gray"><rect x="20" y="20" width="640" height="230" rx="12" stroke-width="0.5"/><text class="th" x="340" y="44" text-anchor="middle" dominant-baseline="central">Operating System layer</text></g>
+<g class="c-purple"><rect x="40" y="60" width="280" height="60" rx="8" stroke-width="1"/><text class="th" x="180" y="82" text-anchor="middle" dominant-baseline="central">Robot class (java.awt)</text><text class="ts" x="180" y="100" text-anchor="middle" dominant-baseline="central">OS keyboard + mouse + screen</text></g>
+<text class="ts" x="180" y="136" text-anchor="middle">file dialogs, clipboard,</text>
+<text class="ts" x="180" y="152" text-anchor="middle">OS popups, screenshots</text>
+<g class="c-teal"><rect x="360" y="60" width="280" height="60" rx="8" stroke-width="0.5"/><text class="th" x="500" y="82" text-anchor="middle" dominant-baseline="central">Selenium Actions</text><text class="ts" x="500" y="100" text-anchor="middle" dominant-baseline="central">Browser DOM interactions</text></g>
+<text class="ts" x="500" y="136" text-anchor="middle">hover, drag-drop,</text>
+<text class="ts" x="500" y="152" text-anchor="middle">in-page keyboard combos</text>
+<text class="ts" x="340" y="220" text-anchor="middle">Robot = OS level (bypasses browser) | Actions = browser level (in DOM)</text>
+</svg>`,
+concepts:[
+{title:"Robot class — setup and keyboard",body:`<pre><code class="language-java">import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+
+Robot robot = new Robot();
+
+// Press Enter key:
+robot.keyPress(KeyEvent.VK_ENTER);
+robot.keyRelease(KeyEvent.VK_ENTER);
+
+// Press Tab:
+robot.keyPress(KeyEvent.VK_TAB);
+robot.keyRelease(KeyEvent.VK_TAB);
+
+// Press Escape (dismiss dialog):
+robot.keyPress(KeyEvent.VK_ESCAPE);
+robot.keyRelease(KeyEvent.VK_ESCAPE);
+
+// Press Ctrl+A (select all) then Ctrl+C (copy):
+robot.keyPress(KeyEvent.VK_CONTROL);
+robot.keyPress(KeyEvent.VK_A);
+robot.keyRelease(KeyEvent.VK_A);
+robot.keyRelease(KeyEvent.VK_CONTROL);</code></pre>`},
+{title:"File upload dialog — most common Robot use case",body:`<pre><code class="language-java">// ⚠ PREFERRED: Use sendKeys directly on file input (no Robot needed):
+driver.findElement(By.id("fileInput")).sendKeys("/home/user/doc.pdf");
+
+// ROBOT approach — only when file input is not accessible via Selenium:
+// 1. Click the upload button to open OS dialog
+driver.findElement(By.id("uploadBtn")).click();
+Thread.sleep(1500); // wait for OS dialog to open
+
+// 2. Type file path into the dialog using clipboard (most reliable):
+Robot robot = new Robot();
+StringSelection filePath = new StringSelection("/home/user/file.pdf");
+Toolkit.getDefaultToolkit().getSystemClipboard().setContents(filePath, null);
+
+// 3. Paste the path (Ctrl+V):
+robot.keyPress(KeyEvent.VK_CONTROL); robot.keyPress(KeyEvent.VK_V);
+robot.keyRelease(KeyEvent.VK_V); robot.keyRelease(KeyEvent.VK_CONTROL);
+
+// 4. Confirm with Enter:
+robot.keyPress(KeyEvent.VK_ENTER); robot.keyRelease(KeyEvent.VK_ENTER);</code></pre>`},
+{title:"Mouse control — move, click, scroll",body:`<pre><code class="language-java">Robot robot = new Robot();
+
+// Move mouse to absolute screen coordinates:
+robot.mouseMove(500, 300);  // x=500, y=300 on screen
+
+// Left click:
+robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+
+// Right click:
+robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+
+// Double click:
+robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+
+// Mouse wheel scroll:
+robot.mouseWheel(3);  // scroll down 3 notches
+robot.mouseWheel(-3); // scroll up 3 notches</code></pre>`},
+{title:"Clipboard — copy and paste between fields",body:`<pre><code class="language-java">import java.awt.Toolkit;
+import java.awt.datatransfer.*;
+
+// Set clipboard content (type text into OS dialog):
+void setClipboard(String text) throws Exception {
+    StringSelection sel = new StringSelection(text);
+    Toolkit.getDefaultToolkit()
+           .getSystemClipboard().setContents(sel, null);
+}
+
+// Read clipboard content:
+String readClipboard() throws Exception {
+    Transferable contents = Toolkit.getDefaultToolkit()
+        .getSystemClipboard().getContents(null);
+    if (contents != null &amp;&amp; contents.isDataFlavorSupported(
+            DataFlavor.stringFlavor)) {
+        return (String) contents.getTransferData(DataFlavor.stringFlavor);
+    }
+    return null;
+}
+
+// Usage: verify copied text matches expected
+String copied = readClipboard();
+assert copied.equals("Expected text") : "Clipboard mismatch";</code></pre>`},
+{title:"Screenshot with Robot — full screen capture",body:`<pre><code class="language-java">import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+
+// Capture full OS screen (including browser chrome, taskbar):
+Robot robot = new Robot();
+Rectangle screen = new Rectangle(
+    Toolkit.getDefaultToolkit().getScreenSize());
+BufferedImage screenshot = robot.createScreenCapture(screen);
+
+// Save to file:
+ImageIO.write(screenshot, "PNG",
+    new File("screenshots/full_screen.png"));
+
+// Capture specific area (x, y, width, height):
+Rectangle area = new Rectangle(0, 0, 800, 600);
+BufferedImage partial = robot.createScreenCapture(area);
+ImageIO.write(partial, "PNG", new File("partial.png"));
+
+// Note: Selenium's TakesScreenshot is better for browser-only tests</code></pre>`}
+],
+mistakes:[
+{bad:"Using Robot for file upload in CI/CD headless environments",good:"Use sendKeys() directly on the file input element — it works headlessly. Robot requires a display. Fall back to AutoIT or PyAutoGUI for CI file dialog automation on non-headless"},
+{bad:"robot.keyPress without robot.keyRelease — key stays held down",good:"Always pair every keyPress with keyRelease. Held modifier keys (Ctrl, Shift) corrupt subsequent keyboard actions until released"}
+],
+checklist:["Always pair keyPress + keyRelease for every key including modifiers","For file upload: try sendKeys first on input[type=file] — no Robot needed","Robot needs a display — add Xvfb in Linux CI if you must use Robot","Use clipboard (StringSelection) instead of keyPress for each char — faster and reliable","robot.delay(ms) adds waiting between actions — use sparingly, prefer explicit waits"]
+},
+
+{id:18,badge:"Exceptions",bClass:"b3",
+title:"All Selenium Exceptions — Handle & Fix",
+sub:"NoSuchElement · StaleElement · Timeout · ElementNotInteractable · All types",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What is StaleElementReferenceException and how do you fix it?",a:"Thrown when a WebElement reference is no longer valid — the DOM was rebuilt (after page refresh, AJAX update, navigation). Fix: re-find the element after the DOM change, or use ExpectedConditions.stalenessOf() to wait for the old element to detach."},
+{q:"What is the difference between NoSuchElementException and TimeoutException?",a:"NoSuchElementException fires immediately when findElement can't locate the element (with no implicit wait set). TimeoutException fires when an explicit wait's maximum duration is exceeded — the condition never became true."},
+{q:"What causes ElementNotInteractableException?",a:"Element is in the DOM but not interactable — it could be hidden (display:none/visibility:hidden), covered by an overlay, outside viewport, disabled, or still animating into position. Fix: wait for elementToBeClickable, scroll into view, or close the overlay."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 290" role="img"><title>Selenium exception hierarchy</title><desc>Shows WebDriverException as root with common child exceptions grouped by category</desc><defs></defs>
+<g class="c-coral"><rect x="220" y="20" width="240" height="40" rx="8" stroke-width="0.5"/><text class="th" x="340" y="44" text-anchor="middle" dominant-baseline="central">WebDriverException (root)</text></g>
+<line x1="100" y1="60" x2="100" y2="100" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+<line x1="250" y1="60" x2="250" y2="100" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+<line x1="430" y1="60" x2="430" y2="100" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+<line x1="590" y1="60" x2="590" y2="100" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+<line x1="60" y1="60" x2="640" y2="60" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+<g class="c-red"><rect x="30" y="100" width="140" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="100" y="120" text-anchor="middle" dominant-baseline="central">NoSuchElement</text></g>
+<g class="c-red"><rect x="180" y="100" width="140" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="250" y="120" text-anchor="middle" dominant-baseline="central">StaleElement</text></g>
+<g class="c-amber"><rect x="330" y="100" width="200" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="430" y="120" text-anchor="middle" dominant-baseline="central">ElementNotInteractable</text></g>
+<g class="c-amber"><rect x="545" y="100" width="115" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="602" y="120" text-anchor="middle" dominant-baseline="central">Timeout</text></g>
+<g class="c-gray"><rect x="30" y="155" width="140" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="100" y="175" text-anchor="middle" dominant-baseline="central">InvalidSelector</text></g>
+<g class="c-gray"><rect x="185" y="155" width="130" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="250" y="175" text-anchor="middle" dominant-baseline="central">NoSuchFrame</text></g>
+<g class="c-gray"><rect x="330" y="155" width="130" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="395" y="175" text-anchor="middle" dominant-baseline="central">NoAlertPresent</text></g>
+<g class="c-gray"><rect x="475" y="155" width="185" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="567" y="175" text-anchor="middle" dominant-baseline="central">UnhandledAlertException</text></g>
+<g class="c-gray"><rect x="30" y="210" width="160" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="110" y="230" text-anchor="middle" dominant-baseline="central">MoveTargetOutOfBounds</text></g>
+<g class="c-gray"><rect x="205" y="210" width="160" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="285" y="230" text-anchor="middle" dominant-baseline="central">SessionNotCreated</text></g>
+<g class="c-gray"><rect x="380" y="210" width="160" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="460" y="230" text-anchor="middle" dominant-baseline="central">JavascriptException</text></g>
+<g class="c-gray"><rect x="555" y="210" width="105" height="32" rx="6" stroke-width="0.5"/><text class="ts" x="607" y="230" text-anchor="middle" dominant-baseline="central">NoSuchWindow</text></g>
+</svg>`,
+concepts:[
+{title:"NoSuchElementException — causes and fixes",body:`<pre><code class="language-java">// Caused by: wrong locator, element not yet loaded, inside iframe
+
+// Fix 1: Add explicit wait
+WebElement el = wait.until(EC
+    .presenceOfElementLocated(By.id("dynamicEl")));
+
+// Fix 2: Verify locator in DevTools (F12 → Console):
+// document.querySelector('#dynamicEl') → check if returns null
+
+// Fix 3: Check if inside an iFrame:
+driver.switchTo().frame("myFrame");
+WebElement el = driver.findElement(By.id("innerEl"));
+
+// Fix 4: Safe find (no exception — returns boolean):
+boolean exists = !driver.findElements(By.id("el")).isEmpty();
+
+// Fix 5: Try-catch and retry logic:
+try {
+    driver.findElement(By.id("btn")).click();
+} catch (NoSuchElementException e) {
+    System.out.println("Element not found: " + e.getMessage());
+}</code></pre>`},
+{title:"StaleElementReferenceException — causes and fixes",body:`<pre><code class="language-java">// Caused by: DOM rebuilt after AJAX, page refresh, navigation
+// Old WebElement reference becomes invalid
+
+// Fix 1: Re-find element after DOM change:
+driver.findElement(By.id("refresh")).click();
+wait.until(EC.stalenessOf(oldElement)); // wait for old to die
+WebElement fresh = driver.findElement(By.id("result")); // re-find
+
+// Fix 2: FluentWait ignoring stale:
+Wait&lt;WebDriver&gt; w = new FluentWait&lt;&gt;(driver)
+    .withTimeout(Duration.ofSeconds(10))
+    .ignoring(StaleElementReferenceException.class);
+w.until(d -&gt; { d.findElement(By.id("el")).click(); return true; });
+
+// Fix 3: Store locator, not element — re-find when needed:
+By btnLocator = By.id("submit"); // store By, not WebElement
+driver.findElement(btnLocator).click(); // always fresh</code></pre>`},
+{title:"ElementNotInteractableException — causes and fixes",body:`<pre><code class="language-java">// Caused by: element hidden, covered by overlay, animating, disabled
+
+// Fix 1: Wait for clickable (visible + enabled):
+wait.until(EC.elementToBeClickable(By.id("btn"))).click();
+
+// Fix 2: Scroll element into view first:
+actions.scrollToElement(element).perform(); // Selenium 4
+element.click();
+
+// Fix 3: Close overlay blocking element:
+driver.findElement(By.id("cookieBanner")).click(); // dismiss
+wait.until(EC.elementToBeClickable(By.id("btn"))).click();
+
+// Fix 4: JS click as last resort (bypasses visibility check):
+JavascriptExecutor js = (JavascriptExecutor) driver;
+js.executeScript("arguments[0].click()", element);
+
+// Fix 5: Wait for animation to finish before clicking:
+Thread.sleep(500); // only as last resort — prefer explicit wait</code></pre>`},
+{title:"UnhandledAlertException & NoAlertPresentException",body:`<pre><code class="language-java">// UnhandledAlertException — unexpected alert appeared during action
+try {
+    driver.findElement(By.id("save")).click();
+} catch (UnhandledAlertException e) {
+    // Alert appeared! Handle it then continue:
+    driver.switchTo().alert().accept();
+    System.out.println("Alert text: " + e.getAlertText());
+}
+
+// NoAlertPresentException — trying to switch to alert that isn't there
+try {
+    driver.switchTo().alert().accept();
+} catch (NoAlertPresentException e) {
+    System.out.println("No alert present — skipping");
+}
+
+// BEST: Use explicit wait before alert interaction:
+wait.until(EC.alertIsPresent());
+driver.switchTo().alert().accept();</code></pre>`},
+{title:"TimeoutException, InvalidSelector, SessionNotCreated",body:`<pre><code class="language-java">// TimeoutException — explicit wait condition not met in time
+try {
+    wait.until(EC.visibilityOfElementLocated(By.id("slowEl")));
+} catch (TimeoutException e) {
+    ScreenshotUtil.capture(driver, "timeout_failure");
+    System.out.println("Page state: " + driver.getPageSource());
+}
+
+// InvalidSelectorException — bad XPath/CSS syntax
+// WRONG: By.xpath("//div[@class=active]") — missing quotes
+// RIGHT: By.xpath("//div[@class='active']")
+
+// SessionNotCreatedException — driver/browser version mismatch
+// Fix: Update ChromeDriver to match Chrome browser version
+// Or: Let Selenium Manager handle it (Selenium 4.6+)
+
+// ElementClickInterceptedException — click blocked by overlay
+try {
+    element.click();
+} catch (ElementClickInterceptedException e) {
+    js.executeScript("arguments[0].click()", element); // JS click
+}</code></pre>`}
+],
+mistakes:[
+{bad:"Catching WebDriverException broadly and silently ignoring it",good:"Catch specific exception types (NoSuchElementException, StaleElementReferenceException) — handle each appropriately. Always log exception message and take a screenshot"},
+{bad:"Not taking a screenshot before catching exceptions in test teardown",good:"In your exception handler or @AfterMethod, always take screenshot BEFORE calling driver.quit() — once quit() is called you lose the browser state forever"}
+],
+checklist:["Store By locators not WebElements to avoid StaleElementReference on reuse","NoSuchElementException → check locator in DevTools console first","ElementClickInterceptedException → dismiss overlay, scroll to element, then try again","Always screenshot on TimeoutException — it captures the failing page state","SessionNotCreatedException → version mismatch — let Selenium Manager fix automatically"]
+},
+
+{id:19,badge:"Relative Locators",bClass:"b3",
+title:"Relative Locators — Selenium 4 Feature",
+sub:"above · below · toLeftOf · toRightOf · near · chaining",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What are Relative Locators in Selenium 4?",a:"Relative Locators (also called Friendly Locators) allow you to find elements based on their spatial position relative to another element — above, below, toLeftOf, toRightOf, near. They use the W3C WebDriver BiDi protocol under the hood."},
+{q:"How does the 'near' relative locator work?",a:"near(element) finds elements within 50px of the specified element in any direction. It's useful for finding unlabeled elements (like inputs without id/name) that are visually close to a labeled element."},
+{q:"Can you chain relative locators in Selenium 4?",a:"Yes — relative locators can be chained. Example: withTagName('input').above(submitBtn).toRightOf(label) — find an input that is both above the submit button AND to the right of a label element."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 300" role="img"><title>Relative locator spatial directions</title><desc>Shows a center reference element with above below toLeftOf toRightOf and near directions</desc><defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-teal"><rect x="255" y="120" width="170" height="44" rx="8" stroke-width="1"/><text class="th" x="340" y="146" text-anchor="middle" dominant-baseline="central">Reference element</text></g>
+<g class="c-purple"><rect x="255" y="30" width="170" height="36" rx="6" stroke-width="0.5"/><text class="th" x="340" y="52" text-anchor="middle" dominant-baseline="central">above()</text></g>
+<line x1="340" y1="120" x2="340" y2="66" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<g class="c-purple"><rect x="255" y="220" width="170" height="36" rx="6" stroke-width="0.5"/><text class="th" x="340" y="242" text-anchor="middle" dominant-baseline="central">below()</text></g>
+<line x1="340" y1="164" x2="340" y2="220" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<g class="c-purple"><rect x="60" y="122" width="160" height="36" rx="6" stroke-width="0.5"/><text class="th" x="140" y="144" text-anchor="middle" dominant-baseline="central">toLeftOf()</text></g>
+<line x1="255" y1="142" x2="220" y2="142" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<g class="c-purple"><rect x="460" y="122" width="160" height="36" rx="6" stroke-width="0.5"/><text class="th" x="540" y="144" text-anchor="middle" dominant-baseline="central">toRightOf()</text></g>
+<line x1="425" y1="142" x2="460" y2="142" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<g class="c-amber"><rect x="160" y="220" width="100" height="36" rx="6" stroke-width="0.5"/><text class="th" x="210" y="242" text-anchor="middle" dominant-baseline="central">near(50px)</text></g>
+<text class="ts" x="340" y="286" text-anchor="middle">near() = within 50px in any direction</text>
+</svg>`,
+concepts:[
+{title:"Relative Locators — syntax and import",body:`<pre><code class="language-java">import static org.openqa.selenium.support.locators.RelativeLocator.with;
+
+// Basic structure:
+// with(tagName).direction(referenceElement)
+
+// Example HTML:
+// &lt;label&gt;Email&lt;/label&gt;  &lt;input type="email" /&gt;
+// &lt;label&gt;Password&lt;/label&gt;  &lt;input type="password" /&gt;
+// &lt;button id="submit"&gt;Login&lt;/button&gt;
+
+WebElement emailLabel = driver.findElement(By.xpath("//label[text()='Email']"));
+
+// Find the input to the right of 'Email' label:
+WebElement emailInput = driver.findElement(
+    with(By.tagName("input")).toRightOf(emailLabel));
+
+emailInput.sendKeys("user@test.com");</code></pre>`},
+{title:"above() and below() — vertical positioning",body:`<pre><code class="language-java">WebElement submitBtn = driver.findElement(By.id("submit"));
+
+// Find password input that is ABOVE the submit button:
+WebElement passwordField = driver.findElement(
+    with(By.tagName("input")).above(submitBtn));
+passwordField.sendKeys("Secret123");
+
+// Find element BELOW a specific element:
+WebElement header = driver.findElement(By.tagName("h2"));
+WebElement firstParagraph = driver.findElement(
+    with(By.tagName("p")).below(header));
+
+// Real scenario: form without ids — find inputs by label position
+WebElement nameLabel = driver.findElement(
+    By.xpath("//label[text()='Full Name']"));
+WebElement nameInput = driver.findElement(
+    with(By.tagName("input")).toRightOf(nameLabel));
+nameInput.sendKeys("John Doe");</code></pre>`},
+{title:"near() — proximity-based finding",body:`<pre><code class="language-java">// near() finds elements within 50px of the reference element
+WebElement emailLabel = driver.findElement(
+    By.xpath("//label[text()='Email']"));
+
+// Find any input near the email label:
+WebElement nearInput = driver.findElement(
+    with(By.tagName("input")).near(emailLabel));
+
+// near() is useful for:
+// - Icon buttons next to text (edit/delete icons in table rows)
+// - Inputs that don't have id/name but are next to labeled text
+// - Checkboxes next to their label text
+
+WebElement editIcon = driver.findElement(By.id("john-row-label"));
+WebElement editBtn = driver.findElement(
+    with(By.cssSelector("button.edit-btn")).near(editIcon));
+editBtn.click();</code></pre>`},
+{title:"Chaining relative locators",body:`<pre><code class="language-java">// Chain multiple relative locators for precision:
+WebElement submitBtn = driver.findElement(By.id("submit"));
+WebElement sideLabel = driver.findElement(By.id("sideLabel"));
+
+// Find input that is above submit AND to right of sideLabel:
+WebElement preciseInput = driver.findElement(
+    with(By.tagName("input"))
+        .above(submitBtn)
+        .toRightOf(sideLabel));
+
+// Real scenario: table row operations
+// Find the delete button in the same row as 'John Doe' cell
+WebElement johnCell = driver.findElement(
+    By.xpath("//td[text()='John Doe']"));
+WebElement deleteBtn = driver.findElement(
+    with(By.cssSelector("button.delete"))
+        .toRightOf(johnCell));
+deleteBtn.click();</code></pre>`},
+{title:"Relative locators vs XPath axes — when to use each",body:`<pre><code class="language-java">// XPath axes — use for DOM-relationship traversal:
+// Find input that is next sibling of label:
+driver.findElement(By.xpath(
+    "//label[text()='Email']/following-sibling::input"));
+
+// Relative Locators — use for VISUAL/SPATIAL positioning:
+// Find input visually to the right of email label:
+driver.findElement(
+    with(By.tagName("input")).toRightOf(emailLabel));
+
+// Use XPath axes when: elements are DOM siblings/parent/child
+// Use Relative Locators when: elements are visually close but
+// NOT necessarily DOM siblings (e.g. in separate divs/tables)
+
+// Relative locators use bounding box positions — not DOM tree</code></pre>`}
+],
+mistakes:[
+{bad:"Using near() expecting it to find the closest element — it finds ANY element within 50px",good:"near() finds all elements within 50px and returns the first — if multiple match, specify more constraints. Prefer toRightOf/above with specific tag names"},
+{bad:"Relative locators for elements far apart on the page",good:"Relative locators use pixel-based bounding box — elements far apart on the page won't be found by near(). Use standard locators for elements not spatially adjacent"}
+],
+checklist:["Import: import static RelativeLocator.with — the static import is required","Chain relative locators for precision: with(By.tagName('input')).above(el).toRightOf(label2)","Relative locators are position-based (pixels) not DOM-relationship-based","near() default radius is 50px — cannot be customized in current Selenium 4","Use Relative Locators for unlabeled inputs near labeled text — great for legacy forms"]
+},
+
+{id:20,badge:"CDP Support",bClass:"b4",
+title:"Native Chrome DevTools Protocol (CDP)",
+sub:"Network · Console · Geolocation · Auth · Performance",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What is CDP in Selenium 4?",a:"CDP (Chrome DevTools Protocol) is Chrome's low-level debugging API. Selenium 4 provides direct access to CDP via HasDevTools, allowing tests to intercept network requests, mock geolocation, emulate device, capture console logs, and inject credentials — all without browser extensions."},
+{q:"Which Selenium 4 interface gives access to CDP?",a:"ChromeDriver implements HasDevTools which provides driver.getDevTools() — returning a DevTools instance. You open a session with devTools.createSession() then call send(Commands.of(...)) to execute CDP commands."},
+{q:"Is CDP support only for Chrome in Selenium 4?",a:"CDP is natively Chrome/Chromium-based. Selenium 4 also supports it for Edge (Chromium-based). Firefox has its own BiDi protocol — not CDP. For cross-browser tests, abstract CDP usage behind a feature flag."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 260" role="img"><title>CDP usage areas in Selenium 4</title><desc>Shows five CDP capability areas: network, console, geolocation, auth, and performance</desc><defs></defs>
+<g class="c-purple"><rect x="240" y="20" width="200" height="44" rx="8" stroke-width="1"/><text class="th" x="340" y="46" text-anchor="middle" dominant-baseline="central">Chrome DevTools Protocol</text></g>
+<g class="c-teal"><rect x="20" y="100" width="120" height="52" rx="8" stroke-width="0.5"/><text class="th" x="80" y="120" text-anchor="middle" dominant-baseline="central">Network</text><text class="ts" x="80" y="138" text-anchor="middle" dominant-baseline="central">intercept, block</text></g>
+<g class="c-teal"><rect x="155" y="100" width="110" height="52" rx="8" stroke-width="0.5"/><text class="th" x="210" y="120" text-anchor="middle" dominant-baseline="central">Console</text><text class="ts" x="210" y="138" text-anchor="middle" dominant-baseline="central">log capture</text></g>
+<g class="c-teal"><rect x="280" y="100" width="120" height="52" rx="8" stroke-width="0.5"/><text class="th" x="340" y="120" text-anchor="middle" dominant-baseline="central">Geolocation</text><text class="ts" x="340" y="138" text-anchor="middle" dominant-baseline="central">mock location</text></g>
+<g class="c-teal"><rect x="415" y="100" width="110" height="52" rx="8" stroke-width="0.5"/><text class="th" x="470" y="120" text-anchor="middle" dominant-baseline="central">Auth</text><text class="ts" x="470" y="138" text-anchor="middle" dominant-baseline="central">basic auth</text></g>
+<g class="c-teal"><rect x="540" y="100" width="120" height="52" rx="8" stroke-width="0.5"/><text class="th" x="600" y="120" text-anchor="middle" dominant-baseline="central">Performance</text><text class="ts" x="600" y="138" text-anchor="middle" dominant-baseline="central">metrics capture</text></g>
+<text class="ts" x="340" y="200" text-anchor="middle">All via: driver.getDevTools().send(Command)</text>
+<text class="ts" x="340" y="220" text-anchor="middle">Requires: ChromeDriver or EdgeDriver (Chromium-based)</text>
+</svg>`,
+concepts:[
+{title:"CDP setup — DevTools session",body:`<pre><code class="language-java">import org.openqa.selenium.chromium.HasCdp;
+import org.openqa.selenium.devtools.DevTools;
+import org.openqa.selenium.devtools.v120.*; // use version matching Chrome
+
+ChromeDriver driver = new ChromeDriver();
+DevTools devTools = driver.getDevTools();
+devTools.createSession();
+
+// Alternative using HasCdp (Selenium 4 high-level API):
+// Less version-coupling than direct DevTools commands:
+HasCdp cdpDriver = (HasCdp) driver;
+Map&lt;String, Object&gt; result = cdpDriver.executeCdpCommand(
+    "Network.enable", Map.of());
+
+// executeCdpCommand is simpler for one-off CDP calls
+// DevTools.send is better for subscribing to events</code></pre>`},
+{title:"Network interception — block/mock requests",body:`<pre><code class="language-java">DevTools devTools = ((ChromeDriver)driver).getDevTools();
+devTools.createSession();
+
+// Enable network domain:
+devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+
+// Listen for all network requests:
+devTools.addListener(Network.requestWillBeSent(), req -&gt; {
+    System.out.println("Request: " + req.getRequest().getUrl());
+});
+
+// Block images to speed up tests:
+devTools.send(Network.setBlockedURLs(List.of("*.png", "*.jpg", "*.gif")));
+
+// Set custom request headers (e.g. auth token):
+devTools.send(Network.setExtraHTTPHeaders(
+    new Headers(Map.of("Authorization", "Bearer mytoken123"))));</code></pre>`},
+{title:"Geolocation mocking",body:`<pre><code class="language-java">import org.openqa.selenium.devtools.v120.emulation.Emulation;
+
+DevTools devTools = ((ChromeDriver)driver).getDevTools();
+devTools.createSession();
+
+// Mock user geolocation to Mumbai, India:
+devTools.send(Emulation.setGeolocationOverride(
+    Optional.of(19.076),   // latitude
+    Optional.of(72.877),   // longitude
+    Optional.of(1.0)       // accuracy in meters
+));
+
+driver.get("https://maps.google.com");
+// Map will show Mumbai location
+
+// Clear geolocation override:
+devTools.send(Emulation.clearGeolocationOverride());</code></pre>`},
+{title:"Console log capture and Basic Auth",body:`<pre><code class="language-java">// Capture browser console logs via CDP:
+DevTools devTools = ((ChromeDriver)driver).getDevTools();
+devTools.createSession();
+devTools.send(Log.enable());
+
+List&lt;String&gt; consoleLogs = new ArrayList&lt;&gt;();
+devTools.addListener(Log.entryAdded(), entry -&gt; {
+    consoleLogs.add(entry.getLevel() + ": " + entry.getText());
+    System.out.println("Console: " + entry.getText());
+});
+
+driver.get("https://app.com");
+System.out.println("All logs: " + consoleLogs);
+
+// Basic Authentication via CDP (no popup handling needed):
+Predicate&lt;URI&gt; uriPredicate = uri -&gt;
+    uri.getHost().contains("app.com");
+((HasAuthentication) driver).register(uriPredicate,
+    UsernameAndPassword.of("admin", "password123"));</code></pre>`},
+{title:"Performance metrics capture",body:`<pre><code class="language-java">import org.openqa.selenium.devtools.v120.performance.Performance;
+
+DevTools devTools = ((ChromeDriver)driver).getDevTools();
+devTools.createSession();
+devTools.send(Performance.enable(Optional.empty()));
+
+driver.get("https://app.com");
+
+// Get performance metrics:
+List&lt;Metric&gt; metrics = devTools.send(Performance.getMetrics());
+metrics.forEach(metric -&gt;
+    System.out.println(metric.getName() + ": " + metric.getValue()));
+
+// Key metrics to watch:
+// TaskDuration — total CPU time for tasks
+// JSHeapUsedSize — memory used by JS heap
+// Nodes — number of DOM nodes
+// Documents — number of documents in page</code></pre>`}
+],
+mistakes:[
+{bad:"Hardcoding devtools.v120 version number in imports",good:"CDP API version must match your Chrome version. Use Version.fromString(((ChromeDriver)driver).getCapabilities().getBrowserVersion()) to get the right version programmatically"},
+{bad:"Using CDP for things standard Selenium API already handles",good:"Use CDP only for what WebDriver can't do: network interception, geolocation mock, console logs, performance metrics, auth headers. Don't use CDP just because it exists"}
+],
+checklist:["Always call devTools.createSession() before any send() call","CDP version number (v120) must match Chrome major version","addListener() subscribes to CDP events — don't forget to remove listeners after test","HasAuthentication.register() handles Basic Auth dialogs — no Alert.accept() needed","executeCdpCommand() on HasCdp interface is simpler for one-off commands without events"]
+},
+
+{id:21,badge:"newWindow/Tab",bClass:"b4",
+title:"newWindow() and newTab() — Selenium 4",
+sub:"Open new tab · Open new window · Switch · WindowType enum",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What is new about window/tab handling in Selenium 4?",a:"Selenium 4 added driver.switchTo().newWindow(WindowType.TAB) and newWindow(WindowType.WINDOW) — allowing you to programmatically open new tabs and windows without clicking links. Previous Selenium had no built-in API for this."},
+{q:"How is newWindow() different from opening a URL in the same tab?",a:"newWindow() opens a completely new browser context (tab or window) and automatically switches to it. The original tab/window remains open. This is essential for testing multi-tab workflows, popup windows, and comparing content across tabs."},
+{q:"What is the WindowType enum in Selenium 4?",a:"WindowType is a Selenium 4 enum with two values: WindowType.TAB (opens in new tab, same browser window) and WindowType.WINDOW (opens in a new separate browser window). Both return the new handle after switching."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 280" role="img"><title>newWindow and newTab flow in Selenium 4</title><desc>Shows browser with original tab, opening new tab via API, switching back and forth</desc><defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-gray"><rect x="20" y="20" width="640" height="230" rx="12" stroke-width="0.5"/><text class="th" x="340" y="44" text-anchor="middle" dominant-baseline="central">Browser window</text></g>
+<g class="c-teal"><rect x="40" y="60" width="260" height="60" rx="8" stroke-width="0.5"/><text class="th" x="170" y="82" text-anchor="middle" dominant-baseline="central">Tab 1 (original)</text><text class="ts" x="170" y="100" text-anchor="middle" dominant-baseline="central">handle: ABC123</text></g>
+<g class="c-purple"><rect x="360" y="60" width="260" height="60" rx="8" stroke-width="1"/><text class="th" x="490" y="82" text-anchor="middle" dominant-baseline="central">Tab 2 (new)</text><text class="ts" x="490" y="100" text-anchor="middle" dominant-baseline="central">handle: XYZ789</text></g>
+<line x1="300" y1="90" x2="360" y2="90" class="arr" marker-end="url(#a)" stroke="var(--color-text-tertiary)"/>
+<text class="ts" x="330" y="80" text-anchor="middle">switchTo</text>
+<text class="ts" x="330" y="108" text-anchor="middle">.newWindow</text>
+<text class="ts" x="170" y="160" text-anchor="middle">getWindowHandle() = ABC123</text>
+<text class="ts" x="490" y="160" text-anchor="middle">auto-switched after newWindow()</text>
+<g class="c-amber"><rect x="130" y="185" width="420" height="40" rx="8" stroke-width="0.5"/><text class="ts" x="340" y="209" text-anchor="middle" dominant-baseline="central">switchTo().window(handle) to navigate between tabs</text></g>
+</svg>`,
+concepts:[
+{title:"newWindow(WindowType.TAB) — open new tab",body:`<pre><code class="language-java">import org.openqa.selenium.WindowType;
+
+// Store original window handle before opening new tab
+String originalHandle = driver.getWindowHandle();
+System.out.println("Original: " + originalHandle);
+
+driver.get("https://app.com");
+
+// Open NEW TAB and auto-switch to it:
+driver.switchTo().newWindow(WindowType.TAB);
+
+// Now in new tab — navigate to different URL:
+driver.get("https://app.com/admin");
+System.out.println("New tab title: " + driver.getTitle());
+
+// Switch back to original tab:
+driver.switchTo().window(originalHandle);
+System.out.println("Back to: " + driver.getTitle());</code></pre>`},
+{title:"newWindow(WindowType.WINDOW) — open new browser window",body:`<pre><code class="language-java">// Store current handle
+String mainWindow = driver.getWindowHandle();
+
+// Open NEW BROWSER WINDOW (separate window, not tab):
+driver.switchTo().newWindow(WindowType.WINDOW);
+
+// New window is opened and focused automatically
+driver.get("https://admin.app.com");
+driver.manage().window().maximize();
+
+// Do work in new window...
+String adminData = driver.findElement(By.id("report")).getText();
+
+// Close new window and switch back:
+driver.close();                          // close new window
+driver.switchTo().window(mainWindow);    // go back to main
+System.out.println("Back in main: " + driver.getTitle());</code></pre>`},
+{title:"Multi-tab workflow — full scenario",body:`<pre><code class="language-java">// Real scenario: compare prices across 3 tabs
+String tab1 = driver.getWindowHandle();
+driver.get("https://shop1.com/product/123");
+String price1 = driver.findElement(By.id("price")).getText();
+
+// Open tab 2:
+driver.switchTo().newWindow(WindowType.TAB);
+String tab2 = driver.getWindowHandle();
+driver.get("https://shop2.com/product/123");
+String price2 = driver.findElement(By.id("price")).getText();
+
+// Open tab 3:
+driver.switchTo().newWindow(WindowType.TAB);
+driver.get("https://shop3.com/product/123");
+String price3 = driver.findElement(By.id("price")).getText();
+
+System.out.println("Shop1: "+price1+" | Shop2: "+price2+" | Shop3: "+price3);
+
+// Switch back to tab 1:
+driver.switchTo().window(tab1);</code></pre>`},
+{title:"Selenium 3 vs 4 — window tab comparison",body:`<pre><code class="language-java">// SELENIUM 3 — open new tab via JavaScript (workaround):
+((JavascriptExecutor) driver).executeScript("window.open()");
+Set&lt;String&gt; handles = driver.getWindowHandles();
+String newTab = handles.stream()
+    .filter(h -&gt; !h.equals(originalHandle))
+    .findFirst().orElse("");
+driver.switchTo().window(newTab);
+
+// SELENIUM 4 — built-in, clean API:
+driver.switchTo().newWindow(WindowType.TAB);  // auto-switches
+driver.get("https://newpage.com");
+
+// Selenium 4 also supports getting ALL handles:
+Set&lt;String&gt; allHandles = driver.getWindowHandles();
+allHandles.forEach(h -&gt; System.out.println("Handle: " + h));</code></pre>`},
+{title:"Close specific tab and cleanup all",body:`<pre><code class="language-java">// Clean up — close all tabs except main:
+String mainHandle = driver.getWindowHandle();
+
+// Get handles before opening new ones:
+driver.switchTo().newWindow(WindowType.TAB);
+driver.get("https://extra.com");
+
+// Close current tab (extra.com):
+driver.close();                         // closes current tab only
+driver.switchTo().window(mainHandle);   // must switch after close!
+
+// Close ALL tabs and quit browser (test teardown):
+driver.quit(); // always use quit() in teardown — never close() alone
+
+// Pattern: close tab → switch → continue
+// Without switchTo() after close() → NoSuchWindowException</code></pre>`}
+],
+mistakes:[
+{bad:"Calling driver.close() and continuing without driver.switchTo().window(handle)",good:"After close(), driver context is lost — always immediately switchTo() a valid window handle. Test for NoSuchWindowException by wrapping in try-catch if unsure which handle is valid"},
+{bad:"Using JS window.open() for new tabs in Selenium 4",good:"Use driver.switchTo().newWindow(WindowType.TAB) — it opens the tab AND auto-switches. JS window.open() requires manual handle detection afterward"}
+],
+checklist:["newWindow() auto-switches to the new tab/window — no manual switchTo needed","Store original window handle BEFORE calling newWindow()","After driver.close(), ALWAYS switchTo() a remaining valid handle","driver.quit() closes ALL tabs/windows — use only in @After teardown","WindowType.TAB vs WindowType.WINDOW — same content isolation, different UI presentation"]
+},
+
+{id:22,badge:"ChromeOptions",bClass:"b4",
+title:"ChromeOptions — All Keys & Values",
+sub:"Arguments · Capabilities · Experimental · Prefs · Headless",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"What is ChromeOptions and what can it configure?",a:"ChromeOptions is the Selenium 4 class for configuring Chrome browser sessions. It supports: command-line arguments (--headless, --window-size), experimental options (excludeSwitches, useAutomationExtension), user preferences (download directory, notifications), and W3C capabilities."},
+{q:"How do you run Chrome in headless mode in Selenium 4?",a:"Use options.addArguments('--headless=new') — the new headless mode in Chrome 112+ is more stable and matches headed Chrome behavior. The old --headless flag uses the legacy headless which has rendering differences."},
+{q:"What is the difference between addArguments and setExperimentalOption?",a:"addArguments() passes Chrome command-line flags (like --disable-gpu). setExperimentalOption() sets Chrome-specific options not in W3C spec (like 'prefs' for user profile settings and 'excludeSwitches' for disabling Chrome features)."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 270" role="img"><title>ChromeOptions configuration categories</title><desc>Shows four configuration areas: addArguments, experimental options, user preferences, W3C capabilities</desc><defs></defs>
+<g class="c-teal"><rect x="20" y="20" width="155" height="200" rx="8" stroke-width="0.5"/><text class="th" x="97" y="44" text-anchor="middle" dominant-baseline="central">addArguments()</text><text class="ts" x="97" y="66" text-anchor="middle">--headless=new</text><text class="ts" x="97" y="84" text-anchor="middle">--no-sandbox</text><text class="ts" x="97" y="102" text-anchor="middle">--window-size</text><text class="ts" x="97" y="120" text-anchor="middle">--disable-gpu</text><text class="ts" x="97" y="138" text-anchor="middle">--incognito</text><text class="ts" x="97" y="156" text-anchor="middle">--ignore-certs</text><text class="ts" x="97" y="174" text-anchor="middle">--proxy-server</text></g>
+<g class="c-purple"><rect x="190" y="20" width="155" height="200" rx="8" stroke-width="0.5"/><text class="th" x="267" y="44" text-anchor="middle" dominant-baseline="central">Experimental</text><text class="ts" x="267" y="66" text-anchor="middle">excludeSwitches</text><text class="ts" x="267" y="84" text-anchor="middle">useAutomation</text><text class="ts" x="267" y="102" text-anchor="middle">Extension</text><text class="ts" x="267" y="120" text-anchor="middle">mobileEmulation</text><text class="ts" x="267" y="138" text-anchor="middle">perfLoggingPrefs</text></g>
+<g class="c-amber"><rect x="360" y="20" width="155" height="200" rx="8" stroke-width="0.5"/><text class="th" x="437" y="44" text-anchor="middle" dominant-baseline="central">User prefs</text><text class="ts" x="437" y="66" text-anchor="middle">download.dir</text><text class="ts" x="437" y="84" text-anchor="middle">disable prompts</text><text class="ts" x="437" y="102" text-anchor="middle">notifications off</text><text class="ts" x="437" y="120" text-anchor="middle">autofill off</text><text class="ts" x="437" y="138" text-anchor="middle">geolocation</text></g>
+<g class="c-coral"><rect x="530" y="20" width="130" height="200" rx="8" stroke-width="0.5"/><text class="th" x="595" y="44" text-anchor="middle" dominant-baseline="central">W3C caps</text><text class="ts" x="595" y="66" text-anchor="middle">acceptInsecure</text><text class="ts" x="595" y="84" text-anchor="middle">Certs</text><text class="ts" x="595" y="102" text-anchor="middle">pageLoad</text><text class="ts" x="595" y="120" text-anchor="middle">Strategy</text><text class="ts" x="595" y="138" text-anchor="middle">platform</text><text class="ts" x="595" y="156" text-anchor="middle">Name</text></g>
+</svg>`,
+concepts:[
+{title:"ChromeOptions — addArguments complete reference",body:`<pre><code class="language-java">ChromeOptions opts = new ChromeOptions();
+
+// === HEADLESS ===
+opts.addArguments("--headless=new");      // new headless (Chrome 112+)
+
+// === REQUIRED FOR LINUX CI ===
+opts.addArguments("--no-sandbox");         // required in Docker/root
+opts.addArguments("--disable-dev-shm-usage"); // /dev/shm too small
+opts.addArguments("--disable-gpu");         // needed in headless
+
+// === WINDOW ===
+opts.addArguments("--start-maximized");     // maximize on start
+opts.addArguments("--window-size=1920,1080"); // specific size
+
+// === SECURITY / CERTS ===
+opts.addArguments("--ignore-certificate-errors"); // ignore SSL errors
+opts.addArguments("--allow-insecure-localhost");  // allow http localhost
+
+// === BROWSER MODE ===
+opts.addArguments("--incognito");           // private browsing
+opts.addArguments("--disable-extensions");  // no extensions
+opts.addArguments("--disable-popup-blocking"); // allow popups
+
+// === PROXY ===
+opts.addArguments("--proxy-server=http://proxy:8080");</code></pre>`},
+{title:"Experimental options — excludeSwitches, prefs",body:`<pre><code class="language-java">ChromeOptions opts = new ChromeOptions();
+
+// Remove "Chrome is being controlled by automated test software" bar:
+opts.setExperimentalOption("excludeSwitches",
+    Arrays.asList("enable-automation"));
+opts.setExperimentalOption("useAutomationExtension", false);
+
+// User preferences (prefs) — Map of Chrome profile settings:
+Map&lt;String, Object&gt; prefs = new HashMap&lt;&gt;();
+
+// Download settings:
+prefs.put("download.default_directory", "/home/user/downloads");
+prefs.put("download.prompt_for_download", false); // no save dialog
+prefs.put("download.directory_upgrade", true);
+
+// Disable notifications popup:
+prefs.put("profile.default_content_setting_values.notifications", 2);
+
+// Disable geolocation prompts:
+prefs.put("profile.default_content_setting_values.geolocation", 2);
+
+opts.setExperimentalOption("prefs", prefs);
+WebDriver driver = new ChromeDriver(opts);</code></pre>`},
+{title:"W3C capabilities and Page Load Strategy",body:`<pre><code class="language-java">ChromeOptions opts = new ChromeOptions();
+
+// Accept untrusted SSL certs:
+opts.setAcceptInsecureCerts(true);
+
+// Page Load Strategy:
+// NORMAL — wait for full page load (default)
+opts.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+// EAGER — wait for DOMContentLoaded only (faster)
+opts.setPageLoadStrategy(PageLoadStrategy.EAGER);
+// NONE — don't wait at all (fastest, manual waits needed)
+opts.setPageLoadStrategy(PageLoadStrategy.NONE);
+
+// Platform name (for Grid):
+opts.setPlatformName("linux");
+
+// Browser version (for Grid to select correct node):
+opts.setBrowserVersion("stable"); // or "115", "latest"
+
+// Set timeout via Options (Selenium 4):
+opts.setImplicitWaitTimeout(Duration.ofSeconds(10));
+opts.setPageLoadTimeout(Duration.ofSeconds(30));
+opts.setScriptTimeout(Duration.ofSeconds(30));</code></pre>`},
+{title:"Mobile emulation with ChromeOptions",body:`<pre><code class="language-java">ChromeOptions opts = new ChromeOptions();
+
+// Emulate a device by name (Chrome DevTools device list):
+Map&lt;String, String&gt; mobileEmulation = new HashMap&lt;&gt;();
+mobileEmulation.put("deviceName", "Pixel 5");
+opts.setExperimentalOption("mobileEmulation", mobileEmulation);
+
+// Or emulate by custom dimensions:
+Map&lt;String, Object&gt; deviceMetrics = new HashMap&lt;&gt;();
+deviceMetrics.put("width", 390);
+deviceMetrics.put("height", 844);
+deviceMetrics.put("pixelRatio", 3.0);
+deviceMetrics.put("touch", true);
+
+Map&lt;String, Object&gt; mobileEmu = new HashMap&lt;&gt;();
+mobileEmu.put("deviceMetrics", deviceMetrics);
+mobileEmu.put("userAgent", "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0)");
+opts.setExperimentalOption("mobileEmulation", mobileEmu);
+
+WebDriver driver = new ChromeDriver(opts);</code></pre>`},
+{title:"Loading extensions and user profiles",body:`<pre><code class="language-java">ChromeOptions opts = new ChromeOptions();
+
+// Load Chrome extension (.crx file):
+opts.addExtensions(new File("/path/to/extension.crx"));
+
+// Add extension from unpacked folder (developer mode):
+opts.addArguments("--load-extension=/path/to/extension/folder");
+
+// Use existing Chrome user profile (with saved logins):
+opts.addArguments("--user-data-dir=/home/user/.config/google-chrome");
+opts.addArguments("--profile-directory=Default");
+
+// Binary location (non-standard Chrome install):
+opts.setBinary("/opt/google/chrome-beta/chrome");
+
+// Remote debugging port (for CDP connection):
+opts.addArguments("--remote-debugging-port=9222");
+
+WebDriver driver = new ChromeDriver(opts);</code></pre>`}
+],
+mistakes:[
+{bad:"Using --headless (old flag) instead of --headless=new in Chrome 112+",good:"Use --headless=new which uses the GPU process and matches headed Chrome rendering. The old --headless uses a different rendering path and causes layout differences"},
+{bad:"Setting prefs without setExperimentalOption('prefs', map) wrapper",good:"All Chrome user preferences must go inside a Map passed to setExperimentalOption('prefs', prefsMap) — they cannot be set as individual arguments"}
+],
+checklist:["--no-sandbox + --disable-dev-shm-usage are mandatory for Linux Docker/CI","excludeSwitches + useAutomationExtension=false removes automation banner","PageLoadStrategy.EAGER speeds up tests on content-heavy pages","prefs map controls download folder, notification suppression, geolocation handling","setBinary() allows testing Chrome Beta/Canary/Chromium alongside stable"]
+},
+
+{id:23,badge:"FirefoxOptions/SafariOptions",bClass:"b4",
+title:"FirefoxOptions & SafariOptions — All Config",
+sub:"GeckoDriver · Firefox prefs · Profiles · Safari WebKit",
+flow:["What","Why","When","How","Where"],
+oneliners:[
+{q:"How is FirefoxOptions different from ChromeOptions?",a:"FirefoxOptions uses FirefoxProfile for user preferences (instead of Chrome's 'prefs' map), addArguments for command-line flags, and addPreference() directly on the options object. Firefox also uses GeckoDriver while Chrome uses ChromeDriver."},
+{q:"What is FirefoxProfile and when do you need it?",a:"FirefoxProfile is a Firefox user profile object that controls browser-level settings (downloads, security, extensions). Use it when you need to: auto-download files without a prompt, set custom proxy, disable browser dialogs, or install extensions."},
+{q:"What are the limitations of SafariDriver in Selenium?",a:"SafariDriver is built into macOS — no binary download needed. Limitations: runs only on macOS, no headless mode, requires 'Allow Remote Automation' in Safari Developer menu, and Safari has the most restricted WebDriver support of all browsers."}
+],
+diagram:`<svg width="100%" viewBox="0 0 680 260" role="img"><title>FirefoxOptions and SafariOptions configuration</title><desc>Side by side showing Firefox and Safari options structure</desc><defs></defs>
+<g class="c-teal"><rect x="20" y="20" width="300" height="210" rx="10" stroke-width="0.5"/><text class="th" x="170" y="44" text-anchor="middle" dominant-baseline="central">FirefoxOptions</text><text class="ts" x="170" y="68" text-anchor="middle">addArguments(-headless)</text><text class="ts" x="170" y="88" text-anchor="middle">addPreference(key, value)</text><text class="ts" x="170" y="108" text-anchor="middle">setProfile(FirefoxProfile)</text><text class="ts" x="170" y="128" text-anchor="middle">setBinary(path)</text><text class="ts" x="170" y="148" text-anchor="middle">setAcceptInsecureCerts()</text><text class="ts" x="170" y="168" text-anchor="middle">setPageLoadStrategy()</text><text class="ts" x="170" y="188" text-anchor="middle">addExtensions(file)</text></g>
+<g class="c-purple"><rect x="360" y="20" width="300" height="210" rx="10" stroke-width="0.5"/><text class="th" x="510" y="44" text-anchor="middle" dominant-baseline="central">SafariOptions</text><text class="ts" x="510" y="68" text-anchor="middle">setUseTechnologyPreview()</text><text class="ts" x="510" y="88" text-anchor="middle">setAutomaticInspection()</text><text class="ts" x="510" y="108" text-anchor="middle">setAutomaticProfiling()</text><text class="ts" x="510" y="128" text-anchor="middle">setBrowserVersion()</text><text class="ts" x="510" y="148" text-anchor="middle">setPlatformName(macOS)</text><text class="ts" x="510" y="168" text-anchor="middle">No headless support</text></g>
+</svg>`,
+concepts:[
+{title:"FirefoxOptions — addArguments and addPreference",body:`<pre><code class="language-java">FirefoxOptions opts = new FirefoxOptions();
+
+// Headless Firefox:
+opts.addArguments("--headless");            // Firefox headless
+opts.addArguments("--width=1920");
+opts.addArguments("--height=1080");
+
+// Accept untrusted SSL certs:
+opts.setAcceptInsecureCerts(true);
+
+// Set Page Load Strategy:
+opts.setPageLoadStrategy(PageLoadStrategy.EAGER);
+
+// Firefox preferences (addPreference directly):
+opts.addPreference("browser.download.folderList", 2);
+opts.addPreference("browser.download.dir", "/home/user/downloads");
+opts.addPreference("browser.helperApps.neverAsk.saveToDisk",
+    "application/pdf,application/zip");
+opts.addPreference("browser.download.manager.showWhenStarting", false);
+
+WebDriver driver = new FirefoxDriver(opts);</code></pre>`},
+{title:"FirefoxProfile — full user profile configuration",body:`<pre><code class="language-java">import org.openqa.selenium.firefox.FirefoxProfile;
+
+FirefoxProfile profile = new FirefoxProfile();
+
+// Auto-download PDF/ZIP without dialog:
+profile.setPreference("browser.download.folderList", 2);
+profile.setPreference("browser.download.dir", "/downloads");
+profile.setPreference("browser.helperApps.neverAsk.saveToDisk",
+    "application/pdf,application/octet-stream");
+
+// Disable Firefox update checks:
+profile.setPreference("app.update.enabled", false);
+
+// Disable geolocation:
+profile.setPreference("geo.enabled", false);
+
+// Accept untrusted certificates:
+profile.setAcceptUntrustedCertificates(true);
+profile.setAssumeUntrustedCertificateIssuer(false);
+
+FirefoxOptions opts = new FirefoxOptions();
+opts.setProfile(profile);
+WebDriver driver = new FirefoxDriver(opts);</code></pre>`},
+{title:"Firefox binary and extension loading",body:`<pre><code class="language-java">import org.openqa.selenium.firefox.FirefoxBinary;
+
+FirefoxOptions opts = new FirefoxOptions();
+
+// Custom Firefox binary path (Firefox Beta/Developer Edition):
+opts.setBinary("/opt/firefox-dev/firefox");
+
+// Load Firefox extension (.xpi file):
+FirefoxProfile profile = new FirefoxProfile();
+profile.addExtension(new File("/path/to/extension.xpi"));
+opts.setProfile(profile);
+
+// Set log level for Firefox:
+opts.setLogLevel(FirefoxDriverLogLevel.TRACE); // DEBUG, WARN, ERROR
+
+// Private browsing mode:
+opts.addArguments("-private");
+
+// Disable browser notifications:
+opts.addPreference("dom.webnotifications.enabled", false);
+
+WebDriver driver = new FirefoxDriver(opts);</code></pre>`},
+{title:"SafariOptions — macOS setup",body:`<pre><code class="language-java">import org.openqa.selenium.safari.SafariOptions;
+
+// Safari setup — macOS only, no driver download needed
+// REQUIRED: Safari → Develop → Allow Remote Automation
+// Also run once in terminal: safaridriver --enable
+
+SafariOptions opts = new SafariOptions();
+
+// Use Safari Technology Preview:
+opts.setUseTechnologyPreview(false); // true = STP binary
+
+// Enable automatic inspection (opens Web Inspector):
+opts.setAutomaticInspection(false);
+
+// Enable automatic profiling (Web Inspector timeline):
+opts.setAutomaticProfiling(false);
+
+// Platform name (for Grid — macOS only):
+opts.setPlatformName("mac");
+
+WebDriver driver = new SafariDriver(opts);
+
+// Note: Safari CANNOT be run headlessly
+// Note: Only one Safari session at a time</code></pre>`},
+{title:"EdgeOptions — Chromium-based, similar to Chrome",body:`<pre><code class="language-java">import org.openqa.selenium.edge.EdgeOptions;
+
+EdgeOptions opts = new EdgeOptions();
+
+// Edge is Chromium-based — most ChromeOptions work!
+opts.addArguments("--headless=new");
+opts.addArguments("--no-sandbox");
+opts.addArguments("--disable-dev-shm-usage");
+opts.addArguments("--window-size=1920,1080");
+opts.setAcceptInsecureCerts(true);
+
+// Edge-specific: use existing user profile:
+opts.addArguments("--user-data-dir=C:\\Users\\user\\AppData\\Local\\Microsoft\\Edge\\User Data");
+
+// Edge also supports CDP via HasDevTools!
+EdgeDriver edgeDriver = new EdgeDriver(opts);
+DevTools devTools = edgeDriver.getDevTools();
+
+// DesiredCapabilities migration to EdgeOptions:
+// Old: caps.setBrowserName("MicrosoftEdge") → New: new EdgeDriver(opts)</code></pre>`}
+],
+mistakes:[
+{bad:"Using FirefoxProfile.setPreference for download settings and not addArguments for headless",good:"For headless Firefox use opts.addArguments('--headless'). For download settings use profile.setPreference or opts.addPreference directly — they serve different configuration layers"},
+{bad:"Trying to run Safari in headless mode or on non-macOS",good:"SafariDriver only works on macOS with a physical display. For headless cross-browser CI, use Chrome headless or Firefox headless — exclude Safari or run it only in macOS-based CI agents"}
+],
+checklist:["Firefox: use addPreference() directly on opts OR FirefoxProfile — not both for same key","Safari: run safaridriver --enable once in terminal before first test","Edge: treats ChromeOptions arguments — almost all Chrome flags work on Edge too","Firefox log level: FirefoxDriverLogLevel.WARN in CI to reduce noise","SafariDriver allows only ONE parallel session per machine — plan test distribution accordingly"]
+}
+];
+
+function buildWidget(){
+  const bar=document.getElementById('tabBar2');
+  const cont=document.getElementById('sessions2');
+  S.forEach((s,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(i===0?' active':'');
+    btn.textContent=`S${s.id}`;
+    btn.title=s.title;
+    btn.onclick=()=>activate(i);
+    bar.appendChild(btn);
+    const div=document.createElement('div');
+    div.className='session'+(i===0?' active':'');
+    div.innerHTML=buildSession(s,i);
+    cont.appendChild(div);
+  });
+}
+
+function activate(idx){
+  document.querySelectorAll('#tabBar2 .tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.querySelectorAll('#sessions2 .session').forEach((s,i)=>s.classList.toggle('active',i===idx));
+}
+
+function buildSession(s,i){
+  const pills=s.flow.map(f=>`<span class="pill">${f}</span>`).join('');
+  const ols=s.oneliners.map(o=>`<div class="oneliner"><strong>Q: ${o.q}</strong><br>${o.a}</div>`).join('');
+  const concepts=s.concepts.map(c=>`<div class="card"><div class="card-title"><i class="ti ti-code" aria-hidden="true"></i>${c.title}</div>${c.body}</div>`).join('');
+  const mistakes=s.mistakes.map(m=>`<div class="err-row"><div class="err-box bad"><p>Common mistake</p>${m.bad}</div><div class="err-box good"><p>Correct approach</p>${m.good}</div></div>`).join('');
+  const checks=s.checklist.map(c=>`<div class="check-item"><i class="ti ti-circle-check" aria-hidden="true"></i><span>${c}</span></div>`).join('');
+  return `
+    <div class="s-header">
+      <span class="badge ${s.bClass}">${s.badge}</span>
+      <div class="s-title">Session ${s.id}: ${s.title}</div>
+      <div class="s-sub">${s.sub}</div>
+    </div>
+    <div class="flow-pills">${pills}</div>
+    <div class="card"><div class="card-title"><i class="ti ti-message-circle" aria-hidden="true"></i>Interview one-liners</div>${ols}</div>
+    <div style="margin:1rem 0">${s.diagram}</div>
+    <div class="card-title" style="margin:.5rem 0;font-size:14px"><i class="ti ti-books" aria-hidden="true"></i>&nbsp;Hands-on examples</div>
+    ${concepts}
+    <div class="card"><div class="card-title"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Mistakes &amp; fixes</div>${mistakes}</div>
+    <div class="card"><div class="card-title"><i class="ti ti-checklist" aria-hidden="true"></i>Best practices checklist</div>${checks}</div>
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="activate(Math.max(0,${i}-1))" ${i===0?'disabled':''}>← Previous</button>
+      <span class="prog">${i+1} / ${S.length}</span>
+      <button class="nav-btn" onclick="activate(Math.min(${S.length-1},${i}+1))" ${i===S.length-1?'disabled':''}>Next →</button>
+    </div>`;
+}
+
+buildWidget();
+</script>
+
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

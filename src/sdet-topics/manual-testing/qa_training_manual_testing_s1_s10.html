@@ -1,0 +1,651 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Manual Testing: Sessions 1 to 10</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --border-radius-lg:12px;
+  --border-radius-md:8px;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f4f8;
+  --color-border-primary:#534AB7;
+  --color-border-secondary:#d1d1db;
+  --color-border-tertiary:#e4e4eb;
+  --color-text-primary:#1a1a2e;
+  --color-text-secondary:#555770;
+  --color-text-tertiary:#8e90a6;
+  --font-sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+
+body{font-family:var(--font-sans);background:transparent;color:var(--color-text-primary)}
+.container{max-width:680px;padding:0}
+.phase-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.phase-label{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;letter-spacing:.4px}
+.phase-f{background:#EEEDFE;color:#3C3489}
+.phase-i{background:#E1F5EE;color:#085041}
+.phase-a{background:#FAECE7;color:#712B13}
+.tab-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px}
+.tab-btn{font-size:12px;padding:5px 10px;border-radius:6px;border:.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .18s;font-family:var(--font-sans);white-space:nowrap}
+.tab-btn:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.tab-btn.active{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.tab-btn.done::after{content:"✓";margin-left:4px;color:#1D9E75;font-size:10px}
+.progress-bar{height:4px;background:var(--color-border-tertiary);border-radius:2px;margin-bottom:18px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#534AB7,#1D9E75);border-radius:2px;transition:width .4s}
+.session{display:none}
+.session.active{display:block}
+.session-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:.5px solid var(--color-border-tertiary)}
+.session-number{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0}
+.sn-f{background:#EEEDFE;color:#534AB7}
+.sn-i{background:#E1F5EE;color:#0F6E56}
+.sn-a{background:#FAECE7;color:#993C1D}
+.session-title{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.session-phase{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.8px;color:var(--color-text-tertiary);text-transform:uppercase;margin:18px 0 8px}
+.overview-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:14px 16px;border:.5px solid var(--color-border-tertiary);margin-bottom:4px}
+.overview-card p{font-size:14px;line-height:1.7;color:var(--color-text-primary);margin-bottom:8px}
+.overview-card p:last-child{margin-bottom:0}
+.wwwh{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.wwwh-item{background:var(--color-background-primary);border-radius:var(--border-radius-md);padding:10px 12px;border:.5px solid var(--color-border-tertiary)}
+.wwwh-label{font-size:10px;font-weight:500;letter-spacing:.6px;color:var(--color-text-tertiary);margin-bottom:4px;text-transform:uppercase}
+.wwwh-text{font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.oneliner-list{display:flex;flex-direction:column;gap:6px}
+.oneliner{display:flex;align-items:flex-start;gap:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:.5px solid var(--color-border-tertiary)}
+.ol-num{font-size:11px;font-weight:500;color:#534AB7;min-width:18px;margin-top:1px}
+.ol-text{font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.diagram-box{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:14px;border:.5px solid var(--color-border-tertiary);overflow-x:auto}
+.checklist{display:flex;flex-direction:column;gap:5px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-primary);padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);line-height:1.5}
+.check-icon{color:#1D9E75;font-size:14px;flex-shrink:0;margin-top:1px}
+.qa-list{display:flex;flex-direction:column;gap:8px}
+.qa-item{border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.qa-q{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;cursor:pointer;background:var(--color-background-secondary)}
+.qa-q:hover{background:var(--color-background-primary)}
+.qa-label{font-size:11px;font-weight:500;color:#993C1D;min-width:14px;margin-top:1px}
+.qa-q-text{font-size:13px;font-weight:500;color:var(--color-text-primary);flex:1;line-height:1.5}
+.qa-toggle{font-size:14px;color:var(--color-text-tertiary);transition:transform .2s}
+.qa-answer{display:none;padding:10px 12px;font-size:13px;color:var(--color-text-secondary);line-height:1.6;border-top:.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.qa-item.open .qa-answer{display:block}
+.qa-item.open .qa-toggle{transform:rotate(180deg)}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:14px;border-top:.5px solid var(--color-border-tertiary)}
+.nav-btn{font-size:13px;padding:7px 16px;border-radius:var(--border-radius-md);border:.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);cursor:pointer;font-family:var(--font-sans)}
+.nav-btn:hover{background:var(--color-background-primary)}
+.nav-btn.primary{background:#534AB7;color:#fff;border-color:#534AB7}
+.nav-btn.primary:hover{background:#3C3489}
+.session-counter{font-size:12px;color:var(--color-text-tertiary)}
+svg text{font-family:var(--font-sans)!important}
+.concept-text{font-size:14px;line-height:1.7;color:var(--color-text-primary);margin-bottom:10px}
+.highlight-box{background:#EEEDFE;border-radius:var(--border-radius-md);padding:10px 14px;border:.5px solid #AFA9EC;margin:8px 0}
+.highlight-box p{font-size:13px;color:#26215C;line-height:1.6}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.col-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;border:.5px solid var(--color-border-tertiary)}
+.col-card h4{font-size:13px;font-weight:500;margin-bottom:6px;color:var(--color-text-primary)}
+.col-card ul{padding-left:16px;font-size:12px;color:var(--color-text-secondary);line-height:1.7}
+
+.c-amber rect{fill:#FAEEDA;stroke:#EF9F27;stroke-width:1.5}
+.c-coral rect{fill:#FAECE7;stroke:#F0997B;stroke-width:1.5}
+.c-gray rect{fill:#f4f4f8;stroke:#d1d1db;stroke-width:1.5}
+.c-green rect{fill:#EAF3DE;stroke:#97C459;stroke-width:1.5}
+.c-purple rect{fill:#EEEDFE;stroke:#AFA9EC;stroke-width:1.5}
+.c-red rect{fill:#FDE8E8;stroke:#DC3545;stroke-width:1.5}
+.c-teal rect{fill:#E1F5EE;stroke:#5DCAA5;stroke-width:1.5}
+svg .th{font-weight:600;fill:var(--color-text-primary);font-family:var(--font-sans);font-size:13px}
+svg .ts{font-size:11px;fill:var(--color-text-secondary);font-family:var(--font-sans)}
+</style>
+
+<div class="container">
+  <div class="phase-bar">
+    <span class="phase-label phase-f">Phase 1: Fundamentals — S1 to S4</span>
+    <span class="phase-label phase-i">Phase 2: Intermediate — S5 to S7</span>
+    <span class="phase-label phase-a">Phase 3: Advanced — S8 to S10</span>
+  </div>
+  <div class="tab-bar" id="tabBar"></div>
+  <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:10%"></div></div>
+  <div id="sessions"></div>
+</div>
+
+<script>
+const sessions=[
+{id:1,phase:"Fundamentals",color:"f",title:"What is software testing?",
+overview:{def:"Software testing is the process of evaluating and verifying that a software application does what it is supposed to do — finding bugs before users do.",wwwh:[
+{l:"What",t:"Examining software to detect differences between expected & actual behavior"},
+{l:"Why",t:"To deliver a reliable, defect-free product that meets user expectations"},
+{l:"When",t:"Throughout every phase of SDLC — not just at the end"},
+{l:"Where",t:"In every layer: UI, API, DB, integration, performance, security"},
+{l:"How",t:"Via manual exploration, scripted test cases, and automated test suites"}]},
+oneliners:[
+"Software testing is the process of finding defects before the customer finds them.",
+"Testing validates that the software meets both specified requirements and user expectations.",
+"Good testing reduces risk, not just defect count.",
+"Testing cannot prove the absence of bugs — it can only prove their presence.",
+"The goal of testing is not to break the software but to build confidence in it."
+],
+concept:`Software testing sits inside the larger SDLC (Software Development Life Cycle). It spans multiple types — from checking individual functions (Unit Testing) to verifying the whole system works end-to-end (System Testing), to confirming the customer is satisfied (UAT). The V-Model shows each development phase has a corresponding test phase.`,
+diagram:`<svg width="100%" viewBox="0 0 680 340" role="img"><title>V-Model of Software Testing</title><desc>The V-Model showing development phases on the left mapping to test phases on the right</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-purple"><rect x="30" y="30" width="170" height="40" rx="8" stroke-width="0.5"/><text class="th" x="115" y="50" text-anchor="middle" dominant-baseline="central">Requirements</text></g>
+<g class="c-purple"><rect x="30" y="290" width="170" height="40" rx="8" stroke-width="0.5"/><text class="th" x="115" y="310" text-anchor="middle" dominant-baseline="central">UAT</text></g>
+<g class="c-teal"><rect x="80" y="90" width="155" height="38" rx="8" stroke-width="0.5"/><text class="th" x="157" y="109" text-anchor="middle" dominant-baseline="central">System Design</text></g>
+<g class="c-teal"><rect x="80" y="232" width="155" height="38" rx="8" stroke-width="0.5"/><text class="th" x="157" y="251" text-anchor="middle" dominant-baseline="central">System Testing</text></g>
+<g class="c-coral"><rect x="128" y="150" width="140" height="38" rx="8" stroke-width="0.5"/><text class="th" x="198" y="169" text-anchor="middle" dominant-baseline="central">Module Design</text></g>
+<g class="c-coral"><rect x="128" y="172" width="140" height="38" rx="8" stroke-width="0.5"/><text class="th" x="198" y="191" text-anchor="middle" dominant-baseline="central">Integration Test</text></g>
+<g class="c-amber"><rect x="260" y="150" width="160" height="58" rx="8" stroke-width="0.5"/><text class="th" x="340" y="176" text-anchor="middle" dominant-baseline="central">Coding</text><text class="ts" x="340" y="196" text-anchor="middle">Unit Testing</text></g>
+<g class="c-purple"><rect x="470" y="232" width="160" height="38" rx="8" stroke-width="0.5"/><text class="th" x="550" y="251" text-anchor="middle" dominant-baseline="central">System Testing</text></g>
+<g class="c-teal"><rect x="470" y="90" width="160" height="38" rx="8" stroke-width="0.5"/><text class="th" x="550" y="109" text-anchor="middle" dominant-baseline="central">System Test Plan</text></g>
+<g class="c-purple"><rect x="470" y="290" width="160" height="40" rx="8" stroke-width="0.5"/><text class="th" x="550" y="310" text-anchor="middle" dominant-baseline="central">UAT Execution</text></g>
+<line x1="200" y1="50" x2="470" y2="50" stroke="var(--color-border-secondary)" stroke-width="1" stroke-dasharray="4 3"/>
+<line x1="235" y1="109" x2="470" y2="109" stroke="var(--color-border-secondary)" stroke-width="1" stroke-dasharray="4 3"/>
+<line x1="268" y1="169" x2="470" y2="251" stroke="var(--color-border-secondary)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" x="340" y="22" text-anchor="middle">V-Model: Development ↔ Testing Phases</text>
+</svg>`,
+practices:["Always test as early as possible — shift-left testing reduces cost","Never skip smoke testing before detailed regression","Document every test case: inputs, steps, expected results, actual results","Re-test every fixed bug AND run regression — new fixes can break old features","Report bugs with clear, reproducible steps — not vague descriptions","Understand requirements fully before writing test cases","Separate test environments from production at all times","Track test coverage — know what is and isn't tested"],
+qa:[
+{q:"What is software testing in one sentence?",a:"Software testing is a process of evaluating a system or its components with the intent to find whether it satisfies specified requirements and to identify gaps, errors, or missing requirements."},
+{q:"What is the primary goal of software testing?",a:"The primary goal is to detect defects as early as possible and ensure the product meets business and user requirements. It reduces risk of failure in production."},
+{q:"Can testing guarantee a bug-free product?",a:"No. Testing can prove the presence of defects, never their complete absence (Dijkstra's principle). The goal is risk reduction, not zero-defect guarantee."},
+{q:"What is the difference between error, fault, and failure?",a:"Error: human mistake in code or logic. Fault (Bug/Defect): result of an error in the code. Failure: when the defect is executed and the system behaves incorrectly — visible to the user."},
+{q:"What is the cost of a defect if found in production vs. requirements phase?",a:"Defects found in production cost 10–100× more to fix than those found during requirements or design. This is the foundation of 'shift-left' testing."},
+{q:"Name the 7 Principles of Software Testing.",a:"1. Testing shows presence of defects, 2. Exhaustive testing is impossible, 3. Early testing (shift-left), 4. Defect clustering (80/20 rule), 5. Pesticide paradox, 6. Testing is context-dependent, 7. Absence of errors fallacy."}
+]},
+
+{id:2,phase:"Fundamentals",color:"f",title:"Why is testing necessary?",
+overview:{def:"Testing is necessary because software defects cause financial loss, reputation damage, security breaches, and even loss of human life. It builds trust between the product team and the end user.",wwwh:[
+{l:"What",t:"The business and technical justification for having a dedicated testing function"},
+{l:"Why",t:"Undetected bugs in production cost money, trust, and sometimes lives"},
+{l:"When",t:"Testing justification applies from day one — before a single line of code"},
+{l:"Where",t:"Applicable in banking, healthcare, e-commerce, aerospace, and every domain"},
+{l:"How",t:"By calculating cost of quality, tracking escaped defects, and measuring user impact"}]},
+oneliners:[
+"Testing is necessary because the cost of fixing a defect in production is 100x more than in development.",
+"Without testing, you are letting your users do the QA for you.",
+"Testing protects the brand — one critical bug can erase years of user trust.",
+"Software failures in critical systems (healthcare, aviation) can cost human lives.",
+"Testing is the last safety net between broken code and a broken user experience."
+],
+concept:`Real-world software failures prove why testing is not optional. The Ariane 5 rocket exploded (1996) due to a software overflow error — $500M lost. The Boeing 737 MAX MCAS software issue contributed to 346 deaths. The Knight Capital trading bug (2012) lost $440M in 45 minutes. These were all preventable with proper testing practices.`,
+diagram:`<svg width="100%" viewBox="0 0 680 300" role="img"><title>Cost of defect vs detection phase</title><desc>Bar chart showing defect fix cost rising exponentially from requirements to production</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="ts" x="340" y="20" text-anchor="middle">Cost to fix a defect by phase (relative cost)</text>
+<text class="ts" x="20" y="160" text-anchor="middle" transform="rotate(-90,20,160)">Fix Cost</text>
+<line x1="60" y1="260" x2="650" y2="260" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+<line x1="60" y1="40" x2="60" y2="260" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+<g class="c-teal"><rect x="80" y="230" width="70" height="30" rx="4" stroke-width="0.5"/><text class="ts" x="115" y="245" text-anchor="middle" dominant-baseline="central">1x</text></g>
+<g class="c-teal"><rect x="190" y="210" width="70" height="50" rx="4" stroke-width="0.5"/><text class="ts" x="225" y="235" text-anchor="middle" dominant-baseline="central">5x</text></g>
+<g class="c-amber"><rect x="300" y="185" width="70" height="75" rx="4" stroke-width="0.5"/><text class="ts" x="335" y="222" text-anchor="middle" dominant-baseline="central">10x</text></g>
+<g class="c-coral"><rect x="410" y="145" width="70" height="115" rx="4" stroke-width="0.5"/><text class="ts" x="445" y="202" text-anchor="middle" dominant-baseline="central">20x</text></g>
+<g class="c-red"><rect x="520" y="60" width="70" height="200" rx="4" stroke-width="0.5"/><text class="ts" x="555" y="160" text-anchor="middle" dominant-baseline="central">100x</text></g>
+<text class="ts" x="115" y="276" text-anchor="middle">Req.</text>
+<text class="ts" x="225" y="276" text-anchor="middle">Design</text>
+<text class="ts" x="335" y="276" text-anchor="middle">Coding</text>
+<text class="ts" x="445" y="276" text-anchor="middle">Testing</text>
+<text class="ts" x="555" y="276" text-anchor="middle">Production</text>
+</svg>`,
+practices:["Always present testing ROI to management using defect escape rate metrics","Use risk-based testing to prioritise high-impact areas first","Track 'cost of quality' = prevention + appraisal + internal failure + external failure","Ensure testing is budgeted as a separate line item, not squeezed from dev time","Share real-world bug impact stories in team retrospectives","Integrate testing into CI/CD so feedback is instant","Measure defect density: defects per KLOC (thousand lines of code)","Report escaped defects separately — these are the most expensive ones"],
+qa:[
+{q:"Why is testing necessary?",a:"To detect defects early, reduce cost of failures, protect end-users, meet regulatory compliance, and build confidence that the software behaves as expected under real-world conditions."},
+{q:"What is the cost of quality?",a:"It includes: Prevention costs (training, process), Appraisal costs (testing, reviews), Internal failure costs (rework), External failure costs (support, recalls, legal). Testing addresses all four."},
+{q:"Give a real-world example where lack of testing caused major damage.",a:"The Knight Capital Group bug (2012) lost $440M in 45 minutes due to a software deployment error that wasn't tested. It nearly bankrupted the company."},
+{q:"What is an escaped defect?",a:"A defect that was not caught during testing and made it to production. Escaped defects are the most expensive and damaging type — they reach real users."},
+{q:"What is defect density?",a:"Defect density = Number of defects / Size of software (KLOC or function points). It helps measure product quality and testing effectiveness across modules."},
+{q:"What is the 'absence of errors' fallacy?",a:"Just because testing found no bugs doesn't mean the software is good. If you tested the wrong features or missed requirements, a bug-free product can still be useless. This is Principle 7 of the 7 Testing Principles."}
+]},
+
+{id:3,phase:"Fundamentals",color:"f",title:"What is manual testing?",
+overview:{def:"Manual testing is the process of manually executing test cases without using any automation tools — a human tester plays the role of the end user to find bugs.",wwwh:[
+{l:"What",t:"Human-driven test execution — no scripts, no automation frameworks"},
+{l:"Why",t:"Some tests need human judgment: UI aesthetics, usability, exploratory scenarios"},
+{l:"When",t:"Early in a project, for exploratory testing, and for one-time or ad-hoc tests"},
+{l:"Where",t:"UI testing, UAT, exploratory testing, usability testing, accessibility testing"},
+{l:"How",t:"Tester reads requirements, writes test cases, executes them, logs bugs manually"}]},
+oneliners:[
+"Manual testing is the human eye that catches what automation scripts miss.",
+"Automation tests what you know; manual testing discovers what you don't know.",
+"In manual testing, the tester IS the test tool.",
+"Manual testing is irreplaceable for usability, accessibility, and exploratory scenarios.",
+"Manual testing is the foundation — you must test manually before you automate."
+],
+concept:`Manual testing follows a structured workflow: Understand Requirements → Create Test Plan → Write Test Cases → Set Up Test Environment → Execute Tests → Log Defects → Retest & Regression → Test Sign-Off. It has distinct advantages over automation for certain scenarios but is slower and prone to human error for repetitive tasks.`,
+diagram:`<svg width="100%" viewBox="0 0 680 120" role="img"><title>Manual testing workflow</title><desc>Sequential flow of manual testing process from requirements to sign-off</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-purple"><rect x="10" y="38" width="72" height="44" rx="6" stroke-width="0.5"/><text class="ts" x="46" y="56" text-anchor="middle" dominant-baseline="central">Read</text><text class="ts" x="46" y="70" text-anchor="middle">Reqs</text></g>
+<line x1="82" y1="60" x2="96" y2="60" class="arr" marker-end="url(#arrow)"/>
+<g class="c-teal"><rect x="96" y="38" width="72" height="44" rx="6" stroke-width="0.5"/><text class="ts" x="132" y="56" text-anchor="middle" dominant-baseline="central">Write</text><text class="ts" x="132" y="70" text-anchor="middle">Test Cases</text></g>
+<line x1="168" y1="60" x2="182" y2="60" class="arr" marker-end="url(#arrow)"/>
+<g class="c-teal"><rect x="182" y="38" width="72" height="44" rx="6" stroke-width="0.5"/><text class="ts" x="218" y="56" text-anchor="middle" dominant-baseline="central">Setup</text><text class="ts" x="218" y="70" text-anchor="middle">Env</text></g>
+<line x1="254" y1="60" x2="268" y2="60" class="arr" marker-end="url(#arrow)"/>
+<g class="c-amber"><rect x="268" y="38" width="72" height="44" rx="6" stroke-width="0.5"/><text class="ts" x="304" y="56" text-anchor="middle" dominant-baseline="central">Execute</text><text class="ts" x="304" y="70" text-anchor="middle">Tests</text></g>
+<line x1="340" y1="60" x2="354" y2="60" class="arr" marker-end="url(#arrow)"/>
+<g class="c-coral"><rect x="354" y="38" width="72" height="44" rx="6" stroke-width="0.5"/><text class="ts" x="390" y="56" text-anchor="middle" dominant-baseline="central">Log</text><text class="ts" x="390" y="70" text-anchor="middle">Defects</text></g>
+<line x1="426" y1="60" x2="440" y2="60" class="arr" marker-end="url(#arrow)"/>
+<g class="c-amber"><rect x="440" y="38" width="72" height="44" rx="6" stroke-width="0.5"/><text class="ts" x="476" y="56" text-anchor="middle" dominant-baseline="central">Retest &amp;</text><text class="ts" x="476" y="70" text-anchor="middle">Regression</text></g>
+<line x1="512" y1="60" x2="526" y2="60" class="arr" marker-end="url(#arrow)"/>
+<g class="c-green"><rect x="526" y="38" width="72" height="44" rx="6" stroke-width="0.5"/><text class="ts" x="562" y="56" text-anchor="middle" dominant-baseline="central">Sign</text><text class="ts" x="562" y="70" text-anchor="middle">Off</text></g>
+<text class="ts" x="340" y="14" text-anchor="middle">Manual testing workflow</text>
+</svg>`,
+practices:["Always write test cases before execution — never test from memory alone","Use boundary value analysis and equivalence partitioning to design cases","Mark each test case result clearly: Pass / Fail / Blocked / Not Executed","Log defects with: steps to reproduce, actual result, expected result, severity, priority","Always do a smoke test before full regression","Maintain a traceability matrix — link every test case to a requirement","Review test cases with developers and BAs before execution","Use exploratory testing to find bugs that scripted tests miss"],
+qa:[
+{q:"What is manual testing?",a:"Manual testing is a testing process where a human tester manually executes test cases without any automation tool, simulating end-user behavior to find defects in the software."},
+{q:"What are the types of manual testing?",a:"Black-box testing, White-box testing, Grey-box testing, Exploratory testing, Adhoc testing, Usability testing, UAT (User Acceptance Testing), Regression testing, Smoke testing, Sanity testing."},
+{q:"What is exploratory testing?",a:"Exploratory testing is simultaneous test design, execution, and learning — the tester explores the application without pre-written scripts, using experience and intuition to find bugs."},
+{q:"What is the difference between smoke testing and sanity testing?",a:"Smoke test: broad and shallow — checks if the build is stable enough to test (all major features work). Sanity test: narrow and deep — checks a specific bug fix or feature in detail."},
+{q:"What are the disadvantages of manual testing?",a:"Time-consuming, prone to human error, not suitable for repetitive/large data tests, hard to scale, inconsistent results across testers, cannot run 24/7 like automated tests."},
+{q:"When should manual testing be preferred over automation?",a:"When test cases run rarely (one-time), when the UI changes frequently, for exploratory/usability/accessibility testing, when automation ROI is negative, and during early-stage projects."}
+]},
+
+{id:4,phase:"Fundamentals",color:"f",title:"Verification vs. Validation",
+overview:{def:"Verification asks 'Are we building the product right?' Validation asks 'Are we building the right product?' Both are essential — one checks process, the other checks outcome.",wwwh:[
+{l:"What",t:"Two quality assurance activities with fundamentally different objectives"},
+{l:"Why",t:"Without verification, errors compound. Without validation, the product misses the need."},
+{l:"When",t:"Verification: during development phases. Validation: at the end with real users/acceptance criteria."},
+{l:"Where",t:"Verification: code reviews, walkthroughs, inspections. Validation: UAT, beta testing."},
+{l:"How",t:"Verification = static techniques. Validation = dynamic testing (executing the software)."}]},
+oneliners:[
+"Verification: building the product right. Validation: building the right product.",
+"Verification is process-oriented; validation is product-oriented.",
+"Verification finds defects early through reviews; validation finds them through execution.",
+"You can pass all verifications and still fail validation if requirements were wrong.",
+"Validation is the final check that the software meets real-world user needs."
+],
+concept:`A classic analogy: You are building a bridge. Verification checks whether you are following the engineering blueprints correctly at each step. Validation checks whether the bridge actually connects the two banks the city needed to connect. Both can fail independently. Static testing (reviews, walkthroughs) = Verification. Dynamic testing (test execution) = Validation.`,
+diagram:`<svg width="100%" viewBox="0 0 680 200" role="img"><title>Verification vs Validation comparison</title><desc>Two-column diagram contrasting verification and validation concepts</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-purple"><rect x="30" y="20" width="290" height="160" rx="12" stroke-width="0.5"/><text class="th" x="175" y="50" text-anchor="middle" dominant-baseline="central">Verification</text><text class="ts" x="175" y="72" text-anchor="middle">"Building it right?"</text><text class="ts" x="175" y="92" text-anchor="middle">Static — no code execution</text><text class="ts" x="175" y="112" text-anchor="middle">Reviews, walkthroughs, inspections</text><text class="ts" x="175" y="132" text-anchor="middle">Done by QA / Dev team</text><text class="ts" x="175" y="152" text-anchor="middle">Checks: process &amp; documentation</text></g>
+<g class="c-teal"><rect x="360" y="20" width="290" height="160" rx="12" stroke-width="0.5"/><text class="th" x="505" y="50" text-anchor="middle" dominant-baseline="central">Validation</text><text class="ts" x="505" y="72" text-anchor="middle">"Right product built?"</text><text class="ts" x="505" y="92" text-anchor="middle">Dynamic — software is executed</text><text class="ts" x="505" y="112" text-anchor="middle">UAT, acceptance testing, beta</text><text class="ts" x="505" y="132" text-anchor="middle">Done with end users / clients</text><text class="ts" x="505" y="152" text-anchor="middle">Checks: product vs real need</text></g>
+<text class="ts" x="340" y="105" text-anchor="middle">vs</text>
+</svg>`,
+practices:["Always perform requirements review (verification) before writing a single test case","Never skip code reviews — they are verification activities that catch defects for free","Include BA and product owners in validation (UAT) — only they can say if the product is right","Document verification activities (review meetings, sign-offs) as audit evidence","Use a Requirements Traceability Matrix (RTM) to link verification and validation activities","For each requirement: verify it is testable before planning validation","Flag any requirement that cannot be validated — it is likely ambiguous","Run UAT in a production-like environment for meaningful validation results"],
+qa:[
+{q:"What is the difference between verification and validation?",a:"Verification checks whether the product is being built according to the specification (process-oriented, static). Validation checks whether the finished product meets the user's actual needs (product-oriented, dynamic)."},
+{q:"Give an example of each.",a:"Verification: reviewing design documents, code walkthroughs, unit test review. Validation: running UAT with real users, beta testing, acceptance test execution."},
+{q:"Can a product pass verification but fail validation?",a:"Yes. If the requirements themselves were wrong, the team could perfectly implement incorrect requirements. All verification passes, but validation fails because the product doesn't serve user needs."},
+{q:"What are static testing techniques?",a:"Reviews (informal, walkthrough, technical, inspection), static analysis (code linters, SAST tools), checklists. These are all verification activities — no execution of code."},
+{q:"Who performs validation?",a:"Validation is typically performed by end-users, clients, or QA with user involvement — in UAT (User Acceptance Testing) or beta testing phases."},
+{q:"Where do verification and validation fit in the V-Model?",a:"Verification activities are on the left arm of the V (Requirements, Design, Coding review). Validation activities are on the right arm (Integration Testing, System Testing, UAT) where execution happens."}
+]},
+
+{id:5,phase:"Intermediate",color:"i",title:"What is Quality Assurance (QA)?",
+overview:{def:"Quality Assurance is a proactive, process-oriented activity that ensures quality standards and processes are being followed — preventing defects from occurring in the first place.",wwwh:[
+{l:"What",t:"A systematic set of activities to ensure processes produce quality products"},
+{l:"Why",t:"To prevent defects by improving the process — not just catching bugs after the fact"},
+{l:"When",t:"QA runs throughout the SDLC, starting before development begins"},
+{l:"Where",t:"SDLC process audits, test process improvement, standards compliance"},
+{l:"How",t:"Process audits, standards (ISO, CMMI), reviews, metrics, retrospectives"}]},
+oneliners:[
+"QA is about preventing defects by improving the process, not just finding bugs.",
+"QA is proactive; QC is reactive — that's the core difference.",
+"QA asks: Are we following the right process to build quality software?",
+"A QA engineer makes sure the factory (process) is good; QC checks the products coming out.",
+"QA is everyone's responsibility — it is embedded in culture, not just the QA team."
+],
+concept:`QA focuses on the process. If your process is good, your product will be good. QA uses process models like CMMI (Capability Maturity Model Integration) and standards like ISO 9001 / ISO 25010 to establish, audit, and improve how teams build software. QA activities include: setting standards, process audits, root cause analysis, retrospectives, and training.`,
+diagram:`<svg width="100%" viewBox="0 0 680 220" role="img"><title>QA vs QC positioning in SDLC</title><desc>Diagram showing QA as a process umbrella over the entire SDLC and QC as an inspection at the output</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-purple"><rect x="20" y="20" width="600" height="50" rx="10" stroke-width="0.5"/><text class="th" x="320" y="44" text-anchor="middle" dominant-baseline="central">Quality Assurance (QA) — Process Umbrella — spans all phases</text></g>
+<g class="c-teal"><rect x="30" y="100" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="80" y="122" text-anchor="middle" dominant-baseline="central">Req.</text></g>
+<line x1="130" y1="122" x2="144" y2="122" class="arr" marker-end="url(#arrow)"/>
+<g class="c-teal"><rect x="144" y="100" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="194" y="122" text-anchor="middle" dominant-baseline="central">Design</text></g>
+<line x1="244" y1="122" x2="258" y2="122" class="arr" marker-end="url(#arrow)"/>
+<g class="c-teal"><rect x="258" y="100" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="308" y="122" text-anchor="middle" dominant-baseline="central">Coding</text></g>
+<line x1="358" y1="122" x2="372" y2="122" class="arr" marker-end="url(#arrow)"/>
+<g class="c-teal"><rect x="372" y="100" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="422" y="122" text-anchor="middle" dominant-baseline="central">Testing</text></g>
+<line x1="472" y1="122" x2="486" y2="122" class="arr" marker-end="url(#arrow)"/>
+<g class="c-teal"><rect x="486" y="100" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="536" y="122" text-anchor="middle" dominant-baseline="central">Release</text></g>
+<g class="c-amber"><rect x="200" y="175" width="240" height="40" rx="8" stroke-width="0.5"/><text class="th" x="320" y="195" text-anchor="middle" dominant-baseline="central">Quality Control (QC) — Output Inspection</text></g>
+<line x1="320" y1="144" x2="320" y2="174" class="arr" marker-end="url(#arrow)"/>
+</svg>`,
+practices:["Define and document quality standards before the project starts","Conduct regular process audits — not just product audits","Use root cause analysis (RCA) for every critical defect — fix the process, not just the bug","Track quality metrics: defect density, test coverage, escaped defect rate, test execution rate","Establish entry and exit criteria for every phase of testing","Hold retrospectives after every release to continuously improve the process","Enforce peer code reviews as part of your QA process","Align QA activities with ISO 25010 quality characteristics: functionality, reliability, usability, efficiency, security, maintainability"],
+qa:[
+{q:"What is Quality Assurance?",a:"QA is a proactive, process-oriented discipline that focuses on improving and monitoring the software development process to prevent defects from occurring. It ensures teams follow standards and best practices."},
+{q:"What is the difference between QA and testing?",a:"Testing is a subset of QA. Testing detects defects in a product. QA improves the process so fewer defects are produced in the first place. Testing is reactive; QA is proactive."},
+{q:"What is CMMI?",a:"Capability Maturity Model Integration — a process improvement framework with 5 maturity levels: 1-Initial, 2-Managed, 3-Defined, 4-Quantitatively Managed, 5-Optimizing. Higher levels mean more mature, predictable processes."},
+{q:"What are examples of QA activities?",a:"Process audits, standards definition (coding standards, review checklists), template creation, metrics tracking, training programs, root cause analysis, process retrospectives, and SDLC gate reviews."},
+{q:"What are entry and exit criteria?",a:"Entry criteria: conditions that must be met before testing begins (e.g. build deployed, smoke test passed). Exit criteria: conditions to determine when testing is complete (e.g. 95% test cases executed, 0 P1 open bugs)."},
+{q:"What ISO standard is most relevant for software quality?",a:"ISO/IEC 25010 (SQuaRE model) defines 8 software quality characteristics: Functional suitability, Performance efficiency, Compatibility, Usability, Reliability, Security, Maintainability, Portability."}
+]},
+
+{id:6,phase:"Intermediate",color:"i",title:"What is Quality Control (QC)?",
+overview:{def:"Quality Control is a reactive, product-oriented activity focused on identifying defects in the actual software product. QC is the inspection and testing phase that ensures the product meets defined quality standards.",wwwh:[
+{l:"What",t:"The hands-on inspection and testing of software to detect defects in the product"},
+{l:"Why",t:"To catch defects before the product reaches the end user"},
+{l:"When",t:"During and after development — unit testing, integration testing, system testing, UAT"},
+{l:"Where",t:"Test execution phase, code review for defect detection, build verification"},
+{l:"How",t:"Executing test cases, reviewing outputs, comparing against expected results"}]},
+oneliners:[
+"QC is product-oriented — it checks the output, not the process.",
+"QC is testing in action: running test cases and hunting for bugs.",
+"QA prevents defects; QC detects defects — both are needed.",
+"QC is the last line of defense before software reaches the customer.",
+"QC asks: Does this product meet the quality standard we defined?"
+],
+concept:`QC is what most people think of when they hear 'QA engineer' — it's the actual execution of tests. But it is formally reactive: you test what has been built and catch what is wrong. Good QA reduces the volume of defects QC needs to find. QC includes activities like test case execution, defect reporting, defect tracking, and bug retesting.`,
+diagram:`<svg width="100%" viewBox="0 0 680 180" role="img"><title>QC process flow</title><desc>Flow showing test execution, defect detection, bug reporting, retesting, and sign-off in QC</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-amber"><rect x="20" y="60" width="100" height="50" rx="8" stroke-width="0.5"/><text class="th" x="70" y="82" text-anchor="middle" dominant-baseline="central">Execute</text><text class="ts" x="70" y="98" text-anchor="middle">Test Cases</text></g>
+<line x1="120" y1="85" x2="140" y2="85" class="arr" marker-end="url(#arrow)"/>
+<g class="c-coral"><rect x="140" y="60" width="100" height="50" rx="8" stroke-width="0.5"/><text class="th" x="190" y="82" text-anchor="middle" dominant-baseline="central">Detect</text><text class="ts" x="190" y="98" text-anchor="middle">Defect</text></g>
+<line x1="240" y1="85" x2="260" y2="85" class="arr" marker-end="url(#arrow)"/>
+<g class="c-coral"><rect x="260" y="60" width="100" height="50" rx="8" stroke-width="0.5"/><text class="th" x="310" y="82" text-anchor="middle" dominant-baseline="central">Report</text><text class="ts" x="310" y="98" text-anchor="middle">Bug</text></g>
+<line x1="360" y1="85" x2="380" y2="85" class="arr" marker-end="url(#arrow)"/>
+<g class="c-teal"><rect x="380" y="60" width="100" height="50" rx="8" stroke-width="0.5"/><text class="th" x="430" y="82" text-anchor="middle" dominant-baseline="central">Dev Fixes</text><text class="ts" x="430" y="98" text-anchor="middle">Bug</text></g>
+<line x1="480" y1="85" x2="500" y2="85" class="arr" marker-end="url(#arrow)"/>
+<g class="c-green"><rect x="500" y="60" width="100" height="50" rx="8" stroke-width="0.5"/><text class="th" x="550" y="82" text-anchor="middle" dominant-baseline="central">Retest &amp;</text><text class="ts" x="550" y="98" text-anchor="middle">Close</text></g>
+<text class="ts" x="340" y="30" text-anchor="middle">QC process: detect → report → fix → verify</text>
+<line x1="550" y1="110" x2="550" y2="140" stroke="var(--color-border-secondary)" stroke-width="0.5" stroke-dasharray="4 3"/>
+<line x1="550" y1="140" x2="190" y2="140" stroke="var(--color-border-secondary)" stroke-width="0.5" stroke-dasharray="4 3"/>
+<line x1="190" y1="140" x2="190" y2="110" class="arr" stroke="var(--color-border-secondary)" stroke-width="0.5" marker-end="url(#arrow)"/>
+<text class="ts" x="370" y="158" text-anchor="middle">If regression found → re-execute</text>
+</svg>`,
+practices:["Execute test cases in a defined, consistent order — smoke first, then functional","Log every bug with: ID, title, severity, priority, steps to reproduce, environment, screenshot","Assign severity (critical/major/minor/trivial) separately from priority (P1/P2/P3/P4)","Never close a defect without a retest + regression check","Maintain a defect lifecycle: New → Assigned → Fixed → Retested → Closed / Reopened","Achieve minimum test coverage before sign-off (typically 90–95% of test cases executed)","Use test management tools: Jira, TestRail, Zephyr, qTest","QC sign-off requires: exit criteria met, no P1 open bugs, product owner approval"],
+qa:[
+{q:"What is Quality Control?",a:"QC is a product-oriented activity that involves executing tests to detect defects in the software product. It is reactive — it identifies issues after code is written and verifies the product meets quality standards."},
+{q:"What is a defect lifecycle?",a:"The defect lifecycle tracks a bug from discovery to closure: New → Assigned → Open → Fixed → Retested → Closed. It can also go: Fixed → Reopened if the fix was insufficient."},
+{q:"What is the difference between severity and priority?",a:"Severity = technical impact of the bug on the system (crash = critical). Priority = business urgency to fix it (how soon it needs fixing). A cosmetic bug on the homepage might have low severity but high priority."},
+{q:"What is a test sign-off?",a:"A formal document/approval indicating that testing is complete, exit criteria are met, known risks are accepted, and the product is ready for release. Signed by QA lead and/or product owner."},
+{q:"What tools are used for QC activities?",a:"Bug tracking: Jira, Bugzilla, Azure DevOps. Test management: TestRail, Zephyr, qTest. Test execution: Selenium (UI), Postman (API), JMeter (performance). Manual test tracking: Excel, Google Sheets."},
+{q:"What metrics are tracked during QC?",a:"Test execution rate, test pass rate, defect density, defect discovery rate, defect fix rate, mean time to detect (MTTD), mean time to repair (MTTR), test coverage percentage."}
+]},
+
+{id:7,phase:"Intermediate",color:"i",title:"Defect Cascade Effect",
+overview:{def:"The defect cascade effect (also called 'defect amplification') is when a defect introduced early in the SDLC propagates through later phases, multiplying in impact and cost at each stage.",wwwh:[
+{l:"What",t:"One early defect triggering multiple downstream defects and rework"},
+{l:"Why",t:"Later phases build on earlier work — errors compound like compound interest"},
+{l:"When",t:"Occurs across all SDLC phases — worst when requirements defects cascade to production"},
+{l:"Where",t:"Requirements → Design → Code → Testing → Production — each phase amplifies"},
+{l:"How",t:"An incorrect requirement leads to wrong design → wrong code → failed tests → production bug"}]},
+oneliners:[
+"One wrong requirement can produce ten downstream defects — that's the cascade effect.",
+"The earlier a defect is caught, the fewer cascades it causes.",
+"Defect cascade is why shift-left testing and early reviews are critical.",
+"A cascade defect is like a typo in a recipe that ruins the whole dish.",
+"Requirements defects cascade the hardest — they poison every phase that follows."
+],
+concept:`Imagine a requirement says 'The system should process 100 transactions per second' but the stakeholder actually needed 1000/sec. This wrong requirement leads to a design that accommodates 100/sec, code built for 100/sec, a database schema optimized for 100/sec, and tests that pass for 100/sec. Everything is 'correct' — but the whole system needs to be re-architected in production. One defect → entire cascade.`,
+diagram:`<svg width="100%" viewBox="0 0 680 260" role="img"><title>Defect cascade effect across SDLC phases</title><desc>Pyramid showing how one requirements defect cascades and multiplies across design, code, testing, and production</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-teal"><rect x="270" y="20" width="140" height="38" rx="8" stroke-width="0.5"/><text class="th" x="340" y="34" text-anchor="middle" dominant-baseline="central">Requirements</text><text class="ts" x="340" y="50" text-anchor="middle">1 defect</text></g>
+<line x1="340" y1="58" x2="280" y2="85" class="arr" stroke="#EF9F27" marker-end="url(#arrow)"/>
+<line x1="340" y1="58" x2="400" y2="85" class="arr" stroke="#EF9F27" marker-end="url(#arrow)"/>
+<g class="c-amber"><rect x="160" y="85" width="140" height="38" rx="8" stroke-width="0.5"/><text class="th" x="230" y="99" text-anchor="middle" dominant-baseline="central">Design</text><text class="ts" x="230" y="115" text-anchor="middle">2–3 defects</text></g>
+<g class="c-amber"><rect x="380" y="85" width="140" height="38" rx="8" stroke-width="0.5"/><text class="th" x="450" y="99" text-anchor="middle" dominant-baseline="central">Architecture</text><text class="ts" x="450" y="115" text-anchor="middle">2–3 defects</text></g>
+<line x1="230" y1="123" x2="180" y2="150" class="arr" stroke="#D85A30" marker-end="url(#arrow)"/>
+<line x1="230" y1="123" x2="260" y2="150" class="arr" stroke="#D85A30" marker-end="url(#arrow)"/>
+<line x1="450" y1="123" x2="420" y2="150" class="arr" stroke="#D85A30" marker-end="url(#arrow)"/>
+<line x1="450" y1="123" x2="490" y2="150" class="arr" stroke="#D85A30" marker-end="url(#arrow)"/>
+<g class="c-coral"><rect x="60" y="150" width="120" height="38" rx="8" stroke-width="0.5"/><text class="th" x="120" y="164" text-anchor="middle" dominant-baseline="central">Code A</text><text class="ts" x="120" y="180" text-anchor="middle">2–5 defects</text></g>
+<g class="c-coral"><rect x="210" y="150" width="120" height="38" rx="8" stroke-width="0.5"/><text class="th" x="270" y="164" text-anchor="middle" dominant-baseline="central">Code B</text><text class="ts" x="270" y="180" text-anchor="middle">2–5 defects</text></g>
+<g class="c-coral"><rect x="360" y="150" width="120" height="38" rx="8" stroke-width="0.5"/><text class="th" x="420" y="164" text-anchor="middle" dominant-baseline="central">Code C</text><text class="ts" x="420" y="180" text-anchor="middle">2–5 defects</text></g>
+<g class="c-coral"><rect x="510" y="150" width="120" height="38" rx="8" stroke-width="0.5"/><text class="th" x="570" y="164" text-anchor="middle" dominant-baseline="central">Code D</text><text class="ts" x="570" y="180" text-anchor="middle">2–5 defects</text></g>
+<g class="c-red"><rect x="100" y="215" width="480" height="38" rx="8" stroke-width="0.5"/><text class="th" x="340" y="229" text-anchor="middle" dominant-baseline="central">Production Failure</text><text class="ts" x="340" y="245" text-anchor="middle">1 original defect → 10–50+ failures in production</text></g>
+</svg>`,
+practices:["Invest heavily in requirements reviews — the earliest defect is the cheapest to fix","Use formal inspection (Fagan inspection) for critical requirement and design documents","Conduct design reviews before coding begins to stop cascades at the design phase","Implement shift-left testing — bring QA into requirements and sprint planning","Track 'defect injection rate per phase' — measure where defects are being introduced","Perform root cause analysis on production defects to find the cascade origin","Use peer code review to catch code defects before they cascade to test","Re-review impacted areas whenever a high-severity defect is found"],
+qa:[
+{q:"What is the defect cascade effect?",a:"The defect cascade effect is when a defect introduced in an early SDLC phase (like requirements) propagates to subsequent phases (design, coding, testing, production), multiplying in number and cost at each stage."},
+{q:"Give a concrete example of a cascading defect.",a:"A requirement says 'allow 3 failed login attempts' but the business needs 5. Design, code, and tests are all built for 3. In production, customer complaints expose the cascade — massive rework across all layers."},
+{q:"Why are requirements defects the most expensive?",a:"Because they cascade through every subsequent phase. Each phase builds on the previous one with the defect baked in. Fixing it in production means reworking design, code, tests, and documentation — amplification at every level."},
+{q:"How does shift-left testing reduce cascade effects?",a:"By involving QA earlier (in requirements and design), defects are caught before they propagate. A review comment on a requirements document costs minutes; fixing a cascade in production costs weeks."},
+{q:"What is defect amplification?",a:"Another name for the cascade effect — the phenomenon where one original defect in a higher-level artifact (like requirements) produces multiple defects in lower-level artifacts (code, test cases), amplifying the original error."},
+{q:"How do you prevent cascade defects in an Agile project?",a:"Definition of Ready (clear requirements before sprint start), sprint planning with QA, Three Amigos sessions (Dev + QA + BA review stories together), shift-left automation, and retrospectives to trace defect origins."}
+]},
+
+{id:8,phase:"Advanced",color:"a",title:"The Pesticide Paradox",
+overview:{def:"The pesticide paradox states that if the same set of test cases are executed repeatedly, they will no longer be effective at finding new bugs — just as insects develop resistance to pesticides.",wwwh:[
+{l:"What",t:"The diminishing returns of repeated, unchanged test cases in finding new defects"},
+{l:"Why",t:"Software (and bugs) evolve; static test cases stop covering new defect territory"},
+{l:"When",t:"In regression cycles where test cases are reused without review or refresh"},
+{l:"Where",t:"Automated regression suites, manual regression packs, smoke test sets"},
+{l:"How",t:"Review, update, remove, and expand test cases regularly — add new scenarios"}]},
+oneliners:[
+"The pesticide paradox: the same tests find the same bugs — and miss all the new ones.",
+"If your test suite never changes, it becomes a comfort blanket, not a quality net.",
+"Rotate testers, refresh test cases, and add exploratory testing to fight the paradox.",
+"Static test suites grow stale — test coverage must evolve with the software.",
+"Principle 5 of the 7 Testing Principles: keep refreshing your tests."
+],
+concept:`Boris Beizer coined this term in 'Software Testing Techniques' (1990). The analogy: farmers spray pesticide → insects die → resistant insects survive → reproduce → entire population becomes resistant. In testing: same test cases → same bugs found → new bugs introduced → test cases don't catch them → quality degrades silently. The fix is continuous test review and refresh, exploratory testing, and mutation testing.`,
+diagram:`<svg width="100%" viewBox="0 0 680 210" role="img"><title>Pesticide paradox cycle diagram</title><desc>Circular flow showing how repeated test cases become ineffective over time</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="c-teal"><rect x="250" y="20" width="180" height="44" rx="8" stroke-width="0.5"/><text class="th" x="340" y="42" text-anchor="middle" dominant-baseline="central">Write test cases</text></g>
+<line x1="430" y1="42" x2="570" y2="80" class="arr" stroke="#1D9E75" marker-end="url(#arrow)"/>
+<g class="c-teal"><rect x="510" y="80" width="150" height="44" rx="8" stroke-width="0.5"/><text class="th" x="585" y="102" text-anchor="middle" dominant-baseline="central">Execute &amp; find bugs</text></g>
+<line x1="585" y1="124" x2="585" y2="155" class="arr" stroke="#EF9F27" marker-end="url(#arrow)"/>
+<g class="c-amber"><rect x="510" y="155" width="150" height="44" rx="8" stroke-width="0.5"/><text class="th" x="585" y="177" text-anchor="middle" dominant-baseline="central">Bugs fixed</text></g>
+<line x1="510" y1="177" x2="370" y2="177" class="arr" stroke="#D85A30" marker-end="url(#arrow)"/>
+<g class="c-coral"><rect x="200" y="155" width="170" height="44" rx="8" stroke-width="0.5"/><text class="th" x="285" y="177" text-anchor="middle" dominant-baseline="central">Re-run SAME tests</text></g>
+<line x1="200" y1="177" x2="100" y2="155" class="arr" stroke="#993C1D" marker-end="url(#arrow)"/>
+<g class="c-red"><rect x="20" y="115" width="170" height="44" rx="8" stroke-width="0.5"/><text class="th" x="105" y="137" text-anchor="middle" dominant-baseline="central">Fewer bugs found</text></g>
+<line x1="105" y1="115" x2="250" y2="42" class="arr" stroke="#993C1D" marker-end="url(#arrow)"/>
+<text class="ts" x="340" y="130" text-anchor="middle" style="fill:#993C1D;font-weight:500">← Break the cycle: refresh tests</text>
+</svg>`,
+practices:["Review and update test cases after every major release cycle","Add new test cases for every new feature — don't just reuse the old pack","Rotate testers across modules — fresh eyes find new bugs","Add exploratory testing sessions alongside scripted regression","Use mutation testing to evaluate whether your test suite would catch injected bugs","Track 'new bugs found per test cycle' — a dropping trend signals the paradox","Periodically retire obsolete test cases that test removed or irrelevant features","Use risk-based test prioritization to focus on areas that changed most"],
+qa:[
+{q:"What is the pesticide paradox?",a:"The pesticide paradox (ISTQB Principle 5) states that if the same tests are run repeatedly without change, they will eventually stop finding new bugs. As the software evolves, the static test set no longer covers new defect areas."},
+{q:"Who coined the term pesticide paradox?",a:"Boris Beizer in his book 'Software Testing Techniques' (1990). He drew the analogy from agriculture — insects develop resistance to the same pesticide over time."},
+{q:"How do you overcome the pesticide paradox?",a:"Regularly review and update test cases, add tests for new scenarios, use exploratory testing, rotate testers, employ mutation testing, and apply risk-based analysis to identify untested areas."},
+{q:"What is mutation testing?",a:"A technique where small changes (mutations) are deliberately introduced into the code, and tests are run to see if they detect the change. If tests pass with a mutation, the test suite is weak — it needs strengthening."},
+{q:"How does the pesticide paradox affect automated test suites?",a:"Automated suites that are never updated become a false safety net. They pass on every run not because the software is perfect, but because the tests only check known-good paths. New bugs in new code go undetected."},
+{q:"What is the relationship between pesticide paradox and exploratory testing?",a:"Exploratory testing is the primary counter to the pesticide paradox for manual testing — because the tester designs tests on the fly, each session covers different territory and can find defects that scripted tests miss."}
+]},
+
+{id:9,phase:"Advanced",color:"a",title:"What is a Latent Defect?",
+overview:{def:"A latent defect is a defect that already exists in the software but has not yet been discovered — it remains dormant until a specific set of conditions triggers it.",wwwh:[
+{l:"What",t:"A hidden bug that exists in code but hasn't manifested yet as a visible failure"},
+{l:"Why",t:"Because not all code paths are exercised in normal usage or testing"},
+{l:"When",t:"It surfaces when a specific input, state, or environment condition triggers it"},
+{l:"Where",t:"Anywhere — edge cases, error paths, multi-threading, specific data combinations"},
+{l:"How",t:"Found through boundary testing, stress testing, mutation testing, code analysis"}]},
+oneliners:[
+"A latent defect is a bug hiding in the code, waiting for the right conditions to strike.",
+"Just because software hasn't failed doesn't mean it has no defects — they may be latent.",
+"Latent defects are why testing must cover edge cases and not just happy paths.",
+"100% test pass rate doesn't mean zero defects — it means no latent defects triggered yet.",
+"Security vulnerabilities are often latent defects — invisible until exploited."
+],
+concept:`A classic latent defect example: a date-processing function that works correctly for all dates — except February 29 in a leap year. If the software was tested and released in a non-leap year, the defect exists but is latent. It will surface exactly four years later. Many year-2000 (Y2K) bugs were latent defects that existed for decades before surfacing on January 1, 2000.`,
+diagram:`<svg width="100%" viewBox="0 0 680 190" role="img"><title>Latent defect lifecycle</title><desc>Timeline showing a defect introduced during development remaining dormant through testing until triggered in production</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<line x1="40" y1="90" x2="640" y2="90" class="arr" stroke="var(--color-border-secondary)" stroke-width="1" marker-end="url(#arrow)"/>
+<g class="c-coral"><rect x="50" y="60" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="100" y="78" text-anchor="middle" dominant-baseline="central">Dev</text><text class="ts" x="100" y="95" text-anchor="middle">Bug injected</text></g>
+<line x1="150" y1="82" x2="200" y2="82" class="arr" stroke="#993C1D" stroke-width="1" marker-end="url(#arrow)"/>
+<g class="c-gray"><rect x="200" y="60" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="250" y="78" text-anchor="middle" dominant-baseline="central">Testing</text><text class="ts" x="250" y="95" text-anchor="middle">Not triggered</text></g>
+<text class="ts" x="250" y="130" text-anchor="middle">Latent — dormant</text>
+<line x1="300" y1="82" x2="350" y2="82" class="arr" stroke="var(--color-border-secondary)" stroke-width="1" marker-end="url(#arrow)"/>
+<g class="c-gray"><rect x="350" y="60" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="400" y="78" text-anchor="middle" dominant-baseline="central">Release</text><text class="ts" x="400" y="95" text-anchor="middle">Not visible</text></g>
+<text class="ts" x="400" y="130" text-anchor="middle">Latent — dormant</text>
+<line x1="450" y1="82" x2="510" y2="82" class="arr" stroke="#993C1D" stroke-width="1.5" marker-end="url(#arrow)"/>
+<g class="c-red"><rect x="510" y="50" width="130" height="60" rx="8" stroke-width="0.5"/><text class="th" x="575" y="72" text-anchor="middle" dominant-baseline="central">Production</text><text class="ts" x="575" y="90" text-anchor="middle">Trigger conditions</text><text class="ts" x="575" y="105" text-anchor="middle">met → FAILURE</text></g>
+<text class="ts" x="340" y="160" text-anchor="middle">Defect was always there — testing simply never triggered it</text>
+</svg>`,
+practices:["Test boundary values aggressively — latent defects hide at data edges","Include negative test cases — test what the system should NOT do","Use equivalence partitioning to cover logical data groups beyond happy paths","Conduct stress and load tests to trigger race conditions and latent concurrency bugs","Use static analysis tools (SonarQube, Coverity) to detect latent defects without execution","Track code coverage — untested code paths are likely homes for latent defects","Review exception handling paths — latent defects often hide in error branches","Schedule periodic exploratory testing of rarely-used features"],
+qa:[
+{q:"What is a latent defect?",a:"A latent defect is a defect that already exists in the software code but has not yet caused a visible failure. It remains dormant until a specific combination of inputs, states, or conditions triggers it."},
+{q:"Give a real-world example of a latent defect.",a:"Y2K bug — date storage using 2-digit year (e.g., '99' for 1999) was a latent defect that existed for decades but only surfaced on January 1, 2000. The defect was always there; the trigger was the year rollover."},
+{q:"How are latent defects different from known defects?",a:"A known defect has been detected and logged but not fixed. A latent defect has not been detected — it hasn't triggered yet. Both exist in the code, but only one is known to the team."},
+{q:"What testing techniques help uncover latent defects?",a:"Boundary value analysis, equivalence partitioning, negative testing, stress/load testing, fuzz testing, mutation testing, static analysis (code scanning), and code coverage analysis to identify untested paths."},
+{q:"Why is code coverage important for latent defects?",a:"Code coverage shows which lines, branches, and conditions were exercised during testing. Low coverage = high probability of latent defects in untested paths. 80–100% coverage is the target for critical systems."},
+{q:"Can a latent defect become a security vulnerability?",a:"Yes. Many security vulnerabilities start as latent defects — buffer overflows, SQL injection points, unvalidated inputs. They exist harmlessly until an attacker discovers the specific trigger condition to exploit them."}
+]},
+
+{id:10,phase:"Advanced",color:"a",title:"What is a Masked Defect?",
+overview:{def:"A masked defect is a defect that is hidden or concealed by the presence of another defect. When the masking defect is fixed, the previously hidden defect becomes visible.",wwwh:[
+{l:"What",t:"A defect whose symptoms are hidden because another defect is also present"},
+{l:"Why",t:"Two bugs can interact — Bug A's effect hides Bug B's symptoms from the tester"},
+{l:"When",t:"Discovered when Bug A is fixed, and Bug B suddenly appears (seemingly from nowhere)"},
+{l:"Where",t:"Commonly in complex flows: error handling paths, validation sequences, UI rendering"},
+{l:"How",t:"Found via thorough regression, bug interaction analysis, and code reviews"}]},
+oneliners:[
+"A masked defect is a bug hiding behind another bug — fix one, the other appears.",
+"Masking is why fixing one bug can appear to 'cause' a new one that was already there.",
+"Developers say 'I only changed one thing' — masked defects explain the new failure.",
+"Masked defects are uncovered by thorough regression after every bug fix.",
+"Never assume a bug fix is safe without regression — masked defects are waiting."],
+concept:`Classic example: A login form has Bug A (accepts blank passwords) and Bug B (crashes on invalid characters in username). Bug A masks Bug B — because the tester logs in with a blank password and never gets to the username validation path where Bug B lives. When Bug A is fixed (blank passwords rejected), testers now reach the username field more, and Bug B surfaces. Bug B was always there — masked by Bug A.`,
+diagram:`<svg width="100%" viewBox="0 0 680 230" role="img"><title>Masked defect concept diagram</title><desc>Diagram showing how Bug A masks Bug B and how fixing Bug A reveals Bug B</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="ts" x="180" y="18" text-anchor="middle">Before fix</text>
+<text class="ts" x="500" y="18" text-anchor="middle">After Bug A fixed</text>
+<line x1="340" y1="20" x2="340" y2="210" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="4 3"/>
+<g class="c-coral"><rect x="30" y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="95" y="50" text-anchor="middle" dominant-baseline="central">Bug A</text><text class="ts" x="95" y="68" text-anchor="middle">Visible &amp; reported</text></g>
+<g class="c-gray"><rect x="30" y="105" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="95" y="125" text-anchor="middle" dominant-baseline="central">Bug B</text><text class="ts" x="95" y="143" text-anchor="middle">Hidden (masked)</text></g>
+<line x1="95" y1="80" x2="95" y2="105" stroke="#993C1D" stroke-width="1" stroke-dasharray="3 2"/>
+<text class="ts" x="95" y="99" text-anchor="middle">masks ↓</text>
+<text class="ts" x="95" y="175" text-anchor="middle">Tester never reaches</text>
+<text class="ts" x="95" y="190" text-anchor="middle">Bug B's code path</text>
+<g class="c-green"><rect x="370" y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="435" y="50" text-anchor="middle" dominant-baseline="central">Bug A</text><text class="ts" x="435" y="68" text-anchor="middle">Fixed &amp; closed</text></g>
+<g class="c-red"><rect x="370" y="105" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="435" y="125" text-anchor="middle" dominant-baseline="central">Bug B</text><text class="ts" x="435" y="143" text-anchor="middle">NOW VISIBLE!</text></g>
+<line x1="435" y1="80" x2="435" y2="104" class="arr" stroke="#E24B4A" marker-end="url(#arrow)"/>
+<text class="ts" x="435" y="175" text-anchor="middle">Regression exposes</text>
+<text class="ts" x="435" y="190" text-anchor="middle">the masked defect</text>
+<line x1="160" y1="55" x2="370" y2="55" class="arr" stroke="#1D9E75" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<text class="ts" x="265" y="48" text-anchor="middle">Fix Bug A →</text>
+</svg>`,
+practices:["Always run full regression after every bug fix — not just a retest of the fixed bug","When a new bug appears after a fix, always investigate if it was masked — not newly introduced","Conduct code impact analysis before any fix to understand what paths are affected","Use bug dependency mapping: when Bug A is closed, check all related paths","Never rush bug fixes without regression — masked defects emerge under pressure","Use branch coverage in testing — ensure all code branches are tested, reducing masking","Document which test cases cover which code paths to analyze potential masking","When a developer says 'this fix introduced a new bug' — investigate masking first"],
+qa:[
+{q:"What is a masked defect?",a:"A masked defect is a defect whose symptoms are hidden by the presence of another defect. When the first (masking) defect is fixed, the masked defect becomes visible — it was always there, just concealed."},
+{q:"What is the difference between a latent defect and a masked defect?",a:"Latent defect: hidden because it was never triggered (no specific condition occurred). Masked defect: hidden because another defect is preventing its symptoms from being observed. Both are undiscovered; the cause of concealment differs."},
+{q:"Give an example of a masked defect.",a:"A checkout button crashes (Bug A) before the payment gateway is called. The payment gateway has an invalid API key (Bug B). Bug A masks Bug B — nobody reaches Bug B. Fix Bug A → Bug B surfaces."},
+{q:"How do you detect masked defects?",a:"Thorough regression testing after every bug fix, branch and path coverage analysis, code impact assessment before fixes, paired bug investigation, and exploratory testing after releases."},
+{q:"Why is masked defect analysis important in critical systems?",a:"In banking, healthcare, or aviation, a masked defect in a safety-critical path could lie dormant through testing, appear when the masking defect is patched, and cause severe harm. Risk-based testing and full regression are essential."},
+{q:"A bug you reported was 'Won't Fix' and then closed. Later a new bug appears in the same area. Could it be masked?",a:"Yes — if the original 'Won't Fix' bug was masking another defect, closing it (or fixing an adjacent bug) can now expose the masked defect. Always track 'Won't Fix' bugs for subsequent masked defect analysis."}
+]}
+];
+
+const visited=new Set([1]);
+let current=1;
+
+function phaseClass(p){return p==="Fundamentals"?"f":p==="Intermediate"?"i":"a"}
+
+function buildTabs(){
+  const bar=document.getElementById("tabBar");
+  sessions.forEach(s=>{
+    const btn=document.createElement("button");
+    btn.className="tab-btn"+(s.id===1?" active":"");
+    btn.id="tab"+s.id;
+    btn.textContent="S"+s.id;
+    btn.onclick=()=>goTo(s.id);
+    bar.appendChild(btn);
+  });
+}
+
+function buildSessions(){
+  const cont=document.getElementById("sessions");
+  sessions.forEach(s=>{
+    const div=document.createElement("div");
+    div.className="session"+(s.id===1?" active":"");
+    div.id="sess"+s.id;
+    div.innerHTML=renderSession(s);
+    cont.appendChild(div);
+  });
+}
+
+function renderSession(s){
+  const pc=phaseClass(s.phase);
+  return `
+<div class="session-header">
+  <div class="session-number sn-${pc}">S${s.id}</div>
+  <div><div class="session-title">${s.title}</div><div class="session-phase">Phase: ${s.phase}</div></div>
+</div>
+
+<div class="section-label">Overview</div>
+<div class="overview-card">
+  <p>${s.overview.def}</p>
+  <div class="wwwh">${s.overview.wwwh.map(w=>`<div class="wwwh-item"><div class="wwwh-label">${w.l}</div><div class="wwwh-text">${w.t}</div></div>`).join("")}</div>
+</div>
+
+<div class="section-label">Interview one-liners</div>
+<div class="oneliner-list">${s.oneliners.map((o,i)=>`<div class="oneliner"><span class="ol-num">${i+1}</span><span class="ol-text">${o}</span></div>`).join("")}</div>
+
+<div class="section-label">Concept & visual diagram</div>
+<div class="concept-text">${s.concept}</div>
+<div class="diagram-box">${s.diagram}</div>
+
+<div class="section-label">Best practices checklist</div>
+<div class="checklist">${s.practices.map(p=>`<div class="check-item"><span class="check-icon"><i class="ti ti-check" aria-hidden="true"></i></span><span>${p}</span></div>`).join("")}</div>
+
+<div class="section-label">Interview Q&A — SDET style (tap to reveal)</div>
+<div class="qa-list">${s.qa.map((q,i)=>`<div class="qa-item" id="qa-${s.id}-${i}">
+  <div class="qa-q" onclick="toggleQA('qa-${s.id}-${i}')">
+    <span class="qa-label">Q${i+1}</span>
+    <span class="qa-q-text">${q.q}</span>
+    <i class="ti ti-chevron-down qa-toggle" aria-hidden="true"></i>
+  </div>
+  <div class="qa-answer">${q.a}</div>
+</div>`).join("")}</div>
+
+<div class="nav-row">
+  <button class="nav-btn" onclick="goTo(${s.id-1})" ${s.id===1?"disabled style='opacity:.4'":""}>← Previous</button>
+  <span class="session-counter">Session ${s.id} of ${sessions.length}</span>
+  <button class="nav-btn primary" onclick="goTo(${s.id+1})" ${s.id===sessions.length?"disabled style='opacity:.4'":""}>Next →</button>
+</div>`;
+}
+
+function goTo(id){
+  if(id<1||id>sessions.length)return;
+  document.getElementById("sess"+current).classList.remove("active");
+  document.getElementById("tab"+current).classList.remove("active");
+  visited.add(id);
+  current=id;
+  document.getElementById("sess"+id).classList.add("active");
+  document.getElementById("tab"+id).classList.add("active");
+  sessions.forEach(s=>{if(visited.has(s.id))document.getElementById("tab"+s.id).classList.add("done");});
+  document.getElementById("progFill").style.width=(current/sessions.length*100)+"%";
+  window.scrollTo(0,0);
+}
+
+function toggleQA(id){
+  const el=document.getElementById(id);
+  el.classList.toggle("open");
+}
+
+buildTabs();
+buildSessions();
+</script>
+
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

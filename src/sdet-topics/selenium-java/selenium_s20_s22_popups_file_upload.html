@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selenium Java: Alerts, Popups & File Upload Handling (Sessions 20 to 22)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+.hub{padding:1rem 0;max-width:700px;font-family:var(--font-sans)}
+.pbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pp{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:500;border:1.5px solid}
+.ph1{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.ph2{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.ph3{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.stabs{display:flex;border-bottom:1.5px solid var(--color-border-tertiary);overflow-x:auto}
+.stab{padding:9px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--color-text-secondary);white-space:nowrap;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;font-family:var(--font-sans)}
+.stab.active{color:#3C3489;border-bottom-color:#7F77DD;background:#EEEDFE}
+.stab:hover:not(.active){background:var(--color-background-secondary)}
+.prow{display:flex;align-items:center;gap:8px;padding:8px 13px;background:#EEEDFE;border-bottom:0.5px solid #AFA9EC}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.dn{background:#1D9E75}.dot.ac{background:#7F77DD}.dot.td{background:#D3D1C7}
+.plbl{font-size:11px;color:#3C3489;font-weight:500}
+.obanner{background:#EEEDFE;padding:14px 16px;border-bottom:0.5px solid #AFA9EC}
+.obanner h2{font-size:11px;font-weight:500;color:#534AB7;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.obanner p{font-size:13px;color:#26215C;line-height:1.6}
+.sec{padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec h3{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qp{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px;color:var(--color-text-primary);line-height:1.5;border-left:3px solid #7F77DD}
+.abox{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;margin-bottom:8px}
+.aflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.an{padding:5px 10px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500;text-align:center;line-height:1.4}
+.n1{background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC}
+.n2{background:#E1F5EE;color:#085041;border:1px solid #5DCAA5}
+.n3{background:#FAECE7;color:#712B13;border:1px solid #F0997B}
+.n4{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
+.n5{background:#E6F1FB;color:#0C447C;border:1px solid #85B7EB}
+.arr{color:var(--color-text-secondary);font-size:13px;font-weight:500}
+.dr{font-size:12px;color:var(--color-text-secondary);padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;gap:6px}
+.glosgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.gitem{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px}
+.gkw{font-size:11px;font-weight:500;color:#3C3489;font-family:'Courier New',monospace;margin-bottom:3px}
+.gdef{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.cs{background:#fff;border:1.5px solid #e2e4e8;border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.csh{display:flex;align-items:flex-start !important;gap:8px;padding:8px 14px;background:#f6f8fa;border-bottom:1px solid #e2e4e8;flex-wrap:nowrap !important}
+.csh span{font-size:13px !important;font-weight:700 !important;color:#24292f;letter-spacing:.03em !important;text-transform:uppercase;font-family:'Outfit', sans-serif !important;line-height:1.4 !important}
+.dr2{display:flex;gap:5px;margin-top:4px !important;flex-shrink:0 !important}
+.md{width:11px;height:11px;border-radius:50%}
+.mr{background:#ff5f57}.my{background:#febc2e}.mg{background:#28c840}
+.ctbar{display:flex;background:#f0f2f5;border-bottom:1px solid #e2e4e8;overflow-x:auto}
+.ct{padding:7px 12px;font-size:11px;cursor:pointer;border:none;background:transparent;color:#57606a;white-space:nowrap;font-family:'Courier New',monospace;border-bottom:2px solid transparent;font-weight:500}
+.ct.active{color:#0969da;border-bottom-color:#0969da;background:#fff}
+.ct:hover:not(.active){background:#e8eaed;color:#24292f}
+.cp{display:none;padding:14px 18px;overflow-x:auto;background:#fff}
+.cp.active{display:block}
+pre{font-family:'Courier New',monospace;font-size:12px;line-height:2;white-space:pre;color:#24292f}
+.ln{color:#8c9198;font-size:11px;user-select:none;margin-right:14px;display:inline-block;width:22px;text-align:right}
+.kw{color:#cf222e;font-weight:500}.cm{color:#6e7781;font-style:italic}.st{color:#0a3069}
+.cl{color:#953800;font-weight:500}.mt{color:#8250df}.nm{color:#0550ae}
+.vr{color:#24292f}.bo{color:#116329;font-weight:500}
+.fb{background:#f0f2f5;border:0.5px solid #d0d7de;border-radius:4px;padding:3px 10px;font-size:11px;color:#57606a;font-family:'Courier New',monospace;display:inline-block;margin-bottom:8px}
+.bpl{list-style:none;display:grid;gap:6px}
+.bpl li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.bpc{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px}
+.ql{display:grid;gap:10px}
+.qi{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.qq{font-size:12px;font-weight:500;color:#0969da;margin-bottom:4px}
+.qa{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.flowrow{display:flex;align-items:stretch;gap:0;margin:10px 0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.fstep{flex:1;padding:10px 8px;font-size:11px;text-align:center;border-right:0.5px solid var(--color-border-tertiary)}
+.fstep:last-child{border-right:none}
+.fstep .fn{font-weight:500;margin-bottom:3px;font-size:12px}
+.fstep .fd{color:var(--color-text-secondary);font-size:11px}
+.badge{padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500}
+.b-p{background:#EEEDFE;color:#3C3489}
+.b-t{background:#E1F5EE;color:#085041}
+.b-c{background:#FAECE7;color:#712B13}
+.b-b{background:#E6F1FB;color:#0C447C}
+.b-a{background:#FAEEDA;color:#633806}
+</style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+  <div class="hub">
+<div class="pbar">
+  <span class="pp ph1">S20 · Popups — Browser Level</span>
+  <span class="pp ph2">S21 · Popups — Web &amp; OS Level</span>
+  <span class="pp ph3">S22 · File Upload — All Ways</span>
+</div>
+
+<div class="stabs" id="sTabs">
+  <button class="stab active" onclick="sw(0)">S20 · Browser Popups</button>
+  <button class="stab" onclick="sw(1)">S21 · Web &amp; OS Popups</button>
+  <button class="stab" onclick="sw(2)">S22 · File Upload</button>
+</div>
+
+<div class="prow"><span id="pd"></span><span class="plbl" id="pl">Session 20 of 22</span></div>
+
+<div id="allS">
+
+<!-- ═══════════════════ S20 — BROWSER POPUPS ═══════════════════ -->
+<div id="s0">
+  <div class="obanner">
+    <h2>Selenium Java: Alerts, Popups & File Upload Handling (Sessions 20 to 22)</h2>
+    <p>A browser-level popup is a dialog generated natively by JavaScript using <code>alert()</code>, <code>confirm()</code>, or <code>prompt()</code>. These are <em>not</em> part of the HTML DOM — they are rendered by the browser engine and require Selenium's <code>Alert</code> interface, not regular element selectors. Attempting to interact with the page while one is open throws <code>UnhandledAlertException</code>.</p>
+  </div>
+
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Native browser dialogs spawned by JS: alert (OK only), confirm (OK/Cancel), prompt (text input)</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Freeze all page interactions until dismissed — must be handled before any subsequent action</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>On form submit confirmations, session expiry warnings, delete confirmations, cookie consent banners</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>In test cleanup (<code>@AfterMethod</code>), after triggering UI actions that cause alerts</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span><code>driver.switchTo().alert()</code> → read text / send keys / accept / dismiss</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Alert</div><div class="gdef">Selenium interface — represents any open browser-native JS dialog (all 3 types)</div></div>
+      <div class="gitem"><div class="gkw">switchTo().alert()</div><div class="gdef">Moves Selenium focus to the currently open browser dialog</div></div>
+      <div class="gitem"><div class="gkw">accept()</div><div class="gdef">Clicks OK button on any alert/confirm/prompt — submits and closes it</div></div>
+      <div class="gitem"><div class="gkw">dismiss()</div><div class="gdef">Clicks Cancel button — only meaningful on confirm() and prompt()</div></div>
+      <div class="gitem"><div class="gkw">getText()</div><div class="gdef">Returns the message string shown inside the open alert dialog</div></div>
+      <div class="gitem"><div class="gkw">sendKeys(text)</div><div class="gdef">Types text into a prompt() input field — must be called before accept()</div></div>
+      <div class="gitem"><div class="gkw">alertIsPresent()</div><div class="gdef">ExpectedCondition — waits until an alert is present before switching</div></div>
+      <div class="gitem"><div class="gkw">NoAlertPresentException</div><div class="gdef">Thrown when switchTo().alert() is called but no alert is open</div></div>
+      <div class="gitem"><div class="gkw">UnhandledAlertException</div><div class="gdef">Thrown when a page action is attempted while an alert is still open</div></div>
+      <div class="gitem"><div class="gkw">WebDriverWait</div><div class="gdef">Explicit wait that polls until a condition is met — used to wait for alert</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Interview one-liners</h3>
+    <div class="igrid">
+      <div class="qp">driver.switchTo().alert() moves Selenium focus to the currently open browser-native JS dialog.</div>
+      <div class="qp">alert() has only OK; confirm() has OK and Cancel; prompt() has a text input plus OK and Cancel.</div>
+      <div class="qp">accept() clicks OK on any alert type; dismiss() clicks Cancel — only valid on confirm() and prompt().</div>
+      <div class="qp">UnhandledAlertException is thrown when you interact with the page while an alert is still open.</div>
+      <div class="qp">Always use WebDriverWait with alertIsPresent() before switchTo().alert() to avoid NoAlertPresentException on slow pages.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Popup type architecture flow</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+      <div class="abox" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:500;color:#3C3489;margin-bottom:6px">alert() <span class="badge b-p">OK only</span></div>
+        <div class="dr"><span style="color:var(--color-text-secondary);font-size:11px">Buttons</span><span style="font-size:11px">OK (1 button)</span></div>
+        <div class="dr"><span style="color:var(--color-text-secondary);font-size:11px">Action</span><span style="font-size:11px">accept() only</span></div>
+        <div class="dr" style="border:none"><span style="color:var(--color-text-secondary);font-size:11px">Use case</span><span style="font-size:11px">Info messages</span></div>
+      </div>
+      <div class="abox" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:500;color:#085041;margin-bottom:6px">confirm() <span class="badge b-t">OK + Cancel</span></div>
+        <div class="dr"><span style="color:var(--color-text-secondary);font-size:11px">Buttons</span><span style="font-size:11px">OK + Cancel</span></div>
+        <div class="dr"><span style="color:var(--color-text-secondary);font-size:11px">Action</span><span style="font-size:11px">accept() / dismiss()</span></div>
+        <div class="dr" style="border:none"><span style="color:var(--color-text-secondary);font-size:11px">Use case</span><span style="font-size:11px">Confirm delete</span></div>
+      </div>
+      <div class="abox" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:500;color:#633806;margin-bottom:6px">prompt() <span class="badge b-a">Text input</span></div>
+        <div class="dr"><span style="color:var(--color-text-secondary);font-size:11px">Buttons</span><span style="font-size:11px">OK + Cancel</span></div>
+        <div class="dr"><span style="color:var(--color-text-secondary);font-size:11px">Action</span><span style="font-size:11px">sendKeys + accept</span></div>
+        <div class="dr" style="border:none"><span style="color:var(--color-text-secondary);font-size:11px">Use case</span><span style="font-size:11px">User input ask</span></div>
+      </div>
+    </div>
+    <div class="flowrow">
+      <div class="fstep n1"><div class="fn">1. Trigger</div><div class="fd">button.click()<br>fires JS alert</div></div>
+      <div class="fstep n2"><div class="fn">2. Wait</div><div class="fd">alertIsPresent()<br>safe detection</div></div>
+      <div class="fstep n3"><div class="fn">3. Switch</div><div class="fd">switchTo().alert()<br>focus on dialog</div></div>
+      <div class="fstep n4"><div class="fn">4. Interact</div><div class="fd">getText / sendKeys<br>read or type</div></div>
+      <div class="fstep n5"><div class="fn">5. Close</div><div class="fd">accept() / dismiss()<br>dismiss dialog</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh"><div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S20 · Browser Level Popups</span></div>
+      <div class="ctbar">
+        <button class="ct active" onclick="sc(0,0)">1. Simple Alert</button>
+        <button class="ct" onclick="sc(0,1)">2. Confirm Dialog</button>
+        <button class="ct" onclick="sc(0,2)">3. Prompt Dialog</button>
+        <button class="ct" onclick="sc(0,3)">4. Wait for Alert</button>
+        <button class="ct" onclick="sc(0,4)">5. Close Safely</button>
+      </div>
+
+      <div class="cp active" id="c0-0"><div class="fb">SimpleAlertDemo.java</div><pre><code class="language-java">
+ 1// ── alert() — JS popup with message and only OK button ────────────
+ 2// alert() pauses page execution; you MUST handle it before doing anything else
+ 3// Throws UnhandledAlertException if you try other actions while alert is open
+ 4import org.openqa.selenium.Alert;
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class SimpleAlertDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+13
+14    // Click the button that fires a JavaScript alert() popup
+15    driver.findElement(By.xpath("//button[text()='Click for JS Alert']")).click();
+16
+17    // switchTo().alert() → moves Selenium focus to the open alert dialog
+18    // Returns Alert object — gives access to all alert interaction methods
+19    Alert alert = driver.switchTo().alert();
+20
+21    // getText() → reads the message shown in the alert dialog
+22    // IMPORTANT: read BEFORE accept/dismiss — text is gone after closing
+23    String msg = alert.getText();
+24    System.out.println("Alert message: " + msg);
+25
+26    // accept() → clicks the OK button — closes the alert
+27    // For a simple alert(), accept() is the ONLY valid action
+28    alert.accept();
+29
+30    // Page is now accessible again — can interact with DOM elements
+31    System.out.println("Alert dismissed. Page title: " + driver.getTitle());
+32    driver.quit();
+33  }
+34}</code></pre></div>
+
+      <div class="cp" id="c0-1"><div class="fb">ConfirmDialogDemo.java</div><pre><code class="language-java">
+ 1// ── confirm() — OK and Cancel popup ──────────────────────────────
+ 2// accept()  → clicks OK  → returns true  to the calling JavaScript
+ 3// dismiss() → clicks Cancel → returns false to the calling JavaScript
+ 4import org.openqa.selenium.Alert;
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class ConfirmDialogDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+13
+14    // SCENARIO A: Click OK on a confirm dialog
+15    driver.findElement(By.xpath("//button[text()='Click for JS Confirm']")).click();
+16    Alert confirmOK = driver.switchTo().alert();
+17    System.out.println("Confirm says: " + confirmOK.getText());
+18    confirmOK.accept();   // clicks OK — confirms the action
+19    System.out.println("Clicked OK. Result: " +
+20      driver.findElement(By.id("result")).getText());
+21
+22    // SCENARIO B: Click Cancel on a confirm dialog
+23    driver.findElement(By.xpath("//button[text()='Click for JS Confirm']")).click();
+24    Alert confirmCancel = driver.switchTo().alert();
+25
+26    // dismiss() → clicks Cancel — rejects the confirmation
+27    confirmCancel.dismiss();
+28    System.out.println("Clicked Cancel. Result: " +
+29      driver.findElement(By.id("result")).getText());
+30
+31    driver.quit();
+32  }
+33}</code></pre></div>
+
+      <div class="cp" id="c0-2"><div class="fb">PromptDialogDemo.java</div><pre><code class="language-java">
+ 1// ── prompt() — Alert with a text input field ─────────────────────
+ 2// sendKeys() → types text into the prompt's input field
+ 3// MUST call sendKeys BEFORE accept() — typing after close has no effect
+ 4import org.openqa.selenium.Alert;
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class PromptDialogDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+13
+14    driver.findElement(By.xpath("//button[text()='Click for JS Prompt']")).click();
+15
+16    // switchTo().alert() works for ALL 3 popup types — same method
+17    Alert prompt = driver.switchTo().alert();
+18
+19    // Read the question shown in the prompt
+20    System.out.println("Prompt asks: " + prompt.getText());
+21
+22    // STEP 1: sendKeys() → types text into the prompt's text input
+23    // The input inside a browser prompt is NOT a DOM element — only sendKeys works
+24    prompt.sendKeys("Selenium Automation");
+25
+26    // STEP 2: accept() → submits the typed value, closes the prompt
+27    prompt.accept();
+28    System.out.println("Entered value. Result: " +
+29      driver.findElement(By.id("result")).getText());
+30
+31    // SCENARIO B: Dismiss the prompt (sends null back to JavaScript)
+32    driver.findElement(By.xpath("//button[text()='Click for JS Prompt']")).click();
+33    driver.switchTo().alert().dismiss(); // Cancel — no text submitted
+34    System.out.println("Dismissed prompt.");
+35    driver.quit();
+36  }
+37}</code></pre></div>
+
+      <div class="cp" id="c0-3"><div class="fb">WaitForAlertDemo.java</div><pre><code class="language-java">
+ 1// ── Wait for alert with WebDriverWait + alertIsPresent() ──────────
+ 2// On slow pages, alert may take time to appear — direct switchTo().alert()
+ 3// throws NoAlertPresentException if no alert is open yet
+ 4import org.openqa.selenium.Alert;
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import org.openqa.selenium.support.ui.ExpectedConditions;
+ 9import org.openqa.selenium.support.ui.WebDriverWait;
+10import java.time.Duration;
+11
+12public class WaitForAlertDemo {
+13  public static void main(String[] args) {
+14    WebDriver driver = new ChromeDriver();
+15    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+16
+17    driver.findElement(By.xpath("//button[text()='Click for JS Alert']")).click();
+18
+19    // WebDriverWait → explicit wait, max 10 seconds
+20    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+21
+22    // alertIsPresent() → polls until an alert is open, then returns it
+23    // Returns the Alert object directly — no separate switchTo needed
+24    Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+25
+26    System.out.println("Alert text: " + alert.getText());
+27    alert.accept();
+28
+29    // Safe pattern to check whether an alert is present WITHOUT exception
+30    try {
+31      Alert possible = driver.switchTo().alert();
+32      System.out.println("Unexpected alert: " + possible.getText());
+33      possible.accept();
+34    } catch (org.openqa.selenium.NoAlertPresentException e) {
+35      System.out.println("No alert present — page is clean");
+36    }
+37    driver.quit();
+38  }
+39}</code></pre></div>
+
+      <div class="cp" id="c0-4"><div class="fb">AlertCleanupTestNG.java</div><pre><code class="language-java">
+ 1// ── Alert cleanup in TestNG @AfterMethod ──────────────────────────
+ 2// Best practice: always dismiss any open alert in teardown
+ 3// to prevent UnhandledAlertException in the next test
+ 4import org.openqa.selenium.Alert;
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.NoAlertPresentException;
+ 7import org.openqa.selenium.WebDriver;
+ 8import org.openqa.selenium.chrome.ChromeDriver;
+ 9import org.testng.Assert;
+10import org.testng.annotations.AfterMethod;
+11import org.testng.annotations.BeforeMethod;
+12import org.testng.annotations.Test;
+13
+14public class AlertCleanupTestNG {
+15  private WebDriver driver;
+16
+17  @BeforeMethod
+18  public void setUp() {
+19    driver = new ChromeDriver();
+20    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+21  }
+22
+23  @Test
+24  public void alertTextTest() {
+25    driver.findElement(By.xpath("//button[text()='Click for JS Alert']")).click();
+26    Alert a = driver.switchTo().alert();
+27    // Assert the alert message is exactly as expected
+28    Assert.assertEquals(a.getText(), "I am a JS Alert");
+29    a.accept();
+30  }
+31
+32  @AfterMethod
+33  public void tearDown() {
+34    // ALWAYS try to dismiss any leftover alert before quitting
+35    // Prevents UnhandledAlertException in the next test run
+36    try {
+37      driver.switchTo().alert().dismiss();
+38    } catch (NoAlertPresentException ignored) {
+39      // No alert open — that's fine, carry on
+40    }
+41    driver.quit();
+42  }
+43}</code></pre></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Best Practices</h3>
+    <ul class="bpl">
+      <li><span class="bpc">✓</span>Always use <code>WebDriverWait + alertIsPresent()</code> instead of calling <code>switchTo().alert()</code> directly — prevents <code>NoAlertPresentException</code> on slow-loading dialogs</li>
+      <li><span class="bpc">✓</span>Capture <code>alert.getText()</code> BEFORE calling <code>accept()</code> or <code>dismiss()</code> — the text is inaccessible after the dialog closes</li>
+      <li><span class="bpc">✓</span>In <code>@AfterMethod</code>, wrap <code>driver.switchTo().alert().dismiss()</code> in a try-catch — silently swallows <code>NoAlertPresentException</code> when no alert is open</li>
+      <li><span class="bpc">✓</span>For <code>prompt()</code>, call <code>sendKeys()</code> before <code>accept()</code> — this is the only way to type into a browser-native prompt (it is not a DOM element)</li>
+      <li><span class="bpc">✓</span>Never call <code>dismiss()</code> on a simple <code>alert()</code> — it has no Cancel button and behavior varies across browsers</li>
+    </ul>
+  </div>
+
+  <div class="sec" style="border:none">
+    <h3>Interview Prep — 5 SDET Q&amp;A</h3>
+    <div class="ql">
+      <div class="qi"><div class="qq">Q1. What is the difference between alert(), confirm(), and prompt() in Selenium handling?</div><div class="qa">A: All three use <code>switchTo().alert()</code>. alert() is info-only — use <code>accept()</code>. confirm() has OK/Cancel — use <code>accept()</code> or <code>dismiss()</code>. prompt() has a text input — call <code>sendKeys(text)</code> then <code>accept()</code> to submit, or <code>dismiss()</code> to cancel.</div></div>
+      <div class="qi"><div class="qq">Q2. What exception is thrown when you interact with the page while an alert is still open?</div><div class="qa">A: <code>UnhandledAlertException</code> — Selenium throws this when you try to find elements, click, or navigate while a JS alert dialog is still blocking the page. Always handle the alert before continuing test execution.</div></div>
+      <div class="qi"><div class="qq">Q3. What exception is thrown when you call switchTo().alert() but no alert is open?</div><div class="qa">A: <code>NoAlertPresentException</code>. Use <code>WebDriverWait.until(ExpectedConditions.alertIsPresent())</code> to safely wait for the alert before switching, or wrap in try-catch to check for unexpected alerts.</div></div>
+      <div class="qi"><div class="qq">Q4. Why must getText() be called before accept() or dismiss()?</div><div class="qa">A: Once <code>accept()</code> or <code>dismiss()</code> is called, the alert dialog is closed and the Alert object becomes stale. Any call to <code>getText()</code> after closing throws a <code>NoAlertPresentException</code> or returns null depending on the driver version.</div></div>
+      <div class="qi"><div class="qq">Q5. How do you assert that a specific message appears in an alert?</div><div class="qa">A: Trigger the action that opens the alert, switch to it with <code>switchTo().alert()</code>, capture <code>alert.getText()</code> into a String, then use <code>Assert.assertEquals(alertText, "expected message")</code> before calling accept().</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ S21 — WEB & OS POPUPS ═══════════════════ -->
+<div id="s1" style="display:none">
+  <div class="obanner">
+    <h2>Overview — Web-level and OS-level popups</h2>
+    <p>Web-level popups are custom HTML modal dialogs built with CSS/JS — they ARE part of the DOM and use standard <code>findElement()</code>. OS-level popups (Windows Authentication, native file pickers, print dialogs) live outside the browser and require the Java <code>Robot</code> class or URL-embedded credentials. Understanding which level a popup is at determines the correct Selenium strategy.</p>
+  </div>
+
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:65px;flex-shrink:0">Web modal</span><span>HTML &lt;div&gt; overlay with CSS — is a DOM element → use findElement(), click(), getText()</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:65px;flex-shrink:0">Auth popup</span><span>Windows/Basic HTTP Auth dialog rendered by OS — Robot + clipboard or URL credentials</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:65px;flex-shrink:0">Print dialog</span><span>OS print dialog — Robot sends keyboard shortcuts (Escape to close)</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:65px;flex-shrink:0">New window</span><span>Pop-up window opened by target="_blank" or window.open() — handle with window handles</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:65px;flex-shrink:0">Notification</span><span>Browser permission popup — disable via ChromeOptions args before session starts</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">HTML modal</div><div class="gdef">A &lt;div&gt; element styled as a dialog overlay — lives in the DOM, handled by standard WebElement methods</div></div>
+      <div class="gitem"><div class="gkw">Windows Auth</div><div class="gdef">HTTP Basic/NTLM authentication dialog rendered by the OS — Selenium cannot reach it directly</div></div>
+      <div class="gitem"><div class="gkw">Robot class</div><div class="gdef">java.awt.Robot — generates OS-level keyboard and mouse events to interact with native dialogs</div></div>
+      <div class="gitem"><div class="gkw">StringSelection</div><div class="gdef">java.awt.datatransfer.StringSelection — places a String into the OS clipboard</div></div>
+      <div class="gitem"><div class="gkw">Toolkit.getSystemClipboard()</div><div class="gdef">Returns the system clipboard object — used to set clipboard content for Robot paste</div></div>
+      <div class="gitem"><div class="gkw">ChromeOptions arg</div><div class="gdef">--disable-notifications — disables browser permission popups before the session opens</div></div>
+      <div class="gitem"><div class="gkw">visibilityOfElementLocated</div><div class="gdef">ExpectedCondition — waits until a HTML modal element is visible before interacting</div></div>
+      <div class="gitem"><div class="gkw">URL credentials</div><div class="gdef">http://user:pass@domain.com — embeds credentials in URL to bypass Basic Auth dialog</div></div>
+      <div class="gitem"><div class="gkw">getWindowHandles()</div><div class="gdef">Returns Set of all open browser window/tab IDs — used to switch to popup windows</div></div>
+      <div class="gitem"><div class="gkw">KeyEvent.VK_ESCAPE</div><div class="gdef">OS-level Escape keycode used with Robot to dismiss native dialogs (print, permission)</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Interview one-liners</h3>
+    <div class="igrid">
+      <div class="qp">HTML modals are DOM elements — never use switchTo().alert() for them; use findElement() and click().</div>
+      <div class="qp">Disable browser notification popups before tests by passing --disable-notifications to ChromeOptions.</div>
+      <div class="qp">Windows Authentication dialogs are OS-level — use URL-embedded credentials or Robot class to handle them.</div>
+      <div class="qp">A popup window opened by target="_blank" needs getWindowHandles() and switchTo().window(handle) to access.</div>
+      <div class="qp">Robot class works at OS level — it cannot interact with DOM elements and does not work in headless mode.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Popup level decision diagram</h3>
+    <div class="abox">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">Decision: which tool to use?</div>
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:180px;flex-shrink:0">Can DevTools inspect it?</span><span>YES → it is a DOM element → use <code>findElement()</code> and WebElement methods</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:180px;flex-shrink:0">Is it a JS alert/confirm/prompt?</span><span>YES → use <code>switchTo().alert()</code> and the Alert interface</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:180px;flex-shrink:0">Is it a new browser window/tab?</span><span>YES → use <code>getWindowHandles()</code> + <code>switchTo().window()</code></span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:180px;flex-shrink:0">Is it a Basic Auth dialog?</span><span>YES → use URL credentials OR Robot class + StringSelection clipboard</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:180px;flex-shrink:0">Is it a browser notification ask?</span><span>YES → add <code>--disable-notifications</code> to ChromeOptions before driver creation</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh"><div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S21 · Web &amp; OS Level Popups</span></div>
+      <div class="ctbar">
+        <button class="ct active" onclick="sc(1,0)">1. HTML Modal</button>
+        <button class="ct" onclick="sc(1,1)">2. Disable Notifications</button>
+        <button class="ct" onclick="sc(1,2)">3. URL Auth</button>
+        <button class="ct" onclick="sc(1,3)">4. Robot Auth</button>
+        <button class="ct" onclick="sc(1,4)">5. Popup Window</button>
+      </div>
+
+      <div class="cp active" id="c1-0"><div class="fb">HTMLModalDemo.java</div><pre><code class="language-java">
+ 1// ── Web-level HTML modal — it is a DOM element, not a JS alert ────
+ 2// DO NOT use switchTo().alert() for HTML modals
+ 3// Find it with findElement(), read it with getText(), close with click()
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import org.openqa.selenium.support.ui.ExpectedConditions;
+ 9import org.openqa.selenium.support.ui.WebDriverWait;
+10import java.time.Duration;
+11
+12public class HTMLModalDemo {
+13  public static void main(String[] args) {
+14    WebDriver driver = new ChromeDriver();
+15    driver.get("https://the-internet.herokuapp.com/entry_ad");
+16
+17    // Wait for the HTML modal &lt;div&gt; to be VISIBLE in the DOM
+18    // visibilityOfElementLocated → waits until element exists AND is visible
+19    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+20    WebElement modal = wait.until(
+21      ExpectedConditions.visibilityOfElementLocated(By.id("modal")));
+22
+23    // Read modal content — it's a regular DOM element
+24    String title   = modal.findElement(By.tagName("h3")).getText();
+25    String body    = modal.findElement(By.tagName("p")).getText();
+26    System.out.println("Modal title: " + title);
+27    System.out.println("Modal body:  " + body);
+28
+29    // Close the modal by clicking its close button — standard DOM click()
+30    driver.findElement(By.cssSelector(".modal-footer p")).click();
+31
+32    // Wait for modal to disappear from view before continuing
+33    wait.until(ExpectedConditions.invisibilityOf(modal));
+34    System.out.println("Modal closed. Page accessible again.");
+35    driver.quit();
+36  }
+37}</code></pre></div>
+
+      <div class="cp" id="c1-1"><div class="fb">DisableNotificationsDemo.java</div><pre><code class="language-java">
+ 1// ── Disable browser permission / notification popups ──────────────
+ 2// Browser asks "Allow notifications?" — this OS-level browser prompt
+ 3// interrupts tests. Disable it BEFORE creating the driver via ChromeOptions.
+ 4import org.openqa.selenium.WebDriver;
+ 5import org.openqa.selenium.chrome.ChromeDriver;
+ 6import org.openqa.selenium.chrome.ChromeOptions;
+ 7import java.util.HashMap;
+ 8import java.util.Map;
+ 9
+10public class DisableNotificationsDemo {
+11  public static void main(String[] args) {
+12
+13    ChromeOptions options = new ChromeOptions();
+14
+15    // METHOD 1: Command-line argument — disables the popup entirely
+16    // --disable-notifications → browser never asks for notification permission
+17    options.addArguments("--disable-notifications");
+18
+19    // METHOD 2: Chrome preferences — finer control over popup types
+20    // profile.default_content_setting_values.notifications = 2 means BLOCK
+21    Map&lt;String, Object&gt; prefs = new HashMap&lt;&gt;();
+22    prefs.put("profile.default_content_setting_values.notifications", 2); // 1=allow, 2=block, 3=ask
+23    prefs.put("credentials_enable_service", false); // disable save password popup
+24    prefs.put("profile.password_manager_enabled", false); // disable password manager
+25    options.setExperimentalOption("prefs", prefs);
+26
+27    // Also suppress the "Chrome is controlled by automation" bar
+28    options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+29
+30    WebDriver driver = new ChromeDriver(options);
+31    driver.get("https://the-internet.herokuapp.com");
+32    System.out.println("No notification popup will appear!");
+33    driver.quit();
+34  }
+35}</code></pre></div>
+
+      <div class="cp" id="c1-2"><div class="fb">URLAuthDemo.java</div><pre><code class="language-java">
+ 1// ── OS-level Windows Authentication — URL credentials method ──────
+ 2// When a site shows HTTP Basic Auth, the OS renders a native dialog
+ 3// Selenium CANNOT click in the OS dialog — use URL-embedded credentials
+ 4// Format: http://username:password@the-domain.com
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8
+ 9public class URLAuthDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12
+13    // APPROACH 1: Embed credentials directly in the URL
+14    // Format: http://user:password@host/path
+15    // Browser auto-sends the credentials as an Authorization header
+16    // bypassing the OS dialog completely
+17    String user   = "admin";
+18    String pass   = "admin";
+19    String domain = "the-internet.herokuapp.com";
+20
+21    // Build URL: http://admin:admin@the-internet.herokuapp.com/basic_auth
+22    String authUrl = "http://" + user + ":" + pass + "@" + domain + "/basic_auth";
+23    driver.get(authUrl); // navigates and auto-authenticates
+24
+25    // Verify login was successful — "Congratulations!" should be on page
+26    String pageText = driver.findElement(By.tagName("p")).getText();
+27    System.out.println("Auth result: " + pageText);
+28
+29    // APPROACH 2: Selenium 4 CDP-based auth header injection
+30    // More secure — doesn't expose credentials in URL logs
+31    // devTools.send(Network.enable(empty, empty, empty));
+32    // Map&lt;String,Object&gt; headers = Map.of("Authorization","Basic YWRtaW46YWRtaW4=");
+33    // devTools.send(Network.setExtraHTTPHeaders(headers));
+34
+35    driver.quit();
+36  }
+37}</code></pre></div>
+
+      <div class="cp" id="c1-3"><div class="fb">RobotWindowsAuthDemo.java</div><pre><code class="language-java">
+ 1// ── OS-level Windows Auth — Robot class method ────────────────────
+ 2// When URL credentials don't work (NTLM/Kerberos), use Robot + clipboard
+ 3// Robot types at OS level — works on the native auth dialog
+ 4import java.awt.Robot;
+ 5import java.awt.Toolkit;
+ 6import java.awt.datatransfer.StringSelection;
+ 7import java.awt.event.KeyEvent;
+ 8import org.openqa.selenium.WebDriver;
+ 9import org.openqa.selenium.chrome.ChromeDriver;
+10
+11public class RobotWindowsAuthDemo {
+12  public static void main(String[] args) throws Exception {
+13    WebDriver driver = new ChromeDriver();
+14    // Navigate to a page requiring Windows Authentication — OS dialog opens
+15    driver.get("http://the-internet.herokuapp.com/basic_auth");
+16    Thread.sleep(2000); // wait for OS dialog to appear
+17
+18    Robot robot = new Robot();
+19
+20    // STEP 1: Put username into OS clipboard
+21    StringSelection userSel = new StringSelection("admin");
+22    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(userSel, null);
+23
+24    // STEP 2: Ctrl+V to paste username into the OS dialog's username field
+25    robot.keyPress(KeyEvent.VK_CONTROL);
+26    robot.keyPress(KeyEvent.VK_V);
+27    robot.keyRelease(KeyEvent.VK_V);
+28    robot.keyRelease(KeyEvent.VK_CONTROL);
+29
+30    // STEP 3: TAB to move focus to the password field
+31    robot.keyPress(KeyEvent.VK_TAB); robot.keyRelease(KeyEvent.VK_TAB);
+32
+33    // STEP 4: Put password into clipboard and paste
+34    StringSelection passSel = new StringSelection("admin");
+35    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(passSel, null);
+36    robot.keyPress(KeyEvent.VK_CONTROL); robot.keyPress(KeyEvent.VK_V);
+37    robot.keyRelease(KeyEvent.VK_V);     robot.keyRelease(KeyEvent.VK_CONTROL);
+38
+39    // STEP 5: Press ENTER to submit the credentials
+40    robot.keyPress(KeyEvent.VK_ENTER); robot.keyRelease(KeyEvent.VK_ENTER);
+41    System.out.println("OS auth dialog handled via Robot!");
+42    driver.quit();
+43  }
+44}</code></pre></div>
+
+      <div class="cp" id="c1-4"><div class="fb">PopupWindowDemo.java</div><pre><code class="language-java">
+ 1// ── New window popup — opened by target="_blank" or window.open() ─
+ 2// Not an alert, not a modal — it is a new browser window with its own handle
+ 3// Must use getWindowHandles() to detect it and switchTo().window() to access
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.chrome.ChromeDriver;
+ 7import java.util.Set;
+ 8
+ 9public class PopupWindowDemo {
+10  public static void main(String[] args) {
+11    WebDriver driver = new ChromeDriver();
+12    driver.get("https://the-internet.herokuapp.com/windows");
+13
+14    // Save parent window handle BEFORE clicking the link
+15    String parent = driver.getWindowHandle();
+16
+17    // Click link that opens a new window (target="_blank")
+18    driver.findElement(By.linkText("Click Here")).click();
+19
+20    // getWindowHandles() → Set of ALL open window handle IDs
+21    Set&lt;String&gt; all = driver.getWindowHandles();
+22    System.out.println("Open windows: " + all.size());
+23
+24    // Loop to find the new window handle (not the parent)
+25    for (String h : all) {
+26      if (!h.equals(parent)) {
+27        driver.switchTo().window(h); // switch to popup window
+28      }
+29    }
+30    System.out.println("Popup title: " + driver.getTitle());
+31
+32    // Close the popup and switch back to the parent window
+33    driver.close();
+34    driver.switchTo().window(parent); // MUST switch back or driver is orphaned
+35    System.out.println("Back on parent: " + driver.getTitle());
+36    driver.quit();
+37  }
+38}</code></pre></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Best Practices</h3>
+    <ul class="bpl">
+      <li><span class="bpc">✓</span>Determine popup level first: open DevTools — if you can inspect it, it is a DOM element → use <code>findElement()</code>; if not, it is browser or OS level</li>
+      <li><span class="bpc">✓</span>Disable notification/permission popups globally in <code>@BeforeSuite</code> via <code>ChromeOptions.addArguments("--disable-notifications")</code></li>
+      <li><span class="bpc">✓</span>Prefer URL-embedded credentials over Robot for Basic Auth — simpler, no display requirement, works in headless mode</li>
+      <li><span class="bpc">✓</span>Always save the parent window handle before clicking any link that might open a popup window</li>
+      <li><span class="bpc">✓</span>After <code>driver.close()</code> on a popup window, always <code>switchTo().window(parentHandle)</code> immediately — failure causes <code>NoSuchWindowException</code></li>
+    </ul>
+  </div>
+
+  <div class="sec" style="border:none">
+    <h3>Interview Prep — 5 SDET Q&amp;A</h3>
+    <div class="ql">
+      <div class="qi"><div class="qq">Q1. How do you differentiate between a JS alert and an HTML modal?</div><div class="qa">A: Open browser DevTools — if you can see and inspect the element in the Elements panel, it is an HTML modal (DOM element → use <code>findElement()</code>). If DevTools cannot inspect it and it freezes the browser, it is a JS alert → use <code>switchTo().alert()</code>.</div></div>
+      <div class="qi"><div class="qq">Q2. Why can't Selenium handle Windows Authentication dialogs directly?</div><div class="qa">A: Windows Authentication dialogs are rendered by the OS, not the browser. Selenium's WebDriver protocol only communicates with the browser's rendering engine. OS-level windows are outside its scope. Solutions: URL-embedded credentials, Robot class, or CDP network header injection.</div></div>
+      <div class="qi"><div class="qq">Q3. How do you suppress Chrome's "Allow notifications" popup in Selenium tests?</div><div class="qa">A: Two ways: (1) <code>options.addArguments("--disable-notifications")</code> disables entirely; (2) Set Chrome prefs via <code>options.setExperimentalOption("prefs", map)</code> where <code>profile.default_content_setting_values.notifications = 2</code> (block). Both must be applied before <code>new ChromeDriver(options)</code>.</div></div>
+      <div class="qi"><div class="qq">Q4. What is the difference between driver.close() and driver.quit() in multi-window scenarios?</div><div class="qa">A: <code>close()</code> closes only the currently focused window — session stays alive and other windows remain open. <code>quit()</code> closes ALL windows and terminates the entire WebDriver session. After <code>close()</code> on a popup, always switch back to the parent window handle.</div></div>
+      <div class="qi"><div class="qq">Q5. How does Robot class differ from Selenium's Actions class for keyboard input?</div><div class="qa">A: Actions class works at the browser/DOM level — it sends events to web elements. Robot works at the OS level — it generates actual hardware-level keyboard/mouse events that work on any application window including native OS dialogs. Robot does not work in headless mode (no display).</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ S22 — FILE UPLOAD ═══════════════════ -->
+<div id="s2" style="display:none">
+  <div class="obanner">
+    <h2>Overview — File upload — all ways</h2>
+    <p>File upload testing is one of the most common real-world Selenium challenges. There are five distinct approaches: (1) <code>sendKeys()</code> on the file input directly, (2) Robot class for OS dialog, (3) JavaScript DOM manipulation, (4) AutoIt on Windows, and (5) Sikuli for image-based recognition. Each method targets a different layer of the OS/browser stack. Knowing all five and when to apply them is essential for SDET interviews.</p>
+  </div>
+
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Interacting with &lt;input type="file"&gt; element or OS file picker to choose a file for upload</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>File upload is on virtually every real web app — profile pictures, documents, CSV imports</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>During functional tests: verify file accepted, preview shown, validation errors, file size limits</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Registration forms, document upload portals, CMS media libraries, data import screens</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>sendKeys(path) on input[type='file'] is the primary method — bypass the OS dialog entirely</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">input[type="file"]</div><div class="gdef">HTML element that opens a file picker — can receive file path via sendKeys() in Selenium</div></div>
+      <div class="gitem"><div class="gkw">sendKeys(filePath)</div><div class="gdef">Types absolute file path string directly into file input — bypasses OS dialog</div></div>
+      <div class="gitem"><div class="gkw">absolute path</div><div class="gdef">Full filesystem path including drive letter (Windows) or / root (Linux/Mac)</div></div>
+      <div class="gitem"><div class="gkw">Robot class</div><div class="gdef">java.awt.Robot — types file path into OS file picker when sendKeys won't work</div></div>
+      <div class="gitem"><div class="gkw">JavascriptExecutor</div><div class="gdef">Removes display:none / visibility:hidden from file input so Selenium can interact</div></div>
+      <div class="gitem"><div class="gkw">removeAttribute</div><div class="gdef">JS method to strip hidden/disabled/readonly attributes from file input element</div></div>
+      <div class="gitem"><div class="gkw">AutoIt</div><div class="gdef">Windows-only scripting tool — handles native OS dialogs including file pickers</div></div>
+      <div class="gitem"><div class="gkw">Sikuli</div><div class="gdef">Screen image-recognition tool — finds and clicks OS elements by visual screenshot pattern</div></div>
+      <div class="gitem"><div class="gkw">WebDriverWait</div><div class="gdef">Explicit wait — used to wait for file upload to complete and result to appear</div></div>
+      <div class="gitem"><div class="gkw">multipart/form-data</div><div class="gdef">HTTP encoding type required for file uploads — set on &lt;form enctype&gt; attribute</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Interview one-liners</h3>
+    <div class="igrid">
+      <div class="qp">The simplest and most reliable way to upload a file in Selenium is sendKeys() with the absolute file path on the file input element.</div>
+      <div class="qp">sendKeys() on input[type="file"] bypasses the OS file dialog entirely — Selenium sets the file path directly in the DOM.</div>
+      <div class="qp">If the file input is hidden, use JavascriptExecutor to remove the display:none or visibility:hidden attribute before calling sendKeys().</div>
+      <div class="qp">Robot class handles OS-level file pickers by pasting the file path into the OS dialog via clipboard and pressing Enter.</div>
+      <div class="qp">AutoIt is Windows-only — it executes an AutoIt script that handles the native Windows file picker by window title.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Five file upload methods — decision map</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div class="abox" style="margin-bottom:0;border-left:3px solid #7F77DD">
+        <div style="font-size:12px;font-weight:500;color:#3C3489;margin-bottom:4px">Method 1: sendKeys() <span class="badge b-p">Recommended</span></div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">Works on visible HTML input[type=file]. Simplest, fastest, no external tools. Cross-platform.</div>
+      </div>
+      <div class="abox" style="margin-bottom:0;border-left:3px solid #5DCAA5">
+        <div style="font-size:12px;font-weight:500;color:#085041;margin-bottom:4px">Method 2: JS Executor <span class="badge b-t">Hidden inputs</span></div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">Unhides file input via JS, then sendKeys(). Use when input has display:none or visibility:hidden.</div>
+      </div>
+      <div class="abox" style="margin-bottom:0;border-left:3px solid #F0997B">
+        <div style="font-size:12px;font-weight:500;color:#712B13;margin-bottom:4px">Method 3: Robot class <span class="badge b-c">OS dialog</span></div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">For custom upload buttons that open OS dialog. Clipboard paste. Requires display (no headless).</div>
+      </div>
+      <div class="abox" style="margin-bottom:0;border-left:3px solid #EF9F27">
+        <div style="font-size:12px;font-weight:500;color:#633806;margin-bottom:4px">Method 4: AutoIt <span class="badge b-a">Windows only</span></div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">External Windows tool. Runs compiled .exe script. Handles Windows-native file picker by window title.</div>
+      </div>
+    </div>
+    <div class="abox" style="border-left:3px solid #85B7EB">
+      <div style="font-size:12px;font-weight:500;color:#0C447C;margin-bottom:4px">Method 5: Sikuli <span class="badge b-b">Image recognition</span></div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">Uses screen screenshots to find and interact with OS elements visually. Platform-independent but fragile to UI changes.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh"><div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S22 · File Upload All Ways</span></div>
+      <div class="ctbar">
+        <button class="ct active" onclick="sc(2,0)">1. sendKeys()</button>
+        <button class="ct" onclick="sc(2,1)">2. Hidden Input JS</button>
+        <button class="ct" onclick="sc(2,2)">3. Robot Upload</button>
+        <button class="ct" onclick="sc(2,3)">4. AutoIt Upload</button>
+        <button class="ct" onclick="sc(2,4)">5. Verify Upload</button>
+      </div>
+
+      <div class="cp active" id="c2-0"><div class="fb">SendKeysUploadDemo.java</div><pre><code class="language-java">
+ 1// ── METHOD 1: sendKeys() — The primary, recommended approach ──────
+ 2// sendKeys(absoluteFilePath) directly sets the file path on the input element
+ 3// NO OS dialog opens — Selenium injects the path directly into the DOM
+ 4// Works for: standard visible &lt;input type="file"&gt; elements
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.WebDriver;
+ 7import org.openqa.selenium.WebElement;
+ 8import org.openqa.selenium.chrome.ChromeDriver;
+ 9import org.openqa.selenium.support.ui.ExpectedConditions;
+10import org.openqa.selenium.support.ui.WebDriverWait;
+11import java.time.Duration;
+12
+13public class SendKeysUploadDemo {
+14  public static void main(String[] args) {
+15    WebDriver driver = new ChromeDriver();
+16    driver.get("https://the-internet.herokuapp.com/upload");
+17
+18    // Find the &lt;input type="file"&gt; element on the page
+19    // DO NOT click it — that would open the OS dialog we want to avoid
+20    WebElement fileInput = driver.findElement(By.id("file-upload"));
+21
+22    // ABSOLUTE path is required — relative paths do NOT work
+23    // Windows: "C:\\Users\\user\\Desktop\\test.pdf"
+24    // Linux/Mac: "/home/user/Desktop/test.pdf"
+25    String filePath = "C:\\TestFiles\\sample.pdf";
+26
+27    // sendKeys(filePath) → sets the file path directly on the input element
+28    // Exactly like a user typed it — but no OS dialog involved at all
+29    fileInput.sendKeys(filePath);
+30    System.out.println("File selected: " + fileInput.getAttribute("value"));
+31
+32    // Click the Upload button to submit the form
+33    driver.findElement(By.id("file-submit")).click();
+34
+35    // Wait for confirmation message to appear after upload
+36    new WebDriverWait(driver, Duration.ofSeconds(10)).until(
+37      ExpectedConditions.visibilityOfElementLocated(By.id("uploaded-files")));
+38    System.out.println("Uploaded: " +
+39      driver.findElement(By.id("uploaded-files")).getText());
+40    driver.quit();
+41  }
+42}</code></pre></div>
+
+      <div class="cp" id="c2-1"><div class="fb">HiddenInputJSUploadDemo.java</div><pre><code class="language-java">
+ 1// ── METHOD 2: JavascriptExecutor — Handle hidden file inputs ──────
+ 2// Some sites hide the file input with CSS (display:none / visibility:hidden)
+ 3// and show a custom styled button instead. sendKeys() fails on hidden elements.
+ 4// Solution: use JS to make the input visible/enabled, then sendKeys()
+ 5import org.openqa.selenium.By;
+ 6import org.openqa.selenium.JavascriptExecutor;
+ 7import org.openqa.selenium.WebDriver;
+ 8import org.openqa.selenium.WebElement;
+ 9import org.openqa.selenium.chrome.ChromeDriver;
+10
+11public class HiddenInputJSUploadDemo {
+12  public static void main(String[] args) {
+13    WebDriver driver = new ChromeDriver();
+14    driver.get("https://the-internet.herokuapp.com/upload");
+15    JavascriptExecutor js = (JavascriptExecutor) driver;
+16
+17    // Locate the hidden file input element
+18    WebElement fileInput = driver.findElement(By.id("file-upload"));
+19
+20    // TECHNIQUE 1: Remove display:none — makes element visible to sendKeys()
+21    js.executeScript("arguments[0].style.display = 'block';", fileInput);
+22
+23    // TECHNIQUE 2: Remove visibility:hidden
+24    js.executeScript("arguments[0].style.visibility = 'visible';", fileInput);
+25
+26    // TECHNIQUE 3: Remove opacity:0 (common in drag-and-drop upload zones)
+27    js.executeScript("arguments[0].style.opacity = '1';", fileInput);
+28
+29    // TECHNIQUE 4: Remove the 'disabled' attribute if present
+30    js.executeScript("arguments[0].removeAttribute('disabled');", fileInput);
+31
+32    // Now sendKeys() will work — element is visible to Selenium
+33    fileInput.sendKeys("C:\\TestFiles\\sample.pdf");
+34    System.out.println("Hidden input handled — file set via JS unhide");
+35
+36    // Alternative: set value directly without sendKeys (skips validation events)
+37    // js.executeScript("arguments[0].value = 'filename'", fileInput); ← limited use
+38
+39    driver.quit();
+40  }
+41}</code></pre></div>
+
+      <div class="cp" id="c2-2"><div class="fb">RobotFileUploadDemo.java</div><pre><code class="language-java">
+ 1// ── METHOD 3: Robot class — Handle OS-level file picker dialog ────
+ 2// When a custom button triggers the native OS file picker dialog
+ 3// Selenium cannot interact with OS dialogs — use Robot + clipboard paste
+ 4// Does NOT work in headless mode (requires a physical or virtual display)
+ 5import java.awt.Robot;
+ 6import java.awt.Toolkit;
+ 7import java.awt.datatransfer.StringSelection;
+ 8import java.awt.event.KeyEvent;
+ 9import org.openqa.selenium.By;
+10import org.openqa.selenium.WebDriver;
+11import org.openqa.selenium.chrome.ChromeDriver;
+12
+13public class RobotFileUploadDemo {
+14  public static void main(String[] args) throws Exception {
+15    WebDriver driver = new ChromeDriver();
+16    driver.get("https://the-internet.herokuapp.com/upload");
+17
+18    // STEP 1: Click the upload button — this opens the OS file picker dialog
+19    driver.findElement(By.id("file-upload")).click();
+20    Thread.sleep(2000); // wait for the OS dialog to appear on screen
+21
+22    Robot robot = new Robot();
+23
+24    // STEP 2: Put the file path string into the system clipboard
+25    // StringSelection → wrapper that puts a String onto the OS clipboard
+26    StringSelection sel = new StringSelection("C:\\TestFiles\\sample.pdf");
+27    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);
+28
+29    // STEP 3: Ctrl+V → paste the path into the OS dialog's file name field
+30    robot.keyPress(KeyEvent.VK_CONTROL);
+31    robot.keyPress(KeyEvent.VK_V);
+32    robot.keyRelease(KeyEvent.VK_V);
+33    robot.keyRelease(KeyEvent.VK_CONTROL);
+34    robot.delay(500); // brief pause for paste to register in OS dialog
+35
+36    // STEP 4: Press ENTER → clicks Open / OK button in the OS file dialog
+37    robot.keyPress(KeyEvent.VK_ENTER);
+38    robot.keyRelease(KeyEvent.VK_ENTER);
+39    Thread.sleep(1000); // wait for dialog to close and file to be selected
+40
+41    // Now submit the form with the selected file
+42    driver.findElement(By.id("file-submit")).click();
+43    System.out.println("File uploaded via Robot OS dialog handling!");
+44    driver.quit();
+45  }
+46}</code></pre></div>
+
+      <div class="cp" id="c2-3"><div class="fb">AutoItUploadDemo.java</div><pre><code class="language-java">
+ 1// ── METHOD 4: AutoIt — Windows-only native dialog handler ─────────
+ 2// AutoIt is a Windows scripting tool that can handle native Windows dialogs
+ 3// STEPS: Write AutoIt script → compile to .exe → execute from Java
+ 4// Requires AutoIt installed: https://www.autoitscript.com/
+ 5
+ 6// ─── AUTOIT SCRIPT (FileUpload.au3) ──────────────────────────────
+ 7// WinWaitActive("Open")                  ; wait for "Open" dialog title
+ 8// ControlSetText("Open","","Edit1","C:\TestFiles\sample.pdf") ; type path
+ 9// ControlClick("Open","","Button1")      ; click the Open button
+10// ─── Compile: Aut2Exe → creates FileUpload.exe ───────────────────
+11
+12import org.openqa.selenium.By;
+13import org.openqa.selenium.WebDriver;
+14import org.openqa.selenium.chrome.ChromeDriver;
+15
+16public class AutoItUploadDemo {
+17  public static void main(String[] args) throws Exception {
+18    WebDriver driver = new ChromeDriver();
+19    driver.get("https://the-internet.herokuapp.com/upload");
+20
+21    // STEP 1: Click the file input button — opens the OS file dialog
+22    driver.findElement(By.id("file-upload")).click();
+23
+24    // STEP 2: Execute the compiled AutoIt script immediately
+25    // Runtime.getRuntime().exec() → launches an OS-level process from Java
+26    // The AutoIt .exe handles the Windows file picker dialog
+27    Runtime.getRuntime().exec("C:\\AutoItScripts\\FileUpload.exe");
+28
+29    // STEP 3: Wait for AutoIt to finish and the dialog to close
+30    Thread.sleep(3000); // give AutoIt time to find and interact with dialog
+31
+32    // STEP 4: Submit the form after file is selected
+33    driver.findElement(By.id("file-submit")).click();
+34    System.out.println("File uploaded via AutoIt Windows dialog handling!");
+35
+36    // LIMITATION: AutoIt only works on Windows — not on Mac or Linux
+37    // Alternative on Mac: use AppleScript via Runtime.exec()
+38    // Alternative on Linux: use xdotool keyboard simulation via Runtime.exec()
+39
+40    driver.quit();
+41  }
+42}</code></pre></div>
+
+      <div class="cp" id="c2-4"><div class="fb">VerifyUploadTestNG.java</div><pre><code class="language-java">
+ 1// ── Verify upload — Complete file upload test with assertions ─────
+ 2// After upload, verify: filename shown, success message, no error
+ 3// Also covers: multiple files, file type validation, size limit check
+ 4import org.openqa.selenium.By;
+ 5import org.openqa.selenium.WebDriver;
+ 6import org.openqa.selenium.WebElement;
+ 7import org.openqa.selenium.chrome.ChromeDriver;
+ 8import org.openqa.selenium.support.ui.ExpectedConditions;
+ 9import org.openqa.selenium.support.ui.WebDriverWait;
+10import org.testng.Assert;
+11import org.testng.annotations.AfterMethod;
+12import org.testng.annotations.BeforeMethod;
+13import org.testng.annotations.Test;
+14import java.time.Duration;
+15
+16public class VerifyUploadTestNG {
+17  private WebDriver driver;
+18  private WebDriverWait wait;
+19
+20  @BeforeMethod
+21  public void setUp() {
+22    driver = new ChromeDriver();
+23    wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+24    driver.get("https://the-internet.herokuapp.com/upload");
+25  }
+26
+27  @Test(description = "File upload succeeds and correct filename is shown")
+28  public void verifyFileUpload() {
+29    String fileName = "sample.pdf";
+30    String filePath = "C:\\TestFiles\\" + fileName;
+31
+32    driver.findElement(By.id("file-upload")).sendKeys(filePath);
+33    driver.findElement(By.id("file-submit")).click();
+34
+35    // ASSERTION 1: Wait and verify the success header appeared
+36    WebElement header = wait.until(
+37      ExpectedConditions.visibilityOfElementLocated(By.tagName("h3")));
+38    Assert.assertEquals(header.getText(), "File Uploaded!", "Upload header mismatch");
+39
+40    // ASSERTION 2: Verify the correct filename appears in result
+41    String uploadedFile = driver.findElement(By.id("uploaded-files")).getText();
+42    Assert.assertEquals(uploadedFile, fileName, "Wrong filename shown after upload");
+43    System.out.println("PASS: File '" + uploadedFile + "' uploaded successfully!");
+44  }
+45
+46  @AfterMethod
+47  public void tearDown() { driver.quit(); }
+48}</code></pre></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Best Practices</h3>
+    <ul class="bpl">
+      <li><span class="bpc">✓</span>Always use <code>sendKeys(absoluteFilePath)</code> as the primary method — it is the simplest, most reliable, cross-platform approach and avoids OS dialog entirely</li>
+      <li><span class="bpc">✓</span>Use absolute paths — relative paths like <code>"./files/test.pdf"</code> do not work with Selenium's <code>sendKeys()</code> on file inputs</li>
+      <li><span class="bpc">✓</span>If the file input is hidden (<code>display:none</code>), use JavascriptExecutor to unhide it before calling <code>sendKeys()</code> — do not click the custom button</li>
+      <li><span class="bpc">✓</span>Robot class is a fallback for OS dialogs but will not work in headless mode — use it only in non-headless CI environments with a virtual display (Xvfb on Linux)</li>
+      <li><span class="bpc">✓</span>After upload, always wait for the success confirmation element before asserting — file uploads take network time and assertions may run before the response arrives</li>
+      <li><span class="bpc">✓</span>For test data files, store them in <code>src/test/resources/</code> and get the path via <code>System.getProperty("user.dir") + "/src/test/resources/sample.pdf"</code> — avoids hardcoded drive letters</li>
+    </ul>
+  </div>
+
+  <div class="sec" style="border:none">
+    <h3>Interview Prep — 5 SDET Q&amp;A</h3>
+    <div class="ql">
+      <div class="qi"><div class="qq">Q1. What is the simplest way to upload a file in Selenium?</div><div class="qa">A: Call <code>driver.findElement(By.id("file-input")).sendKeys("/absolute/path/to/file.pdf")</code>. This sets the file path directly on the <code>&lt;input type="file"&gt;</code> element without opening the OS file picker dialog. Only works with the native HTML file input — not custom JavaScript-driven upload zones.</div></div>
+      <div class="qi"><div class="qq">Q2. Why does sendKeys() fail on a hidden file input and how do you fix it?</div><div class="qa">A: Selenium's <code>sendKeys()</code> throws <code>ElementNotInteractableException</code> on hidden elements. Fix: use JavascriptExecutor to remove the <code>display:none</code> or <code>visibility:hidden</code> CSS — <code>js.executeScript("arguments[0].style.display='block';", fileInput)</code> — then call <code>sendKeys()</code> on the now-visible element.</div></div>
+      <div class="qi"><div class="qq">Q3. How many ways are there to upload a file in Selenium and what are they?</div><div class="qa">A: Five ways: (1) <code>sendKeys(path)</code> on visible file input — simplest and recommended; (2) JavascriptExecutor to unhide input then sendKeys; (3) Robot class with clipboard paste for OS dialogs; (4) AutoIt script execution (Windows only); (5) Sikuli image-based recognition (platform-independent but fragile).</div></div>
+      <div class="qi"><div class="qq">Q4. What is the limitation of using Robot class for file upload?</div><div class="qa">A: Robot does not work in headless mode — it requires an actual display device. In headless CI (e.g., GitHub Actions), use Xvfb (X Virtual Framebuffer) on Linux to create a virtual display for Robot. Also, Robot interacts with whichever OS dialog is currently focused — if another dialog appears, Robot may type into the wrong window.</div></div>
+      <div class="qi"><div class="qq">Q5. How do you get the file path in a platform-independent way for test data files?</div><div class="qa">A: Use <code>System.getProperty("user.dir")</code> to get the project root, then append the resource path: <code>System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "sample.pdf"</code>. This avoids hardcoded Windows drive letters and works on all OS.</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+var cur=0;
+var cP=[
+  ['c0-0','c0-1','c0-2','c0-3','c0-4'],
+  ['c1-0','c1-1','c1-2','c1-3','c1-4'],
+  ['c2-0','c2-1','c2-2','c2-3','c2-4']
+];
+var sNums=[20,21,22];
+function sw(n){
+  document.getElementById('s'+cur).style.display='none';
+  document.getElementById('s'+n).style.display='block';
+  var tabs=document.getElementById('sTabs').children;
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active',i===n);
+  cur=n; upP();
+}
+function sc(s,t){
+  var panels=cP[s];
+  var ctabs=document.getElementById('s'+s).querySelectorAll('.ct');
+  panels.forEach(function(id,i){
+    var el=document.getElementById(id);
+    if(el) el.className='cp'+(i===t?' active':'');
+  });
+  ctabs.forEach(function(tb,i){tb.classList.toggle('active',i===t);});
+}
+function upP(){
+  var d='';
+  for(var i=0;i<3;i++){
+    var c=i<cur?'dn':(i===cur?'ac':'td');
+    d+='<span class="dot '+c+'"></span> ';
+  }
+  document.getElementById('pd').innerHTML=d;
+  document.getElementById('pl').textContent='Session '+sNums[cur]+' of 22';
+}
+upP();
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

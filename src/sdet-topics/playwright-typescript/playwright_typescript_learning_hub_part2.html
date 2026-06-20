@@ -1,0 +1,1355 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playwright TypeScript Learning Hub: Part 2</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+/* ===== VIKRANT VISUAL ENHANCEMENT LAYER v2.0 ===== */
+h1,h2{font-weight:700 !important;border-left:4px solid #6C5CE7 !important;padding-left:12px !important;background:rgba(108,92,231,0.07) !important;border-radius:0 8px 8px 0 !important;margin-top:1.2em !important;margin-bottom:0.6em !important;padding-top:6px !important;padding-bottom:6px !important}
+h3,h4{font-weight:700 !important;border-left:3px solid #00b894 !important;padding-left:10px !important;background:rgba(0,184,148,0.06) !important;border-radius:0 6px 6px 0 !important;margin-top:1em !important;margin-bottom:0.5em !important;padding-top:4px !important;padding-bottom:4px !important}
+h5,h6{font-weight:600 !important;border-left:2px solid #fdcb6e !important;padding-left:8px !important;background:rgba(253,203,110,0.08) !important;border-radius:0 4px 4px 0 !important}
+.section-title,.card-title,.topic-title,[class*="title"],[class*="heading"],.card h3,.card h4,summary,.panel-title,.accordion-header{font-weight:700 !important}
+pre,.code-block,.code-example,.code-container,[class*="code-block"],[class*="codeblock"]{background:#1e1e2e !important;color:#cdd6f4 !important;border-radius:10px !important;padding:16px 18px !important;overflow-x:auto !important;font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace !important;font-size:0.82rem !important;border-left:4px solid #6C5CE7 !important;line-height:1.7 !important;white-space:pre-wrap !important;word-wrap:break-word !important;margin:12px 0 !important;box-shadow:0 2px 12px rgba(0,0,0,0.15) !important;position:relative !important}
+pre code,.code-block code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border:none !important;font-size:inherit !important;border-left:none !important}
+code{background:rgba(108,92,231,0.12) !important;color:#6C5CE7 !important;padding:2px 6px !important;border-radius:4px !important;font-family:'JetBrains Mono','Fira Code',monospace !important;font-size:0.85em !important}
+pre code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border-left:none !important}
+.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{display:flex !important;flex-wrap:wrap !important;gap:8px !important;padding:8px !important}
+.tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"],.tab-button{padding:8px 18px !important;border-radius:20px !important;border:1.5px solid #ddd !important;background:#f8f9fa !important;color:#2d3436 !important;font-weight:600 !important;font-size:0.85rem !important;cursor:pointer !important;transition:all 0.25s ease !important;min-width:fit-content !important;text-align:center !important}
+.tab-btn:hover,.session-tab:hover,[class*="tab-btn"]:hover,button[class*="tab"]:hover{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;transform:translateY(-1px) !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.tab-btn.active,.session-tab.active,[class*="tab-btn"].active,button[class*="tab"].active{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.card,.section,.panel,[class*="card"]{border-radius:12px !important;box-shadow:0 2px 8px rgba(0,0,0,0.06) !important;border-top:3px solid #6C5CE7 !important;margin-bottom:16px !important;padding:16px !important}
+details{border-left:3px solid #00b894 !important;border-radius:8px !important;margin-bottom:12px !important;padding:8px 12px !important;box-shadow:0 1px 4px rgba(0,0,0,0.05) !important}
+details summary{font-weight:700 !important;cursor:pointer !important;padding:10px 12px !important;background:rgba(0,184,148,0.06) !important;border-radius:8px !important;transition:background 0.2s !important}
+details summary:hover{background:rgba(0,184,148,0.12) !important}
+table{width:100% !important;border-collapse:collapse !important;margin:12px 0 !important;border-radius:8px !important;overflow:hidden !important;box-shadow:0 1px 6px rgba(0,0,0,0.08) !important}
+thead th,table thead td{background:#6C5CE7 !important;color:#fff !important;font-weight:700 !important;padding:10px 14px !important;text-align:left !important}
+tbody td{padding:10px 14px !important;border-bottom:1px solid #eee !important}
+tbody tr:hover{background:rgba(108,92,231,0.04) !important}
+.toggle-btn,.accordion-btn,[class*="toggle"],[class*="collapsible"]{cursor:pointer !important;transition:all 0.3s ease !important}
+.toggle-content,.accordion-content,.collapsible-content{overflow:hidden !important;transition:max-height 0.4s ease,opacity 0.3s ease !important}
+@media(max-width:768px){
+  .tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{flex-wrap:wrap !important;justify-content:center !important}
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{font-size:0.78rem !important;padding:6px 14px !important;flex:1 1 auto !important;min-width:80px !important}
+  pre,.code-block,[class*="code-block"]{font-size:0.75rem !important;padding:12px !important}
+  h1{font-size:1.4rem !important}h2{font-size:1.2rem !important}h3{font-size:1.05rem !important}
+  .card,.section,.panel,[class*="card"]{padding:12px !important}
+  body{padding:8px !important}
+}
+@media(max-width:480px){
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{flex:1 1 100% !important;font-size:0.75rem !important;padding:8px 10px !important;border-radius:8px !important}
+  pre,.code-block{font-size:0.7rem !important;padding:10px !important;overflow-x:scroll !important}
+  h1{font-size:1.2rem !important}h2{font-size:1.05rem !important}h3{font-size:0.95rem !important}
+  table{font-size:0.8rem !important;display:block !important;overflow-x:auto !important}
+  body{padding:4px !important}
+}
+pre::-webkit-scrollbar{height:6px}pre::-webkit-scrollbar-track{background:#2a2a3e;border-radius:3px}pre::-webkit-scrollbar-thumb{background:#6C5CE7;border-radius:3px}
+/* ===== END ENHANCEMENT LAYER v2.0 ===== */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+.academy { padding: 1rem 0; max-width: 680px; }
+
+.header { margin-bottom: 1.5rem; }
+.header h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.header p { font-size: 13px; color: var(--color-text-secondary); margin-top: 4px; }
+
+.progress-bar-wrap { background: var(--color-background-secondary); border-radius: 99px; height: 6px; margin: 12px 0 6px; }
+.progress-bar-fill { height: 6px; border-radius: 99px; background: var(--color-text-info); transition: width .4s ease; }
+.progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--color-text-tertiary); }
+
+.phase-pills { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.phase-pill { font-size: 11px; padding: 3px 10px; border-radius: 99px; border: 0.5px solid; font-weight: 500; }
+.pill-basic { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
+.pill-inter { background: var(--color-background-success); color: var(--color-text-success); border-color: var(--color-border-success); }
+
+.tab-strip { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 1rem; }
+.tab-btn { font-size: 12px; padding: 6px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 5px; }
+.tab-btn:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+.tab-btn.active { background: var(--color-background-primary); border-color: var(--color-border-primary); color: var(--color-text-primary); font-weight: 500; }
+.tab-btn.done .dot { background: var(--color-text-success); }
+.tab-btn.active .dot { background: var(--color-text-info); }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-border-secondary); flex-shrink: 0; transition: background .2s; }
+
+.session { display: none; }
+.session.active { display: block; }
+
+.session-header { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--color-background-primary); }
+.session-header h2 { font-size: 17px; font-weight: 500; color: var(--color-text-primary); }
+.session-header .meta { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; display: flex; gap: 12px; flex-wrap: wrap; }
+.session-header .tag { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 2px 8px; font-size: 11px; }
+
+.section { margin-bottom: 1.25rem; }
+.section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.section-title i { font-size: 15px; }
+
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 8px; }
+
+.definition-box { border-left: 3px solid var(--color-text-info); padding: 10px 14px; background: var(--color-background-info); border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; margin-bottom: 8px; }
+.definition-box .term { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.definition-box .def { font-size: 13px; color: var(--color-text-secondary); margin-top: 3px; line-height: 1.5; }
+
+.oneliner { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 8px 12px; margin-bottom: 6px; font-size: 13px; color: var(--color-text-primary); display: flex; align-items: flex-start; gap: 8px; }
+.oneliner i { color: var(--color-text-success); flex-shrink: 0; margin-top: 1px; }
+
+.code-block { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); margin-bottom: 10px; overflow: hidden; }
+.code-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.code-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); font-family: var(--font-mono); }
+.copy-btn { font-size: 11px; color: var(--color-text-tertiary); cursor: pointer; border: none; background: none; padding: 2px 6px; border-radius: 4px; }
+.copy-btn:hover { background: var(--color-background-primary); color: var(--color-text-primary); }
+pre { padding: 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.6; overflow-x: auto; color: var(--color-text-primary); white-space: pre; }
+.kw { color: #7C5CBF; }
+.str { color: #2E8B57; }
+.cmt { color: var(--color-text-tertiary); font-style: italic; }
+.fn { color: #1F6BA5; }
+.num { color: #B07A2A; }
+
+.qa-item { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); margin-bottom: 8px; overflow: hidden; }
+.qa-q { padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500; color: var(--color-text-primary); background: var(--color-background-primary); }
+.qa-q:hover { background: var(--color-background-secondary); }
+.qa-a { display: none; padding: 10px 14px; font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; border-top: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+.qa-item.open .qa-a { display: block; }
+.qa-item.open .qa-chevron { transform: rotate(180deg); }
+.qa-chevron { transition: transform .2s; font-size: 14px; color: var(--color-text-tertiary); }
+
+.checklist { list-style: none; }
+.checklist li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--color-text-primary); padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary); line-height: 1.5; }
+.checklist li:last-child { border-bottom: none; }
+.checklist li i { color: var(--color-text-success); flex-shrink: 0; margin-top: 2px; font-size: 14px; }
+
+.arch-svg { width: 100%; overflow: visible; }
+
+.nav-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem; }
+.nav-btn { font-size: 13px; padding: 7px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-primary); cursor: pointer; }
+.nav-btn:hover { background: var(--color-background-secondary); }
+.nav-btn.primary { background: var(--color-text-info); color: #fff; border-color: transparent; }
+.nav-btn.primary:hover { opacity: .9; }
+
+.keyword-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+.kw-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 8px 12px; }
+.kw-card .kw-name { font-size: 12px; font-weight: 500; font-family: var(--font-mono); color: var(--color-text-info); }
+.kw-card .kw-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; line-height: 1.4; }
+
+.tip { background: var(--color-background-warning); border-left: 3px solid var(--color-text-warning); border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 8px 12px; font-size: 12px; color: var(--color-text-primary); margin-bottom: 8px; }
+</style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+  <div class="academy">
+  <div class="header">
+    <h1>Playwright TypeScript Learning Hub: Part 2</h1>
+    <p>Senior QA Architect guided curriculum · Beginner → Intermediate · 10 Sessions</p>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:10%"></div></div>
+    <div class="progress-meta"><span id="prog-label">Session 1 of 10</span><span id="prog-pct">10%</span></div>
+  </div>
+
+  <div class="phase-pills">
+    <span class="phase-pill pill-basic">Phase 1 · Fundamentals (Sessions 1–5)</span>
+    <span class="phase-pill pill-inter">Phase 2 · Intermediate (Sessions 6–10)</span>
+  </div>
+
+  <div class="tab-strip" id="tab-strip"></div>
+
+  <!-- ═══════════════ SESSION 1 ═══════════════ -->
+  <div class="session active" id="s1">
+    <div class="session-header">
+      <h2>Session 1 — What is Playwright &amp; Why TypeScript?</h2>
+      <div class="meta">
+        <span class="tag">Phase 1 · Fundamentals</span>
+        <span class="tag"><i class="ti ti-clock" aria-hidden="true"></i> ~60 min</span>
+        <span class="tag">Setup + Core Concepts</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-bulb" aria-hidden="true"></i> Overview — What / Why / When / Where / How</div>
+      <div class="definition-box">
+        <div class="term">Playwright</div>
+        <div class="def"><b>What:</b> An open-source browser automation library by Microsoft that lets you control real browsers (Chromium, Firefox, WebKit) programmatically.<br><b>Why:</b> Faster, more reliable, auto-waits for elements, built-in parallelism — no more flaky Selenium tests.<br><b>When:</b> Use it for end-to-end (E2E) testing of web applications, UI regression, and API testing.<br><b>Where:</b> Runs on Windows, Mac, Linux — locally or in CI/CD pipelines (GitHub Actions, Jenkins, etc.).<br><b>How:</b> You write test scripts in TypeScript/JavaScript, Playwright drives the browser, asserts UI behavior.</div>
+      </div>
+      <div class="definition-box">
+        <div class="term">TypeScript</div>
+        <div class="def"><b>What:</b> A superset of JavaScript with static types — meaning you declare what data type each variable holds.<br><b>Why:</b> Catches bugs at compile time (before running), gives you autocomplete in VS Code, makes large test codebases maintainable.<br><b>When:</b> Always — the Playwright team recommends TypeScript for SDET professionals.<br><b>How:</b> TypeScript code gets compiled (.ts → .js) before execution. The compiler is called <code>tsc</code>.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-messages" aria-hidden="true"></i> Interview One-Liners (say exactly these in interviews)</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "Playwright is a Microsoft-owned E2E testing framework that supports Chromium, Firefox, and WebKit with a single API."</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "Unlike Selenium, Playwright has built-in auto-waiting, which eliminates most flaky test failures caused by timing issues."</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "I use TypeScript with Playwright because static typing catches type mismatches at compile time, not at runtime."</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "Playwright can test across all major browser engines in parallel, which significantly reduces overall test suite execution time."</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "Playwright's Page Object Model integration with TypeScript classes gives our test suite strong maintainability and readability."</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-topology-star" aria-hidden="true"></i> Architecture — How Playwright Works</div>
+      <div class="card">
+        <svg class="arch-svg" viewBox="0 0 620 240" role="img">
+          <title>Playwright architecture diagram</title>
+          <desc>Test script sends commands through Playwright API to a Browser Server using WebSocket, which drives real browsers: Chromium, Firefox, WebKit</desc>
+          <defs>
+            <marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+          <g class="c-purple">
+            <rect x="20" y="90" width="130" height="56" rx="8" stroke-width="0.5"/>
+            <text class="th" x="85" y="114" text-anchor="middle" dominant-baseline="central">Test Script</text>
+            <text class="ts" x="85" y="132" text-anchor="middle" dominant-baseline="central">.spec.ts file</text>
+          </g>
+          <line x1="152" y1="118" x2="198" y2="118" stroke="var(--t)" stroke-width="1" marker-end="url(#ar1)" opacity=".6"/>
+          <text class="ts" x="175" y="110" text-anchor="middle">CDP/WS</text>
+          <g class="c-teal">
+            <rect x="200" y="90" width="140" height="56" rx="8" stroke-width="0.5"/>
+            <text class="th" x="270" y="114" text-anchor="middle" dominant-baseline="central">Playwright API</text>
+            <text class="ts" x="270" y="132" text-anchor="middle" dominant-baseline="central">Browser · Page · Locator</text>
+          </g>
+          <line x1="342" y1="118" x2="388" y2="118" stroke="var(--t)" stroke-width="1" marker-end="url(#ar1)" opacity=".6"/>
+          <text class="ts" x="365" y="110" text-anchor="middle">drives</text>
+          <g class="c-gray">
+            <rect x="390" y="30" width="110" height="44" rx="8" stroke-width="0.5"/>
+            <text class="th" x="445" y="52" text-anchor="middle" dominant-baseline="central">Chromium</text>
+          </g>
+          <g class="c-amber">
+            <rect x="390" y="90" width="110" height="44" rx="8" stroke-width="0.5"/>
+            <text class="th" x="445" y="112" text-anchor="middle" dominant-baseline="central">Firefox</text>
+          </g>
+          <g class="c-coral">
+            <rect x="390" y="150" width="110" height="44" rx="8" stroke-width="0.5"/>
+            <text class="th" x="445" y="172" text-anchor="middle" dominant-baseline="central">WebKit</text>
+          </g>
+          <line x1="390" y1="52" x2="344" y2="100" stroke="var(--t)" stroke-width="0.5" stroke-dasharray="3 3" opacity=".4"/>
+          <line x1="390" y1="172" x2="344" y2="136" stroke="var(--t)" stroke-width="0.5" stroke-dasharray="3 3" opacity=".4"/>
+          <text class="ts" x="310" y="220" text-anchor="middle">Real browsers — no simulators</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+      <div class="tip">Every keyword below is explained in comments. Read comments first, then the code.</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-1.ts — Your first Playwright test</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">// 'import' — brings external code into this file
+// 'test' — Playwright's function to define a test case
+// 'expect' — Playwright's assertion utility (checks if something is true)
+import { test, expect } from '@playwright/test';
+
+// test() takes two arguments:
+// 1. A string — the test name (shows in reports)
+// 2. An async arrow function — the test body
+// { page } — destructured from Playwright's fixture (auto-provided browser page)
+test('homepage title is correct', async ({ page }) => {
+
+  // page.goto() — navigates the browser to a URL
+  // 'await' — waits for the async operation to finish before proceeding
+  await page.goto('https://playwright.dev');
+
+  // page.title() — reads the document title from the browser tab
+  // expect(...).toContain(...) — asserts the title includes this text
+  await expect(page).toHaveTitle(/Playwright/);
+});</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-2.ts — TypeScript types explained</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">// TypeScript: every variable has a 'type' — string, number, boolean, etc.
+// The ': string' after the variable name is called a 'type annotation'
+
+const baseUrl: string = 'https://example.com';
+// 'const' — declares a constant (value cannot be reassigned)
+
+let retryCount: number = 3;
+// 'let' — declares a variable (value CAN be reassigned)
+
+let isLoggedIn: boolean = false;
+// 'boolean' type — only true or false
+
+// 'interface' — defines the shape of an object (like a blueprint)
+interface UserCredentials {
+  username: string;
+  password: string;
+  role: 'admin' | 'user';  // 'union type' — only these two values allowed
+}
+
+// Using the interface as a type annotation on a variable
+const testUser: UserCredentials = {
+  username: 'qa_tester',
+  password: 'Test@123',
+  role: 'user'
+};</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-3.ts — async / await explained</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">// 'async' — marks a function as asynchronous (it can do time-taking work)
+// 'await' — pauses execution until the async operation completes
+// Without await, your code runs without waiting → test fails randomly
+
+import { test, expect } from '@playwright/test';
+
+test('login flow with async/await', async ({ page }) => {
+
+  // Step 1: Navigate — browser must finish loading before next line runs
+  await page.goto('https://example.com/login');
+
+  // Step 2: Find input by placeholder text, then type into it
+  // getByPlaceholder() — Playwright locator (finds elements on page)
+  await page.getByPlaceholder('Email').fill('user@test.com');
+
+  // Step 3: Fill password field
+  await page.getByPlaceholder('Password').fill('secret123');
+
+  // Step 4: Click the login button (found by its visible text)
+  await page.getByRole('button', { name: 'Log in' }).click();
+
+  // Step 5: Assert dashboard heading is visible after login
+  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+});</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-4.ts — playwright.config.ts explained</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">// playwright.config.ts — the central configuration file for your test suite
+// 'defineConfig' — a helper function that provides autocomplete for config options
+import { defineConfig, devices } from '@playwright/test';
+
+// 'export default' — makes this config available to the Playwright runner
+export default defineConfig({
+
+  // testDir: folder where Playwright looks for .spec.ts files
+  testDir: './tests',
+
+  // timeout: max milliseconds a single test can run before it fails
+  timeout: 30000,
+
+  // retries: how many times to retry a failing test automatically
+  retries: 2,
+
+  // use: default settings applied to every test
+  use: {
+    baseURL: 'https://example.com',  // prefix for page.goto('/')
+    screenshot: 'only-on-failure',   // capture screenshots when test fails
+    video: 'retain-on-failure',       // record video only for failures
+    headless: true,                   // run without opening browser window
+  },
+
+  // projects: run tests across multiple browsers
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
+  ],
+});</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-5.ts — Installation &amp; project setup commands</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript"># Step 1: Create a new folder and enter it
+mkdir my-playwright-project
+cd my-playwright-project
+
+# Step 2: Initialize Node.js project (creates package.json)
+# package.json tracks your project dependencies and scripts
+npm init -y
+
+# Step 3: Install Playwright with TypeScript support
+# 'npm install' downloads packages from the internet into node_modules/
+npm init @playwright/test@latest
+
+# Step 4: Install browsers (Chromium, Firefox, WebKit)
+# Playwright downloads its own browser binaries — not your system browsers
+npx playwright install
+
+# Step 5: Run your tests
+# 'npx' runs a package without globally installing it
+npx playwright test
+
+# Step 6: View HTML test report in browser
+npx playwright show-report</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices Checklist</div>
+      <div class="card">
+        <ul class="checklist">
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Always use <code>async/await</code> — never skip it for Playwright calls</li>
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Use TypeScript strict mode (<code>"strict": true</code> in tsconfig.json)</li>
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Set a <code>baseURL</code> in config — never hardcode full URLs in tests</li>
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Enable <code>screenshot: 'only-on-failure'</code> for debugging failed tests</li>
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Store Playwright version in <code>package.json</code> so teammates get same version</li>
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Run <code>npx playwright install</code> after every Playwright version upgrade</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-user-check" aria-hidden="true"></i> Interview Q&amp;A — SDET Style</div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q1: What is the difference between Playwright and Selenium? <i class="ti ti-chevron-down qa-chevron" aria-hidden="true"></i></div>
+        <div class="qa-a">Playwright uses CDP (Chrome DevTools Protocol) and WebSocket to control browsers directly, giving it built-in auto-waiting, network interception, and parallel execution out of the box. Selenium uses WebDriver protocol and requires explicit waits. Playwright is faster, more reliable, and natively supports modern browser features like service workers and shadow DOM.</div>
+      </div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q2: Why would you choose TypeScript over JavaScript for automation? <i class="ti ti-chevron-down qa-chevron" aria-hidden="true"></i></div>
+        <div class="qa-a">TypeScript catches type errors at compile time, not at runtime. In a large test suite, this prevents bugs like passing a number where a string is expected. It also gives IDE autocomplete and refactoring support, making the codebase more maintainable as the team scales.</div>
+      </div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q3: What is <code>async/await</code> and why is it critical in Playwright? <i class="ti ti-chevron-down qa-chevron" aria-hidden="true"></i></div>
+        <div class="qa-a"><code>async/await</code> is JavaScript's way of handling asynchronous operations (operations that take time, like network requests or DOM interactions). Every Playwright action (click, fill, goto) is async. Without <code>await</code>, the next line runs before the action completes, causing unpredictable test failures.</div>
+      </div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q4: What is <code>playwright.config.ts</code> and what goes in it? <i class="ti ti-chevron-down qa-chevron" aria-hidden="true"></i></div>
+        <div class="qa-a">It is the central configuration file for your entire test suite. It controls: test directory location, browser projects, timeouts, retries, base URL, screenshot/video capture settings, and environment-specific options. It is loaded automatically when you run <code>npx playwright test</code>.</div>
+      </div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q5: What does <code>npx playwright install</code> do? <i class="ti ti-chevron-down qa-chevron" aria-hidden="true"></i></div>
+        <div class="qa-a">It downloads Playwright's own browser binaries (Chromium, Firefox, WebKit) into a local cache on your machine. Playwright does NOT use your system-installed Chrome — it uses its own controlled browser versions to ensure tests are reproducible across different machines and CI environments.</div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn primary" onclick="goToSession(2)">Next: Locators &amp; Selectors ↗</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SESSION 2 ═══════════════ -->
+  <div class="session" id="s2">
+    <div class="session-header">
+      <h2>Session 2 — Locators &amp; Selectors</h2>
+      <div class="meta">
+        <span class="tag">Phase 1 · Fundamentals</span>
+        <span class="tag"><i class="ti ti-clock" aria-hidden="true"></i> ~60 min</span>
+        <span class="tag">Finding Elements on Page</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-bulb" aria-hidden="true"></i> Overview</div>
+      <div class="definition-box">
+        <div class="term">Locator</div>
+        <div class="def"><b>What:</b> A Playwright object that represents a way to find one or more elements on a webpage. It is lazy — it only searches when you perform an action on it.<br><b>Why:</b> Playwright locators auto-retry finding the element (up to the timeout) before failing. This prevents flakiness caused by slow-loading elements.<br><b>When:</b> Every time you need to interact with or assert on a page element.<br><b>Key difference from Selenium:</b> Playwright locators have built-in waiting; Selenium findElement throws immediately if not found.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-messages" aria-hidden="true"></i> Interview One-Liners</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "Playwright locators are lazy and auto-retrying — they keep trying to find an element until the timeout expires."</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "I prefer getByRole() because it mirrors how users and screen readers perceive the page — it tests behavior, not implementation."</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "CSS selectors like #id or .class are fragile — a UI redesign breaks them. Role-based locators survive UI changes."</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "getByTestId() is the most stable locator in CI/CD — it requires developers to add data-testid attributes, which never change for business reasons."</div>
+      <div class="oneliner"><i class="ti ti-quote" aria-hidden="true"></i> "I use locator chaining — like page.getByRole('list').getByRole('listitem') — to scope searches within a specific section of the page."</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-topology-star" aria-hidden="true"></i> Locator Priority Hierarchy</div>
+      <div class="card">
+        <svg class="arch-svg" viewBox="0 0 620 280" role="img">
+          <title>Locator priority pyramid</title>
+          <desc>Hierarchy from most recommended at top to least recommended at bottom</desc>
+          <defs>
+            <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+          <g class="c-teal"><rect x="200" y="20" width="220" height="40" rx="8" stroke-width="0.5"/>
+            <text class="th" x="310" y="40" text-anchor="middle" dominant-baseline="central">getByRole()</text></g>
+          <g class="c-teal"><rect x="170" y="72" width="280" height="40" rx="8" stroke-width="0.5"/>
+            <text class="th" x="310" y="92" text-anchor="middle" dominant-baseline="central">getByLabel() / getByPlaceholder()</text></g>
+          <g class="c-purple"><rect x="140" y="124" width="340" height="40" rx="8" stroke-width="0.5"/>
+            <text class="th" x="310" y="144" text-anchor="middle" dominant-baseline="central">getByText() / getByAltText()</text></g>
+          <g class="c-amber"><rect x="110" y="176" width="400" height="40" rx="8" stroke-width="0.5"/>
+            <text class="th" x="310" y="196" text-anchor="middle" dominant-baseline="central">getByTestId() — data-testid attr</text></g>
+          <g class="c-coral"><rect x="80" y="228" width="460" height="40" rx="8" stroke-width="0.5"/>
+            <text class="th" x="310" y="248" text-anchor="middle" dominant-baseline="central">CSS / XPath — use as last resort</text></g>
+          <text class="ts" x="30" y="40" text-anchor="middle">Best</text>
+          <text class="ts" x="30" y="248" text-anchor="middle">Last</text>
+          <line x1="30" y1="52" x2="30" y2="236" stroke="var(--t)" stroke-width="0.5" marker-end="url(#ar2)" opacity=".4"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-code" aria-hidden="true"></i> Code Examples</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-1.ts — getByRole (most recommended)</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('role-based locators', async ({ page }) => {
+  await page.goto('https://example.com');
+
+  // getByRole() — finds element by its ARIA role + visible name
+  // role: 'button' matches &lt;button&gt; tags and elements with role="button"
+  // { name: 'Submit' } — the visible text or aria-label of the element
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // role: 'heading' — finds &lt;h1&gt;, &lt;h2&gt;, etc.
+  // { level: 1 } — specifically finds &lt;h1&gt;
+  await expect(page.getByRole('heading', { level: 1 }))
+    .toHaveText('Welcome');
+
+  // role: 'textbox' — finds &lt;input type="text"&gt; or &lt;textarea&gt;
+  await page.getByRole('textbox', { name: 'Search' }).fill('Playwright');
+
+  // role: 'checkbox' — finds &lt;input type="checkbox"&gt;
+  await page.getByRole('checkbox', { name: 'Accept terms' }).check();
+
+  // role: 'link' — finds &lt;a&gt; tags
+  await page.getByRole('link', { name: 'Privacy Policy' }).click();
+});</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-2.ts — getByLabel &amp; getByPlaceholder</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">test('label and placeholder locators', async ({ page }) => {
+  await page.goto('https://example.com/register');
+
+  // getByLabel() — finds input by its associated &lt;label&gt; text
+  // HTML: &lt;label for="email"&gt;Email Address&lt;/label&gt; &lt;input id="email"&gt;
+  await page.getByLabel('Email Address').fill('test@email.com');
+
+  // getByPlaceholder() — finds input by its placeholder attribute
+  // HTML: &lt;input placeholder="Enter your name"&gt;
+  await page.getByPlaceholder('Enter your name').fill('John Doe');
+
+  // getByText() — finds ANY element containing this visible text
+  // Useful for finding paragraphs, spans, divs with specific text
+  await expect(page.getByText('Already have an account?')).toBeVisible();
+});</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-3.ts — getByTestId (most stable in CI)</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">// getByTestId() requires developers to add data-testid attributes in HTML
+// HTML: &lt;button data-testid="submit-btn"&gt;Submit&lt;/button&gt;
+// These attributes survive redesigns — the most stable selector in large teams
+
+test('test ID locators', async ({ page }) => {
+  await page.goto('https://example.com');
+
+  // Finds: &lt;button data-testid="login-button"&gt;
+  await page.getByTestId('login-button').click();
+
+  // You can configure the attribute name in playwright.config.ts:
+  // use: { testIdAttribute: 'data-qa' } — then use data-qa="..." in HTML
+  await page.getByTestId('error-message').waitFor();
+
+  // Chaining: narrow search scope by parent element first
+  // Only looks for 'nav-link' INSIDE the element with data-testid="sidebar"
+  await page.getByTestId('sidebar')
+    .getByTestId('nav-link')
+    .first()  // .first() — gets the first matching element
+    .click();
+});</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-4.ts — CSS &amp; XPath (use rarely)</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">test('CSS and XPath selectors', async ({ page }) => {
+  await page.goto('https://example.com');
+
+  // page.locator() — accepts CSS selectors as a string
+  // '#login' = element with id="login"
+  await page.locator('#login').click();
+
+  // '.btn-primary' = element with class="btn-primary"
+  await page.locator('.btn-primary').click();
+
+  // CSS attribute selector: [attribute="value"]
+  await page.locator('input[type="email"]').fill('test@test.com');
+
+  // XPath — use only when CSS cannot reach the element
+  // xpath= prefix tells Playwright to use XPath mode
+  // //button[contains(text(),'Log')] = button whose text contains 'Log'
+  await page.locator("xpath=//button[contains(text(),'Log')]").click();
+});</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-5.ts — Locator filtering &amp; chaining</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">test('advanced locator techniques', async ({ page }) => {
+  await page.goto('https://example.com/products');
+
+  // .filter() — narrows locator results using additional conditions
+  // Finds all list items, but only those that contain the text 'In Stock'
+  const inStockItems = page.getByRole('listitem')
+    .filter({ hasText: 'In Stock' });
+
+  // .count() — returns how many elements match the locator
+  const count: number = await inStockItems.count();
+  console.log(`Found ${count} in-stock items`);
+
+  // .nth(index) — picks the Nth element (0-based index)
+  // .nth(0) = first element, .nth(1) = second element
+  await inStockItems.nth(0).getByRole('button', { name: 'Add to cart' }).click();
+
+  // .all() — returns an array of all matching locators
+  // Use for loops — process each matching element
+  const allItems = await page.getByRole('listitem').all();
+  for (const item of allItems) {
+    const text = await item.textContent();
+    console.log(text);  // textContent() returns the text inside the element
+  }
+});</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-checklist" aria-hidden="true"></i> Best Practices</div>
+      <div class="card">
+        <ul class="checklist">
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Prefer <code>getByRole()</code> → <code>getByLabel()</code> → <code>getByTestId()</code> in that order</li>
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Never use XPath unless absolutely necessary — it breaks on minor DOM changes</li>
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Never use index-based selectors like <code>nth-child(3)</code> — they break when UI order changes</li>
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Ask developers to add <code>data-testid</code> attributes to dynamic elements</li>
+          <li><i class="ti ti-circle-check" aria-hidden="true"></i> Use locator chaining to scope searches and avoid ambiguous matches</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><i class="ti ti-user-check" aria-hidden="true"></i> Interview Q&amp;A</div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q1: What is the difference between a Locator and ElementHandle? <i class="ti ti-chevron-down qa-chevron" aria-hidden="true"></i></div>
+        <div class="qa-a">A Locator is a lazy, auto-retrying descriptor — it finds the element fresh each time you interact with it. An ElementHandle is a direct JS reference to a DOM element captured at a moment in time — if the element is re-rendered by React/Vue, the handle becomes stale. Always use Locators in Playwright.</div>
+      </div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q2: Why is getByRole() preferred over CSS selectors? <i class="ti ti-chevron-down qa-chevron" aria-hidden="true"></i></div>
+        <div class="qa-a">getByRole() is resilient to UI redesigns. If a developer changes a button's class or ID, role-based locators still work. It also aligns tests with accessibility — if the role is wrong, both users with screen readers AND your tests fail, giving you double coverage.</div>
+      </div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q3: How do you handle a situation where multiple elements match your locator? <i class="ti ti-chevron-down qa-chevron" aria-hidden="true"></i></div>
+        <div class="qa-a">Use chaining to scope: <code>page.getByRole('list').getByRole('listitem')</code>. Or use <code>.filter()</code> to narrow by text content. Or use <code>.first()</code>, <code>.last()</code>, or <code>.nth(index)</code>. If the page genuinely has duplicate elements that you can't distinguish, ask the developer to add <code>data-testid</code> attributes.</div>
+      </div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q4: What is auto-waiting in Playwright? <i class="ti ti-chevron-down qa-chevron" aria-hidden="true"></i></div>
+        <div class="qa-a">Before performing any action (click, fill, etc.), Playwright automatically waits for the element to be: attached to DOM, visible, stable (not moving), enabled (not disabled), and not obscured. This replaces manual <code>waitForElement()</code> calls from Selenium and eliminates most timing-related test failures.</div>
+      </div>
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">Q5: What is the purpose of .filter() on a locator? <i class="ti ti-chevron-down qa-chavron" aria-hidden="true"></i></div>
+        <div class="qa-a"><code>.filter()</code> narrows a collection of matching elements by additional criteria such as <code>hasText</code> (element contains specific text) or <code>has</code> (element contains a child matching another locator). It is used when you want a subset of a list of similar elements — for example, all product cards that show "In Stock".</div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn" onclick="goToSession(1)">← Session 1</button>
+      <button class="nav-btn primary" onclick="goToSession(3)">Next: Assertions ↗</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SESSIONS 3–10 STUBS ═══════════════ -->
+  <div class="session" id="s3">
+    <div class="session-header">
+      <h2>Session 3 — Assertions &amp; expect()</h2>
+      <div class="meta"><span class="tag">Phase 1 · Fundamentals</span><span class="tag"><i class="ti ti-clock"></i> ~60 min</span><span class="tag">Validating UI State</span></div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-bulb"></i> Overview</div>
+      <div class="definition-box">
+        <div class="term">Assertion</div>
+        <div class="def"><b>What:</b> A statement that checks whether the actual outcome matches the expected outcome. If it fails, the test fails with a clear message.<br><b>Why:</b> Without assertions, a test only verifies the code runs without crashing — not that the UI shows the correct result.<br><b>Playwright's expect():</b> Auto-retrying — it keeps checking until the condition passes or timeout expires.</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-messages"></i> Interview One-Liners</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "Playwright's web-first assertions auto-retry, so I don't need explicit waits before asserting on dynamic content."</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "toBeVisible() checks that the element is both present in the DOM and visible to the user — not just attached to the DOM."</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "I use soft assertions when I want a test to collect multiple failures in one run rather than stopping at the first."</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "toHaveURL() is a page-level assertion — it asserts the browser's current URL after a navigation."</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "expect.poll() lets me assert on a custom async condition that Playwright doesn't have a built-in matcher for."</div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-code"></i> Code Examples</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-1.ts — Core locator assertions</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('core assertion methods', async ({ page }) => {
+  await page.goto('https://example.com');
+
+  // toBeVisible() — passes if element is in DOM AND visible on screen
+  await expect(page.getByRole('heading')).toBeVisible();
+
+  // toHaveText() — passes if element's text content matches exactly
+  await expect(page.getByRole('heading')).toHaveText('Example Domain');
+
+  // toContainText() — passes if element contains this text (partial match)
+  await expect(page.getByRole('paragraph')).toContainText('illustrative');
+
+  // toBeEnabled() — passes if form element is not disabled
+  await expect(page.getByRole('button')).toBeEnabled();
+
+  // toBeHidden() — passes if element is NOT visible (opposite of toBeVisible)
+  await expect(page.getByTestId('error-msg')).toBeHidden();
+});</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-2.ts — Page-level assertions</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">test('page-level assertions', async ({ page }) => {
+  await page.goto('https://example.com');
+
+  // toHaveURL() — asserts the current browser URL
+  // Accepts string, regex, or URLSearchParams
+  await expect(page).toHaveURL('https://example.com');
+  await expect(page).toHaveURL(/example\.com/);
+
+  // toHaveTitle() — asserts the browser tab title (&lt;title&gt; tag)
+  await expect(page).toHaveTitle(/Example/);
+
+  // Navigate and verify redirect — URL changes after action
+  await page.getByRole('link', { name: 'More information' }).click();
+  await expect(page).toHaveURL(/iana\.org/);
+});</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-3.ts — Input &amp; attribute assertions</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">test('input and attribute assertions', async ({ page }) => {
+  await page.goto('https://example.com/form');
+
+  const emailInput = page.getByLabel('Email');
+  await emailInput.fill('test@test.com');
+
+  // toHaveValue() — checks what is typed inside an input field
+  await expect(emailInput).toHaveValue('test@test.com');
+
+  // toHaveAttribute() — checks an element's HTML attribute value
+  // Useful for checking href, src, disabled, type, etc.
+  await expect(emailInput).toHaveAttribute('type', 'email');
+
+  // toHaveClass() — checks element has this CSS class
+  await expect(page.getByRole('button', { name: 'Submit' }))
+    .toHaveClass(/btn-primary/);
+
+  // toBeChecked() — for checkboxes and radio buttons
+  await page.getByRole('checkbox', { name: 'Remember me' }).check();
+  await expect(page.getByRole('checkbox', { name: 'Remember me' }))
+    .toBeChecked();
+});</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-4.ts — Soft assertions</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">test('soft assertions — collect all failures', async ({ page }) => {
+  await page.goto('https://example.com');
+
+  // expect.soft() — records failure but CONTINUES the test
+  // Normal expect() stops the test immediately on failure
+  // Use soft assertions to check multiple fields in one test run
+  await expect.soft(page.getByRole('heading')).toHaveText('Example Domain');
+  await expect.soft(page).toHaveTitle('Example Domain');
+  await expect.soft(page.getByRole('link')).toBeVisible();
+
+  // At the END of the test, Playwright reports ALL soft failures together
+  // This is more efficient than fixing one failure, rerunning, finding next
+});</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-5.ts — Custom timeout on assertions</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">test('assertion timeout override', async ({ page }) => {
+  await page.goto('https://example.com');
+
+  // By default, assertions retry for 5 seconds (configured in playwright.config.ts)
+  // { timeout: N } — override just for this assertion (milliseconds)
+  // Use when you know this specific element takes longer to appear
+  await expect(page.getByRole('heading'))
+    .toBeVisible({ timeout: 10000 });
+
+  // expect.poll() — assert on a custom condition that auto-retries
+  // Use when Playwright has no built-in matcher for what you need
+  await expect.poll(async () => {
+    const count = await page.getByRole('listitem').count();
+    return count;
+  }, { timeout: 10000 }).toBeGreaterThan(3);
+});</code></pre>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-checklist"></i> Best Practices</div>
+      <div class="card">
+        <ul class="checklist">
+          <li><i class="ti ti-circle-check"></i> Always await expect() calls — missing await makes assertions unreliable</li>
+          <li><i class="ti ti-circle-check"></i> Use web-first assertions (toBeVisible, toHaveText) — they auto-retry unlike manual waits</li>
+          <li><i class="ti ti-circle-check"></i> Use soft assertions for form validation testing — check all fields in one test run</li>
+          <li><i class="ti ti-circle-check"></i> Set global <code>expect: { timeout: 5000 }</code> in config — override per-assertion only when needed</li>
+          <li><i class="ti ti-circle-check"></i> Use regex in assertions for dynamic text: <code>toHaveText(/Welcome, .+/)</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-user-check"></i> Interview Q&amp;A</div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q1: What is the difference between toBeVisible() and toBeAttached()? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">toBeAttached() only checks that the element exists in the DOM. toBeVisible() checks that the element is in the DOM AND visible to the user (not hidden via CSS display:none, visibility:hidden, or opacity:0). Always use toBeVisible() when verifying UI behavior.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q2: When would you use soft assertions? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">When testing a form or a page with multiple fields that all need verification. Instead of fixing one assertion failure, rerunning, finding the next failure — soft assertions let you see ALL failures in one test run. Useful in smoke tests and regression suites.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q3: How does Playwright's auto-retrying assertion work? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">When you call expect(locator).toBeVisible(), Playwright repeatedly evaluates the condition every 100ms until it passes OR the timeout (default 5s) expires. This is why you don't need waitForElement() before assertions in Playwright — the assertion itself is the wait.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q4: What is the difference between toHaveText() and toContainText()? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">toHaveText() matches the ENTIRE text content of the element. toContainText() passes if the element's text includes your string as a substring. Use toContainText() for dynamic text like "Welcome, John" when you only want to verify "Welcome".</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q5: What is expect.poll() and when do you use it? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">expect.poll() lets you assert on a custom async function that Playwright retries until the assertion passes or times out. Use it when you need to assert on something Playwright has no built-in matcher for — like a database count, an API response value, or a complex computed state.</div></div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="goToSession(2)">← Session 2</button>
+      <button class="nav-btn primary" onclick="goToSession(4)">Next: Page Object Model ↗</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SESSION 4 ═══════════════ -->
+  <div class="session" id="s4">
+    <div class="session-header">
+      <h2>Session 4 — Page Object Model (POM)</h2>
+      <div class="meta"><span class="tag">Phase 1 · Fundamentals</span><span class="tag"><i class="ti ti-clock"></i> ~75 min</span><span class="tag">Design Pattern</span></div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-bulb"></i> Overview</div>
+      <div class="definition-box">
+        <div class="term">Page Object Model (POM)</div>
+        <div class="def"><b>What:</b> A design pattern where each web page (or component) is represented as a TypeScript class. The class contains locators and methods for that page.<br><b>Why:</b> When a locator changes, you update it in ONE place (the page class) instead of hunting across 50 test files.<br><b>How:</b> Create a class per page with a constructor receiving <code>page</code>, define locators as properties, define actions as methods.</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-messages"></i> Interview One-Liners</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "Page Object Model separates test logic from page interaction logic — tests read like user stories, not like CSS selectors."</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "With POM, when a UI change breaks a locator, I fix it in one class file — not in every test that uses it."</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "I define locators as readonly properties in the constructor so they're initialized once and reused across all methods."</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "Page objects should expose actions (login, search, addToCart) — not raw locators — to tests."</div>
+      <div class="oneliner"><i class="ti ti-quote"></i> "I follow the rule: assertions belong in tests, not in page objects — page objects only perform actions."</div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-code"></i> Code Examples</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">LoginPage.ts — Page Object class</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">// 'import' the Page type from Playwright for TypeScript type checking
+import { Page, Locator } from '@playwright/test';
+
+// 'class' — a blueprint for creating page objects
+// TypeScript class groups related locators and actions for one page
+export class LoginPage {
+
+  // 'readonly' — these properties are set once and never changed
+  // 'Locator' — Playwright type for element references
+  readonly emailInput: Locator;
+  readonly passwordInput: Locator;
+  readonly loginButton: Locator;
+  readonly errorMessage: Locator;
+
+  // 'constructor' — runs when you create a new LoginPage instance
+  // 'page: Page' — receives the Playwright page object as a parameter
+  constructor(private page: Page) {
+    // Initialize all locators here — defined once, reused everywhere
+    this.emailInput    = page.getByLabel('Email');
+    this.passwordInput  = page.getByLabel('Password');
+    this.loginButton    = page.getByRole('button', { name: 'Log in' });
+    this.errorMessage   = page.getByTestId('login-error');
+  }
+
+  // 'async' method — encapsulates the full login action
+  // Takes username and password as parameters (TypeScript types: string)
+  async login(email: string, password: string): Promise&lt;void&gt; {
+    await this.page.goto('/login');       // navigate to login page
+    await this.emailInput.fill(email);      // type email
+    await this.passwordInput.fill(password); // type password
+    await this.loginButton.click();          // click login button
+  }
+}</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">login.spec.ts — Test using the Page Object</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+
+test('successful login redirects to dashboard', async ({ page }) => {
+
+  // Instantiate the page object — 'new' creates an instance of the class
+  const loginPage = new LoginPage(page);
+
+  // Call the page object method — test reads like a user story
+  await loginPage.login('user@test.com', 'Password@123');
+
+  // Assertion stays in the test file — not in the page object
+  await expect(page).toHaveURL(/dashboard/);
+});
+
+test('invalid credentials shows error message', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+
+  await loginPage.login('bad@email.com', 'wrongpassword');
+
+  // errorMessage is a locator defined in the page object
+  await expect(loginPage.errorMessage).toBeVisible();
+  await expect(loginPage.errorMessage).toContainText('Invalid credentials');
+});</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">BasePage.ts — Base class for shared behavior</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">import { Page } from '@playwright/test';
+
+// 'BasePage' — parent class with methods shared by ALL page objects
+// Avoids repeating common code (waitForLoader, scrollToTop) in every page
+export class BasePage {
+
+  // 'protected' — accessible in BasePage AND in child classes (not outside)
+  constructor(protected page: Page) {}
+
+  // Method available to ALL child page classes
+  async waitForPageLoad(): Promise&lt;void&gt; {
+    // waitForLoadState('networkidle') — waits until no network requests for 500ms
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async getPageTitle(): Promise&lt;string&gt; {
+    return await this.page.title();
+  }
+}
+
+// 'extends' — LoginPage inherits all methods from BasePage
+import { Locator } from '@playwright/test';
+export class LoginPageV2 extends BasePage {
+  readonly emailInput: Locator;
+
+  constructor(page: Page) {
+    super(page);  // 'super()' calls the BasePage constructor — required when extending
+    this.emailInput = page.getByLabel('Email');
+  }
+
+  async login(email: string, password: string) {
+    await this.page.goto('/login');
+    await this.emailInput.fill(email);
+    await this.page.getByLabel('Password').fill(password);
+    await this.page.getByRole('button', { name: 'Log in' }).click();
+    await this.waitForPageLoad();  // inherited from BasePage
+  }
+}</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-4.ts — Returning page objects from methods</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">import { Page, Locator } from '@playwright/test';
+import { DashboardPage } from './DashboardPage';
+
+export class LoginPageV3 {
+  constructor(private page: Page) {}
+
+  // Return type is 'Promise&lt;DashboardPage&gt;' — after login we land on dashboard
+  // This technique chains page objects — login returns the next page object
+  async loginAndGoToDashboard(email: string, pwd: string): Promise&lt;DashboardPage&gt; {
+    await this.page.goto('/login');
+    await this.page.getByLabel('Email').fill(email);
+    await this.page.getByLabel('Password').fill(pwd);
+    await this.page.getByRole('button', { name: 'Log in' }).click();
+    return new DashboardPage(this.page);  // return next page object
+  }
+}
+
+// In the test — clean chaining reads like a user journey:
+// const dashboard = await loginPage.loginAndGoToDashboard('a@b.com','pass');
+// await expect(dashboard.welcomeBanner).toBeVisible();</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">example-5.ts — Component objects (reusable UI parts)</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+        <pre><code class="language-typescript">import { Locator } from '@playwright/test';
+
+// Component Object — like a Page Object but for a reusable UI component
+// Example: a navigation bar that appears on EVERY page
+export class NavBar {
+
+  // 'container' — the root locator scoping all nav interactions
+  readonly container: Locator;
+
+  // Takes a Locator (not Page) — works within any page's nav element
+  constructor(container: Locator) {
+    this.container = container;
+  }
+
+  async clickLink(linkName: string) {
+    // All locators scoped to container — won't match links outside the nav
+    await this.container
+      .getByRole('link', { name: linkName })
+      .click();
+  }
+}
+
+// Usage in a test:
+// const nav = new NavBar(page.getByRole('navigation'));
+// await nav.clickLink('Products');</code></pre>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-checklist"></i> Best Practices</div>
+      <div class="card">
+        <ul class="checklist">
+          <li><i class="ti ti-circle-check"></i> One class per page — do not put multiple pages in one file</li>
+          <li><i class="ti ti-circle-check"></i> Assertions belong in tests — page objects only perform actions</li>
+          <li><i class="ti ti-circle-check"></i> Use <code>readonly</code> for locators — prevents accidental reassignment</li>
+          <li><i class="ti ti-circle-check"></i> Extend a BasePage class for shared utility methods</li>
+          <li><i class="ti ti-circle-check"></i> Return the next page object from navigation methods for clean chaining</li>
+          <li><i class="ti ti-circle-check"></i> Create component objects for reusable UI parts (nav bar, modal, table)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-user-check"></i> Interview Q&amp;A</div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q1: What is the Page Object Model and why do you use it? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">POM is a design pattern that creates a class for each web page. Locators and page interactions are defined in the class. Tests only call class methods. This means when a UI changes, you update one class file, not every test that interacts with that page.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q2: Should assertions go inside page objects? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">No. Page objects should only perform actions. Assertions belong in tests. If you put assertions in page objects, a page object becomes tightly coupled to specific test scenarios and cannot be reused in tests that expect different outcomes.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q3: What is the difference between 'private' and 'protected' in a TypeScript class? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">'private' members are only accessible within the class where they're defined. 'protected' members are accessible in the class AND in any class that extends (inherits from) it. Use 'protected' for the 'page' property in BasePage so child page objects can access it.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q4: How do you share a page object across multiple tests? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">Use Playwright fixtures. You define a custom fixture that creates the page object and inject it into tests. This is more scalable than creating 'new LoginPage(page)' in every test — the fixture handles instantiation.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q5: What is the 'super()' call in a TypeScript class? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">super() calls the constructor of the parent class. When a class extends another, TypeScript requires you to call super() in the child constructor before accessing 'this'. It passes arguments to the parent's constructor — in our case, the Playwright 'page' object is passed to BasePage.</div></div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="goToSession(3)">← Session 3</button>
+      <button class="nav-btn primary" onclick="goToSession(5)">Next: Fixtures &amp; Hooks ↗</button>
+    </div>
+  </div>
+
+  <!-- Sessions 5-10 compact -->
+  <div class="session" id="s5">
+    <div class="session-header"><h2>Session 5 — Fixtures, Hooks &amp; Test Organization</h2><div class="meta"><span class="tag">Phase 1 · Fundamentals</span><span class="tag">~75 min</span><span class="tag">Test Setup &amp; Teardown</span></div></div>
+    <div class="section"><div class="section-title"><i class="ti ti-bulb"></i> Overview</div>
+    <div class="definition-box"><div class="term">Fixtures</div><div class="def"><b>What:</b> Playwright's dependency injection system — fixtures provide pre-built objects (page, browser, context) to tests automatically.<br><b>Why:</b> Eliminates boilerplate setup in every test. You can create custom fixtures that set up a logged-in state, a database seed, or a page object.<br><b>Built-in fixtures:</b> page, browser, context, request, browserName.</div></div>
+    <div class="definition-box"><div class="term">Hooks</div><div class="def"><b>What:</b> Functions that run automatically before/after tests — beforeAll, afterAll, beforeEach, afterEach.<br><b>Why:</b> Set up shared state (login session, test data) once for a group of tests rather than repeating it in each test.</div></div></div>
+    <div class="section"><div class="section-title"><i class="ti ti-messages"></i> Interview One-Liners</div>
+    <div class="oneliner"><i class="ti ti-quote"></i> "beforeEach runs before every test in its describe block — I use it to navigate to the page being tested."</div>
+    <div class="oneliner"><i class="ti ti-quote"></i> "Custom fixtures let me inject a pre-authenticated page into tests — avoiding login steps in every test."</div>
+    <div class="oneliner"><i class="ti ti-quote"></i> "beforeAll runs once before all tests in a describe block — ideal for expensive operations like database seeding."</div>
+    <div class="oneliner"><i class="ti ti-quote"></i> "test.describe() groups related tests — failures in one describe block don't affect another."</div>
+    <div class="oneliner"><i class="ti ti-quote"></i> "I use test.use() at the describe level to set browser context options (viewport, locale) for a specific test group."</div></div>
+    <div class="section"><div class="section-title"><i class="ti ti-code"></i> Code Examples</div>
+    <div class="code-block"><div class="code-header"><span class="code-label">example-1.ts — beforeEach and afterEach hooks</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+    <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+// test.describe() — groups related tests into a named suite
+// Like a folder for tests — organizes output in reports
+test.describe('Product Search', () => {
+
+  // test.beforeEach() — runs BEFORE each test in this describe block
+  // Receives the same { page } fixture as tests
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/products');  // navigate once — shared by all tests below
+  });
+
+  test('search by product name', async ({ page }) => {
+    // page is already at /products — beforeEach navigated for us
+    await page.getByPlaceholder('Search products').fill('laptop');
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('listitem')).toHaveCount(5);
+  });
+
+  test('empty search shows all products', async ({ page }) => {
+    await expect(page.getByRole('listitem')).toHaveCount(20);
+  });
+
+  // test.afterEach() — runs AFTER each test — good for cleanup
+  test.afterEach(async ({ page }) => {
+    // Clear local storage after each test to avoid state leakage
+    await page.evaluate(() => localStorage.clear());
+  });
+});</code></pre></div>
+    <div class="code-block"><div class="code-header"><span class="code-label">example-2.ts — Custom fixture (logged-in page)</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+    <pre><code class="language-typescript">import { test as base, expect } from '@playwright/test';
+import { LoginPage } from './pages/LoginPage';
+
+// Extend the base 'test' object with a custom 'loggedInPage' fixture
+// 'ExtendedFixtures' interface defines what our custom fixture provides
+type ExtendedFixtures = { loggedInPage: import('@playwright/test').Page };
+
+// test.extend() — adds our fixture to Playwright's fixture system
+export const test = base.extend&lt;ExtendedFixtures&gt;({
+
+  // 'loggedInPage' fixture — auto-logs in before giving page to test
+  loggedInPage: async ({ page }, use) => {
+    // SETUP: perform login before test
+    const loginPage = new LoginPage(page);
+    await loginPage.login('user@test.com', 'Password@123');
+
+    // 'use' — hand the prepared page to the test
+    await use(page);
+
+    // TEARDOWN (after 'use'): runs after the test finishes
+    await page.goto('/logout');
+  },
+});
+
+// In tests — import 'test' from this file (not @playwright/test)
+// test('dashboard loads', async ({ loggedInPage }) => { ... });</code></pre></div>
+    <div class="code-block"><div class="code-header"><span class="code-label">example-3.ts — beforeAll for expensive setup</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+    <pre><code class="language-typescript">test.describe('Admin Panel Tests', () => {
+
+  // test.beforeAll() — runs ONCE before all tests in this describe block
+  // Use for: database seeding, API setup, creating test accounts
+  // Note: does NOT receive 'page' fixture — runs outside browser context
+  test.beforeAll(async ({ request }) => {
+    // 'request' fixture — Playwright's API testing client (no browser needed)
+    // Seed test data via API before any test opens a browser
+    await request.post('/api/seed-test-data', {
+      data: { type: 'admin-tests' }
+    });
+  });
+
+  // test.afterAll() — runs ONCE after all tests in this describe block
+  test.afterAll(async ({ request }) => {
+    // Clean up test data after all tests finish
+    await request.delete('/api/seed-test-data');
+  });
+
+  test('admin can view all users', async ({ page }) => {
+    await page.goto('/admin/users');
+    await expect(page.getByRole('row')).toHaveCount(10);
+  });
+});</code></pre></div>
+    <div class="code-block"><div class="code-header"><span class="code-label">example-4.ts — test.use() for context options</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+    <pre><code class="language-typescript">test.describe('Mobile viewport tests', () => {
+
+  // test.use() — overrides browser context settings for this describe block
+  // 'viewport' — sets the browser window size for all tests in this group
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('hamburger menu visible on mobile', async ({ page }) => {
+    await page.goto('/home');
+    // This test runs at 375×812 (iPhone size)
+    await expect(page.getByTestId('hamburger-menu')).toBeVisible();
+  });
+});
+
+test.describe('Locale tests', () => {
+  // test.use() with locale and timezone — tests date/currency formatting
+  test.use({ locale: 'de-DE', timezoneId: 'Europe/Berlin' });
+
+  test('price shows euro format in German locale', async ({ page }) => {
+    await page.goto('/shop');
+    await expect(page.getByTestId('price')).toContainText('€');
+  });
+});</code></pre></div>
+    <div class="code-block"><div class="code-header"><span class="code-label">example-5.ts — test.skip, test.only, test.fail</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> copy</button></div>
+    <pre><code class="language-typescript">// test.skip() — marks a test to be skipped (not run)
+// Use when: known bug exists, feature not yet built
+test.skip('payment flow', async ({ page }) => {
+  // This test is skipped — shown as 'skipped' in report
+});
+
+// test.only() — runs ONLY this test (all others are skipped)
+// NEVER commit test.only() to git — it skips your entire test suite!
+test.only('isolated debug test', async ({ page }) => {
+  // Only this test runs during local debugging
+});
+
+// test.fail() — marks a test as EXPECTED to fail
+// If it passes, that's the failure! Used for known bugs with open tickets
+test.fail('known bug - BUG-1234', async ({ page }) => {
+  await page.goto('/checkout');
+  // This is expected to fail until the bug is fixed
+});
+
+// Conditional skip — skip based on browser or environment
+test('webkit specific test', async ({ page, browserName }) => {
+  // test.skip() inside a test — condition evaluated at runtime
+  test.skip(browserName === 'firefox', 'This test only runs in Chrome and WebKit');
+  await page.goto('/');
+});</code></pre></div></div>
+    <div class="section"><div class="section-title"><i class="ti ti-checklist"></i> Best Practices</div><div class="card"><ul class="checklist">
+      <li><i class="ti ti-circle-check"></i> Use beforeEach for navigation — keeps tests independent</li>
+      <li><i class="ti ti-circle-check"></i> Use beforeAll only for expensive external setup (API seeding) — not browser actions</li>
+      <li><i class="ti ti-circle-check"></i> Never commit test.only() — it silently disables your entire test suite in CI</li>
+      <li><i class="ti ti-circle-check"></i> Use custom fixtures for authentication — saves login time across the suite</li>
+      <li><i class="ti ti-circle-check"></i> Group tests with test.describe() — makes reports readable and failures scoped</li>
+    </ul></div></div>
+    <div class="section"><div class="section-title"><i class="ti ti-user-check"></i> Interview Q&amp;A</div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q1: Difference between beforeEach and beforeAll? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">beforeEach runs before EVERY test — good for navigation and resetting state. beforeAll runs ONCE before all tests in the block — good for expensive setup like database seeding or creating a user via API that all tests share.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q2: What is a Playwright fixture? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">A fixture is a dependency that Playwright automatically injects into your test function. Built-in fixtures include page, browser, context, and request. You can create custom fixtures using test.extend() to provide pre-authenticated pages, database connections, or page object instances.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q3: Why is test.only() dangerous in CI/CD? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">test.only() causes Playwright to skip all other tests and run only the marked one. If accidentally committed to the main branch, your entire CI pipeline runs only that one test while reporting success — giving false confidence. Always use it locally only and remove before committing.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q4: How do you run tests in parallel and control worker count? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">Playwright runs test files in parallel by default. Control worker count in playwright.config.ts with <code>workers: 4</code>. Tests within a single file run sequentially by default. Add <code>test.describe.parallel()</code> to run tests within a describe block in parallel. In CI, set workers based on available CPU cores.</div></div>
+      <div class="qa-item" onclick="toggleQA(this)"><div class="qa-q">Q5: What is test.use() and where is it valid? <i class="ti ti-chevron-down qa-chevron"></i></div><div class="qa-a">test.use() overrides fixture options for the current scope — either at the file level (affects all tests in the file) or inside a describe block (affects only tests in that group). Common uses: viewport size, locale, timezone, storageState (for pre-authenticated sessions), and baseURL overrides.</div></div>
+    </div>
+    <div class="nav-row"><button class="nav-btn" onclick="goToSession(4)">← Session 4</button><button class="nav-btn primary" onclick="goToSession(6)">Next: API Testing ↗</button></div>
+  </div>
+
+  <!-- Sessions 6-10 minimal shells with sendPrompt -->
+  <div class="session" id="s6">
+    <div class="session-header"><h2>Session 6 — API Testing with Playwright</h2><div class="meta"><span class="tag">Phase 2 · Intermediate</span><span class="tag">~75 min</span><span class="tag">request fixture</span></div></div>
+    <div class="card" style="text-align:center;padding:2rem">
+      <i class="ti ti-api" style="font-size:40px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+      <p style="font-size:15px;font-weight:500;margin:12px 0 6px">Load this session with full content</p>
+      <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px">5 code examples · Interview Q&amp;A · Architecture diagram · Best practices</p>
+      <button class="nav-btn primary" onclick="sendPrompt('Load Session 6: API Testing with Playwright - show full content with 5 code examples, interview Q&A, architecture diagram, and best practices checklist')">Load Session 6 ↗</button>
+    </div>
+    <div class="nav-row"><button class="nav-btn" onclick="goToSession(5)">← Session 5</button><button class="nav-btn primary" onclick="goToSession(7)">Session 7 →</button></div>
+  </div>
+  <div class="session" id="s7">
+    <div class="session-header"><h2>Session 7 — Network Interception &amp; Mocking</h2><div class="meta"><span class="tag">Phase 2 · Intermediate</span><span class="tag">~75 min</span><span class="tag">page.route()</span></div></div>
+    <div class="card" style="text-align:center;padding:2rem">
+      <i class="ti ti-network" style="font-size:40px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+      <p style="font-size:15px;font-weight:500;margin:12px 0 6px">Load this session with full content</p>
+      <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px">page.route() · request/response mocking · API intercept patterns</p>
+      <button class="nav-btn primary" onclick="sendPrompt('Load Session 7: Network Interception and Mocking with Playwright - show full content with 5 code examples, interview Q&A, architecture diagram, and best practices checklist')">Load Session 7 ↗</button>
+    </div>
+    <div class="nav-row"><button class="nav-btn" onclick="goToSession(6)">← Session 6</button><button class="nav-btn primary" onclick="goToSession(8)">Session 8 →</button></div>
+  </div>
+  <div class="session" id="s8">
+    <div class="session-header"><h2>Session 8 — Authentication &amp; Storage State</h2><div class="meta"><span class="tag">Phase 2 · Intermediate</span><span class="tag">~60 min</span><span class="tag">storageState</span></div></div>
+    <div class="card" style="text-align:center;padding:2rem">
+      <i class="ti ti-lock" style="font-size:40px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+      <p style="font-size:15px;font-weight:500;margin:12px 0 6px">Load this session with full content</p>
+      <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px">storageState · globalSetup · cookie-based auth · OAuth patterns</p>
+      <button class="nav-btn primary" onclick="sendPrompt('Load Session 8: Authentication and Storage State in Playwright - show full content with 5 code examples, interview Q&A, architecture diagram, and best practices checklist')">Load Session 8 ↗</button>
+    </div>
+    <div class="nav-row"><button class="nav-btn" onclick="goToSession(7)">← Session 7</button><button class="nav-btn primary" onclick="goToSession(9)">Session 9 →</button></div>
+  </div>
+  <div class="session" id="s9">
+    <div class="session-header"><h2>Session 9 — Reporting, Screenshots &amp; Tracing</h2><div class="meta"><span class="tag">Phase 2 · Intermediate</span><span class="tag">~60 min</span><span class="tag">Allure · Trace Viewer</span></div></div>
+    <div class="card" style="text-align:center;padding:2rem">
+      <i class="ti ti-chart-bar" style="font-size:40px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+      <p style="font-size:15px;font-weight:500;margin:12px 0 6px">Load this session with full content</p>
+      <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px">HTML reporter · Allure · trace viewer · video recording · screenshot strategies</p>
+      <button class="nav-btn primary" onclick="sendPrompt('Load Session 9: Reporting Screenshots and Tracing in Playwright - show full content with 5 code examples, interview Q&A, architecture diagram, and best practices checklist')">Load Session 9 ↗</button>
+    </div>
+    <div class="nav-row"><button class="nav-btn" onclick="goToSession(8)">← Session 8</button><button class="nav-btn primary" onclick="goToSession(10)">Session 10 →</button></div>
+  </div>
+  <div class="session" id="s10">
+    <div class="session-header"><h2>Session 10 — CI/CD Integration &amp; Best Practices</h2><div class="meta"><span class="tag">Phase 2 · Intermediate</span><span class="tag">~75 min</span><span class="tag">GitHub Actions · Jenkins</span></div></div>
+    <div class="card" style="text-align:center;padding:2rem">
+      <i class="ti ti-git-merge" style="font-size:40px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+      <p style="font-size:15px;font-weight:500;margin:12px 0 6px">Load this session with full content</p>
+      <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px">GitHub Actions YAML · parallel sharding · Docker · environment configs · SDET best practices</p>
+      <button class="nav-btn primary" onclick="sendPrompt('Load Session 10: CI/CD Integration and Best Practices with Playwright - show full content with 5 code examples, interview Q&A, architecture diagram, and best practices checklist')">Load Session 10 ↗</button>
+    </div>
+    <div class="nav-row"><button class="nav-btn" onclick="goToSession(9)">← Session 9</button></div>
+  </div>
+</div>
+
+<script>
+const sessions = [
+  { id:1, label:'S1', title:'Intro & Setup', phase:'basic' },
+  { id:2, label:'S2', title:'Locators', phase:'basic' },
+  { id:3, label:'S3', title:'Assertions', phase:'basic' },
+  { id:4, label:'S4', title:'POM', phase:'basic' },
+  { id:5, label:'S5', title:'Fixtures', phase:'basic' },
+  { id:6, label:'S6', title:'API Testing', phase:'inter' },
+  { id:7, label:'S7', title:'Mocking', phase:'inter' },
+  { id:8, label:'S8', title:'Auth', phase:'inter' },
+  { id:9, label:'S9', title:'Reporting', phase:'inter' },
+  { id:10, label:'S10', title:'CI/CD', phase:'inter' },
+];
+
+let currentSession = 1;
+const visited = new Set([1]);
+
+function buildTabs() {
+  const strip = document.getElementById('tab-strip');
+  sessions.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (s.id === 1 ? ' active' : '');
+    btn.id = 'tab-'+s.id;
+    btn.onclick = () => goToSession(s.id);
+    btn.innerHTML = `<span class="dot"></span>${s.label}: ${s.title}`;
+    strip.appendChild(btn);
+  });
+}
+
+function goToSession(n) {
+  document.getElementById('s'+currentSession).classList.remove('active');
+  document.getElementById('tab-'+currentSession).classList.remove('active');
+
+  currentSession = n;
+  visited.add(n);
+
+  document.getElementById('s'+n).classList.add('active');
+  const activeTab = document.getElementById('tab-'+n);
+  activeTab.classList.add('active');
+
+  visited.forEach(id => {
+    if (id !== n) document.getElementById('tab-'+id).classList.add('done');
+  });
+
+  const pct = Math.round((n / 10) * 100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-label').textContent = `Session ${n} of 10`;
+  document.getElementById('prog-pct').textContent = pct+'%';
+
+  document.querySelector('.academy').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleQA(el) {
+  el.classList.toggle('open');
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.innerHTML = '<i class="ti ti-check"></i> copied';
+    setTimeout(() => btn.innerHTML = '<i class="ti ti-copy"></i> copy', 1800);
+  });
+}
+
+buildTabs();
+</script>
+
+<script>
+/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
+(function(){try{
+  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
+    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
+      btn.addEventListener('click',function(){
+        var t=this.nextElementSibling;
+        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
+      });
+    }
+  });
+  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
+    if(!tab.dataset.vTab){tab.dataset.vTab='1';
+      tab.addEventListener('click',function(){
+        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
+        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
+      });
+    }
+  });
+}catch(e){console.log('VE:',e)}})();
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

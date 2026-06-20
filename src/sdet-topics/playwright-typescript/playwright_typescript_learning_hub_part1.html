@@ -1,0 +1,2332 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playwright TypeScript Learning Hub: Part 1</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+/* ===== VIKRANT VISUAL ENHANCEMENT LAYER v2.0 ===== */
+h1,h2{font-weight:700 !important;border-left:4px solid #6C5CE7 !important;padding-left:12px !important;background:rgba(108,92,231,0.07) !important;border-radius:0 8px 8px 0 !important;margin-top:1.2em !important;margin-bottom:0.6em !important;padding-top:6px !important;padding-bottom:6px !important}
+h3,h4{font-weight:700 !important;border-left:3px solid #00b894 !important;padding-left:10px !important;background:rgba(0,184,148,0.06) !important;border-radius:0 6px 6px 0 !important;margin-top:1em !important;margin-bottom:0.5em !important;padding-top:4px !important;padding-bottom:4px !important}
+h5,h6{font-weight:600 !important;border-left:2px solid #fdcb6e !important;padding-left:8px !important;background:rgba(253,203,110,0.08) !important;border-radius:0 4px 4px 0 !important}
+.section-title,.card-title,.topic-title,[class*="title"],[class*="heading"],.card h3,.card h4,summary,.panel-title,.accordion-header{font-weight:700 !important}
+pre,.code-block,.code-example,.code-container,[class*="code-block"],[class*="codeblock"]{background:#1e1e2e !important;color:#cdd6f4 !important;border-radius:10px !important;padding:16px 18px !important;overflow-x:auto !important;font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace !important;font-size:0.82rem !important;border-left:4px solid #6C5CE7 !important;line-height:1.7 !important;white-space:pre-wrap !important;word-wrap:break-word !important;margin:12px 0 !important;box-shadow:0 2px 12px rgba(0,0,0,0.15) !important;position:relative !important}
+pre code,.code-block code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border:none !important;font-size:inherit !important;border-left:none !important}
+code{background:rgba(108,92,231,0.12) !important;color:#6C5CE7 !important;padding:2px 6px !important;border-radius:4px !important;font-family:'JetBrains Mono','Fira Code',monospace !important;font-size:0.85em !important}
+pre code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border-left:none !important}
+.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{display:flex !important;flex-wrap:wrap !important;gap:8px !important;padding:8px !important}
+.tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"],.tab-button{padding:8px 18px !important;border-radius:20px !important;border:1.5px solid #ddd !important;background:#f8f9fa !important;color:#2d3436 !important;font-weight:600 !important;font-size:0.85rem !important;cursor:pointer !important;transition:all 0.25s ease !important;min-width:fit-content !important;text-align:center !important}
+.tab-btn:hover,.session-tab:hover,[class*="tab-btn"]:hover,button[class*="tab"]:hover{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;transform:translateY(-1px) !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.tab-btn.active,.session-tab.active,[class*="tab-btn"].active,button[class*="tab"].active{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
+.card,.section,.panel,[class*="card"]{border-radius:12px !important;box-shadow:0 2px 8px rgba(0,0,0,0.06) !important;border-top:3px solid #6C5CE7 !important;margin-bottom:16px !important;padding:16px !important}
+details{border-left:3px solid #00b894 !important;border-radius:8px !important;margin-bottom:12px !important;padding:8px 12px !important;box-shadow:0 1px 4px rgba(0,0,0,0.05) !important}
+details summary{font-weight:700 !important;cursor:pointer !important;padding:10px 12px !important;background:rgba(0,184,148,0.06) !important;border-radius:8px !important;transition:background 0.2s !important}
+details summary:hover{background:rgba(0,184,148,0.12) !important}
+table{width:100% !important;border-collapse:collapse !important;margin:12px 0 !important;border-radius:8px !important;overflow:hidden !important;box-shadow:0 1px 6px rgba(0,0,0,0.08) !important}
+thead th,table thead td{background:#6C5CE7 !important;color:#fff !important;font-weight:700 !important;padding:10px 14px !important;text-align:left !important}
+tbody td{padding:10px 14px !important;border-bottom:1px solid #eee !important}
+tbody tr:hover{background:rgba(108,92,231,0.04) !important}
+.toggle-btn,.accordion-btn,[class*="toggle"],[class*="collapsible"]{cursor:pointer !important;transition:all 0.3s ease !important}
+.toggle-content,.accordion-content,.collapsible-content{overflow:hidden !important;transition:max-height 0.4s ease,opacity 0.3s ease !important}
+@media(max-width:768px){
+  .tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{flex-wrap:wrap !important;justify-content:center !important}
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{font-size:0.78rem !important;padding:6px 14px !important;flex:1 1 auto !important;min-width:80px !important}
+  pre,.code-block,[class*="code-block"]{font-size:0.75rem !important;padding:12px !important}
+  h1{font-size:1.4rem !important}h2{font-size:1.2rem !important}h3{font-size:1.05rem !important}
+  .card,.section,.panel,[class*="card"]{padding:12px !important}
+  body{padding:8px !important}
+}
+@media(max-width:480px){
+  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{flex:1 1 100% !important;font-size:0.75rem !important;padding:8px 10px !important;border-radius:8px !important}
+  pre,.code-block{font-size:0.7rem !important;padding:10px !important;overflow-x:scroll !important}
+  h1{font-size:1.2rem !important}h2{font-size:1.05rem !important}h3{font-size:0.95rem !important}
+  table{font-size:0.8rem !important;display:block !important;overflow-x:auto !important}
+  body{padding:4px !important}
+}
+pre::-webkit-scrollbar{height:6px}pre::-webkit-scrollbar-track{background:#2a2a3e;border-radius:3px}pre::-webkit-scrollbar-thumb{background:#6C5CE7;border-radius:3px}
+/* ===== END ENHANCEMENT LAYER v2.0 ===== */
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:transparent;color:var(--color-text-primary)}
+.hub{max-width:680px;padding:0}
+.phase-bar{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.phase-pill{font-size:11px;padding:3px 10px;border-radius:99px;border:0.5px solid;font-weight:500;cursor:default}
+.p1{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.p2{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.p3{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.p4{background:#FAECE7;color:#993C1D;border-color:#F0997B}
+.tab-scroll{display:flex;gap:0;overflow-x:auto;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:20px;scrollbar-width:none}
+.tab-scroll::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:8px 13px;font-size:12px;font-weight:500;color:var(--color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s}
+.tab-btn:hover{color:var(--color-text-primary)}
+.tab-btn.active{color:var(--color-text-primary);border-bottom:2px solid #534AB7}
+.session{display:none}
+.session.active{display:block}
+.session-header{margin-bottom:16px}
+.badge-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.phase-tag{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500}
+.session-num{font-size:11px;color:var(--color-text-tertiary)}
+h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.tagline{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.section-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 10px;padding-bottom:6px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:4px}
+.ov-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.ov-label{font-size:11px;color:var(--color-text-tertiary);font-weight:500;margin-bottom:3px}
+.ov-val{font-size:13px;color:var(--color-text-primary);line-height:1.4}
+.oneliner-list{display:flex;flex-direction:column;gap:6px}
+.oneliner{background:var(--color-background-secondary);border-left:2px solid #534AB7;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:8px 12px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.concept-block{margin-bottom:14px}
+.concept-block h4{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.concept-block p{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+.code-tabs{margin-bottom:12px}
+.code-tab-bar{display:flex;gap:0;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:0;overflow-x:auto;scrollbar-width:none}
+.code-tab-bar::-webkit-scrollbar{display:none}
+.ct-btn{flex-shrink:0;padding:5px 11px;font-size:11px;font-weight:500;color:var(--color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.ct-btn.active{color:#534AB7;border-bottom:2px solid #534AB7}
+.code-panel{display:none}
+.code-panel.active{display:block}
+pre{background:#1e1e2e;border-radius:0 0 var(--border-radius-md) var(--border-radius-md);padding:14px 16px;overflow-x:auto;font-size:11.5px;line-height:1.6;font-family:var(--font-mono);color:#cdd6f4;border:0.5px solid var(--color-border-tertiary);border-top:none}
+.code-label{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-bottom:none;border-radius:var(--border-radius-md) var(--border-radius-md) 0 0;padding:6px 12px;font-size:11px;font-weight:500;color:var(--color-text-secondary)}
+.kw{color:#cba6f7}.fn{color:#89dceb}.str{color:#a6e3a1}.cm{color:#6c7086;font-style:italic}.num{color:#fab387}.type{color:#f9e2af}.op{color:#89dceb}.var{color:#cdd6f4}
+.bp-list{display:flex;flex-direction:column;gap:5px}
+.bp-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.bp-item:before{content:"✓";color:#1D9E75;font-weight:700;flex-shrink:0;margin-top:1px}
+.qa-list{display:flex;flex-direction:column;gap:10px}
+.qa-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.qa-q{padding:9px 12px;background:var(--color-background-secondary);font-size:13px;font-weight:500;color:var(--color-text-primary);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.qa-q .chevron{transition:transform .2s;font-size:12px;color:var(--color-text-tertiary)}
+.qa-a{display:none;padding:10px 12px;font-size:13px;color:var(--color-text-secondary);line-height:1.6;border-top:0.5px solid var(--color-border-tertiary)}
+.qa-a.open{display:block}
+.diag{margin:12px 0;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);line-height:1.7;border:0.5px solid var(--color-border-tertiary)}
+.diag .box{color:var(--color-text-primary);font-weight:500}
+.prog-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.prog-label{font-size:11px;color:var(--color-text-tertiary)}
+.prog-track{flex:1;height:4px;background:var(--color-background-secondary);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#534AB7,#1D9E75);border-radius:99px;transition:width .3s}
+.nav-row{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+.nav-btn{padding:6px 14px;font-size:12px;font-weight:500;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);cursor:pointer}
+.nav-btn:hover{background:var(--color-background-secondary)}
+.nav-btn.primary{background:#534AB7;color:#fff;border-color:#534AB7}
+.nav-btn.primary:hover{background:#3C3489}
+</style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+  <div class="hub">
+<h2 style="sr-only">Playwright TypeScript Learning Hub: Part 1</h2>
+
+<div class="phase-bar">
+  <span class="phase-pill p1">Phase 1: Fundamentals (S1–S3)</span>
+  <span class="phase-pill p2">Phase 2: Intermediate (S4–S6)</span>
+  <span class="phase-pill p3">Phase 3: Advanced (S7–S8)</span>
+  <span class="phase-pill p4">Phase 4: Frameworks (S9–S10)</span>
+</div>
+
+<div class="prog-bar">
+  <span class="prog-label">Progress</span>
+  <div class="prog-track"><div class="prog-fill" id="prog" style="width:10%"></div></div>
+  <span class="prog-label" id="prog-text">1 / 10</span>
+</div>
+
+<div class="tab-scroll" id="tabbar">
+  <button class="tab-btn active" onclick="goTo(0)">S1 Intro</button>
+  <button class="tab-btn" onclick="goTo(1)">S2 Locators</button>
+  <button class="tab-btn" onclick="goTo(2)">S3 Assertions</button>
+  <button class="tab-btn" onclick="goTo(3)">S4 Hooks</button>
+  <button class="tab-btn" onclick="goTo(4)">S5 Parallel</button>
+  <button class="tab-btn" onclick="goTo(5)">S6 Workers</button>
+  <button class="tab-btn" onclick="goTo(6)">S7 POM</button>
+  <button class="tab-btn" onclick="goTo(7)">S8 Advanced POM</button>
+  <button class="tab-btn" onclick="goTo(8)">S9 CI/CD</button>
+  <button class="tab-btn" onclick="goTo(9)">S10 Pro Tips</button>
+</div>
+
+<!-- ═══════════════ SESSION 1 ═══════════════ -->
+<div class="session active" id="s0">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p1">Fundamentals</span><span class="session-num">Session 1 of 10</span></div>
+    <h2>Introduction to Playwright + TypeScript</h2>
+    <p class="tagline">Set up your automation environment and write your very first test from scratch.</p>
+  </div>
+
+  <div class="section-title">Overview — What / Why / When / Where / How</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">What</div><div class="ov-val">Playwright is a Node.js library by Microsoft for end-to-end browser automation — Chromium, Firefox, WebKit.</div></div>
+    <div class="ov-card"><div class="ov-label">Why</div><div class="ov-val">Faster than Selenium, auto-waits built-in, supports multiple browsers in one run, works headless or headed.</div></div>
+    <div class="ov-card"><div class="ov-label">When</div><div class="ov-val">Use for UI regression, smoke tests, E2E testing of web apps before every release or PR merge.</div></div>
+    <div class="ov-card"><div class="ov-label">Where</div><div class="ov-val">Runs locally, in Docker, GitHub Actions, Azure Pipelines — any Node.js environment.</div></div>
+    <div class="ov-card"><div class="ov-label">How</div><div class="ov-val">npm init → install Playwright → write test() blocks → run with npx playwright test.</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"Playwright is a Microsoft-maintained E2E testing framework that supports Chromium, Firefox, and WebKit out of the box."</div>
+    <div class="oneliner">"Unlike Selenium, Playwright auto-waits for elements to be actionable before interacting — no Thread.sleep() needed."</div>
+    <div class="oneliner">"TypeScript gives us compile-time type checking on our test code, catching errors before we even run the tests."</div>
+    <div class="oneliner">"Playwright runs tests in true browser contexts, not simulated DOM environments like jsdom used by Jest."</div>
+    <div class="oneliner">"The playwright.config.ts file is the single source of truth for browser targets, base URL, retries, and timeouts."</div>
+  </div>
+
+  <div class="section-title">Architecture Diagram</div>
+  <div class="diag">
+<span class="box">Your Test Code (.spec.ts)</span>
+       ↓ calls
+<span class="box">Playwright Test Runner</span>  ←── playwright.config.ts
+       ↓ launches
+<span class="box">Browser (Chromium / Firefox / WebKit)</span>
+       ↓ opens
+<span class="box">Browser Context</span>  (isolated session — cookies, storage)
+       ↓ creates
+<span class="box">Page</span>  (tab — has URL, DOM, network)
+       ↓ provides
+<span class="box">Locator API</span>  →  <span class="box">Actions</span>  →  <span class="box">Assertions</span>
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s0')">1. Install & Config</button>
+      <button class="ct-btn" onclick="switchCode(this,'s0')">2. First Test</button>
+      <button class="ct-btn" onclick="switchCode(this,'s0')">3. Config File</button>
+      <button class="ct-btn" onclick="switchCode(this,'s0')">4. Multi-Browser</button>
+      <button class="ct-btn" onclick="switchCode(this,'s0')">5. Screenshot</button>
+    </div>
+    <div class="code-panel active" data-s="s0">
+      <div class="code-label">Terminal — Install Playwright</div>
+      <pre><code class="language-typescript"># Step 1: Create a new project folder and initialise npm
+mkdir my-pw-tests && cd my-pw-tests
+npm init -y
+
+# Step 2: Install Playwright with TypeScript support
+# --yes accepts all defaults: chromium + firefox + webkit browsers
+npm init playwright@latest
+
+# Step 3: Run the sample test Playwright generated for you
+npx playwright test
+
+# Step 4: Open the HTML test report in browser
+npx playwright show-report</code></pre>
+    </div>
+    <div class="code-panel" data-s="s0">
+      <div class="code-label">tests/first.spec.ts — Your First Test</div>
+      <pre><code class="language-typescript">// 'test' and 'expect' are Playwright's core imports
+import { test, expect } from '@playwright/test';
+
+// test() defines a single test case
+// First arg: test name (shows in report)
+// Second arg: async callback receives { page } — the browser tab object
+test('homepage has correct title', async ({ page }) => {
+
+  // page.goto() navigates the browser to a URL
+  // await = wait for full navigation before next line
+  await page.goto('https://playwright.dev');
+
+  // expect() + toHaveTitle() asserts the page title matches
+  // Playwright auto-retries this assertion for up to 5 seconds
+  await expect(page).toHaveTitle(/Playwright/);
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s0">
+      <div class="code-label">playwright.config.ts — Central Configuration</div>
+      <pre><code class="language-typescript">import { defineConfig, devices } from '@playwright/test';
+
+// defineConfig gives TypeScript auto-complete on config options
+export default defineConfig({
+
+  // testDir: where Playwright looks for .spec.ts files
+  testDir: './tests',
+
+  // fullyParallel: run ALL tests at the same time
+  fullyParallel: true,
+
+  // retries: auto-retry failing tests in CI (not locally)
+  retries: process.env.CI ? 2 : 0,
+
+  // reporter: 'html' creates a rich clickable report
+  reporter: 'html',
+
+  // use: settings shared across ALL projects
+  use: {
+    // baseURL lets you write page.goto('/login') instead of full URL
+    baseURL: 'https://myapp.com',
+    // trace: record a full trace on first retry for debugging
+    trace: 'on-first-retry',
+  },
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s0">
+      <div class="code-label">playwright.config.ts — Multi-Browser Projects</div>
+      <pre><code class="language-typescript">import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  projects: [
+    // Each project = one browser target
+    // Playwright runs ALL your tests on EACH project
+    {
+      name: 'chromium',
+      // devices['Desktop Chrome'] sets viewport, userAgent automatically
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'mobile-chrome',
+      // Emulates a Pixel 5 screen size and touch events
+      use: { ...devices['Pixel 5'] },
+    },
+  ],
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s0">
+      <div class="code-label">tests/screenshot.spec.ts — Capture & Visual Debug</div>
+      <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('capture screenshot for debugging', async ({ page }) => {
+  await page.goto('https://playwright.dev');
+
+  // page.screenshot() saves a PNG of the current viewport
+  // path: where to save it (relative to project root)
+  await page.screenshot({ path: 'screenshots/homepage.png' });
+
+  // fullPage: true captures the ENTIRE scrollable page, not just visible area
+  await page.screenshot({
+    path: 'screenshots/full-page.png',
+    fullPage: true,
+  });
+
+  // toHaveScreenshot() does VISUAL COMPARISON — fails if pixels differ
+  // Saves a baseline image on first run, compares on subsequent runs
+  await expect(page).toHaveScreenshot('homepage-baseline.png');
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices Checklist</div>
+  <div class="bp-list">
+    <div class="bp-item">Always use <code>async/await</code> — never mix with callbacks or .then() chains in tests</div>
+    <div class="bp-item">Set <code>baseURL</code> in config so tests aren't coupled to a hardcoded domain</div>
+    <div class="bp-item">Enable <code>trace: 'on-first-retry'</code> in config to get click-by-click debug replays in CI</div>
+    <div class="bp-item">Name tests clearly: describe WHAT is tested, not HOW (e.g. "user can log in" not "click login button")</div>
+    <div class="bp-item">Commit <code>playwright.config.ts</code> to version control — it IS your test strategy documented in code</div>
+  </div>
+
+  <div class="section-title">Interview Q&A — SDET Style</div>
+  <div class="qa-list" id="qa-s0"></div>
+</div>
+
+<!-- ═══════════════ SESSION 2 ═══════════════ -->
+<div class="session" id="s1">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p1">Fundamentals</span><span class="session-num">Session 2 of 10</span></div>
+    <h2>Locators — Finding Elements Like a Pro</h2>
+    <p class="tagline">Master Playwright's smart locator API — the foundation of every reliable test.</p>
+  </div>
+
+  <div class="section-title">Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">What</div><div class="ov-val">Locators are lazy, auto-retrying handles to DOM elements. They find and interact with elements on your page.</div></div>
+    <div class="ov-card"><div class="ov-label">Why</div><div class="ov-val">Playwright auto-waits until element is visible, enabled, stable — eliminating flaky timing issues.</div></div>
+    <div class="ov-card"><div class="ov-label">When</div><div class="ov-val">Every time you need to click, type, read, or assert anything on the page.</div></div>
+    <div class="ov-card"><div class="ov-label">Where</div><div class="ov-val">In your test files and Page Object Model classes — anywhere you reference a UI element.</div></div>
+    <div class="ov-card"><div class="ov-label">How</div><div class="ov-val">page.getByRole(), getByText(), getByLabel(), getByTestId() — prefer semantic over CSS/XPath.</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"Playwright locators are lazy — they don't hit the DOM until you call an action, so stale element exceptions are impossible."</div>
+    <div class="oneliner">"getByRole() is my preferred locator because it mirrors how assistive technologies see the page — robust and accessible."</div>
+    <div class="oneliner">"I avoid CSS selectors with class names in tests because class names change during refactoring; data-testid attributes are stable."</div>
+    <div class="oneliner">"Playwright's auto-wait polls the DOM up to the timeout limit — no explicit waits needed for standard interactions."</div>
+    <div class="oneliner">"Chaining locators like page.getByRole('list').getByRole('listitem') scopes the search to a subtree, preventing wrong-element matches."</div>
+  </div>
+
+  <div class="section-title">Locator Priority (Best → Avoid)</div>
+  <div class="diag">
+<span class="box">🏆 1. getByRole()        </span>  — semantic, accessible, most resilient
+<span class="box">✅  2. getByLabel()       </span>  — form inputs tied to their label text
+<span class="box">✅  3. getByPlaceholder() </span>  — inputs without visible label
+<span class="box">✅  4. getByText()        </span>  — buttons, links, headings by visible text
+<span class="box">✅  5. getByTestId()      </span>  — data-testid attr, team-agreed standard
+<span class="box">⚠️  6. locator('css')     </span>  — OK for stable selectors, fragile otherwise
+<span class="box">❌  7. locator('xpath')   </span>  — brittle, hard to read, last resort only
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s1')">1. getByRole</button>
+      <button class="ct-btn" onclick="switchCode(this,'s1')">2. getByLabel</button>
+      <button class="ct-btn" onclick="switchCode(this,'s1')">3. getByTestId</button>
+      <button class="ct-btn" onclick="switchCode(this,'s1')">4. Chaining</button>
+      <button class="ct-btn" onclick="switchCode(this,'s1')">5. Filter</button>
+    </div>
+    <div class="code-panel active" data-s="s1">
+      <div class="code-label">getByRole — Semantic Element Targeting</div>
+      <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('login using semantic locators', async ({ page }) => {
+  await page.goto('/login');
+
+  // getByRole('button') finds &lt;button&gt; elements
+  // { name: 'Sign in' } filters by accessible name (text content)
+  // This matches: &lt;button&gt;Sign in&lt;/button&gt;
+  await page.getByRole('button', { name: 'Sign in' }).click();
+
+  // getByRole('heading') finds &lt;h1&gt;–&lt;h6&gt;
+  // { level: 1 } narrows to only &lt;h1&gt;
+  await expect(
+    page.getByRole('heading', { level: 1 })
+  ).toHaveText('Welcome back');
+
+  // getByRole('link') targets &lt;a href&gt; tags
+  await page.getByRole('link', { name: 'Forgot password?' }).click();
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s1">
+      <div class="code-label">getByLabel — Form Inputs</div>
+      <pre><code class="language-typescript">test('fill login form by label', async ({ page }) => {
+  await page.goto('/login');
+
+  // getByLabel('Email') finds the INPUT associated with
+  // &lt;label&gt;Email&lt;/label&gt; via for="..." or wrapping
+  // fill() clears field then types the value
+  await page.getByLabel('Email').fill('user@example.com');
+
+  // For password fields — same pattern
+  await page.getByLabel('Password').fill('Secret123');
+
+  // getByRole for submit button — exact:true prevents partial matches
+  await page.getByRole('button', { name: 'Login', exact: true }).click();
+
+  // Assert we're redirected to dashboard
+  await expect(page).toHaveURL(/dashboard/);
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s1">
+      <div class="code-label">getByTestId — Stable Custom Attribute</div>
+      <pre><code class="language-typescript">// In your HTML: &lt;button data-testid="submit-btn"&gt;Submit&lt;/button&gt;
+// In playwright.config.ts: use: { testIdAttribute: 'data-testid' }
+
+test('use data-testid for stable selectors', async ({ page }) => {
+  await page.goto('/checkout');
+
+  // getByTestId() reads the data-testid attribute
+  // Unaffected by styling changes, text changes, or restructuring
+  await page.getByTestId('submit-btn').click();
+
+  // Checking a data-testid element's visibility
+  await expect(
+    page.getByTestId('success-banner')
+  ).toBeVisible();
+
+  // Getting text content from a testid element
+  const msg = await page.getByTestId('success-banner').textContent();
+  console.log(msg); // "Order placed successfully!"
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s1">
+      <div class="code-label">Chaining Locators — Scope to a Section</div>
+      <pre><code class="language-typescript">test('interact inside a specific card', async ({ page }) => {
+  await page.goto('/products');
+
+  // Problem: page may have MANY "Add to Cart" buttons
+  // Solution: first scope to the right product card
+
+  // Step 1: Find the container element (the product card)
+  const productCard = page
+    .getByTestId('product-card')
+    .filter({ hasText: 'Wireless Headphones' });
+
+  // Step 2: Search INSIDE that card for the button
+  // This won't accidentally click "Add to Cart" on another product
+  await productCard
+    .getByRole('button', { name: 'Add to Cart' })
+    .click();
+
+  // Step 3: Assert cart count updated
+  await expect(page.getByTestId('cart-count')).toHaveText('1');
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s1">
+      <div class="code-label">filter() — Narrow Down Multiple Matches</div>
+      <pre><code class="language-typescript">test('use filter to find the right list item', async ({ page }) => {
+  await page.goto('/todo');
+
+  // All todo items match getByRole('listitem')
+  // filter({ hasText: ... }) keeps only the one containing that text
+  const todoItem = page
+    .getByRole('listitem')
+    .filter({ hasText: 'Buy groceries' });
+
+  // Now interact only with that specific todo
+  await todoItem.getByRole('checkbox').check();
+
+  // hasNot: filters OUT items containing the text
+  const activeTodos = page
+    .getByRole('listitem')
+    .filter({ hasNotText: 'completed' });
+
+  // count() returns the number of matched elements
+  await expect(activeTodos).toHaveCount(3);
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices</div>
+  <div class="bp-list">
+    <div class="bp-item">Follow locator priority — getByRole > getByLabel > getByTestId > CSS. Never start with XPath.</div>
+    <div class="bp-item">Add <code>data-testid</code> attributes to key UI elements as part of the developer–QA contract.</div>
+    <div class="bp-item">Always chain locators to scope searches when the same element pattern appears multiple times on a page.</div>
+    <div class="bp-item">Use <code>exact: true</code> when partial text matching could accidentally match the wrong element.</div>
+    <div class="bp-item">Avoid <code>nth()</code> positional selectors — they break when the page order changes.</div>
+  </div>
+
+  <div class="section-title">Interview Q&A</div>
+  <div class="qa-list" id="qa-s1"></div>
+</div>
+
+<!-- ═══════════════ SESSION 3 ═══════════════ -->
+<div class="session" id="s2">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p1">Fundamentals</span><span class="session-num">Session 3 of 10</span></div>
+    <h2>Assertions — Verifying What Matters</h2>
+    <p class="tagline">Write precise, auto-retrying assertions that prove your app behaves correctly.</p>
+  </div>
+
+  <div class="section-title">Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">What</div><div class="ov-val">Assertions validate expected vs actual state using expect(). Playwright auto-retries async assertions until they pass or timeout.</div></div>
+    <div class="ov-card"><div class="ov-label">Why</div><div class="ov-val">Without assertions, tests can pass even when the app is broken. Assertions are your proof the feature works.</div></div>
+    <div class="ov-card"><div class="ov-label">When</div><div class="ov-val">After every meaningful action — navigate, click, submit, API call. Every test should end with at least one assertion.</div></div>
+    <div class="ov-card"><div class="ov-label">Where</div><div class="ov-val">Use web-first assertions (expect(locator)) for DOM checks; non-retrying assertions (expect(value)) for plain JS values.</div></div>
+    <div class="ov-card"><div class="ov-label">How</div><div class="ov-val">await expect(page).toHaveTitle() / expect(locator).toBeVisible() / expect(locator).toHaveText()</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"Playwright's web-first assertions auto-retry for the full timeout period — I never need to add explicit sleep() calls."</div>
+    <div class="oneliner">"I always use toHaveURL() over checking page.url() manually because toHaveURL() waits for navigation to complete."</div>
+    <div class="oneliner">"soft assertions with expect.soft() let the test continue after a failure so you can see ALL broken things in one run."</div>
+    <div class="oneliner">"toHaveText() checks the visible text — toHaveValue() checks the input value — mixing them up is a common beginner mistake."</div>
+    <div class="oneliner">"I wrap related assertions in a test.step() block so the HTML report shows exactly which logical step failed."</div>
+  </div>
+
+  <div class="section-title">Assertion Types Map</div>
+  <div class="diag">
+<span class="box">Page Assertions</span>         → expect(page).toHaveTitle() / toHaveURL()
+<span class="box">Locator Assertions</span>      → expect(locator).toBeVisible() / toHaveText() / toBeEnabled()
+<span class="box">Input Assertions</span>        → expect(locator).toHaveValue() / toBeChecked()
+<span class="box">Count Assertions</span>        → expect(locator).toHaveCount(n)
+<span class="box">Attribute Assertions</span>    → expect(locator).toHaveAttribute('href', '/home')
+<span class="box">Soft Assertions</span>         → expect.soft(locator) — test continues after failure
+<span class="box">API/Value Assertions</span>    → expect(value).toBe() / toEqual() / toContain()  [NOT auto-retried]
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s2')">1. Page Asserts</button>
+      <button class="ct-btn" onclick="switchCode(this,'s2')">2. Visibility</button>
+      <button class="ct-btn" onclick="switchCode(this,'s2')">3. Text & Value</button>
+      <button class="ct-btn" onclick="switchCode(this,'s2')">4. Soft Assert</button>
+      <button class="ct-btn" onclick="switchCode(this,'s2')">5. test.step</button>
+    </div>
+    <div class="code-panel active" data-s="s2">
+      <div class="code-label">Page-Level Assertions</div>
+      <pre><code class="language-typescript">test('page level assertions', async ({ page }) => {
+  await page.goto('/');
+
+  // toHaveTitle: checks &lt;title&gt; tag — supports string or regex
+  await expect(page).toHaveTitle('My App — Home');
+  await expect(page).toHaveTitle(/My App/); // regex = partial match
+
+  await page.getByRole('link', { name: 'About' }).click();
+
+  // toHaveURL: waits for navigation then checks the URL
+  // Much safer than checking page.url() immediately
+  await expect(page).toHaveURL('/about');
+  await expect(page).toHaveURL(/about/);
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s2">
+      <div class="code-label">Visibility & State Assertions</div>
+      <pre><code class="language-typescript">test('element state assertions', async ({ page }) => {
+  await page.goto('/dashboard');
+
+  // toBeVisible: element exists AND is displayed (not hidden)
+  await expect(page.getByTestId('welcome-banner')).toBeVisible();
+
+  // toBeHidden: opposite of visible — display:none or not in DOM
+  await expect(page.getByTestId('loading-spinner')).toBeHidden();
+
+  // toBeEnabled: form element is NOT disabled
+  await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
+
+  // toBeDisabled: the submit button is disabled until form is valid
+  await expect(page.getByRole('button', { name: 'Submit' })).toBeDisabled();
+
+  // toBeChecked: checkbox or radio is selected
+  await expect(page.getByLabel('Remember me')).toBeChecked();
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s2">
+      <div class="code-label">Text, Value & Attribute Assertions</div>
+      <pre><code class="language-typescript">test('text and value assertions', async ({ page }) => {
+  await page.goto('/profile');
+
+  // toHaveText: checks VISIBLE text content of element
+  // Use for &lt;p&gt;, &lt;span&gt;, &lt;div&gt;, &lt;button&gt; display text
+  await expect(page.getByTestId('user-name'))
+    .toHaveText('Alice Johnson');
+
+  // toHaveValue: checks INPUT field value (not its label/placeholder)
+  // Use for &lt;input&gt;, &lt;textarea&gt;, &lt;select&gt;
+  await expect(page.getByLabel('Username'))
+    .toHaveValue('alice_j');
+
+  // toHaveAttribute: checks an HTML attribute's value
+  await expect(page.getByRole('link', { name: 'Profile' }))
+    .toHaveAttribute('href', '/profile');
+
+  // toContainText: partial text match — element can have more text
+  await expect(page.getByTestId('bio'))
+    .toContainText('Software Engineer');
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s2">
+      <div class="code-label">Soft Assertions — See All Failures At Once</div>
+      <pre><code class="language-typescript">test('soft assertions — collect all failures', async ({ page }) => {
+  await page.goto('/home');
+
+  // expect.soft() records failure but DOES NOT stop the test
+  // Great for checking multiple UI elements in one test
+  await expect.soft(page.getByTestId('logo')).toBeVisible();
+  await expect.soft(page.getByTestId('nav-menu')).toBeVisible();
+  await expect.soft(page.getByTestId('hero-banner')).toBeVisible();
+  await expect.soft(page.getByTestId('cta-button')).toHaveText('Get Started');
+
+  // After all soft assertions, Playwright reports ALL that failed
+  // Without soft: first failure stops test → you miss other problems
+  // With soft: ALL broken elements reported in ONE test run
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s2">
+      <div class="code-label">test.step — Grouped Assertions in Report</div>
+      <pre><code class="language-typescript">test('checkout flow with named steps', async ({ page }) => {
+
+  // test.step() groups actions+assertions into a named block
+  // The HTML report shows each step with pass/fail — very readable
+
+  await test.step('Navigate to cart', async () => {
+    await page.goto('/cart');
+    await expect(page).toHaveURL(/cart/);
+  });
+
+  await test.step('Verify cart items', async () => {
+    await expect(page.getByTestId('cart-item')).toHaveCount(2);
+    await expect(page.getByTestId('total-price')).toHaveText('$59.98');
+  });
+
+  await test.step('Proceed to checkout', async () => {
+    await page.getByRole('button', { name: 'Checkout' }).click();
+    await expect(page).toHaveURL(/checkout/);
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices</div>
+  <div class="bp-list">
+    <div class="bp-item">Always await assertions — skipping await causes tests to pass silently even when they should fail</div>
+    <div class="bp-item">Prefer web-first assertions (expect(locator)) over manually checking element attributes — they auto-retry</div>
+    <div class="bp-item">Use expect.soft() when validating entire page layouts — catch all broken elements in one run</div>
+    <div class="bp-item">Never assert things you already set yourself — asserting that fill('alice') sets value 'alice' adds no value</div>
+    <div class="bp-item">Use test.step() to give meaningful names to assertion groups — makes CI reports instantly readable</div>
+  </div>
+
+  <div class="section-title">Interview Q&A</div>
+  <div class="qa-list" id="qa-s2"></div>
+</div>
+
+<!-- ═══════════════ SESSION 4 ═══════════════ -->
+<div class="session" id="s3">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p2">Intermediate</span><span class="session-num">Session 4 of 10</span></div>
+    <h2>Hooks — beforeEach, afterEach, beforeAll, afterAll</h2>
+    <p class="tagline">Control test lifecycle to eliminate duplicate setup code and ensure clean test isolation.</p>
+  </div>
+
+  <div class="section-title">Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">What</div><div class="ov-val">Hooks are lifecycle functions that run automatically before/after each test or the entire test suite block.</div></div>
+    <div class="ov-card"><div class="ov-label">Why</div><div class="ov-val">DRY principle — write login/setup once, reuse across all tests. Hooks ensure every test starts in a clean, known state.</div></div>
+    <div class="ov-card"><div class="ov-label">When</div><div class="ov-val">beforeEach for per-test setup (navigate to URL, log in). afterEach for cleanup. beforeAll for one-time expensive setup (DB seed).</div></div>
+    <div class="ov-card"><div class="ov-label">Where</div><div class="ov-val">Inside test.describe() blocks to scope hooks to a group, or at file level to apply to all tests in that file.</div></div>
+    <div class="ov-card"><div class="ov-label">How</div><div class="ov-val">test.beforeEach(async ({ page }) => { ... }) — receives the same fixtures as tests.</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"beforeEach runs before every single test in its scope — perfect for navigating to a page or logging in."</div>
+    <div class="oneliner">"beforeAll runs only once before the entire describe block — I use it for database seeding or API token generation."</div>
+    <div class="oneliner">"afterEach is my cleanup hook — I reset state, delete test data, or take a failure screenshot there."</div>
+    <div class="oneliner">"Hooks in a nested describe() are scoped to that group only — they don't bleed into sibling describe blocks."</div>
+    <div class="oneliner">"If beforeAll is used with workers, be careful — it runs once per worker, not once globally across all workers."</div>
+  </div>
+
+  <div class="section-title">Hook Execution Order</div>
+  <div class="diag">
+<span class="box">describe('Suite')</span>
+  ├── <span class="box">beforeAll()</span>       ← runs ONCE before all tests in this block
+  │
+  ├── <span class="box">beforeEach()</span>      ← runs before EVERY test ──────────────┐
+  ├── <span class="box">test('Test 1')</span>    ← test runs                             │
+  ├── <span class="box">afterEach()</span>       ← runs after EVERY test  ←────────────┘
+  │
+  ├── <span class="box">beforeEach()</span>      ← again before Test 2
+  ├── <span class="box">test('Test 2')</span>
+  ├── <span class="box">afterEach()</span>
+  │
+  └── <span class="box">afterAll()</span>        ← runs ONCE after all tests in this block
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s3')">1. beforeEach</button>
+      <button class="ct-btn" onclick="switchCode(this,'s3')">2. afterEach</button>
+      <button class="ct-btn" onclick="switchCode(this,'s3')">3. beforeAll</button>
+      <button class="ct-btn" onclick="switchCode(this,'s3')">4. Nested</button>
+      <button class="ct-btn" onclick="switchCode(this,'s3')">5. Skip/Only</button>
+    </div>
+    <div class="code-panel active" data-s="s3">
+      <div class="code-label">beforeEach — Navigate Before Every Test</div>
+      <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+// test.describe() groups related tests AND their hooks
+test.describe('Dashboard tests', () => {
+
+  // beforeEach runs BEFORE every test() in this describe block
+  // page fixture here is the SAME page the test will receive
+  test.beforeEach(async ({ page }) => {
+    // Every test starts at /dashboard — no duplication!
+    await page.goto('/dashboard');
+    // Wait for content to load before test starts
+    await page.getByTestId('dashboard-title').waitFor();
+  });
+
+  test('shows user greeting', async ({ page }) => {
+    // page is already at /dashboard — beforeEach handled it
+    await expect(page.getByTestId('greeting')).toBeVisible();
+  });
+
+  test('shows stats widgets', async ({ page }) => {
+    // Also starts at /dashboard automatically
+    await expect(page.getByTestId('stats-widget')).toHaveCount(4);
+  });
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s3">
+      <div class="code-label">afterEach — Cleanup & Screenshot on Failure</div>
+      <pre><code class="language-typescript">test.describe('Form submission', () => {
+
+  test.afterEach(async ({ page }, testInfo) => {
+    // testInfo.status = 'passed' | 'failed' | 'skipped' | 'timedOut'
+    // testInfo.expectedStatus = what was expected
+
+    if (testInfo.status !== testInfo.expectedStatus) {
+      // Only take screenshot when test FAILS — save storage
+      const screenshot = await page.screenshot();
+
+      // testInfo.attach() adds screenshot TO the HTML report
+      // You can click it in the report to see exactly what failed
+      await testInfo.attach('failure-screenshot', {
+        body: screenshot,
+        contentType: 'image/png',
+      });
+    }
+  });
+
+  test('submits contact form', async ({ page }) => {
+    await page.goto('/contact');
+    await page.getByLabel('Name').fill('Test User');
+    await page.getByRole('button', { name: 'Send' }).click();
+    await expect(page.getByTestId('success-msg')).toBeVisible();
+  });
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s3">
+      <div class="code-label">beforeAll / afterAll — One-Time Setup</div>
+      <pre><code class="language-typescript">import { test, expect, request } from '@playwright/test';
+
+// Shared variable: created in beforeAll, used in all tests
+let authToken: string;
+
+test.describe('API-authenticated tests', () => {
+
+  // beforeAll: runs ONCE for the entire describe block
+  // Use for expensive operations: DB seed, API auth, browser setup
+  test.beforeAll(async () => {
+    const ctx = await request.newContext();
+    const res = await ctx.post('/api/auth/token', {
+      data: { user: 'admin', pass: 'secret' }
+    });
+    const body = await res.json();
+    authToken = body.token; // Store token for all tests
+  });
+
+  // afterAll: clean up DB records, revoke tokens, etc.
+  test.afterAll(async () => {
+    console.log('Revoking token...', authToken);
+    // cleanup API call here
+  });
+
+  test('uses shared auth token', async ({ page }) => {
+    await page.setExtraHTTPHeaders({ 'Authorization': `Bearer ${authToken}` });
+    await page.goto('/admin');
+  });
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s3">
+      <div class="code-label">Nested describe — Scoped Hook Execution</div>
+      <pre><code class="language-typescript">test.describe('User profile', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/profile'); // Runs before ALL tests below
+  });
+
+  test('shows profile picture', async ({ page }) => {
+    await expect(page.getByTestId('avatar')).toBeVisible();
+  });
+
+  // Nested describe: gets the OUTER beforeEach PLUS its own
+  test.describe('Edit mode', () => {
+
+    // This runs AFTER the outer beforeEach
+    // Order: outer beforeEach → inner beforeEach → test
+    test.beforeEach(async ({ page }) => {
+      await page.getByRole('button', { name: 'Edit' }).click();
+    });
+
+    test('shows edit form', async ({ page }) => {
+      // page is at /profile AND edit mode is open
+      await expect(page.getByLabel('Display name')).toBeVisible();
+    });
+  });
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s3">
+      <div class="code-label">test.skip / test.only — Control Execution</div>
+      <pre><code class="language-typescript">test.describe('Payment tests', () => {
+
+  // test.skip(): temporarily skip a test (shown in report as skipped)
+  // Don't delete tests — skip them with a reason
+  test.skip('PayPal checkout', async ({ page }) => {
+    // Skipped: PayPal integration not ready in staging
+  });
+
+  // test.only(): run ONLY this test in this file (useful for debugging)
+  // WARNING: never commit .only() — it blocks all other tests!
+  test.only('credit card checkout', async ({ page }) => {
+    await page.goto('/checkout');
+    // ... test code
+  });
+
+  // test.fixme(): mark as broken — runs but is expected to fail
+  test.fixme('Apple Pay checkout', async ({ page }) => {
+    // Known bug: PW-4521 — Apple Pay button not rendering
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices</div>
+  <div class="bp-list">
+    <div class="bp-item">Use beforeEach over beforeAll when possible — each test gets a fresh state, preventing test pollution</div>
+    <div class="bp-item">Never share mutable state (like an array of created items) between tests — each test must be independent</div>
+    <div class="bp-item">Add failure screenshots in afterEach with testInfo.attach() — critical for debugging CI failures</div>
+    <div class="bp-item">Never commit test.only() — add a lint rule or pre-commit hook to catch it automatically</div>
+    <div class="bp-item">Use test.skip() with a comment explaining WHY — "skipped because X" is better than silently deleted</div>
+  </div>
+
+  <div class="section-title">Interview Q&A</div>
+  <div class="qa-list" id="qa-s3"></div>
+</div>
+
+<!-- ═══════════════ SESSION 5 ═══════════════ -->
+<div class="session" id="s4">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p2">Intermediate</span><span class="session-num">Session 5 of 10</span></div>
+    <h2>Parallel Testing — Run Everything at Once</h2>
+    <p class="tagline">Cut your test suite time from 30 minutes to 3 minutes using Playwright's parallel execution engine.</p>
+  </div>
+
+  <div class="section-title">Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">What</div><div class="ov-val">Parallel testing runs multiple test files simultaneously — each in its own isolated browser context.</div></div>
+    <div class="ov-card"><div class="ov-label">Why</div><div class="ov-val">Without parallelism, 100 tests at 3s each = 5 minutes. With 4 workers = ~75 seconds. Speed directly impacts developer feedback loop.</div></div>
+    <div class="ov-card"><div class="ov-label">When</div><div class="ov-val">Always enable in CI. Enable locally once your suite grows beyond ~20 tests.</div></div>
+    <div class="ov:card"><div class="ov-label">Where</div><div class="ov-val">Configured in playwright.config.ts via workers and fullyParallel options.</div></div>
+    <div class="ov-card"><div class="ov-label">How</div><div class="ov-val">Set fullyParallel: true for tests-within-files to run parallel too. Set workers: N to control CPU usage.</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"By default Playwright runs test FILES in parallel but tests WITHIN a file serially — fullyParallel:true changes that."</div>
+    <div class="oneliner">"I set workers: '50%' so Playwright uses half the CPU cores — leaving headroom for the app under test."</div>
+    <div class="oneliner">"Tests must be fully independent for parallelism to work — shared global state is the root cause of parallel test flakiness."</div>
+    <div class="oneliner">"test.describe.serial() forces a group of tests to run sequentially inside a parallel suite — useful for ordered workflows."</div>
+    <div class="oneliner">"In CI I use workers: process.env.CI ? 4 : 2 to cap parallelism based on available runner resources."</div>
+  </div>
+
+  <div class="section-title">Parallel Execution Model</div>
+  <div class="diag">
+<span class="box">Test Suite (10 files)</span>
+       ↓  Playwright splits work across workers
+┌──────────────────────────────────────────────────────┐
+│  <span class="box">Worker 1</span>          │  <span class="box">Worker 2</span>          │  <span class="box">Worker 3</span>    │
+│  file1.spec.ts    │  file3.spec.ts    │  file5.spec.ts │
+│  file2.spec.ts    │  file4.spec.ts    │  file6.spec.ts │
+│  Browser Context  │  Browser Context  │  Browser Ctx   │
+│  [Isolated]       │  [Isolated]       │  [Isolated]    │
+└──────────────────────────────────────────────────────┘
+       ↓  All workers finish
+<span class="box">Aggregate Results</span>  →  HTML Report
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s4')">1. Enable Parallel</button>
+      <button class="ct-btn" onclick="switchCode(this,'s4')">2. Workers Config</button>
+      <button class="ct-btn" onclick="switchCode(this,'s4')">3. Serial Group</button>
+      <button class="ct-btn" onclick="switchCode(this,'s4')">4. Sharding (CI)</button>
+      <button class="ct-btn" onclick="switchCode(this,'s4')">5. Independent Tests</button>
+    </div>
+    <div class="code-panel active" data-s="s4">
+      <div class="code-label">playwright.config.ts — Enable Full Parallelism</div>
+      <pre><code class="language-typescript">import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+
+  // fullyParallel: true  → tests WITHIN a file also run in parallel
+  // fullyParallel: false → tests within a file run one-by-one (DEFAULT)
+  // Files always run in parallel regardless of this setting
+  fullyParallel: true,
+
+  // workers: number of parallel browser instances
+  // '50%' = use half of available CPU cores (good for CI)
+  // undefined = Playwright chooses (half of logical CPUs)
+  workers: process.env.CI ? 4 : undefined,
+
+  // retries: retry flaky tests automatically in CI
+  retries: process.env.CI ? 2 : 0,
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s4">
+      <div class="code-label">Workers Configuration — CPU Control</div>
+      <pre><code class="language-typescript">export default defineConfig({
+
+  // OPTION 1: Fixed number — predictable, good for known CI machines
+  workers: 4,
+
+  // OPTION 2: Percentage of CPU cores
+  // On 8-core machine: '50%' = 4 workers
+  workers: '50%',
+
+  // OPTION 3: Environment-aware (BEST practice for teams)
+  // CI has dedicated runners, local devs have other apps running
+  workers: process.env.CI ? 4 : 2,
+
+  // OPTION 4: Single worker = sequential (like old Selenium)
+  // Use only for debugging weird parallel issues
+  // workers: 1,
+
+  // timeout: max time per test (ms) — needed when parallelism
+  // can cause resource contention on slow machines
+  timeout: 30000, // 30 seconds per test
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s4">
+      <div class="code-label">test.describe.serial — Force Sequential Order</div>
+      <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+// test.describe.serial() runs these tests ONE AT A TIME
+// in ORDER, even when fullyParallel: true is set globally
+// Use for: user registration → login → profile → logout flows
+test.describe.serial('user onboarding flow', () => {
+
+  // Test 1: MUST run first
+  test('1. register new user', async ({ page }) => {
+    await page.goto('/register');
+    // fill form and submit...
+    await expect(page).toHaveURL(/verify-email/);
+  });
+
+  // Test 2: runs AFTER Test 1 completes
+  test('2. verify email and login', async ({ page }) => {
+    await page.goto('/login');
+    // login with the just-registered user...
+    await expect(page).toHaveURL(/dashboard/);
+  });
+
+  // If Test 1 FAILS, Tests 2 and 3 are automatically SKIPPED
+  test('3. complete profile setup', async ({ page }) => {
+    await page.goto('/profile/setup');
+  });
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s4">
+      <div class="code-label">Sharding — Split Across CI Machines</div>
+      <pre><code class="language-typescript">## GitHub Actions — Split 200 tests across 4 runners simultaneously
+## Each runner gets a different "shard" of the test suite
+
+# .github/workflows/test.yml
+strategy:
+  matrix:
+    shard: [1/4, 2/4, 3/4, 4/4]
+steps:
+  - run: npx playwright test --shard=${{ matrix.shard }}
+
+## In playwright.config.ts — no changes needed for sharding!
+## Playwright automatically divides test files across shards
+
+## To merge shard reports into one HTML report:
+npx playwright merge-reports --reporter html ./all-blob-reports
+
+## Result: 200 tests that take 20 min on 1 runner
+##         now take ~5 min with 4 shards running in parallel</code></pre>
+    </div>
+    <div class="code-panel" data-s="s4">
+      <div class="code-label">Writing Parallel-Safe Tests</div>
+      <pre><code class="language-typescript">// ❌ BAD: Tests share a global counter — parallel tests corrupt it
+let testCount = 0; // shared mutable state!
+
+test('test A', async ({ page }) => {
+  testCount++; // Race condition in parallel!
+});
+
+// ✅ GOOD: Each test generates unique data independently
+test('create unique user', async ({ page }) => {
+  // Date.now() + random = guaranteed unique even in parallel
+  const uniqueEmail = `user_${Date.now()}_${Math.random().toString(36).slice(2)}@test.com`;
+
+  await page.goto('/register');
+  await page.getByLabel('Email').fill(uniqueEmail);
+  // No collision with other parallel tests!
+});
+
+// ✅ GOOD: Use test-scoped fixtures instead of shared variables
+// Each parallel worker gets its own isolated fixture instance</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices</div>
+  <div class="bp-list">
+    <div class="bp-item">Each test must be fully independent — no shared mutable state, no dependency on execution order</div>
+    <div class="bp-item">Generate unique test data (unique emails, usernames) using timestamps or UUIDs to avoid parallel conflicts</div>
+    <div class="bp-item">Use test.describe.serial() sparingly — only for workflows that genuinely require ordered execution</div>
+    <div class="bp-item">Use sharding in CI to split work across multiple machines for very large suites (200+ tests)</div>
+    <div class="bp-item">Set a global timeout in config — parallel tests on resource-starved CI runners can silently hang forever</div>
+  </div>
+
+  <div class="section-title">Interview Q&A</div>
+  <div class="qa-list" id="qa-s4"></div>
+</div>
+
+<!-- ═══════════════ SESSION 6 ═══════════════ -->
+<div class="session" id="s5">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p2">Intermediate</span><span class="session-num">Session 6 of 10</span></div>
+    <h2>Workers — Deep Dive into Playwright's Execution Engine</h2>
+    <p class="tagline">Understand exactly what a worker is, how it manages browser resources, and how to configure it for speed vs stability.</p>
+  </div>
+
+  <div class="section-title">Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">What</div><div class="ov-val">A worker is a separate Node.js process that Playwright spawns. Each worker owns one browser instance and runs test files assigned to it.</div></div>
+    <div class="ov-card"><div class="ov-label">Why</div><div class="ov-val">Process isolation means a crash in one worker doesn't kill others. True parallelism — not just async concurrency.</div></div>
+    <div class="ov-card"><div class="ov-label">When</div><div class="ov-val">Workers kick in the moment you run npx playwright test. Playwright's scheduler assigns test files to available workers.</div></div>
+    <div class="ov-card"><div class="ov-label">Where</div><div class="ov-val">Each worker = separate OS process + browser instance. They don't share memory or browser state.</div></div>
+    <div class="ov-card"><div class="ov-label">How</span></div><div class="ov-val">Playwright test runner → spawns N worker processes → each opens a browser → runs assigned test files → exits.</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"A worker is a separate Node.js process — workers don't share memory, so there are no shared-state race conditions between them."</div>
+    <div class="oneliner">"Playwright reuses a worker for multiple test files — it doesn't spawn a new browser for every single test file."</div>
+    <div class="oneliner">"workerIndex is a zero-based fixture that tells you which worker a test is running on — useful for allocating unique test data."</div>
+    <div class="oneliner">"test.describe.configure({ mode: 'parallel' }) overrides the global setting for a specific group without touching config."</div>
+    <div class="oneliner">"On CI with 2 CPU cores, setting workers: 4 doesn't give you 4x speed — you'll be context-switching and may slow down."</div>
+  </div>
+
+  <div class="section-title">Worker Architecture</div>
+  <div class="diag">
+<span class="box">npx playwright test</span>
+         ↓
+<span class="box">Test Runner (main process)</span>
+  • Reads playwright.config.ts
+  • Builds test file list
+  • Spawns N worker processes
+         ↓  spawns
+┌────────────────────────────────────────────┐
+│  <span class="box">Worker 0 (PID 1234)</span>                        │
+│  → Launches Chromium browser               │
+│  → Runs: login.spec.ts                     │
+│  → Runs: checkout.spec.ts                  │
+│  → beforeAll() runs ONCE per worker        │
+│  → Receives: workerIndex = 0               │
+└────────────────────────────────────────────┘
+┌────────────────────────────────────────────┐
+│  <span class="box">Worker 1 (PID 5678)</span>                        │
+│  → Launches separate Chromium instance     │
+│  → Runs: search.spec.ts                    │
+│  → Runs: profile.spec.ts                   │
+│  → beforeAll() runs ONCE per worker        │
+│  → Receives: workerIndex = 1               │
+└────────────────────────────────────────────┘
+         ↓
+<span class="box">Results merged → HTML Report</span>
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s5')">1. workerIndex</button>
+      <button class="ct-btn" onclick="switchCode(this,'s5')">2. parallelIndex</button>
+      <button class="ct-btn" onclick="switchCode(this,'s5')">3. Worker Fixture</button>
+      <button class="ct-btn" onclick="switchCode(this,'s5')">4. Scope Config</button>
+      <button class="ct-btn" onclick="switchCode(this,'s5')">5. Worker State</button>
+    </div>
+    <div class="code-panel active" data-s="s5">
+      <div class="code-label">workerIndex — Know Which Worker You're On</div>
+      <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('see which worker is running this test', async ({ page }, testInfo) => {
+
+  // testInfo.workerIndex: 0-based index of the WORKER PROCESS
+  // Never changes for a worker across its lifetime
+  // Use to: allocate different test data per worker
+  console.log(`Running on worker: ${testInfo.workerIndex}`);
+
+  // testInfo.parallelIndex: 0-based index within currently-running tests
+  // More useful for concurrency-sensitive operations
+  console.log(`Parallel index: ${testInfo.parallelIndex}`);
+
+  // Real-world use: give each worker a different test user account
+  // Worker 0 uses testuser_0@example.com
+  // Worker 1 uses testuser_1@example.com — avoids login conflicts
+  const userEmail = `testuser_${testInfo.workerIndex}@example.com`;
+
+  await page.goto('/login');
+  await page.getByLabel('Email').fill(userEmail);
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s5">
+      <div class="code-label">parallelIndex — Per-Concurrent-Test Allocation</div>
+      <pre><code class="language-typescript">test('allocate unique port per parallel test', async ({ page }, testInfo) => {
+
+  // parallelIndex: 0 to (maxConcurrentTests - 1)
+  // Useful for allocating unique resources (DB, port, user)
+  const port = 3000 + testInfo.parallelIndex;
+
+  // Example: start a mock server on a unique port per parallel test
+  // parallelIndex=0 → port 3000
+  // parallelIndex=1 → port 3001
+  // parallelIndex=2 → port 3002
+  console.log(`This test uses port: ${port}`);
+
+  // Allocate unique database rows by parallelIndex
+  const testDbSchema = `test_schema_${testInfo.parallelIndex}`;
+  console.log(`Using DB schema: ${testDbSchema}`);
+
+  await page.goto(`http://localhost:${port}`);
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s5">
+      <div class="code-label">Worker-Scoped Fixture — Shared Setup Per Worker</div>
+      <pre><code class="language-typescript">import { test as base, expect } from '@playwright/test';
+
+// Worker-scoped fixtures: created ONCE per worker, shared by all
+// tests in that worker — NOT recreated per test
+type WorkerFixtures = { authToken: string };
+
+const test = base.extend&lt;{}, WorkerFixtures&gt;({
+
+  // scope: 'worker' = created once per worker process
+  // scope: 'test' (default) = created fresh for every test
+  authToken: [async ({}, use, workerInfo) => {
+    // This runs ONCE per worker — like an expensive login
+    console.log(`Worker ${workerInfo.workerIndex} getting auth token`);
+    const token = `token_for_worker_${workerInfo.workerIndex}`;
+
+    // use() provides the value to all tests in this worker
+    await use(token);
+
+    // Cleanup: runs when the worker shuts down
+    console.log('Worker cleanup: revoking token');
+  }, { scope: 'worker' }],
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s5">
+      <div class="code-label">test.describe.configure — Override Parallelism Scope</div>
+      <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+// Use configure() to override the global parallel setting
+// for just this describe block — without editing config
+
+test.describe('Payment flow', () => {
+  // mode: 'serial'  → run these tests one-by-one, in order
+  // mode: 'parallel' → run all of them at same time (if fullyParallel:false globally)
+  // mode: 'default' → follow global config setting
+  test.describe.configure({ mode: 'serial' });
+
+  test('1. add item to cart', async ({ page }) => {
+    // runs first
+  });
+
+  test('2. proceed to payment', async ({ page }) => {
+    // runs second (after test 1)
+  });
+
+  test('3. confirm order', async ({ page }) => {
+    // runs third
+  });
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s5">
+      <div class="code-label">Worker-Scoped beforeAll — Runs Once Per Worker</div>
+      <pre><code class="language-typescript">// KEY INSIGHT: With parallel workers, beforeAll() runs
+// ONCE PER WORKER, not once globally!
+
+// If workers: 4, beforeAll runs 4 times total
+// (once in each worker process)
+
+let dbConnection: any;
+
+test.describe('DB tests', () => {
+
+  test.beforeAll(async () => {
+    // Runs in EACH worker that is assigned tests from this file
+    // If only 1 worker handles this file → runs once total
+    dbConnection = await openDBConnection();
+    console.log('DB connected in worker');
+  });
+
+  test.afterAll(async () => {
+    // Cleanup: runs when worker is done with all tests in this file
+    await dbConnection?.close();
+  });
+
+  test('reads from DB', async ({ page }) => {
+    // dbConnection is available here (set by beforeAll in THIS worker)
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices</div>
+  <div class="bp-list">
+    <div class="bp-item">Use workerIndex to partition test data — assign different pre-created test accounts to each worker to avoid login conflicts</div>
+    <div class="bp-item">Use worker-scoped fixtures for expensive resources (DB connections, auth tokens) shared across tests in a worker</div>
+    <div class="bp-item">Don't exceed workers: (CPU cores / 2) for UI tests — browsers are memory-hungry, too many workers causes thrashing</div>
+    <div class="bp-item">Remember: beforeAll is per-worker, not globally once — design your setup code with this in mind</div>
+    <div class="bp-item">Test the worker count setting in CI first before setting it in config — run with --workers=1 vs --workers=4 and compare times</div>
+  </div>
+
+  <div class="section-title">Interview Q&A</div>
+  <div class="qa-list" id="qa-s5"></div>
+</div>
+
+<!-- ═══════════════ SESSION 7 ═══════════════ -->
+<div class="session" id="s6">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p3">Advanced</span><span class="session-num">Session 7 of 10</span></div>
+    <h2>Page Object Model (POM) — Architecture for Maintainability</h2>
+    <p class="tagline">Design a scalable test architecture where UI changes only require updating one file, not 50 tests.</p>
+  </div>
+
+  <div class="section-title">Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">What</div><div class="ov-val">POM is a design pattern where each web page is represented as a TypeScript class with locators and action methods.</div></div>
+    <div class="ov-card"><div class="ov-label">Why</div><div class="ov-val">Without POM: change a button's selector → update 50 tests. With POM: change it once in the page class → all tests fixed.</div></div>
+    <div class="ov-card"><div class="ov-label">When</div><div class="ov-val">Use POM from day 1 when your suite exceeds 5–10 test files. Essential for teams and long-lived projects.</div></div>
+    <div class="ov-card"><div class="ov-label">Where</div><div class="ov-val">Create a pages/ directory. One file per page: pages/LoginPage.ts, pages/DashboardPage.ts, etc.</div></div>
+    <div class="ov-card"><div class="ov-label">How</div><div class="ov-val">Class with constructor(page), locators as private properties, business-logic methods as public async functions.</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"POM encapsulates selectors and actions in a class — tests call methods like loginPage.login(), not raw page.fill() calls."</div>
+    <div class="oneliner">"With POM, my tests read like user stories — loginPage.login('admin') then dashboardPage.verifyWelcome() — not implementation details."</div>
+    <div class="oneliner">"I keep assertions OUT of page objects — they belong in tests. Page objects provide actions; tests provide assertions."</div>
+    <div class="oneliner">"Component objects are a variation — reusable classes for repeated UI components like navbars, modals, and tables."</div>
+    <div class="oneliner">"POM combined with custom fixtures lets me inject page objects directly into tests like test({ loginPage }, () => {})"</div>
+  </div>
+
+  <div class="section-title">POM Architecture</div>
+  <div class="diag">
+<span class="box">Without POM</span>                        <span class="box">With POM</span>
+                                        
+tests/login.spec.ts                    tests/login.spec.ts
+  → page.fill('#email', ...)     →       → loginPage.login(email, password)
+  → page.fill('#password', ...)          
+  → page.click('.btn-login')     pages/LoginPage.ts
+                                   → locators: emailInput, passwordInput
+tests/checkout.spec.ts                         loginBtn
+  → page.fill('#email', ...)     → methods:  login(email, pass)
+  → page.fill('#password', ...)            expectError(msg)
+  → page.click('.btn-login')     
+                                 pages/DashboardPage.ts
+Change: .btn-login → #login-btn  → locators: greeting, statsWidgets
+  ❌ Update EVERY test file      → methods:  verifyLoaded()
+                                             navigateTo(section)
+                                 Change selector?
+                                   ✅ Update LoginPage.ts ONLY
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s6')">1. LoginPage</button>
+      <button class="ct-btn" onclick="switchCode(this,'s6')">2. DashboardPage</button>
+      <button class="ct-btn" onclick="switchCode(this,'s6')">3. Using POM in Tests</button>
+      <button class="ct-btn" onclick="switchCode(this,'s6')">4. Component Object</button>
+      <button class="ct-btn" onclick="switchCode(this,'s6')">5. POM Fixture</button>
+    </div>
+    <div class="code-panel active" data-s="s6">
+      <div class="code-label">pages/LoginPage.ts — The Page Object Class</div>
+      <pre><code class="language-typescript">import { Page, Locator } from '@playwright/test';
+
+// Each page = one TypeScript class
+// The class owns ALL locators and actions for that page
+export class LoginPage {
+
+  // readonly: locators don't change after construction
+  // private: tests should use methods, not access locators directly
+  private readonly emailInput: Locator;
+  private readonly passwordInput: Locator;
+  private readonly loginButton: Locator;
+  private readonly errorMessage: Locator;
+
+  // Constructor receives the page object from Playwright
+  constructor(private readonly page: Page) {
+    // Define locators ONCE here — used by ALL methods below
+    this.emailInput = page.getByLabel('Email');
+    this.passwordInput = page.getByLabel('Password');
+    this.loginButton = page.getByRole('button', { name: 'Sign in' });
+    this.errorMessage = page.getByTestId('login-error');
+  }
+
+  // navigate(): go to the login page URL
+  async navigate() {
+    await this.page.goto('/login');
+  }
+
+  // login(): high-level action — fill form and click submit
+  // Tests call this instead of raw fill() + click() calls
+  async login(email: string, password: string) {
+    await this.emailInput.fill(email);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+  }
+
+  // getErrorMessage(): returns error text for test assertion
+  // Page object RETURNS data; tests ASSERT on it
+  async getErrorMessage(): Promise&lt;string | null&gt; {
+    return this.errorMessage.textContent();
+  }
+}</code></pre>
+    </div>
+    <div class="code-panel" data-s="s6">
+      <div class="code-label">pages/DashboardPage.ts — After-Login Page</div>
+      <pre><code class="language-typescript">import { Page, Locator } from '@playwright/test';
+
+export class DashboardPage {
+  private readonly greeting: Locator;
+  private readonly navMenu: Locator;
+  private readonly statsCards: Locator;
+
+  constructor(private readonly page: Page) {
+    this.greeting = page.getByTestId('greeting-message');
+    this.navMenu = page.getByRole('navigation');
+    this.statsCards = page.getByTestId('stat-card');
+  }
+
+  // waitForLoad: ensures dashboard is fully loaded before assertions
+  async waitForLoad() {
+    await this.greeting.waitFor({ state: 'visible' });
+  }
+
+  // getGreetingText: returns greeting so test can assert the value
+  async getGreetingText(): Promise&lt;string | null&gt; {
+    return this.greeting.textContent();
+  }
+
+  // getStatsCount: how many stat cards are visible?
+  async getStatsCount(): Promise&lt;number&gt; {
+    return this.statsCards.count();
+  }
+
+  // navigateTo: click a nav menu item by name
+  async navigateTo(section: string) {
+    await this.navMenu
+      .getByRole('link', { name: section })
+      .click();
+  }
+}</code></pre>
+    </div>
+    <div class="code-panel" data-s="s6">
+      <div class="code-label">tests/login.spec.ts — Clean Tests Using POM</div>
+      <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+import { DashboardPage } from '../pages/DashboardPage';
+
+test.describe('Login', () => {
+
+  test('successful login redirects to dashboard', async ({ page }) => {
+    // Instantiate page objects — they receive the same page fixture
+    const loginPage = new LoginPage(page);
+    const dashboardPage = new DashboardPage(page);
+
+    // Test reads like a user story — clean and intention-revealing
+    await loginPage.navigate();
+    await loginPage.login('admin@example.com', 'Password123');
+
+    // Assertions stay in the TEST, not the page object
+    await expect(page).toHaveURL(/dashboard/);
+    await dashboardPage.waitForLoad();
+    await expect(await dashboardPage.getGreetingText())
+      .toContain('Welcome');
+  });
+
+  test('invalid credentials shows error message', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.navigate();
+    await loginPage.login('wrong@email.com', 'badpassword');
+
+    const error = await loginPage.getErrorMessage();
+    expect(error).toContain('Invalid credentials');
+  });
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s6">
+      <div class="code-label">Component Object — Reusable UI Components</div>
+      <pre><code class="language-typescript">import { Locator } from '@playwright/test';
+
+// Component Object: like POM but for reusable UI components
+// Great for: navbars, modals, tables, notification toasts
+
+export class NavbarComponent {
+  private readonly userMenu: Locator;
+  private readonly logoutBtn: Locator;
+
+  // Constructor receives the NAVBAR LOCATOR (not page)
+  // Scopes all actions inside the navbar element
+  constructor(private readonly navbar: Locator) {
+    this.userMenu = navbar.getByTestId('user-menu');
+    this.logoutBtn = navbar.getByRole('button', { name: 'Logout' });
+  }
+
+  async logout() {
+    await this.userMenu.click(); // open dropdown
+    await this.logoutBtn.click(); // click logout
+  }
+}
+
+// Usage in a Page Object or test:
+// const navbar = new NavbarComponent(page.getByRole('navigation'));
+// await navbar.logout();</code></pre>
+    </div>
+    <div class="code-panel" data-s="s6">
+      <div class="code-label">Custom Fixture — Inject Page Objects into Tests</div>
+      <pre><code class="language-typescript">import { test as base } from '@playwright/test';
+import { LoginPage } from './pages/LoginPage';
+import { DashboardPage } from './pages/DashboardPage';
+
+// Define custom fixture types (what extra fixtures tests can receive)
+type Pages = { loginPage: LoginPage; dashboardPage: DashboardPage };
+
+// Export a customised 'test' with page objects built-in
+export const test = base.extend&lt;Pages&gt;({
+
+  // loginPage fixture: auto-instantiates LoginPage with the page fixture
+  loginPage: async ({ page }, use) => {
+    await use(new LoginPage(page));
+  },
+
+  dashboardPage: async ({ page }, use) => {
+    await use(new DashboardPage(page));
+  },
+});
+
+// In your test file — cleanest possible syntax:
+// import { test } from './fixtures';   ← import custom test
+// test('login', async ({ loginPage, dashboardPage }) => {
+//   await loginPage.navigate();        ← no 'new' needed!
+// });</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices</div>
+  <div class="bp-list">
+    <div class="bp-item">Keep assertions OUT of page objects — they belong in tests. Page objects only do navigation and actions.</div>
+    <div class="bp-item">Use TypeScript private/readonly for locators — prevents tests from bypassing the page object's API</div>
+    <div class="bp-item">Create component objects for repeated UI patterns (tables, modals, toasts) — don't duplicate locators</div>
+    <div class="bp-item">One page object file per page — don't create a mega-file with every locator in the entire app</div>
+    <div class="bp-item">Use custom fixtures to inject page objects — eliminates boilerplate new LoginPage(page) in every test</div>
+  </div>
+
+  <div class="section-title">Interview Q&A</div>
+  <div class="qa-list" id="qa-s6"></div>
+</div>
+
+<!-- ═══════════════ SESSION 8 ═══════════════ -->
+<div class="session" id="s7">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p3">Advanced</span><span class="session-num">Session 8 of 10</span></div>
+    <h2>Advanced POM — Fluent API, Base Pages & Data Factories</h2>
+    <p class="tagline">Take POM to production level: fluent chaining, inheritance, and separating test data from test logic.</p>
+  </div>
+
+  <div class="section-title">Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">What</div><div class="ov-val">Advanced POM adds: BasePage inheritance, fluent method chaining, TypeScript interfaces, and test data factories.</div></div>
+    <div class="ov-card"><div class="ov-label">Why</div><div class="ov-val">As suites scale to hundreds of tests, you need reusable base functionality, readable chaining, and decoupled data.</div></div>
+    <div class="ov-card"><div class="ov-label">When</div><div class="ov-val">After you have 5+ page objects and notice code duplication (e.g. waitForLoad in every page class).</div></div>
+    <div class="ov-card"><div class="ov-label">Where</div><div class="ov-val">pages/BasePage.ts (shared methods), utils/DataFactory.ts (test data), types/index.ts (interfaces).</div></div>
+    <div class="ov-card"><div class="ov-label">How</div><div class="ov-val">Extend BasePage, return this from methods for chaining, use factory functions for unique test data generation.</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"BasePage centralises common methods like waitForPageLoad() and getTitle() — every page object inherits these for free."</div>
+    <div class="oneliner">"Fluent POM: methods return this, enabling test.step chaining like await loginPage.fillEmail().fillPassword().submit()"</div>
+    <div class="oneliner">"Data factories generate TypeScript-typed test objects — UserFactory.create() returns a fully typed User with unique fields."</div>
+    <div class="oneliner">"I use TypeScript interfaces to define contracts for page objects — makes mocking pages in unit tests straightforward."</div>
+    <div class="oneliner">"Avoid inheritance deeper than 2 levels in POM — deep class hierarchies become harder to debug than the tests they serve."</div>
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s7')">1. BasePage</button>
+      <button class="ct-btn" onclick="switchCode(this,'s7')">2. Extend Base</button>
+      <button class="ct-btn" onclick="switchCode(this,'s7')">3. Fluent API</button>
+      <button class="ct-btn" onclick="switchCode(this,'s7')">4. DataFactory</button>
+      <button class="ct-btn" onclick="switchCode(this,'s7')">5. Full E2E Test</button>
+    </div>
+    <div class="code-panel active" data-s="s7">
+      <div class="code-label">pages/BasePage.ts — Shared Functionality</div>
+      <pre><code class="language-typescript">import { Page, Locator, expect } from '@playwright/test';
+
+// BasePage: the parent class ALL page objects extend
+// Contains methods needed by EVERY page in the app
+export abstract class BasePage {
+
+  // abstract: each subclass MUST define its own URL
+  protected abstract readonly url: string;
+
+  // Constructor stores page — subclasses call super(page)
+  constructor(protected readonly page: Page) {}
+
+  // navigate(): every page can go to its own URL
+  async navigate(): Promise&lt;this&gt; {
+    await this.page.goto(this.url);
+    return this; // returns 'this' for fluent chaining
+  }
+
+  // getTitle(): every page can check its own document title
+  async getTitle(): Promise&lt;string&gt; {
+    return this.page.title();
+  }
+
+  // waitForNetworkIdle(): wait until all requests settle
+  async waitForNetworkIdle(): Promise&lt;this&gt; {
+    await this.page.waitForLoadState('networkidle');
+    return this;
+  }
+
+  // takeScreenshot(): attach screenshot with timestamp
+  async takeScreenshot(name: string) {
+    await this.page.screenshot({
+      path: `screenshots/${name}_${Date.now()}.png`
+    });
+  }
+}</code></pre>
+    </div>
+    <div class="code-panel" data-s="s7">
+      <div class="code-label">pages/LoginPage.ts — Extending BasePage</div>
+      <pre><code class="language-typescript">import { Page, Locator } from '@playwright/test';
+import { BasePage } from './BasePage';
+
+// LoginPage EXTENDS BasePage — inherits navigate(), getTitle(), etc.
+export class LoginPage extends BasePage {
+
+  // Fulfil the abstract contract from BasePage
+  protected readonly url = '/login';
+
+  private readonly emailInput: Locator;
+  private readonly passwordInput: Locator;
+  private readonly loginButton: Locator;
+
+  constructor(page: Page) {
+    // Must call super(page) first to initialise BasePage
+    super(page);
+    this.emailInput = page.getByLabel('Email');
+    this.passwordInput = page.getByLabel('Password');
+    this.loginButton = page.getByRole('button', { name: 'Sign in' });
+  }
+
+  // login() returns Promise&lt;void&gt; — completes after click
+  async login(email: string, password: string): Promise&lt;void&gt; {
+    await this.emailInput.fill(email);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+  }
+}</code></pre>
+    </div>
+    <div class="code-panel" data-s="s7">
+      <div class="code-label">Fluent POM — Chainable Method Pattern</div>
+      <pre><code class="language-typescript">import { Page, Locator } from '@playwright/test';
+
+export class RegistrationPage {
+  private readonly nameInput: Locator;
+  private readonly emailInput: Locator;
+  private readonly passwordInput: Locator;
+  private readonly submitBtn: Locator;
+
+  constructor(private readonly page: Page) {
+    this.nameInput = page.getByLabel('Full Name');
+    this.emailInput = page.getByLabel('Email');
+    this.passwordInput = page.getByLabel('Password');
+    this.submitBtn = page.getByRole('button', { name: 'Register' });
+  }
+
+  // Fluent pattern: each method returns Promise&lt;this&gt;
+  // Allows: await regPage.fillName('Alice').fillEmail('a@b.com').submit()
+  async fillName(name: string): Promise&lt;this&gt; {
+    await this.nameInput.fill(name);
+    return this;
+  }
+
+  async fillEmail(email: string): Promise&lt;this&gt; {
+    await this.emailInput.fill(email);
+    return this;
+  }
+
+  async fillPassword(pwd: string): Promise&lt;this&gt; {
+    await this.passwordInput.fill(pwd);
+    return this;
+  }
+
+  async submit(): Promise&lt;void&gt; {
+    await this.submitBtn.click();
+  }
+}</code></pre>
+    </div>
+    <div class="code-panel" data-s="s7">
+      <div class="code-label">utils/UserFactory.ts — Test Data Factory</div>
+      <pre><code class="language-typescript">// Data Factory: generates unique, typed test data
+// Separates DATA concerns from TEST logic concerns
+
+// Define a TypeScript interface for the shape of a User
+export interface User {
+  name: string;
+  email: string;
+  password: string;
+  role: 'admin' | 'user' | 'viewer';
+}
+
+export class UserFactory {
+
+  // create(): generate a complete unique User object
+  // Partial&lt;User&gt; allows overriding specific fields
+  static create(overrides: Partial&lt;User&gt; = {}): User {
+    const timestamp = Date.now();
+    return {
+      // Unique name and email for every test — no conflicts!
+      name: `Test User ${timestamp}`,
+      email: `user_${timestamp}@test.com`,
+      password: 'TestPass123!',
+      role: 'user',
+      // Spread overrides LAST so they take precedence
+      ...overrides,
+    };
+  }
+
+  // createAdmin(): shorthand for creating an admin user
+  static createAdmin(): User {
+    return this.create({ role: 'admin' });
+  }
+}
+
+// Usage in tests:
+// const user = UserFactory.create();          // random user
+// const admin = UserFactory.createAdmin();    // admin user
+// const specific = UserFactory.create({ email: 'alice@test.com' }); // override</code></pre>
+    </div>
+    <div class="code-panel" data-s="s7">
+      <div class="code-label">Full E2E Test — All Patterns Together</div>
+      <pre><code class="language-typescript">import { test, expect } from '@playwright/test';
+import { RegistrationPage } from '../pages/RegistrationPage';
+import { LoginPage } from '../pages/LoginPage';
+import { DashboardPage } from '../pages/DashboardPage';
+import { UserFactory } from '../utils/UserFactory';
+
+test('full registration and login flow', async ({ page }) => {
+  // 1. Generate unique test data — factory pattern
+  const user = UserFactory.create();
+
+  // 2. Instantiate page objects — POM pattern
+  const regPage = new RegistrationPage(page);
+  const loginPage = new LoginPage(page);
+  const dashboard = new DashboardPage(page);
+
+  // 3. Register user — fluent API chains
+  await page.goto('/register');
+  await (await (await regPage.fillName(user.name))
+    .fillEmail(user.email))
+    .fillPassword(user.password);
+  await regPage.submit();
+
+  // 4. Login with same user — BasePage.navigate() from inherited method
+  await loginPage.navigate();
+  await loginPage.login(user.email, user.password);
+
+  // 5. Assert dashboard loads — clean and readable
+  await dashboard.waitForLoad();
+  await expect(page).toHaveURL(/dashboard/);
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices</div>
+  <div class="bp-list">
+    <div class="bp-item">Create a BasePage with common methods — inherit it in every page object to remove duplicated waitForLoad/getTitle code</div>
+    <div class="bp-item">Use data factories with TypeScript interfaces — type safety catches mismatched test data at compile time, not runtime</div>
+    <div class="bp-item">Fluent chaining improves readability but avoid deeply nested await chains — break into steps if it gets complex</div>
+    <div class="bp-item">Keep factory overrides limited to one level — deeply nested override objects make test data hard to understand</div>
+    <div class="bp-item">Never put assertions or expect() calls inside page objects or factories — assertions belong only in test files</div>
+  </div>
+
+  <div class="section-title">Interview Q&A</div>
+  <div class="qa-list" id="qa-s7"></div>
+</div>
+
+<!-- ═══════════════ SESSION 9 ═══════════════ -->
+<div class="session" id="s8">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p4">Frameworks</span><span class="session-num">Session 9 of 10</span></div>
+    <h2>CI/CD Integration — Tests in the Pipeline</h2>
+    <p class="tagline">Make your tests run automatically on every code push — the true mark of a mature QA engineer.</p>
+  </div>
+
+  <div class="section-title">Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">What</div><div class="ov-val">CI/CD integration means Playwright tests trigger automatically on PR/push — failing tests block broken code from merging.</div></div>
+    <div class="ov-card"><div class="ov-label">Why</div><div class="ov-val">Without CI, tests only run when someone remembers. With CI, every single code change is automatically verified.</div></div>
+    <div class="ov-card"><div class="ov-label">When</div><div class="ov-val">From day 1 of the project — CI is not an afterthought. Add it before you write your second test file.</div></div>
+    <div class="ov-card"><div class="ov-label">Where</div><div class="ov-val">GitHub Actions (.github/workflows/), GitLab CI (.gitlab-ci.yml), Azure Pipelines (azure-pipelines.yml).</div></div>
+    <div class="ov-card"><div class="ov-label">How</div><div class="ov-val">Install browsers in CI, set env vars, run npx playwright test, upload HTML report as artifact.</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"I set retries: 2 in CI and retries: 0 locally — flaky tests should be debugged, but shouldn't block the team's CI pipeline."</div>
+    <div class="oneliner">"I always upload the Playwright HTML report as a CI artifact — engineers can download and click through exactly what failed."</div>
+    <div class="oneliner">"Environment variables control baseURL in CI — tests point to staging, not production, without code changes."</div>
+    <div class="oneliner">"I run Playwright in headed mode locally for development, always headless in CI — --headed flag in the npm script."</div>
+    <div class="oneliner">"Sharding splits our 300-test suite across 4 parallel CI runners — cutting pipeline time from 25 minutes to 7 minutes."</div>
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s8')">1. GitHub Actions</button>
+      <button class="ct-btn" onclick="switchCode(this,'s8')">2. Env Variables</button>
+      <button class="ct-btn" onclick="switchCode(this,'s8')">3. CI Config</button>
+      <button class="ct-btn" onclick="switchCode(this,'s8')">4. Docker</button>
+      <button class="ct-btn" onclick="switchCode(this,'s8')">5. Report Upload</button>
+    </div>
+    <div class="code-panel active" data-s="s8">
+      <div class="code-label">.github/workflows/playwright.yml</div>
+      <pre><code class="language-typescript"># Trigger: run tests on every push to main and on all PRs
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  playwright-tests:
+    runs-on: ubuntu-latest  # Linux runner — faster than Windows for browsers
+
+    steps:
+      # Step 1: Check out your repository code
+      - uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js (match your local version)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'  # Cache node_modules for faster runs
+
+      # Step 3: Install npm dependencies
+      - run: npm ci
+
+      # Step 4: Install browser binaries (Chromium, Firefox, WebKit)
+      # --with-deps installs Linux system dependencies too
+      - run: npx playwright install --with-deps
+
+      # Step 5: Run the actual tests
+      - run: npx playwright test
+
+      # Step 6: Upload HTML report so it's downloadable from CI
+      - uses: actions/upload-artifact@v4
+        if: always()  # Upload EVEN if tests fail
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30</code></pre>
+    </div>
+    <div class="code-panel" data-s="s8">
+      <div class="code-label">Environment Variables — Dynamic Configuration</div>
+      <pre><code class="language-typescript">// playwright.config.ts — read env vars for CI/staging/prod
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  use: {
+    // BASE_URL env var: set in CI pipeline secrets/vars
+    // Local: https://localhost:3000
+    // CI staging: https://staging.myapp.com
+    baseURL: process.env.BASE_URL || 'https://localhost:3000',
+
+    // headless: true in CI (no display), false when debugging locally
+    headless: process.env.CI ? true : false,
+  },
+  // More workers in CI (dedicated runner), fewer locally
+  workers: process.env.CI ? 4 : 2,
+  retries: process.env.CI ? 2 : 0,
+});
+
+// In GitHub Actions workflow — set the env var:
+// env:
+//   BASE_URL: https://staging.myapp.com
+
+// For secrets (passwords, API keys) — use GitHub Secrets:
+// env:
+//   TEST_USER_PASSWORD: ${{ secrets.TEST_PASSWORD }}</code></pre>
+    </div>
+    <div class="code-panel" data-s="s8">
+      <div class="code-label">playwright.config.ts — Full CI-Ready Config</div>
+      <pre><code class="language-typescript">import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests',
+  fullyParallel: true,
+  // forbidOnly: prevent accidental .only() commits
+  // !!process.env.CI = true in CI, false locally
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 4 : undefined,
+  // Multiple reporters: list for terminal, html for download
+  reporter: [
+    ['list'],          // prints to terminal during run
+    ['html', { open: 'never' }],  // never auto-opens in CI
+    ['junit', { outputFile: 'results.xml' }],  // for test dashboards
+  ],
+  use: {
+    baseURL: process.env.BASE_URL || 'https://localhost:3000',
+    trace: 'on-first-retry',  // record trace on first retry
+    screenshot: 'only-on-failure',  // auto-screenshot failures
+    video: 'retain-on-failure',    // save video of failing tests
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+  ],
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s8">
+      <div class="code-label">Docker — Containerised Test Execution</div>
+      <pre><code class="language-typescript"># Dockerfile — use Playwright's official image
+# Includes all browser binaries and system dependencies
+FROM mcr.microsoft.com/playwright:v1.44.0-jammy
+
+# Set working directory inside container
+WORKDIR /app
+
+# Copy package files first (layer caching — only re-runs if changed)
+COPY package*.json ./
+
+# Install npm packages
+RUN npm ci
+
+# Copy the rest of your project files
+COPY . .
+
+# Run Playwright tests when the container starts
+CMD ["npx", "playwright", "test"]
+
+## Build and run locally:
+## docker build -t pw-tests .
+## docker run -e BASE_URL=https://staging.myapp.com pw-tests
+
+## In GitHub Actions — run tests in Docker for full isolation:
+## - run: docker run --rm pw-tests</code></pre>
+    </div>
+    <div class="code-panel" data-s="s8">
+      <div class="code-label">Slack Notification on Failure — Advanced CI</div>
+      <pre><code class="language-typescript"># .github/workflows/playwright.yml — Add Slack notification
+steps:
+  - name: Run Playwright Tests
+    id: playwright
+    run: npx playwright test
+    continue-on-error: true  # Don't fail workflow immediately
+
+  # Post Slack message only when tests FAIL
+  - name: Notify Slack on failure
+    if: steps.playwright.outcome == 'failure'
+    uses: slackapi/slack-github-action@v1.24.0
+    with:
+      payload: |
+        {
+          "text": "❌ Playwright tests FAILED on ${{ github.ref }}",
+          "blocks": [{
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*Branch:* ${{ github.ref }}\n*Run:* ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+          }]
+        }
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # Fail the workflow AFTER sending notification
+  - name: Fail if tests failed
+    if: steps.playwright.outcome == 'failure'
+    run: exit 1</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices</div>
+  <div class="bp-list">
+    <div class="bp-item">Always use npx playwright install --with-deps in CI — missing system dependencies are a top cause of CI-only failures</div>
+    <div class="bp-item">Set forbidOnly: !!process.env.CI — this single line prevents accidental test.only() from blocking your entire CI</div>
+    <div class="bp-item">Upload the HTML report as a CI artifact with if: always() — you need it most when tests fail</div>
+    <div class="bp-item">Use GitHub Secrets for passwords and API keys — never hardcode credentials in workflow YAML or test files</div>
+    <div class="bp-item">Cache node_modules in CI (cache: 'npm') — shaves 60–90 seconds off every pipeline run</div>
+  </div>
+
+  <div class="section-title">Interview Q&A</div>
+  <div class="qa-list" id="qa-s8"></div>
+</div>
+
+<!-- ═══════════════ SESSION 10 ═══════════════ -->
+<div class="session" id="s9">
+  <div class="session-header">
+    <div class="badge-row"><span class="phase-tag p4">Frameworks</span><span class="session-num">Session 10 of 10</span></div>
+    <h2>Pro Tips — Debugging, API Testing & Career Advice</h2>
+    <p class="tagline">The master-level techniques that separate a good SDET from a great one.</p>
+  </div>
+
+  <div class="section-title">Overview</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="ov-label">Debug Tools</div><div class="ov-val">Playwright Inspector, trace viewer, --debug flag, codegen for recording interactions.</div></div>
+    <div class="ov-card"><div class="ov-label">API Testing</div><div class="ov-val">request fixture for HTTP calls without a browser — great for setup, teardown, and pure API validation.</div></div>
+    <div class="ov-card"><div class="ov-label">Network</div><div class="ov-val">page.route() to intercept, mock, or block network requests — test error states without a broken backend.</div></div>
+    <div class="ov-card"><div class="ov-label">Storage State</div><div class="ov-val">Save browser storage (cookies, localStorage) after login and reuse it — skip login for every test.</div></div>
+    <div class="ov-card"><div class="ov-label">Career</div><div class="ov-val">Know your why: automation proves features work. Metrics matter: coverage %, flake %, execution time.</div></div>
+  </div>
+
+  <div class="section-title">Interview One-liners</div>
+  <div class="oneliner-list">
+    <div class="oneliner">"PWDEBUG=1 launches the Inspector — I can pause, step through, and explore locators interactively without rerunning."</div>
+    <div class="oneliner">"I use storageState to save a logged-in session and reuse it across all tests — login once, test hundreds of features."</div>
+    <div class="oneliner">"page.route() lets me mock API responses — I test the 500-error UI without needing the backend to actually fail."</div>
+    <div class="oneliner">"The request fixture gives me a full HTTP client inside tests — I use it to create test data via API instead of UI clicks."</div>
+    <div class="oneliner">"My test strategy in one sentence: fast, isolated, deterministic, and run on every commit — everything else follows from that."</div>
+  </div>
+
+  <div class="section-title">Code Examples</div>
+  <div class="code-tabs">
+    <div class="code-tab-bar">
+      <button class="ct-btn active" onclick="switchCode(this,'s9')">1. Debug Mode</button>
+      <button class="ct-btn" onclick="switchCode(this,'s9')">2. StorageState</button>
+      <button class="ct-btn" onclick="switchCode(this,'s9')">3. API Testing</button>
+      <button class="ct-btn" onclick="switchCode(this,'s9')">4. Route Mocking</button>
+      <button class="ct-btn" onclick="switchCode(this,'s9')">5. Trace Viewer</button>
+    </div>
+    <div class="code-panel active" data-s="s9">
+      <div class="code-label">Debugging Tools — Inspector & Codegen</div>
+      <pre><code class="language-typescript">## PWDEBUG=1: launches Playwright Inspector (step-by-step debugger)
+PWDEBUG=1 npx playwright test login.spec.ts
+
+## --debug: alias for PWDEBUG=1 (simpler to type)
+npx playwright test --debug
+
+## --ui: launches interactive UI mode — run, filter, re-run tests visually
+npx playwright test --ui
+
+## codegen: records your browser actions and generates test code
+## Open browser, do actions, get TypeScript code automatically
+npx playwright codegen https://myapp.com
+
+## --headed: run tests in visible browser (not headless)
+## Useful for watching tests run step-by-step locally
+npx playwright test --headed
+
+## --grep: run only tests matching a pattern
+npx playwright test --grep "login"
+
+## --project: run tests only for a specific browser
+npx playwright test --project=chromium
+
+## In code: add page.pause() to stop at a specific line
+## await page.pause(); ← opens Inspector at this exact point</code></pre>
+    </div>
+    <div class="code-panel" data-s="s9">
+      <div class="code-label">storageState — Login Once, Reuse Everywhere</div>
+      <pre><code class="language-typescript">// Step 1: Create auth.setup.ts — logs in and saves session
+import { test as setup } from '@playwright/test';
+import path from 'path';
+
+// authFile: where to save the browser session (cookies + localStorage)
+const authFile = 'playwright/.auth/user.json';
+
+setup('authenticate', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Email').fill('admin@example.com');
+  await page.getByLabel('Password').fill('password123');
+  await page.getByRole('button', { name: 'Sign in' }).click();
+
+  // Save ALL cookies + localStorage to file
+  // Tests reference this file to start already logged in
+  await page.context().storageState({ path: authFile });
+});
+
+// Step 2: playwright.config.ts — use saved session
+// projects: [{
+//   name: 'logged-in tests',
+//   use: { storageState: 'playwright/.auth/user.json' },
+//   dependencies: ['setup'],  // run auth.setup.ts first!
+// }]</code></pre>
+    </div>
+    <div class="code-panel" data-s="s9">
+      <div class="code-label">API Testing — HTTP Without a Browser</div>
+      <pre><code class="language-typescript">import { test, expect, request } from '@playwright/test';
+
+test('API: create user via HTTP POST', async ({ request }) => {
+  // request fixture: Playwright's built-in HTTP client
+  // No browser launched — much faster for pure API tests
+
+  // POST request with JSON body
+  const response = await request.post('/api/users', {
+    data: {
+      name: 'Test User',
+      email: `user_${Date.now()}@test.com`,
+    }
+  });
+
+  // Assert HTTP status code
+  expect(response.status()).toBe(201);
+
+  // Parse response body as JSON
+  const user = await response.json();
+  expect(user).toHaveProperty('id');
+  expect(user.name).toBe('Test User');
+});
+
+test('API setup + UI test', async ({ page, request }) => {
+  // Create test data via API (FAST) then verify UI
+  const res = await request.post('/api/products', {
+    data: { name: 'Test Widget', price: 9.99 }
+  });
+  const { id } = await res.json();
+
+  // Now navigate to the UI and verify the product appears
+  await page.goto(`/products/${id}`);
+  await expect(page.getByRole('heading')).toHaveText('Test Widget');
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s9">
+      <div class="code-label">page.route() — Network Mocking</div>
+      <pre><code class="language-typescript">test('show error banner when API returns 500', async ({ page }) => {
+
+  // page.route(): intercept matching URL and handle it
+  // No real API call is made — Playwright intercepts it
+  await page.route('**/api/user/profile', async (route) => {
+    // fulfill(): respond with our custom mock response
+    await route.fulfill({
+      status: 500,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'Internal Server Error' }),
+    });
+  });
+
+  await page.goto('/profile');
+
+  // Assert that the UI shows an error state
+  await expect(page.getByTestId('error-banner')).toBeVisible();
+  await expect(page.getByTestId('error-banner'))
+    .toContainText('Something went wrong');
+});
+
+test('block images to speed up test', async ({ page }) => {
+  // Abort image requests — makes navigation 2x faster
+  await page.route('**/*.{png,jpg,jpeg,svg}', route => route.abort());
+  await page.goto('/');
+  // Test text content — images not needed for this test
+});</code></pre>
+    </div>
+    <div class="code-panel" data-s="s9">
+      <div class="code-label">Trace Viewer — Click-by-Click Debug Replay</div>
+      <pre><code class="language-typescript">// playwright.config.ts — enable trace recording
+use: {
+  // 'on'            = record always (large files)
+  // 'off'           = never record
+  // 'on-first-retry'= record only when a test retries (RECOMMENDED)
+  // 'retain-on-failure' = record and keep only failing test traces
+  trace: 'on-first-retry',
+}
+
+// Open trace file after a failed CI run:
+// 1. Download trace.zip from CI artifacts
+// 2. Run:
+npx playwright show-trace trace.zip
+// 3. Interactive viewer opens in browser showing:
+//    - Every click, fill, navigation
+//    - DOM snapshots at each step
+//    - Network requests and responses
+//    - Console logs and errors
+//    - Timeline of what happened when
+
+// Record trace manually in a test:
+await page.context().tracing.start({ screenshots: true, snapshots: true });
+await page.goto('/checkout');
+// ... test steps ...
+await page.context().tracing.stop({ path: 'trace.zip' });</code></pre>
+    </div>
+  </div>
+
+  <div class="section-title">Best Practices</div>
+  <div class="bp-list">
+    <div class="bp-item">Use storageState for login — tests are 5–10x faster when they skip the login UI for every test</div>
+    <div class="bp-item">Create test data via API in beforeEach, not by clicking through the UI — UI setup is slow and creates flaky dependencies</div>
+    <div class="bp-item">Use page.route() to test error states — never rely on the real backend to be in a broken state for your test</div>
+    <div class="bp-item">Enable trace: 'on-first-retry' — the trace viewer is the most powerful debugging tool in Playwright's arsenal</div>
+    <div class="bp-item">Track test metrics: flake rate, avg execution time, coverage % — present these to your team to show QA value</div>
+  </div>
+
+  <div class="section-title">Interview Q&A</div>
+  <div class="qa-list" id="qa-s9"></div>
+</div>
+
+<div class="nav-row" id="navrow">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" style="display:none">← Previous</button>
+  <button class="nav-btn primary" id="nextBtn" onclick="navigate(1)">Next Session →</button>
+</div>
+
+</div>
+
+<script>
+const QA_DATA = [
+  [ // S1
+    ["What is the difference between Playwright and Selenium?","Playwright supports multiple browsers natively, has built-in auto-wait, runs in the same process as the test (no WebDriver protocol overhead), and has a better TypeScript experience. Selenium uses WebDriver protocol, which adds latency, and requires explicit waits."],
+    ["What is a Browser Context in Playwright?","A BrowserContext is an isolated browser session — like an incognito window. It has its own cookies, localStorage, and auth state. Each test gets a fresh context, so tests don't pollute each other."],
+    ["Why do we need async/await in Playwright tests?","Playwright interacts with the browser asynchronously — every action (click, fill, goto) is a Promise. async/await ensures the test code waits for each action to complete before moving to the next line."],
+    ["What is playwright.config.ts used for?","It's the central configuration file that sets browser targets, base URL, retries, timeouts, workers, reporters, and test directory. It applies settings globally so individual tests don't need to repeat them."],
+    ["What command installs Playwright's browser binaries?","npx playwright install — or npx playwright install --with-deps to also install Linux system dependencies needed by the browsers. This must be run in CI environments too."],
+  ],
+  [ // S2
+    ["Why prefer getByRole() over CSS selectors?","getByRole() queries the accessibility tree — it's resilient to styling and structural changes. CSS selectors break when classes change. Roles also match how assistive technologies see the page, so passing your tests partly validates accessibility."],
+    ["What is the difference between getByText() and getByRole() with name?","getByText() searches the entire DOM for visible text and can match any element type. getByRole() with name filters by both element type and accessible name — more precise and less likely to match the wrong element."],
+    ["What does 'lazy locator' mean in Playwright?","A lazy locator doesn't query the DOM when you create it — it only queries when you perform an action (click, fill) or assertion. This means you can define locators before the element exists, and there are no 'stale element' errors."],
+    ["How does Playwright's auto-wait work with locators?","When you call an action (like click), Playwright waits until the element is visible, enabled, and stable (not animating). It polls the DOM repeatedly until these conditions are met or the timeout expires."],
+    ["When should you use getByTestId() over other locators?","When getByRole() and getByLabel() don't apply — for elements without semantic roles or labels. data-testid is a stable, team-agreed contract that doesn't change with styling or copy changes."],
+  ],
+  [ // S3
+    ["What is the difference between a hard and soft assertion?","Hard assertion (expect()): test stops immediately on failure. Soft assertion (expect.soft()): failure is recorded but test continues. Use soft for page layout checks where you want all failures visible at once."],
+    ["Why must you await assertions in Playwright?","Web-first assertions return Promises — they retry asynchronously. Without await, the assertion doesn't execute and the test passes silently even if the condition is false. Missing await is one of the most common beginner mistakes."],
+    ["What's the difference between toHaveText() and toContainText()?","toHaveText() requires an exact match of the full text content. toContainText() does a partial match — the element can contain additional text beyond what's checked."],
+    ["What does Playwright do if an assertion fails after retrying?","After the timeout expires (default 5 seconds), the assertion throws an error with a detailed message showing the expected vs actual value. The test fails, and if retries are configured, the entire test reruns."],
+    ["What is test.step() and why should I use it?","test.step() groups actions and assertions under a named block. The HTML report shows each step with its pass/fail status, making it easy to see exactly which logical step failed without reading raw error messages."],
+  ],
+  [ // S4
+    ["What is the execution order of hooks in Playwright?","beforeAll → beforeEach → test → afterEach → afterAll. For nested describe blocks: outer beforeEach runs before inner beforeEach. Hooks at the same level run in definition order."],
+    ["What's the difference between beforeAll and beforeEach?","beforeAll runs once for the entire describe block — use for expensive one-time setup. beforeEach runs before every single test — use for per-test setup that needs a clean state."],
+    ["Can beforeAll share state with tests?","Yes — via variables declared in the describe scope (let authToken). But be careful: when fullyParallel:true, beforeAll runs per-worker, not truly globally once."],
+    ["How do you take a screenshot only when a test fails?","In afterEach, check testInfo.status !== testInfo.expectedStatus, then call page.screenshot() and testInfo.attach() to embed it in the HTML report."],
+    ["What does test.fixme() do vs test.skip()?","test.skip() marks a test as intentionally skipped — it won't run. test.fixme() marks a test as known-broken — it runs but its failure is expected and it shows in a special 'fixme' section in the report."],
+  ],
+  [ // S5
+    ["What is the difference between fullyParallel:true and false?","With false (default): test files run in parallel but tests within a file run serially. With true: every individual test runs in parallel across workers, regardless of which file they're in."],
+    ["Why is test isolation critical for parallel testing?","Parallel tests run simultaneously. If they share mutable state (a global variable, the same DB user), they interfere with each other, causing race conditions and flaky results. Each test must be fully independent."],
+    ["What is test sharding?","Sharding splits the test suite across multiple CI machines. With --shard=1/4, that runner only executes 25% of tests. All 4 shards run simultaneously, cutting total time to ~25% of a single-runner run."],
+    ["How do you generate unique test data for parallel tests?","Use Date.now() + Math.random() for unique strings, UUIDs for IDs, or worker-index-based accounts (testuser_0@, testuser_1@). Never reuse test data between parallel tests."],
+    ["What is test.describe.serial() and when do you use it?","It forces tests within that describe block to run sequentially and in order. Use only for workflows that genuinely depend on ordered execution (registration → verify → login). If Test 1 fails, subsequent tests in the group are auto-skipped."],
+  ],
+  [ // S6
+    ["What exactly is a worker in Playwright?","A worker is a separate Node.js OS process spawned by the Playwright test runner. Each worker has its own memory space, its own browser instance, and runs one or more test files. Workers don't share memory."],
+    ["What is the difference between workerIndex and parallelIndex?","workerIndex is a stable 0-based index for the worker process — never changes during the worker's lifetime. parallelIndex is the index among currently concurrently running tests — useful for dynamic resource allocation."],
+    ["How does beforeAll behave differently with multiple workers?","beforeAll runs once per worker, not once globally. If you have 4 workers and 2 handle your describe block, beforeAll runs twice total. It's not a globally-once hook in parallel mode."],
+    ["When would you use a worker-scoped fixture?","For expensive setup that can be shared across all tests in a worker — like generating an auth token, opening a DB connection, or starting a mock server. Worker-scoped fixtures are created once per worker and disposed when the worker exits."],
+    ["How do you limit parallelism for just one describe block?","Use test.describe.configure({ mode: 'serial' }) inside that block. It overrides the global fullyParallel setting for just those tests without changing playwright.config.ts."],
+  ],
+  [ // S7
+    ["What problem does the Page Object Model solve?","When a selector changes, you update ONE place (the page object class) instead of every test file that uses that selector. POM separates 'how to interact' from 'what to test'."],
+    ["Should assertions go inside page objects?","No — assertions belong in tests. Page objects provide actions and return data. Tests verify the data. Mixing them makes page objects harder to reuse and harder to debug when assertions fail."],
+    ["What is a component object?","A component object is a POM variation for reusable UI components (navbar, modal, data table) that appear on multiple pages. It scopes its locators to the component's root element, not the full page."],
+    ["What's the advantage of custom fixtures for page objects?","Custom fixtures inject page object instances automatically — tests receive loginPage and dashboardPage directly without writing new LoginPage(page) in every test. It reduces boilerplate and keeps tests focused on the test logic."],
+    ["How do you organise page objects in a large project?","pages/ directory with one file per page (LoginPage.ts, CheckoutPage.ts), a components/ directory for reusable components (NavbarComponent.ts, ModalComponent.ts), and a fixtures/ file (fixtures.ts) that wires them into the test framework."],
+  ],
+  [ // S8
+    ["What is BasePage and what goes in it?","BasePage is an abstract parent class that all page objects extend. It contains methods common to every page: navigate(), waitForNetworkIdle(), getTitle(), takeScreenshot(). Subclasses inherit these for free without duplicating code."],
+    ["What is the fluent API pattern in POM?","Methods return Promise<this> instead of Promise<void>. This allows chaining: await page.fillName().fillEmail().submit(). It improves test readability by expressing a sequence of actions in a single expression."],
+    ["What is a data factory and why is it better than hardcoded test data?","A factory is a class with static methods that generate typed test objects with unique values. Better than hardcoded data because: unique values prevent parallel test conflicts, TypeScript types catch errors at compile time, and changing data shape requires updating only the factory."],
+    ["What TypeScript features improve POM maintainability?","private/readonly prevent tests from bypassing the page object API, abstract forces subclasses to define required properties, Partial<T> enables override patterns in factories, and interfaces define contracts for mocking in unit tests."],
+    ["How deep should POM inheritance go?","Maximum 2 levels: BasePage → SpecificPage. Deeper hierarchies (BasePage → AuthenticatedPage → AdminPage → SpecificAdminPage) become harder to debug than the tests they serve. Prefer composition (component objects) over deep inheritance."],
+  ],
+  [ // S9
+    ["How do you handle authentication in Playwright CI?","Save authenticated session with page.context().storageState() to a file in a setup project. Then use storageState in playwright.config.ts for tests that need to be logged in. This means login happens once, not for every test."],
+    ["What is page.route() used for?","Intercepting network requests during tests. You can mock API responses (return fake data), abort requests (block images to speed up tests), or modify request/response headers. Essential for testing error states without a broken backend."],
+    ["How do you run Playwright tests in Docker?","Use Microsoft's official playwright Docker image (mcr.microsoft.com/playwright) which includes all browser binaries and system dependencies. Copy your project, run npm ci, then CMD npx playwright test."],
+    ["What data does the Playwright trace viewer show?","Step-by-step actions, DOM snapshots at every step, network requests/responses, console logs, and a timeline. You can scrub through a test's entire execution and see exactly what the page looked like at any point."],
+    ["How would you describe your test strategy in a sentence?","Fast, isolated, deterministic tests that run on every commit — covering critical user journeys with E2E tests, supplemented by API tests for data validation, and hooked into CI so failures block broken code from merging."],
+  ],
+];
+
+let current = 0;
+
+function renderQA() {
+  QA_DATA.forEach((qas, si) => {
+    const el = document.getElementById('qa-s' + si);
+    if (!el) return;
+    el.innerHTML = qas.map((qa, i) => `
+      <div class="qa-item">
+        <div class="qa-q" onclick="toggleQA(this)">
+          <span>Q${i+1}: ${qa[0]}</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="qa-a">${qa[1]}</div>
+      </div>
+    `).join('');
+  });
+}
+
+function toggleQA(el) {
+  const ans = el.nextElementSibling;
+  const ch = el.querySelector('.chevron');
+  const open = ans.classList.toggle('open');
+  ch.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function switchCode(btn, sid) {
+  const bar = btn.closest('.code-tab-bar');
+  const panels = bar.nextElementSibling ? bar.parentElement.querySelectorAll('.code-panel[data-s="'+sid+'"]') : [];
+  bar.querySelectorAll('.ct-btn').forEach((b,i) => {
+    const isActive = b === btn;
+    b.classList.toggle('active', isActive);
+    if (panels[i]) panels[i].classList.toggle('active', isActive);
+  });
+}
+
+function goTo(n) {
+  document.querySelectorAll('.session').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===n));
+  current = n;
+  const pct = Math.round(((n+1)/10)*100);
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = (n+1) + ' / 10';
+  document.getElementById('prevBtn').style.display = n === 0 ? 'none' : '';
+  document.getElementById('nextBtn').style.display = n === 9 ? 'none' : '';
+  window.scrollTo(0,0);
+}
+
+function navigate(dir) {
+  const next = Math.max(0, Math.min(9, current + dir));
+  goTo(next);
+  document.getElementById('tabbar').querySelectorAll('.tab-btn')[next].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+
+renderQA();
+goTo(0);
+</script>
+
+<script>
+/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
+(function(){try{
+  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
+    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
+      btn.addEventListener('click',function(){
+        var t=this.nextElementSibling;
+        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
+      });
+    }
+  });
+  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
+    if(!tab.dataset.vTab){tab.dataset.vTab='1';
+      tab.addEventListener('click',function(){
+        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
+        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
+      });
+    }
+  });
+}catch(e){console.log('VE:',e)}})();
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

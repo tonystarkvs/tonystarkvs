@@ -1,0 +1,820 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Selenium BDD Cucumber: 8 Sessions Course</title>
+  <style>
+    /* === ORIGINAL STYLE – PRESERVED EXACTLY (plus responsive enhancements) === */
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--accent:#1D9E75;--accent-light:#E1F5EE;--accent-dark:#085041;--warn:#BA7517;--warn-light:#FAEEDA;--danger:#A32D2D;--danger-light:#FCEBEB;--info:#185FA5;--info-light:#E6F1FB;--purple:#534AB7;--purple-light:#EEEDFE}
+    body{font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background:#f8fafc; color:#1e293b; padding:1rem;}
+    .app{max-width:1280px;margin:0 auto;background:white;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.05);padding:1.5rem 1rem;}
+    .header{margin-bottom:1.5rem}
+    .header h1{font-size:1.6rem;font-weight:500;color:#1e293b;margin-bottom:0.25rem}
+    .header p{font-size:0.85rem;color:#475569}
+    .session-nav{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem}
+    .sn-btn{font-size:0.8rem;padding:0.4rem 0.9rem;border-radius:8px;border:0.5px solid #cbd5e1;background:white;color:#475569;cursor:pointer;transition:all .15s}
+    .sn-btn:hover{background:#f1f5f9}
+    .sn-btn.active{background:#1D9E75;color:white;border-color:#1D9E75}
+    .session-body{display:none}
+    .session-body.active{display:block}
+    .session-title{font-size:1.3rem;font-weight:500;color:#1e293b;margin-bottom:0.25rem}
+    .session-meta{font-size:0.75rem;color:#475569;margin-bottom:1rem;display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap}
+    .badge{display:inline-block;font-size:0.7rem;padding:0.2rem 0.6rem;border-radius:8px;font-weight:500}
+    .badge-green{background:#E1F5EE;color:#085041}
+    .badge-amber{background:#FAEEDA;color:#BA7517}
+    .badge-blue{background:#E6F1FB;color:#185FA5}
+    .badge-purple{background:#EEEDFE;color:#534AB7}
+    .card{background:white;border:0.5px solid #e2e8f0;border-radius:16px;padding:1rem 1.2rem;margin-bottom:1rem}
+    .card-title{font-size:1rem;font-weight:500;color:#1e293b;margin-bottom:0.6rem;display:flex;align-items:center;gap:0.5rem}
+    .term-row{display:flex;gap:0.8rem;align-items:flex-start;padding:0.5rem 0;border-bottom:0.5px solid #e2e8f0;font-size:0.85rem}
+    .term{font-weight:500;color:#1e293b;min-width:130px;flex-shrink:0}
+    .term-def{color:#475569;line-height:1.5}
+    .code-block{background:#f1f5f9;border:0.5px solid #e2e8f0;border-radius:8px;padding:0.75rem;font-family:monospace;font-size:0.75rem;color:#1e293b;line-height:1.6;white-space:pre;overflow-x:auto;margin:0.5rem 0}
+    .kw{color:#185FA5}
+    .cm{color:#475569;font-style:italic}
+    .st{color:#085041}
+    .anno{color:#BA7517}
+    table{width:100%;font-size:0.75rem;border-collapse:collapse}
+    th,td{padding:0.5rem 0.3rem;border-bottom:0.5px solid #e2e8f0;text-align:left;vertical-align:top}
+    th{font-weight:500;color:#475569}
+    .tip-row{display:flex;gap:0.5rem;padding:0.5rem 0;font-size:0.85rem;border-bottom:0.5px solid #e2e8f0}
+    .q-row{padding:0.6rem 0;border-bottom:0.5px solid #e2e8f0;font-size:0.85rem}
+    .q-text{font-weight:500;color:#1e293b;margin-bottom:0.2rem}
+    .q-ans{color:#475569;line-height:1.5}
+    .phase-strip{display:flex;gap:0;margin:0.5rem 0;border-radius:8px;overflow:hidden;border:0.5px solid #e2e8f0}
+    .phase-item{flex:1;padding:0.5rem;text-align:center;font-size:0.7rem;font-weight:500}
+    .phase-item span{display:block;font-size:0.65rem;font-weight:400;margin-top:2px}
+    .pi-1{background:#E6F1FB;color:#185FA5}
+    .pi-2{background:#E1F5EE;color:#085041}
+    .pi-3{background:#FCEBEB;color:#A32D2D}
+    .progress-bar{height:4px;background:#e2e8f0;border-radius:4px;margin-bottom:1rem;overflow:hidden}
+    .progress-fill{height:100%;background:#1D9E75;border-radius:4px;transition:width .3s}
+    .nav-footer{display:flex;justify-content:space-between;margin-top:1rem;gap:1rem}
+    .nav-btn{font-size:0.8rem;padding:0.4rem 1rem;border-radius:8px;border:0.5px solid #cbd5e1;background:white;color:#1e293b;cursor:pointer}
+    .nav-btn:hover{background:#f1f5f9}
+    .nav-btn.primary{background:#1D9E75;color:white;border-color:#1D9E75}
+    .ask-btn{display:inline-block;margin-top:0.6rem;font-size:0.7rem;padding:0.3rem 0.8rem;border-radius:8px;border:0.5px solid #cbd5e1;background:white;color:#475569;cursor:pointer}
+    .ask-btn:hover{background:#f1f5f9}
+
+    /* ===== RESPONSIVE ENHANCEMENTS (mobile + tablet) ===== */
+    @media (max-width: 768px) {
+      body { padding: 0.5rem; }
+      .app { padding: 1rem; }
+      .header h1 { font-size: 1.3rem; }
+      .session-nav { flex-wrap: wrap; justify-content: center; gap: 0.4rem; }
+      .sn-btn { font-size: 0.7rem; padding: 0.35rem 0.75rem; }
+      .session-title { font-size: 1.1rem; }
+      .term-row { flex-direction: column; gap: 0.2rem; }
+      .term { min-width: auto; margin-bottom: 0.1rem; }
+      .card { padding: 0.8rem; }
+      .card-title { font-size: 0.9rem; }
+      .code-block { font-size: 0.7rem; padding: 0.6rem; }
+      table, th, td { font-size: 0.7rem; }
+      .phase-item { font-size: 0.65rem; padding: 0.4rem; }
+      .tip-row, .q-row { font-size: 0.75rem; }
+      .nav-btn { font-size: 0.7rem; padding: 0.35rem 0.8rem; }
+    }
+
+    @media (max-width: 480px) {
+      .session-nav { gap: 0.3rem; }
+      .sn-btn { padding: 0.3rem 0.6rem; font-size: 0.65rem; }
+      .card { padding: 0.6rem; }
+      .session-title { font-size: 1rem; }
+      .phase-strip { flex-wrap: wrap; }
+      .phase-item { min-width: 100px; }
+    }
+
+    /* Ensure long code lines wrap or scroll */
+    .code-block { white-space: pre-wrap; word-break: break-word; }
+    table { display: block; overflow-x: auto; }
+  </style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+<div class="app">
+  <div class="header">
+    <h1>Selenium BDD Cucumber: 8 Sessions Course</h1>
+    <p>BDD Cucumber · Selenium 4 · Parallel Testing · Hooks · Interview Prep</p>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="prog" style="width:12.5%"></div></div>
+
+  <div class="session-nav" id="snav">
+    <button class="sn-btn active" data-session="0">S1: Foundations</button>
+    <button class="sn-btn" data-session="1">S2: BDD + Cucumber</button>
+    <button class="sn-btn" data-session="2">S3: Selenium 4</button>
+    <button class="sn-btn" data-session="3">S4: BDD Hooks</button>
+    <button class="sn-btn" data-session="4">S5: Parallel Config</button>
+    <button class="sn-btn" data-session="5">S6: Runner Files</button>
+    <button class="sn-btn" data-session="6">S7: Troubleshooting</button>
+    <button class="sn-btn" data-session="7">S8: Interview Prep</button>
+  </div>
+
+  <!-- ========= SESSION 0 (EXACT ORIGINAL CONTENT) ========= -->
+  <div class="session-body active" id="s0">
+    <div class="session-title">Session 1: Foundations & Key Concepts</div>
+    <div class="session-meta"><span class="badge badge-green">Beginner</span> <span>What is BDD, TDD, ATDD &amp; the full stack</span></div>
+    <div class="card"><div class="card-title"><i class="ti ti-vocabulary" aria-hidden="true"></i> Key Terms Explained</div>
+      <div class="term-row"><div class="term">BDD</div><div class="term-def">Behavior Driven Development — tests written in plain English (Gherkin) so devs, QA &amp; business all understand. Focus: WHAT should happen.</div></div>
+      <div class="term-row"><div class="term">TDD</div><div class="term-def">Test Driven Development — write unit tests before code. Focus: HOW it works internally.</div></div>
+      <div class="term-row"><div class="term">ATDD</div><div class="term-def">Acceptance Test Driven Development — tests defined by the whole team before dev starts. BDD is a style of ATDD.</div></div>
+      <div class="term-row"><div class="term">Cucumber</div><div class="term-def">BDD framework that reads .feature files (Gherkin) and maps steps to Java/Python/JS code.</div></div>
+      <div class="term-row"><div class="term">Selenium 4</div><div class="term-def">Browser automation library. Drives Chrome, Firefox, Edge. New in v4: W3C protocol, CDP, relative locators, improved grid.</div></div>
+      <div class="term-row"><div class="term">Gherkin</div><div class="term-def">Language for writing feature files. Keywords: Feature, Scenario, Given, When, Then, And, But, Background.</div></div>
+      <div class="term-row"><div class="term">Step Definition</div><div class="term-def">Java method annotated with @Given/@When/@Then that links Gherkin step to actual automation code.</div></div>
+      <div class="term-row"><div class="term">POM</div><div class="term-def">Page Object Model — design pattern. One class per web page. Separates UI locators from test logic.</div></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-stack" aria-hidden="true"></i> Full Framework Stack</div>
+      <div class="code-block"><span class="cm">// Typical BDD + Selenium 4 Maven project layers</span>
+<span class="st">Feature File (.feature)</span>        ← Business readable tests
+     ↓
+<span class="st">Step Definitions (.java)</span>       ← Glue between Gherkin &amp; code
+     ↓
+<span class="st">Page Objects (.java)</span>          ← UI element locators + actions
+     ↓
+<span class="st">WebDriver (Selenium 4)</span>        ← Browser automation
+     ↓
+<span class="st">Runner File (JUnit/TestNG)</span>    ← Test execution configuration
+     ↓
+<span class="st">Hooks.java</span>                    ← Setup / teardown logic
+     ↓
+<span class="st">Reports (Extent/Allure)</span>       ← Test results</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-chart-bar" aria-hidden="true"></i> BDD vs TDD vs ATDD — Quick Compare</div>
+      <table class="comp"><thead><tr><th>Aspect</th><th>TDD</th><th>BDD</th><th>ATDD</th></tr></thead>
+      <tbody><tr><td>Who writes</td><td>Developer</td><td>QA + Dev + BA</td><td>Whole team</td></tr>
+      <tr><td>Language</td><td>Code (JUnit)</td><td>Gherkin + Code</td><td>Natural language</td></tr>
+      <tr><td>Focus</td><td>Unit level</td><td>Behaviour/feature</td><td>Acceptance criteria</td></tr>
+      <tr><td>Tool</td><td>JUnit/TestNG</td><td>Cucumber/JBehave</td><td>FitNesse, Robot</td></tr>
+      </tbody></table>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Explain more about BDD vs TDD with real project examples')">Ask Claude to expand this ↗</button>
+  </div>
+
+  <!-- ========= SESSION 1 ========= -->
+  <div class="session-body" id="s1">
+    <div class="session-title">Session 2: BDD + Cucumber Deep Dive</div>
+    <div class="session-meta"><span class="badge badge-green">Beginner</span> Feature files, Gherkin, Step Defs, project structure</div>
+    <div class="card"><div class="card-title"><i class="ti ti-file-text" aria-hidden="true"></i> Feature File Anatomy</div>
+      <div class="code-block"><span class="cm"># src/test/resources/features/login.feature</span>
+<span class="kw">Feature:</span> User Login
+  <span class="cm">As a registered user</span>
+  <span class="cm">I want to log in to the application</span>
+  <span class="cm">So that I can access my account</span>
+
+  <span class="kw">Background:</span>
+    <span class="anno">Given</span> the user is on the login page
+
+  <span class="kw">Scenario:</span> Successful login
+    <span class="anno">When</span>  the user enters valid credentials
+    <span class="anno">Then</span>  the user should see the dashboard
+
+  <span class="kw">Scenario Outline:</span> Invalid login attempts
+    <span class="anno">When</span>  the user enters "<span class="st">&lt;email&gt;</span>" and "<span class="st">&lt;password&gt;</span>"
+    <span class="anno">Then</span>  error "<span class="st">&lt;message&gt;</span>" should be displayed
+    <span class="kw">Examples:</span>
+      | email          | password | message              |
+      | wrong@test.com | abc123   | Invalid credentials  |
+      | user@test.com  | wrongPwd | Invalid credentials  |</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-code" aria-hidden="true"></i> Step Definition (Java)</div>
+      <div class="code-block"><span class="cm">// src/test/java/stepdefs/LoginSteps.java</span>
+<span class="kw">import</span> io.cucumber.java.en.*;
+<span class="kw">import</span> pages.LoginPage;
+
+<span class="kw">public class</span> <span class="st">LoginSteps</span> {
+    <span class="kw">private</span> LoginPage loginPage;
+
+    <span class="anno">@Given</span>(<span class="st">"the user is on the login page"</span>)
+    <span class="kw">public void</span> navigateToLogin() {
+        loginPage = <span class="kw">new</span> LoginPage(DriverManager.getDriver());
+        loginPage.open();
+    }
+
+    <span class="anno">@When</span>(<span class="st">"the user enters valid credentials"</span>)
+    <span class="kw">public void</span> enterValidCredentials() {
+        loginPage.enterEmail(<span class="st">"user@test.com"</span>);
+        loginPage.enterPassword(<span class="st">"Test@1234"</span>);
+        loginPage.clickLogin();
+    }
+
+    <span class="anno">@Then</span>(<span class="st">"the user should see the dashboard"</span>)
+    <span class="kw">public void</span> verifyDashboard() {
+        Assert.assertTrue(loginPage.isDashboardVisible());
+    }
+}</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-folder" aria-hidden="true"></i> Maven Project Structure</div>
+      <div class="code-block">src/
+├── test/
+│   ├── java/
+│   │   ├── <span class="st">hooks/</span>         Hooks.java (Before/After)
+│   │   ├── <span class="st">pages/</span>         LoginPage.java (POM)
+│   │   ├── <span class="st">runners/</span>       TestRunner.java
+│   │   ├── <span class="st">stepdefs/</span>      LoginSteps.java
+│   │   └── <span class="st">utils/</span>         DriverManager.java
+│   └── resources/
+│       ├── <span class="st">features/</span>      login.feature
+│       └── <span class="st">cucumber.properties</span>
+└── pom.xml</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-package" aria-hidden="true"></i> pom.xml Key Dependencies</div>
+      <div class="code-block"><span class="cm">&lt;!-- pom.xml --&gt;</span>
+<span class="kw">&lt;dependencies&gt;</span>
+  <span class="cm">&lt;!-- Cucumber --&gt;</span>
+  &lt;dependency&gt;
+    &lt;groupId&gt;io.cucumber&lt;/groupId&gt;
+    &lt;artifactId&gt;<span class="st">cucumber-java</span>&lt;/artifactId&gt;
+    &lt;version&gt;7.14.0&lt;/version&gt;
+  &lt;/dependency&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;io.cucumber&lt;/groupId&gt;
+    &lt;artifactId&gt;<span class="st">cucumber-junit</span>&lt;/artifactId&gt;  <span class="cm">&lt;!-- or testng --&gt;</span>
+    &lt;version&gt;7.14.0&lt;/version&gt;
+  &lt;/dependency&gt;
+  <span class="cm">&lt;!-- Selenium 4 --&gt;</span>
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.seleniumhq.selenium&lt;/groupId&gt;
+    &lt;artifactId&gt;<span class="st">selenium-java</span>&lt;/artifactId&gt;
+    &lt;version&gt;4.16.1&lt;/version&gt;
+  &lt;/dependency&gt;
+  <span class="cm">&lt;!-- WebDriverManager --&gt;</span>
+  &lt;dependency&gt;
+    &lt;groupId&gt;io.github.bonigarcia&lt;/groupId&gt;
+    &lt;artifactId&gt;<span class="st">webdrivermanager</span>&lt;/artifactId&gt;
+    &lt;version&gt;5.6.3&lt;/version&gt;
+  &lt;/dependency&gt;
+<span class="kw">&lt;/dependencies&gt;</span></div>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Show me a complete Page Object Model class for a login page with Selenium 4')">Show me a full POM class ↗</button>
+  </div>
+
+  <!-- ========= SESSION 2 ========= -->
+  <div class="session-body" id="s2">
+    <div class="session-title">Session 3: Selenium 4 Essentials</div>
+    <div class="session-meta"><span class="badge badge-amber">Intermediate</span> W3C, DriverManager, key new features</div>
+    <div class="card"><div class="card-title"><i class="ti ti-sparkles" aria-hidden="true"></i> What's New in Selenium 4</div>
+      <div class="term-row"><div class="term">W3C WebDriver</div><div class="term-def">All browser communication is now W3C standard. No more JsonWireProtocol. More stable &amp; consistent.</div></div>
+      <div class="term-row"><div class="term">Chrome DevTools (CDP)</div><div class="term-def">Direct access to browser internals — mock networks, intercept requests, capture console logs.</div></div>
+      <div class="term-row"><div class="term">Relative Locators</div><div class="term-def">Find elements relative to others: above(), below(), toLeftOf(), toRightOf(), near(). Useful for dynamic UIs.</div></div>
+      <div class="term-row"><div class="term">New Window/Tab API</div><div class="term-def">driver.switchTo().newWindow(WindowType.TAB) — open tabs programmatically.</div></div>
+      <div class="term-row"><div class="term">Selenium Grid 4</div><div class="term-def">Rebuilt from scratch. Supports Docker, Kubernetes. Better parallel test distribution.</div></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-code" aria-hidden="true"></i> ThreadLocal DriverManager (Thread-Safe)</div>
+      <div class="code-block"><span class="cm">// utils/DriverManager.java — CRITICAL for parallel tests</span>
+<span class="kw">public class</span> <span class="st">DriverManager</span> {
+
+    <span class="cm">// ThreadLocal = separate driver per thread (parallel safe!)</span>
+    <span class="kw">private static</span> ThreadLocal&lt;WebDriver&gt; driver =
+                        <span class="kw">new</span> ThreadLocal&lt;&gt;();
+
+    <span class="kw">public static void</span> initDriver(String browser) {
+        WebDriver d;
+        <span class="kw">switch</span>(browser.toLowerCase()) {
+            <span class="kw">case</span> <span class="st">"chrome"</span>:
+                WebDriverManager.chromedriver().setup();
+                ChromeOptions opts = <span class="kw">new</span> ChromeOptions();
+                opts.addArguments(<span class="st">"--headless=new"</span>); <span class="cm">// headless v2</span>
+                d = <span class="kw">new</span> ChromeDriver(opts);
+                <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="st">"firefox"</span>:
+                WebDriverManager.firefoxdriver().setup();
+                d = <span class="kw">new</span> FirefoxDriver();
+                <span class="kw">break</span>;
+            <span class="kw">default</span>:
+                <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"Unknown browser"</span>);
+        }
+        d.manage().window().maximize();
+        d.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.set(d);
+    }
+
+    <span class="kw">public static</span> WebDriver getDriver() {
+        <span class="kw">return</span> driver.get();
+    }
+
+    <span class="kw">public static void</span> quitDriver() {
+        <span class="kw">if</span> (driver.get() != <span class="kw">null</span>) {
+            driver.get().quit();
+            driver.remove(); <span class="cm">// prevent memory leak!</span>
+        }
+    }
+}</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Common Mistake: Not Using ThreadLocal</div>
+      <div class="code-block"><span class="cm">// BAD — single static driver: parallel tests will CRASH!</span>
+<span class="kw">public static</span> WebDriver driver;  <span class="cm">// ❌ Race condition!</span>
+
+<span class="cm">// GOOD — ThreadLocal: each thread gets its own driver</span>
+<span class="kw">private static</span> ThreadLocal&lt;WebDriver&gt; driver = <span class="kw">new</span> ThreadLocal&lt;&gt;(); <span class="cm">// ✅</span></div>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Show me Selenium 4 CDP usage to mock a network request in a test')">Show CDP network mocking ↗</button>
+  </div>
+
+  <!-- ========= SESSION 3 ========= -->
+  <div class="session-body" id="s3">
+    <div class="session-title">Session 4: BDD Hooks — All 3 Phases × 3 Frameworks</div>
+    <div class="session-meta"><span class="badge badge-amber">Intermediate</span> Before/After hooks in Cucumber, TestNG, JUnit 5</div>
+    <div class="card"><div class="card-title"><i class="ti ti-hook" aria-hidden="true"></i> What Are Hooks?</div>
+      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:10px">Hooks are special methods that run automatically at specific lifecycle points — before/after scenarios, features, or steps. They handle setup &amp; teardown without putting it inside every test.</p>
+      <div class="phase-strip">
+        <div class="phase-item pi-1">Before Suite<span>Run once at start</span></div>
+        <div class="phase-item pi-2">Before/After Scenario<span>Each test setup</span></div>
+        <div class="phase-item pi-3">After Suite<span>Run once at end</span></div>
+      </div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-leaf" aria-hidden="true"></i> Framework 1: Cucumber Hooks</div>
+      <div class="code-block"><span class="cm">// hooks/Hooks.java (Cucumber)</span>
+<span class="kw">import</span> io.cucumber.java.*;
+
+<span class="kw">public class</span> <span class="st">Hooks</span> {
+
+    <span class="cm">// Phase 1: Before each Scenario</span>
+    <span class="anno">@Before</span>
+    <span class="kw">public void</span> setUp(Scenario scenario) {
+        System.out.println(<span class="st">"Starting: "</span> + scenario.getName());
+        DriverManager.initDriver(<span class="st">"chrome"</span>);
+    }
+
+    <span class="cm">// Phase 2: After each Scenario (with screenshot on fail)</span>
+    <span class="anno">@After</span>
+    <span class="kw">public void</span> tearDown(Scenario scenario) {
+        <span class="kw">if</span> (scenario.isFailed()) {
+            <span class="kw">byte</span>[] screenshot = ((TakesScreenshot)
+                DriverManager.getDriver())
+                .getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshot, <span class="st">"image/png"</span>, <span class="st">"Screenshot"</span>);
+        }
+        DriverManager.quitDriver();
+    }
+
+    <span class="cm">// Phase 3: Tagged hook — only runs for @smoke</span>
+    <span class="anno">@Before</span>(<span class="st">"@smoke"</span>)
+    <span class="kw">public void</span> beforeSmoke() {
+        System.out.println(<span class="st">"Smoke test prep..."</span>);
+    }
+
+    <span class="cm">// Before/AfterStep — step level (Cucumber 6+)</span>
+    <span class="anno">@BeforeStep</span>
+    <span class="kw">public void</span> beforeStep() { <span class="cm">/* log step start */</span> }
+
+    <span class="anno">@AfterStep</span>
+    <span class="kw">public void</span> afterStep(Scenario s) { <span class="cm">/* capture step result */</span> }
+}</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-brand-java" aria-hidden="true"></i> Framework 2: TestNG Hooks (3 Phases)</div>
+      <div class="code-block"><span class="cm">// BaseTest.java (TestNG)</span>
+<span class="kw">public class</span> <span class="st">BaseTest</span> {
+
+    <span class="cm">// PHASE 1 — Suite level (runs once for entire suite)</span>
+    <span class="anno">@BeforeSuite</span>
+    <span class="kw">public void</span> globalSetup() {
+        ExtentReports.init(); <span class="cm">// start report</span>
+        System.out.println(<span class="st">"Suite started"</span>);
+    }
+
+    <span class="cm">// PHASE 2 — Method level (runs before each @Test)</span>
+    <span class="anno">@BeforeMethod</span>
+    <span class="kw">public void</span> testSetup(Method method) {
+        DriverManager.initDriver(System.getProperty(<span class="st">"browser"</span>,<span class="st">"chrome"</span>));
+    }
+
+    <span class="anno">@AfterMethod</span>
+    <span class="kw">public void</span> testTearDown(ITestResult result) {
+        <span class="kw">if</span> (result.getStatus() == ITestResult.FAILURE) {
+            captureScreenshot(result.getName());
+        }
+        DriverManager.quitDriver();
+    }
+
+    <span class="cm">// PHASE 3 — Suite level teardown</span>
+    <span class="anno">@AfterSuite</span>
+    <span class="kw">public void</span> globalTeardown() {
+        ExtentReports.flush(); <span class="cm">// finalize report</span>
+    }
+}</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-atom" aria-hidden="true"></i> Framework 3: JUnit 5 Hooks (3 Phases)</div>
+      <div class="code-block"><span class="cm">// BaseTest.java (JUnit 5)</span>
+<span class="kw">import</span> org.junit.jupiter.api.*;
+
+<span class="kw">public class</span> <span class="st">BaseTest</span> {
+
+    <span class="cm">// PHASE 1 — Class level (once before all tests in class)</span>
+    <span class="anno">@BeforeAll</span>
+    <span class="kw">static void</span> suiteSetup() {
+        System.out.println(<span class="st">"All tests starting..."</span>);
+    }
+
+    <span class="cm">// PHASE 2 — Method level (before EACH test)</span>
+    <span class="anno">@BeforeEach</span>
+    <span class="kw">void</span> testSetup(TestInfo info) {
+        System.out.println(<span class="st">"Test: "</span> + info.getDisplayName());
+        DriverManager.initDriver(<span class="st">"chrome"</span>);
+    }
+
+    <span class="anno">@AfterEach</span>
+    <span class="kw">void</span> testTearDown(TestInfo info) {
+        DriverManager.quitDriver();
+    }
+
+    <span class="cm">// PHASE 3 — Class level (once after all tests)</span>
+    <span class="anno">@AfterAll</span>
+    <span class="kw">static void</span> suiteTearDown() {
+        System.out.println(<span class="st">"Suite complete."</span>);
+    }
+}</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-table" aria-hidden="true"></i> 3 Frameworks × 3 Phases Reference</div>
+      <table class="comp">
+        <thead><tr><th>Phase</th><th>Cucumber</th><th>TestNG</th><th>JUnit 5</th></tr></thead>
+        <tbody>
+          <tr><td>Before Suite</td><td>@BeforeAll (JUnit runner)</td><td>@BeforeSuite</td><td>@BeforeAll</td></tr>
+          <tr><td>Before Each Test</td><td>@Before</td><td>@BeforeMethod</td><td>@BeforeEach</td></tr>
+          <tr><td>After Each Test</td><td>@After</td><td>@AfterMethod</td><td>@AfterEach</td></tr>
+          <tr><td>After Suite</td><td>@AfterAll (JUnit runner)</td><td>@AfterSuite</td><td>@AfterAll</td></tr>
+          <tr><td>Step Level</td><td>@BeforeStep / @AfterStep</td><td>@BeforeGroups</td><td>Extensions API</td></tr>
+          <tr><td>Conditional</td><td>@Before("@tag")</td><td>@BeforeMethod(groups)</td><td>@Tag + conditions</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Explain hook order of execution when multiple @Before hooks exist in Cucumber')">Hook execution order ↗</button>
+  </div>
+
+  <!-- ========= SESSION 4 ========= -->
+  <div class="session-body" id="s4">
+    <div class="session-title">Session 5: Parallel Execution Configuration</div>
+    <div class="session-meta"><span class="badge badge-purple">Advanced</span> TestNG XML, JUnit 5 config, Maven Surefire</div>
+    <div class="card"><div class="card-title"><i class="ti ti-cpu" aria-hidden="true"></i> Parallel Execution — Core Concept</div>
+      <div class="term-row"><div class="term">Why Parallel?</div><div class="term-def">Run multiple tests simultaneously → reduce total execution time from hours to minutes.</div></div>
+      <div class="term-row"><div class="term">Thread Count</div><div class="term-def">Number of tests running at same time. Recommended: CPU cores × 2 (e.g., 4 cores = 8 threads).</div></div>
+      <div class="term-row"><div class="term">Thread Safety</div><div class="term-def">Each thread must have its own WebDriver instance (use ThreadLocal). Shared state = flaky tests.</div></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-settings" aria-hidden="true"></i> TestNG — testng.xml Parallel Config</div>
+      <div class="code-block"><span class="cm">&lt;!-- testng.xml --&gt;</span>
+&lt;!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd"&gt;
+
+<span class="cm">&lt;!-- parallel="tests" = each &lt;test&gt; block runs in own thread --&gt;</span>
+&lt;suite name="BDDSuite"
+       <span class="kw">parallel="tests"</span>
+       <span class="st">thread-count="4"</span>
+       verbose="2"&gt;
+
+  <span class="cm">&lt;!-- Thread 1: Chrome --&gt;</span>
+  &lt;test name="ChromeTests"&gt;
+    &lt;parameter name="browser" value="<span class="st">chrome</span>"/&gt;
+    &lt;classes&gt;
+      &lt;class name="runners.TestRunner"/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+
+  <span class="cm">&lt;!-- Thread 2: Firefox --&gt;</span>
+  &lt;test name="FirefoxTests"&gt;
+    &lt;parameter name="browser" value="<span class="st">firefox</span>"/&gt;
+    &lt;classes&gt;
+      &lt;class name="runners.TestRunner"/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+
+&lt;/suite&gt;
+
+<span class="cm">&lt;!-- parallel options: "tests" | "classes" | "methods" --&gt;</span></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-settings" aria-hidden="true"></i> JUnit 5 — junit-platform.properties</div>
+      <div class="code-block"><span class="cm"># src/test/resources/junit-platform.properties</span>
+
+<span class="cm"># Enable parallel execution</span>
+<span class="kw">junit.jupiter.execution.parallel.enabled</span> = true
+
+<span class="cm"># Run test CLASSES in parallel (not methods — safer for Selenium)</span>
+<span class="kw">junit.jupiter.execution.parallel.mode.default</span> = concurrent
+<span class="kw">junit.jupiter.execution.parallel.mode.classes.default</span> = concurrent
+
+<span class="cm"># Thread pool: FIXED = exact count, DYNAMIC = auto based on CPUs</span>
+<span class="kw">junit.jupiter.execution.parallel.config.strategy</span> = fixed
+<span class="kw">junit.jupiter.execution.parallel.config.fixed.parallelism</span> = 4</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-package" aria-hidden="true"></i> Maven Surefire Plugin Config (Required!)</div>
+      <div class="code-block"><span class="cm">&lt;!-- pom.xml build section --&gt;</span>
+&lt;plugin&gt;
+  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="st">maven-surefire-plugin</span>&lt;/artifactId&gt;
+  &lt;version&gt;3.1.2&lt;/version&gt;
+  &lt;configuration&gt;
+    <span class="cm">&lt;!-- For TestNG --&gt;</span>
+    &lt;suiteXmlFiles&gt;
+      &lt;suiteXmlFile&gt;testng.xml&lt;/suiteXmlFile&gt;
+    &lt;/suiteXmlFiles&gt;
+
+    <span class="cm">&lt;!-- For JUnit 5 parallel (uncomment) --&gt;</span>
+    <span class="cm">&lt;!-- &lt;forkCount&gt;4&lt;/forkCount&gt; --&gt;</span>
+    <span class="cm">&lt;!-- &lt;reuseForks&gt;true&lt;/reuseForks&gt; --&gt;</span>
+
+    <span class="cm">&lt;!-- Pass browser param to TestNG --&gt;</span>
+    &lt;systemPropertyVariables&gt;
+      &lt;browser&gt;<span class="st">chrome</span>&lt;/browser&gt;
+    &lt;/systemPropertyVariables&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;</div>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('What is the difference between parallel=tests vs parallel=methods vs parallel=classes in TestNG?')">TestNG parallel modes explained ↗</button>
+  </div>
+
+  <!-- ========= SESSION 5 ========= -->
+  <div class="session-body" id="s5">
+    <div class="session-title">Session 6: Runner Files — JUnit & TestNG with BDD</div>
+    <div class="session-meta"><span class="badge badge-purple">Advanced</span> Complete runner configs with Cucumber options</div>
+    <div class="card"><div class="card-title"><i class="ti ti-run" aria-hidden="true"></i> JUnit 4 Runner (Most Common)</div>
+      <div class="code-block"><span class="cm">// runners/TestRunner.java (JUnit 4 + Cucumber)</span>
+<span class="kw">import</span> io.cucumber.junit.Cucumber;
+<span class="kw">import</span> io.cucumber.junit.CucumberOptions;
+<span class="kw">import</span> org.junit.runner.RunWith;
+
+<span class="anno">@RunWith</span>(Cucumber.class)
+<span class="anno">@CucumberOptions</span>(
+    features  = <span class="st">"src/test/resources/features"</span>,
+    glue      = {<span class="st">"stepdefs"</span>, <span class="st">"hooks"</span>},  <span class="cm">// step defs + hooks packages</span>
+    tags      = <span class="st">"@smoke and not @wip"</span>,   <span class="cm">// tag filter</span>
+    plugin    = {
+        <span class="st">"pretty"</span>,                        <span class="cm">// console output</span>
+        <span class="st">"html:target/cucumber-reports"</span>,  <span class="cm">// HTML report</span>
+        <span class="st">"json:target/cucumber.json"</span>,     <span class="cm">// for Extent/Allure</span>
+        <span class="st">"rerun:target/rerun.txt"</span>         <span class="cm">// failed test list</span>
+    },
+    monochrome = <span class="kw">true</span>,   <span class="cm">// clean console output</span>
+    dryRun    = <span class="kw">false</span>    <span class="cm">// true = check step defs without running</span>
+)
+<span class="kw">public class</span> <span class="st">TestRunner</span> {}</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-run" aria-hidden="true"></i> JUnit 5 Runner (Modern)</div>
+      <div class="code-block"><span class="cm">// runners/TestRunner.java (JUnit 5 + Cucumber)</span>
+<span class="kw">import</span> io.cucumber.junit.platform.engine.Constants;
+<span class="kw">import</span> org.junit.platform.suite.api.*;
+
+<span class="anno">@Suite</span>
+<span class="anno">@IncludeEngines</span>(<span class="st">"cucumber"</span>)
+<span class="anno">@ConfigurationParameter</span>(
+    key   = Constants.FEATURES_PROPERTY_NAME,
+    value = <span class="st">"src/test/resources/features"</span>)
+<span class="anno">@ConfigurationParameter</span>(
+    key   = Constants.GLUE_PROPERTY_NAME,
+    value = <span class="st">"stepdefs,hooks"</span>)
+<span class="anno">@ConfigurationParameter</span>(
+    key   = Constants.PLUGIN_PROPERTY_NAME,
+    value = <span class="st">"pretty,html:target/cucumber-reports"</span>)
+<span class="anno">@ConfigurationParameter</span>(
+    key   = Constants.FILTER_TAGS_PROPERTY_NAME,
+    value = <span class="st">"@smoke"</span>)
+<span class="anno">@ConfigurationParameter</span>(
+    key   = Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
+    value = <span class="st">"true"</span>)
+<span class="kw">public class</span> <span class="st">TestRunner</span> {}</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-run" aria-hidden="true"></i> TestNG Runner</div>
+      <div class="code-block"><span class="cm">// runners/TestRunner.java (TestNG + Cucumber)</span>
+<span class="kw">import</span> io.cucumber.testng.AbstractTestNGCucumberTests;
+<span class="kw">import</span> io.cucumber.testng.CucumberOptions;
+<span class="kw">import</span> org.testng.annotations.DataProvider;
+
+<span class="anno">@CucumberOptions</span>(
+    features = <span class="st">"src/test/resources/features"</span>,
+    glue     = {<span class="st">"stepdefs"</span>, <span class="st">"hooks"</span>},
+    plugin   = {
+        <span class="st">"pretty"</span>,
+        <span class="st">"html:target/cucumber-reports"</span>,
+        <span class="st">"json:target/cucumber.json"</span>
+    },
+    tags     = <span class="st">"@regression"</span>
+)
+<span class="kw">public class</span> <span class="st">TestRunner</span>
+    <span class="kw">extends</span> AbstractTestNGCucumberTests {
+
+    <span class="cm">// THIS is what enables parallel in Cucumber + TestNG!</span>
+    <span class="anno">@Override</span>
+    <span class="anno">@DataProvider</span>(parallel = <span class="kw">true</span>)  <span class="cm">// ← KEY LINE</span>
+    <span class="kw">public</span> Object[][] scenarios() {
+        <span class="kw">return super</span>.scenarios();
+    }
+}</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-alert-circle" aria-hidden="true"></i> Common Runner Mistakes</div>
+      <div class="tip-row"><div class="tip-icon">❌</div><div class="tip-text"><strong>Missing hooks in glue:</strong> glue = {"stepdefs"} — forgetting to add "hooks" means @Before/@After never runs.</div></div>
+      <div class="tip-row"><div class="tip-icon">❌</div><div class="tip-text"><strong>Wrong feature path:</strong> Features path must match your actual directory. Use relative path from project root.</div></div>
+      <div class="tip-row"><div class="tip-icon">❌</div><div class="tip-text"><strong>dryRun=true in CI:</strong> Accidentally leaving dryRun=true means zero tests actually execute.</div></div>
+      <div class="tip-row"><div class="tip-icon">✅</div><div class="tip-text"><strong>Rerun failed tests:</strong> Add plugin "rerun:target/rerun.txt" + create a RerunRunner pointing to that file.</div></div>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('How do I create a rerun runner for failed Cucumber tests in CI/CD?')">Rerun failed tests setup ↗</button>
+  </div>
+
+  <!-- ========= SESSION 6 ========= -->
+  <div class="session-body" id="s6">
+    <div class="session-title">Session 7: Troubleshooting & Best Practices</div>
+    <div class="session-meta"><span class="badge badge-amber">Intermediate</span> Flaky tests, timeouts, race conditions, driver issues</div>
+    <div class="card"><div class="card-title"><i class="ti ti-bug" aria-hidden="true"></i> Flaky Test — Causes & Fixes</div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-x" style="color:var(--danger)" aria-hidden="true"></i></div><div class="tip-text"><strong>ImplicitWait + ExplicitWait together:</strong> Mixing causes unpredictable wait behavior. Use ONLY ExplicitWait (WebDriverWait) in production code.</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-check" style="color:var(--accent)" aria-hidden="true"></i></div><div class="tip-text"><strong>Fix:</strong> <code>WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));</code> then <code>wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("btn")));</code></div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-x" style="color:var(--danger)" aria-hidden="true"></i></div><div class="tip-text"><strong>Thread.sleep() abuse:</strong> Hard sleeps make tests slow AND still fail if the page loads slower than your sleep.</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-check" style="color:var(--accent)" aria-hidden="true"></i></div><div class="tip-text"><strong>Fix:</strong> Replace all Thread.sleep() with explicit waits for the actual condition (element visible, clickable, URL changed).</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-x" style="color:var(--danger)" aria-hidden="true"></i></div><div class="tip-text"><strong>StaleElementReferenceException:</strong> Element found but page refreshed before interaction.</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-check" style="color:var(--accent)" aria-hidden="true"></i></div><div class="tip-text"><strong>Fix:</strong> Re-find element before each action, or use Page Factory with @FindBy lazy loading.</div></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-clock" aria-hidden="true"></i> Timeout Strategy</div>
+      <div class="code-block"><span class="cm">// utils/WaitUtils.java — Centralize all wait logic</span>
+<span class="kw">public class</span> <span class="st">WaitUtils</span> {
+    <span class="kw">private static final int</span> DEFAULT_TIMEOUT = 10;
+
+    <span class="kw">public static</span> WebElement waitForVisible(By locator) {
+        <span class="kw">return new</span> WebDriverWait(
+            DriverManager.getDriver(),
+            Duration.ofSeconds(DEFAULT_TIMEOUT))
+        .until(ExpectedConditions
+            .visibilityOfElementLocated(locator));
+    }
+
+    <span class="kw">public static void</span> waitForPageLoad() {
+        <span class="kw">new</span> WebDriverWait(
+            DriverManager.getDriver(),
+            Duration.ofSeconds(30))
+        .until(d -&gt; ((JavascriptExecutor) d)
+            .executeScript(<span class="st">"return document.readyState"</span>)
+            .equals(<span class="st">"complete"</span>));
+    }
+}</div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-stack-2" aria-hidden="true"></i> Parallel Test Issues & Fixes</div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-x" style="color:var(--danger)" aria-hidden="true"></i></div><div class="tip-text"><strong>Shared static fields in Step Defs:</strong> Static variables are shared across threads → race condition. Use instance variables or ThreadLocal.</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-x" style="color:var(--danger)" aria-hidden="true"></i></div><div class="tip-text"><strong>Test data conflicts:</strong> Two parallel tests using the same username/email → one fails login. Use unique test data per thread (e.g., suffix with thread ID).</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-x" style="color:var(--danger)" aria-hidden="true"></i></div><div class="tip-text"><strong>Screenshots mixed up:</strong> Using static filenames → parallel tests overwrite each other's screenshots.</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-check" style="color:var(--accent)" aria-hidden="true"></i></div><div class="tip-text"><strong>Fix:</strong> Name screenshots with timestamp + thread ID: <code>scenario.getName() + "_" + Thread.currentThread().getId()</code></div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-x" style="color:var(--danger)" aria-hidden="true"></i></div><div class="tip-text"><strong>Driver not quit on failure:</strong> Crashed tests leave browser processes open → memory leak → system slowdown.</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-check" style="color:var(--accent)" aria-hidden="true"></i></div><div class="tip-text"><strong>Fix:</strong> Always quit driver in @After hook. Use try-finally pattern in DriverManager.quitDriver().</div></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-checklist" aria-hidden="true"></i> Pre-Run Checklist</div>
+      <div class="tip-row"><div class="tip-icon">✅</div><div class="tip-text">DriverManager uses ThreadLocal</div></div>
+      <div class="tip-row"><div class="tip-icon">✅</div><div class="tip-text">No static WebDriver references anywhere</div></div>
+      <div class="tip-row"><div class="tip-icon">✅</div><div class="tip-text">All waits are ExplicitWait (no Thread.sleep)</div></div>
+      <div class="tip-row"><div class="tip-icon">✅</div><div class="tip-text">@After hook quits driver even on failure</div></div>
+      <div class="tip-row"><div class="tip-icon">✅</div><div class="tip-text">Test data is thread-unique</div></div>
+      <div class="tip-row"><div class="tip-icon">✅</div><div class="tip-text">Screenshot names include thread ID</div></div>
+      <div class="tip-row"><div class="tip-icon">✅</div><div class="tip-text">headless=new flag for CI pipelines</div></div>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('How do I debug a flaky test that passes locally but fails in CI parallel execution?')">Debug CI flaky tests ↗</button>
+  </div>
+
+  <!-- ========= SESSION 7 ========= -->
+  <div class="session-body" id="s7">
+    <div class="session-title">Session 8: Interview Preparation</div>
+    <div class="session-meta"><span class="badge badge-blue">Interview</span> Common questions with crisp, confident answers</div>
+    <div class="card"><div class="card-title"><i class="ti ti-message-question" aria-hidden="true"></i> BDD & Cucumber Questions</div>
+      <div class="q-row"><div class="q-text">Q: What is BDD and how is it different from TDD?</div><div class="q-ans">BDD focuses on behavior from user's perspective using plain English (Gherkin), involves the whole team (dev, QA, BA). TDD is developer-focused, uses unit tests written in code before implementation.</div></div>
+      <div class="q-row"><div class="q-text">Q: What is the purpose of Background in Cucumber?</div><div class="q-ans">Background runs the same steps before every Scenario in a Feature file — avoids repeating setup steps like "Given I am on the login page" in every scenario.</div></div>
+      <div class="q-row"><div class="q-text">Q: Difference between Scenario and Scenario Outline?</div><div class="q-ans">Scenario runs once with hardcoded values. Scenario Outline runs multiple times with different data from an Examples table — data-driven testing in BDD.</div></div>
+      <div class="q-row"><div class="q-text">Q: What is a Step Definition?</div><div class="q-ans">A Java method annotated with @Given/@When/@Then that matches a Gherkin step using a regex or expression. It's the bridge between human-readable feature files and executable code.</div></div>
+      <div class="q-row"><div class="q-text">Q: What is the glue option in CucumberOptions?</div><div class="q-ans">Package path(s) where Cucumber looks for Step Definitions and Hooks. If missing, steps show as undefined.</div></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-message-question" aria-hidden="true"></i> Hooks Questions</div>
+      <div class="q-row"><div class="q-text">Q: What are Hooks in Cucumber? Name them.</div><div class="q-ans">Hooks are methods that run at lifecycle points: @Before (before each scenario), @After (after each scenario), @BeforeStep, @AfterStep, and tagged variants like @Before("@smoke").</div></div>
+      <div class="q-row"><div class="q-text">Q: How do you take a screenshot on failure in Cucumber?</div><div class="q-ans">In @After hook: check scenario.isFailed(), take screenshot using TakesScreenshot, attach as byte[] via scenario.attach(bytes, "image/png", "name").</div></div>
+      <div class="q-row"><div class="q-text">Q: Difference between @Before in Cucumber vs @BeforeMethod in TestNG?</div><div class="q-ans">@Before is scenario-level in Cucumber (for BDD). @BeforeMethod is test-method-level in TestNG. Both serve same purpose but @BeforeMethod has more granular control (groups, dependsOnMethods).</div></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-message-question" aria-hidden="true"></i> Parallel Execution Questions</div>
+      <div class="q-row"><div class="q-text">Q: How do you run Cucumber tests in parallel?</div><div class="q-ans">Three ways: (1) TestNG: use @DataProvider(parallel=true) in AbstractTestNGCucumberTests runner + testng.xml with parallel="tests". (2) JUnit 5: enable in junit-platform.properties. (3) Maven Surefire: forkCount for JVM-level parallelism.</div></div>
+      <div class="q-row"><div class="q-text">Q: Why do we use ThreadLocal for WebDriver in parallel tests?</div><div class="q-ans">ThreadLocal ensures each thread has its own isolated WebDriver instance. Without it, parallel threads share the same driver, causing tests to interfere — clicking wrong pages, incorrect assertions, crashes.</div></div>
+      <div class="q-row"><div class="q-text">Q: What is the difference between parallel=tests and parallel=methods in TestNG?</div><div class="q-ans">parallel="tests" runs each &lt;test&gt; XML block in its own thread — good for cross-browser. parallel="methods" runs each @Test method in parallel — more granular but needs more careful thread safety.</div></div>
+      <div class="q-row"><div class="q-text">Q: How do you handle test data conflicts in parallel execution?</div><div class="q-ans">Use unique test data per thread: generate emails/usernames with Thread.currentThread().getId() suffix, use separate test databases/schemas per thread, or use a data factory that locks records.</div></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-message-question" aria-hidden="true"></i> Selenium 4 Questions</div>
+      <div class="q-row"><div class="q-text">Q: What's new in Selenium 4 vs Selenium 3?</div><div class="q-ans">W3C protocol (replaced JsonWireProtocol), Chrome DevTools Protocol (CDP) integration, relative locators (above/below/near), new window/tab API, rebuilt Selenium Grid 4 with Docker support, improved documentation.</div></div>
+      <div class="q-row"><div class="q-text">Q: What are Relative Locators in Selenium 4?</div><div class="q-ans">Locate elements relative to other elements: above(), below(), toLeftOf(), toRightOf(), near(). Useful when elements lack unique IDs but are spatially positioned near known elements.</div></div>
+      <div class="q-row"><div class="q-text">Q: Difference between implicit and explicit wait?</div><div class="q-ans">Implicit wait: global, applies to all findElement calls, waits up to N seconds. Explicit wait: targeted, waits for a specific condition on a specific element. Best practice: use only explicit wait to avoid conflicts.</div></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="ti ti-star" aria-hidden="true"></i> Power Interview Tips</div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-bulb" style="color:var(--warn)" aria-hidden="true"></i></div><div class="tip-text"><strong>Show real project experience:</strong> Say "In my project, I used ThreadLocal DriverManager to handle parallel execution across 4 Chrome threads..."</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-bulb" style="color:var(--warn)" aria-hidden="true"></i></div><div class="tip-text"><strong>Know the WHY:</strong> Don't just say what you did — explain why. "We used @DataProvider(parallel=true) BECAUSE it's the correct way to parallelize at the Cucumber scenario level with TestNG."</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-bulb" style="color:var(--warn)" aria-hidden="true"></i></div><div class="tip-text"><strong>Mention trade-offs:</strong> "JUnit 5 parallel is newer but Cucumber's TestNG integration is more mature for scenario-level parallel control."</div></div>
+      <div class="tip-row"><div class="tip-icon"><i class="ti ti-bulb" style="color:var(--warn)" aria-hidden="true"></i></div><div class="tip-text"><strong>Talk about failures:</strong> "I once debugged a race condition where two parallel tests shared a static list — fixed by making it a ThreadLocal instance."</div></div>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Give me 10 more advanced QA automation interview questions on BDD Cucumber and Selenium 4 with answers')">More interview questions ↗</button>
+  </div>
+
+  <div class="nav-footer">
+    <button class="nav-btn" id="prev-btn" disabled>← Previous</button>
+    <span style="font-size:12px;color:#475569;align-self:center" id="pg-label">Session 1 of 8</span>
+    <button class="nav-btn primary" id="next-btn">Next →</button>
+  </div>
+</div>
+
+<script>
+// FIXED navigation – no content changes
+let cur = 0;
+const total = 8;
+
+function go(n) {
+  for(let i=0; i<total; i++) {
+    const el = document.getElementById('s'+i);
+    if(el) el.classList.remove('active');
+  }
+  const activeSession = document.getElementById('s'+n);
+  if(activeSession) activeSession.classList.add('active');
+
+  const btns = document.querySelectorAll('.sn-btn');
+  btns.forEach((btn, idx) => {
+    if(idx === n) btn.classList.add('active');
+    else btn.classList.remove('active');
+  });
+
+  const prog = document.getElementById('prog');
+  if(prog) prog.style.width = ((n+1)/total*100)+'%';
+
+  const label = document.getElementById('pg-label');
+  if(label) label.textContent = 'Session '+(n+1)+' of '+total;
+
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  if(prevBtn) prevBtn.disabled = (n === 0);
+  if(nextBtn) {
+    nextBtn.disabled = (n === total-1);
+    nextBtn.textContent = (n === total-1) ? 'Done ✓' : 'Next →';
+  }
+}
+
+function nav(dir) {
+  const next = cur + dir;
+  if(next >=0 && next < total) {
+    cur = next;
+    go(cur);
+  }
+}
+
+document.querySelectorAll('.sn-btn').forEach((btn, idx) => {
+  btn.addEventListener('click', () => {
+    cur = idx;
+    go(cur);
+  });
+});
+
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+if(prevBtn) prevBtn.addEventListener('click', () => nav(-1));
+if(nextBtn) nextBtn.addEventListener('click', () => nav(1));
+
+go(0);
+
+window.sendPrompt = function(msg) {
+  alert("🤖 AI Assistant: " + msg);
+};
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+

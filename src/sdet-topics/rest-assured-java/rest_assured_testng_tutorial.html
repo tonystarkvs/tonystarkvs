@@ -1,0 +1,532 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REST Assured: Integration with TestNG Tutorial</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+  .nav { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1.5rem; }
+  .nav-btn { padding:6px 14px; border-radius:20px; border:0.5px solid var(--color-border-secondary); background:var(--color-background-secondary); color:var(--color-text-secondary); font-size:13px; cursor:pointer; transition:all .15s; }
+  .nav-btn.active { background:var(--color-background-primary); color:var(--color-text-primary); border-color:var(--color-border-primary); font-weight:500; }
+  .nav-btn:hover { border-color:var(--color-border-primary); color:var(--color-text-primary); }
+  .section { display:none; }
+  .section.active { display:block; }
+  .card { background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:1rem 1.25rem; margin-bottom:1rem; }
+  .badge { display:inline-block; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:500; }
+  .badge-blue { background:#E6F1FB; color:#0C447C; }
+  .badge-green { background:#EAF3DE; color:#27500A; }
+  .badge-amber { background:#FAEEDA; color:#633806; }
+  .badge-coral { background:#FAECE7; color:#712B13; }
+  code { font-family:var(--font-mono); font-size:13px; background:var(--color-background-secondary); padding:2px 6px; border-radius:4px; }
+  pre { font-family:var(--font-mono); font-size:12.5px; background:var(--color-background-secondary); padding:1rem; border-radius:var(--border-radius-md); overflow-x:auto; margin:.75rem 0; line-height:1.6; color:var(--color-text-primary); border:0.5px solid var(--color-border-tertiary); }
+  .step-num { width:28px; height:28px; border-radius:50%; background:var(--color-background-secondary); border:0.5px solid var(--color-border-secondary); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; flex-shrink:0; }
+  .step-row { display:flex; gap:12px; align-items:flex-start; margin-bottom:1rem; }
+  .topic-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-bottom:1rem; }
+  .topic-card { background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:.875rem; cursor:pointer; transition:border-color .15s; }
+  .topic-card:hover { border-color:var(--color-border-primary); }
+  .topic-card .icon { font-size:20px; margin-bottom:6px; color:var(--color-text-secondary); }
+  .topic-card .label { font-size:13px; font-weight:500; color:var(--color-text-primary); }
+  .topic-card .sub { font-size:12px; color:var(--color-text-secondary); margin-top:2px; }
+  .ask-btn { border:0.5px solid var(--color-border-secondary); background:var(--color-background-secondary); color:var(--color-text-primary); padding:8px 16px; border-radius:var(--border-radius-md); cursor:pointer; font-size:13px; }
+  .ask-btn:hover { background:var(--color-background-primary); border-color:var(--color-border-primary); }
+  h3 { font-size:16px; font-weight:500; margin:0 0 .5rem; }
+  h4 { font-size:14px; font-weight:500; margin:.75rem 0 .25rem; color:var(--color-text-primary); }
+  p, li { font-size:14px; color:var(--color-text-secondary); line-height:1.7; margin:.25rem 0; }
+  ul { padding-left:1.25rem; margin:.25rem 0; }
+  .divider { border:none; border-top:0.5px solid var(--color-border-tertiary); margin:1rem 0; }
+</style>
+    <link rel="stylesheet" href="../responsive.css">
+
+    <!-- Prism Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    
+
+
+</head>
+<body class="line-numbers">
+  <h2 class="sr-only">REST Assured: Integration with TestNG Tutorial</h2>
+
+<div style="padding:1rem 0">
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:.5rem;">
+    <i class="ti ti-test-pipe" style="font-size:22px; color:var(--color-text-secondary)" aria-hidden="true"></i>
+    <span style="font-size:18px; font-weight:500; color:var(--color-text-primary)">REST Assured + TestNG Course</span>
+    <span class="badge badge-blue">Java</span>
+  </div>
+  <p style="margin:0 0 1.25rem; color:var(--color-text-secondary)">Hands-on API testing from scratch. Pick a topic below or follow the modules in order.</p>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="show('intro')">1. Intro</button>
+    <button class="nav-btn" onclick="show('setup')">2. Setup</button>
+    <button class="nav-btn" onclick="show('basics')">3. First Test</button>
+    <button class="nav-btn" onclick="show('methods')">4. HTTP Methods</button>
+    <button class="nav-btn" onclick="show('assertions')">5. Assertions</button>
+    <button class="nav-btn" onclick="show('testng')">6. TestNG</button>
+    <button class="nav-btn" onclick="show('advanced')">7. Advanced</button>
+    <button class="nav-btn" onclick="show('practice')">8. Practice</button>
+  </div>
+
+  <!-- INTRO -->
+  <div class="section active" id="s-intro">
+    <div class="card">
+      <h3>What is REST Assured?</h3>
+      <p>REST Assured is a Java library for testing and validating REST APIs. It provides a fluent DSL (domain-specific language) that makes API tests readable and expressive.</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:.75rem;">
+        <span class="badge badge-green">Fluent API</span>
+        <span class="badge badge-blue">BDD Style</span>
+        <span class="badge badge-amber">JSON/XML Support</span>
+        <span class="badge badge-coral">Easy Assertions</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>The BDD pattern: Given / When / Then</h3>
+      <pre><code class="language-java">given()          // Set up request (headers, auth, body)
+  .header(...)
+  .body(...)
+.when()          // Make the HTTP request
+  .get("/users")
+.then()          // Assert the response
+  .statusCode(200)
+  .body("name", equalTo("John"));</code></pre>
+      <p>This reads like plain English — making tests self-documenting.</p>
+    </div>
+    <div class="card">
+      <h3>Why TestNG?</h3>
+      <ul>
+        <li>Groups and priorities for test ordering</li>
+        <li>Data-driven testing with <code>@DataProvider</code></li>
+        <li>Parallel test execution</li>
+        <li>Rich HTML reports</li>
+        <li>Powerful annotations: <code>@BeforeClass</code>, <code>@AfterMethod</code>, etc.</li>
+      </ul>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Can you explain how REST Assured compares to other API testing tools like Postman or Karate?')">How does REST Assured compare to Postman? ↗</button>
+  </div>
+
+  <!-- SETUP -->
+  <div class="section" id="s-setup">
+    <div class="card">
+      <h3>Maven dependencies</h3>
+      <p>Add these to your <code>pom.xml</code>:</p>
+      <pre><code class="language-java">&lt;dependencies&gt;
+  &lt;!-- REST Assured --&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+    &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+    &lt;version&gt;5.4.0&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- TestNG --&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.testng&lt;/groupId&gt;
+    &lt;artifactId&gt;testng&lt;/artifactId&gt;
+    &lt;version&gt;7.9.0&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- JSON Schema Validator (optional) --&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+    &lt;artifactId&gt;json-schema-validator&lt;/artifactId&gt;
+    &lt;version&gt;5.4.0&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+    </div>
+    <div class="card">
+      <h3>Project structure</h3>
+      <pre><code class="language-java">src/
+  test/
+    java/
+      com.example.api/
+        base/
+          BaseTest.java       ← common setup
+        tests/
+          UserApiTest.java
+          ProductApiTest.java
+        utils/
+          TestDataHelper.java
+    resources/
+      testng.xml              ← test suite config</code></pre>
+    </div>
+    <div class="card">
+      <h3>Static imports (put at top of every test file)</h3>
+      <pre><code class="language-java">import io.restassured.RestAssured;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;</code></pre>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Show me how to set up a REST Assured project with Gradle instead of Maven')">Gradle setup instead? ↗</button>
+  </div>
+
+  <!-- BASICS -->
+  <div class="section" id="s-basics">
+    <div class="card">
+      <h3>Your first GET test</h3>
+      <pre><code class="language-java">import io.restassured.RestAssured;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+
+public class FirstTest {
+
+  @BeforeClass
+  public void setup() {
+    RestAssured.baseURI = "https://jsonplaceholder.typicode.com";
+  }
+
+  @Test
+  public void testGetUser() {
+    given()
+      .when()
+        .get("/users/1")
+      .then()
+        .statusCode(200)
+        .body("name", equalTo("Leanne Graham"))
+        .body("email", notNullValue());
+  }
+}</code></pre>
+      <p>We use <code>jsonplaceholder.typicode.com</code> — a free public test API. No setup needed!</p>
+    </div>
+    <div class="card">
+      <h3>Extracting response values</h3>
+      <pre><code class="language-java">// Store the full response
+Response response = given()
+  .when()
+    .get("/users/1");
+
+// Extract a field
+String name = response.jsonPath().getString("name");
+int id = response.jsonPath().getInt("id");
+
+System.out.println("User: " + name + ", ID: " + id);</code></pre>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Explain jsonPath in REST Assured with more examples — how do I extract nested fields and arrays?')">Deep dive into jsonPath ↗</button>
+  </div>
+
+  <!-- HTTP METHODS -->
+  <div class="section" id="s-methods">
+    <div class="topic-grid">
+      <div class="topic-card"><div class="icon"><i class="ti ti-arrow-down-circle" aria-hidden="true"></i></div><div class="label">GET</div><div class="sub">Fetch data</div></div>
+      <div class="topic-card"><div class="icon"><i class="ti ti-plus-square" aria-hidden="true"></i></div><div class="label">POST</div><div class="sub">Create resource</div></div>
+      <div class="topic-card"><div class="icon"><i class="ti ti-edit" aria-hidden="true"></i></div><div class="label">PUT</div><div class="sub">Replace resource</div></div>
+      <div class="topic-card"><div class="icon"><i class="ti ti-pencil" aria-hidden="true"></i></div><div class="label">PATCH</div><div class="sub">Partial update</div></div>
+      <div class="topic-card"><div class="icon"><i class="ti ti-trash" aria-hidden="true"></i></div><div class="label">DELETE</div><div class="sub">Remove resource</div></div>
+    </div>
+    <div class="card">
+      <h4>GET with query params</h4>
+      <pre><code class="language-java">given()
+  .queryParam("userId", 1)
+  .when()
+    .get("/posts")
+  .then()
+    .statusCode(200)
+    .body("size()", greaterThan(0));</code></pre>
+      <h4>POST with JSON body</h4>
+      <pre><code class="language-java">String requestBody = "{"
+  + "\"title\": \"Test Post\","
+  + "\"body\": \"Content here\","
+  + "\"userId\": 1"
+  + "}";
+
+given()
+  .header("Content-Type", "application/json")
+  .body(requestBody)
+  .when()
+    .post("/posts")
+  .then()
+    .statusCode(201)
+    .body("id", notNullValue())
+    .body("title", equalTo("Test Post"));</code></pre>
+      <h4>PUT (full update)</h4>
+      <pre><code class="language-java">given()
+  .header("Content-Type", "application/json")
+  .body("{\"title\":\"Updated\",\"body\":\"New body\",\"userId\":1}")
+  .when()
+    .put("/posts/1")
+  .then()
+    .statusCode(200)
+    .body("title", equalTo("Updated"));</code></pre>
+      <h4>DELETE</h4>
+      <pre><code class="language-java">given()
+  .when()
+    .delete("/posts/1")
+  .then()
+    .statusCode(200);</code></pre>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Show me how to send multipart form data and file uploads with REST Assured')">File upload examples ↗</button>
+  </div>
+
+  <!-- ASSERTIONS -->
+  <div class="section" id="s-assertions">
+    <div class="card">
+      <h3>Hamcrest matchers cheatsheet</h3>
+      <pre><code class="language-java">// Status & headers
+.statusCode(200)
+.header("Content-Type", containsString("application/json"))
+
+// Body — simple fields
+.body("name", equalTo("John"))
+.body("age", greaterThan(18))
+.body("email", notNullValue())
+.body("deleted", is(false))
+
+// Arrays
+.body("items", hasSize(5))
+.body("ids", hasItems(1, 2, 3))
+.body("tags[0]", equalTo("java"))
+
+// Nested JSON
+.body("address.city", equalTo("Mumbai"))
+.body("company.name", containsString("Tech"))
+
+// Response time
+.time(lessThan(2000L))  // under 2 seconds</code></pre>
+    </div>
+    <div class="card">
+      <h3>Soft assertions with TestNG</h3>
+      <pre><code class="language-java">import org.testng.asserts.SoftAssert;
+
+@Test
+public void testUserDetails() {
+  Response res = given()
+    .when().get("/users/1");
+
+  SoftAssert sa = new SoftAssert();
+  sa.assertEquals(res.statusCode(), 200);
+  sa.assertEquals(res.jsonPath().getString("name"), "Leanne Graham");
+  sa.assertNotNull(res.jsonPath().getString("email"));
+
+  sa.assertAll(); // Reports ALL failures, not just first
+}</code></pre>
+      <p>Soft assertions collect all failures before stopping — great for validating multiple fields.</p>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Show me how to validate a JSON schema with REST Assured using json-schema-validator')">JSON Schema validation ↗</button>
+  </div>
+
+  <!-- TESTNG -->
+  <div class="section" id="s-testng">
+    <div class="card">
+      <h3>Key TestNG annotations</h3>
+      <pre><code class="language-java">public class ApiTest {
+
+  @BeforeSuite   // Runs once before ALL tests
+  public void initSuite() { }
+
+  @BeforeClass   // Runs once before this test class
+  public void setupClass() {
+    RestAssured.baseURI = "https://api.example.com";
+  }
+
+  @BeforeMethod  // Runs before EACH @Test method
+  public void beforeEach() { }
+
+  @Test(priority = 1, groups = {"smoke"})
+  public void testLogin() { ... }
+
+  @Test(priority = 2, dependsOnMethods = {"testLogin"})
+  public void testGetProfile() { ... }
+
+  @AfterMethod   // Runs after EACH @Test
+  public void afterEach() { }
+
+  @AfterClass    // Runs once after this class
+  public void teardownClass() { }
+}</code></pre>
+    </div>
+    <div class="card">
+      <h3>Data-driven testing with @DataProvider</h3>
+      <pre><code class="language-java">@DataProvider(name = "userIds")
+public Object[][] provideUserIds() {
+  return new Object[][] {
+    { 1, "Leanne Graham" },
+    { 2, "Ervin Howell" },
+    { 3, "Clementine Bauch" }
+  };
+}
+
+@Test(dataProvider = "userIds")
+public void testMultipleUsers(int userId, String expectedName) {
+  given()
+    .when()
+      .get("/users/" + userId)
+    .then()
+      .statusCode(200)
+      .body("name", equalTo(expectedName));
+}</code></pre>
+    </div>
+    <div class="card">
+      <h3>testng.xml — suite configuration</h3>
+      <pre><code class="language-java">&lt;suite name="API Test Suite" parallel="methods" thread-count="3"&gt;
+  &lt;test name="Smoke Tests"&gt;
+    &lt;groups&gt;
+      &lt;run&gt;&lt;include name="smoke"/&gt;&lt;/run&gt;
+    &lt;/groups&gt;
+    &lt;classes&gt;
+      &lt;class name="com.example.api.tests.UserApiTest"/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+&lt;/suite&gt;</code></pre>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Explain TestNG parallel execution in detail — how do I run REST Assured tests in parallel safely?')">Parallel execution deep dive ↗</button>
+  </div>
+
+  <!-- ADVANCED -->
+  <div class="section" id="s-advanced">
+    <div class="card">
+      <h3>Request specification (reusable config)</h3>
+      <pre><code class="language-java">// In BaseTest.java
+public class BaseTest {
+
+  protected RequestSpecification reqSpec;
+
+  @BeforeClass
+  public void buildSpec() {
+    reqSpec = new RequestSpecBuilder()
+      .setBaseUri("https://api.example.com")
+      .setContentType(ContentType.JSON)
+      .addHeader("Authorization", "Bearer " + getToken())
+      .addFilter(new RequestLoggingFilter())
+      .addFilter(new ResponseLoggingFilter())
+      .build();
+  }
+}
+
+// In test classes
+@Test
+public void testEndpoint() {
+  given(reqSpec)          // reuse the spec!
+    .when().get("/users")
+    .then().statusCode(200);
+}</code></pre>
+    </div>
+    <div class="card">
+      <h3>Authentication</h3>
+      <pre><code class="language-java">// Basic Auth
+given().auth().basic("user", "pass")
+
+// Bearer Token
+given().header("Authorization", "Bearer " + token)
+
+// OAuth2
+given().auth().oauth2(accessToken)
+
+// API Key
+given().queryParam("api_key", "abc123")
+// or
+given().header("X-API-Key", "abc123")</code></pre>
+    </div>
+    <div class="card">
+      <h3>Logging for debugging</h3>
+      <pre><code class="language-java">// Log everything
+given().log().all()
+  .when().get("/users")
+  .then().log().all();
+
+// Log only on failure
+given()
+  .when().get("/users")
+  .then()
+    .log().ifValidationFails()
+    .statusCode(200);</code></pre>
+    </div>
+    <button class="ask-btn" onclick="sendPrompt('Show me how to handle authentication flows in REST Assured — login, get token, use it in subsequent requests')">Auth flow example ↗</button>
+  </div>
+
+  <!-- PRACTICE -->
+  <div class="section" id="s-practice">
+    <div class="card">
+      <h3>Practice exercises</h3>
+      <p>Use <code>https://jsonplaceholder.typicode.com</code> — it's free, no auth needed.</p>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="margin:0">Exercise 1 — Beginner</h4>
+        <span class="badge badge-green">Easy</span>
+      </div>
+      <p>Write a test that fetches all posts (<code>GET /posts</code>) and verifies the response has exactly 100 items.</p>
+      <button class="ask-btn" style="margin-top:.5rem" onclick="sendPrompt('Give me the solution and explanation for: Write a REST Assured TestNG test that fetches all posts from jsonplaceholder and verifies there are exactly 100 posts')">Get solution ↗</button>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="margin:0">Exercise 2 — Intermediate</h4>
+        <span class="badge badge-amber">Medium</span>
+      </div>
+      <p>Create a data-driven test with <code>@DataProvider</code> that creates 3 different posts (<code>POST /posts</code>) and asserts each returns 201 with a non-null <code>id</code>.</p>
+      <button class="ask-btn" style="margin-top:.5rem" onclick="sendPrompt('Give me the solution for: Create a data-driven REST Assured test using @DataProvider to POST 3 different posts to jsonplaceholder')">Get solution ↗</button>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="margin:0">Exercise 3 — Advanced</h4>
+        <span class="badge badge-coral">Hard</span>
+      </div>
+      <p>Build a full CRUD test suite with a shared <code>RequestSpecification</code>, <code>@BeforeClass</code> setup, and soft assertions. Cover GET, POST, PUT, and DELETE for <code>/posts</code>.</p>
+      <button class="ask-btn" style="margin-top:.5rem" onclick="sendPrompt('Give me a complete CRUD test suite solution using REST Assured and TestNG with RequestSpecification, BeforeClass, and soft assertions for jsonplaceholder /posts endpoint')">Get solution ↗</button>
+    </div>
+    <div class="card" style="background:var(--color-background-secondary)">
+      <h3>Ask me anything</h3>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:.5rem;">
+        <button class="ask-btn" onclick="sendPrompt('What are common REST Assured interview questions and answers?')">Interview questions ↗</button>
+        <button class="ask-btn" onclick="sendPrompt('How do I generate Allure reports with REST Assured and TestNG?')">Allure reports ↗</button>
+        <button class="ask-btn" onclick="sendPrompt('How do I read test data from an Excel file in TestNG with REST Assured?')">Excel data provider ↗</button>
+        <button class="ask-btn" onclick="sendPrompt('Show me how to handle dynamic base URIs and environments in REST Assured with TestNG')">Environment config ↗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+
+    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+    <script>
+    if (window.Prism) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                let needsHighlight = false;
+                mutations.forEach(m => {
+                    if (m.addedNodes.length) {
+                        m.addedNodes.forEach(n => {
+                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                        });
+                    }
+                });
+                if (needsHighlight) {
+                    Prism.highlightAll();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+    </script>
+
+
+    <script src="../portal-enhance.js"></script>
+</body>
+</html>
+
