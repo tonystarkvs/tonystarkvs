@@ -889,7 +889,6 @@ pre {
       if (block.dataset.vrCodeDone) return false;
       if (block.closest('.cs, .cp, .cpan, .cwrap, .vr-cb-body')) return false;
       
-      // Filter out .cb if it is a concept block
       if (block.classList.contains('cb')) {
         if (block.querySelector('h4, h3, .cbb') || (block.textContent.trim().startsWith('?') && !block.querySelector('pre, code'))) {
           return false;
@@ -900,57 +899,30 @@ pre {
 
     if (rawBlocks.length === 0) return;
 
-    var groups = [];
-    var currentGroup = [];
-
+    var groupsMap = new Map();
+    
     rawBlocks.forEach(function(block) {
-      if (currentGroup.length === 0) {
-        currentGroup.push(block);
-      } else {
-        var last = currentGroup[currentGroup.length - 1];
-        if (block.parentNode === last.parentNode) {
-          var isAdj = true;
-          var next = last.nextSibling;
-          while (next && next !== block) {
-            if (next.nodeType === 1) {
-              var tag = next.tagName;
-              var cls = next.className || '';
-              if (tag !== 'P' && tag !== 'SPAN' && tag !== 'DIV') {
-                isAdj = false;
-                break;
-              }
-              if (/sub|mini-label|card-title|table|divider/.test(cls)) {
-                isAdj = false;
-                break;
-              }
-              if (!/code-title|cp|code-label|sh|fb|cfn/.test(cls) && next.textContent.trim().length > 150) {
-                isAdj = false;
-                break;
-              }
-            }
-            next = next.nextSibling;
-          }
-          if (isAdj) {
-            currentGroup.push(block);
-          } else {
-            groups.push(currentGroup);
-            currentGroup = [block];
-          }
-        } else {
-          groups.push(currentGroup);
-          currentGroup = [block];
-        }
-      }
+       var container = block.closest('.vr-card, .sess, .content-panel, .session-panel, .concept-section, .pan') || document.body;
+       if (!groupsMap.has(container)) {
+           groupsMap.set(container, []);
+       }
+       groupsMap.get(container).push(block);
     });
-    if (currentGroup.length > 0) groups.push(currentGroup);
 
-    groups.forEach(function(group, gIdx) {
+    groupsMap.forEach(function(group, container) {
+      if (group.length === 0) return;
+
       var cs = document.createElement('div');
       cs.className = 'cs';
       
       var csh = document.createElement('div');
       csh.className = 'csh';
-      csh.innerHTML = '<div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES</span>';
+      var sessTitle = '';
+      var h3 = container.querySelector('h3, .sh, h2');
+      if (h3) {
+          sessTitle = ' — ' + h3.textContent.trim();
+      }
+      csh.innerHTML = '<div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES' + sessTitle + '</span>';
       cs.appendChild(csh);
 
       var ctbar = document.createElement('div');
@@ -970,9 +942,11 @@ pre {
           while (prev) {
             if (prev.nodeType === 1) {
               var cls = prev.className || '';
-              if (/code-title|cp|code-label|sh|fb|cfn|sub|mini-label/.test(cls)) {
+              if (/code-title|cp|code-label|sh|fb|cfn|sub|mini-label|clbl/.test(cls)) {
                 titleText = prev.textContent.trim();
-                prev.style.display = 'none';
+                if(!cls.includes('sh') || prev.textContent.toLowerCase().includes('example')) {
+                    prev.style.display = 'none';
+                }
                 break;
               }
               break;
@@ -987,13 +961,11 @@ pre {
         var cleanTitle = titleText.replace(/^(Example|Exercise)\s+\d+\s*[-—:]*\s*/i, '').trim();
         cleanTitle = cleanTitle.replace(/^[\uE000-\uF8FF|\u2700-\u27BF|💾|📄|💻|✦|●|✓|?]\s*/g, '').trim();
 
-        // Capping very long tab titles
         var tabLabel = cleanTitle;
         if (tabLabel.length > 40) {
           tabLabel = tabLabel.substring(0, 37) + '...';
         }
 
-        // Determine language
         var categoryDefaults = {
           playwright: 'ts',
           selenium: 'java',
@@ -1008,7 +980,7 @@ pre {
           typescript: 'ts',
           postman: 'js'
         };
-        var lang = categoryDefaults[getCategory()] || 'java';
+        var lang = categoryDefaults[typeof getCategory === 'function' ? getCategory() : 'java'] || 'java';
         var codeEl = block.querySelector('code');
         var codeClass = codeEl ? (codeEl.className || '') : (block.className || '');
         var langMatch = codeClass.match(/language-(\w+)/);
@@ -1044,7 +1016,6 @@ pre {
         if (lang === 'javascript') lang = 'js';
 
         var extLookup = { ts: 'ts', js: 'js', py: 'py', xml: 'xml', json: 'json', sh: 'sh', java: 'java' };
-        var tabLabel = cleanTitle;
         var filename = cleanTitle;
         if (!tabLabel) {
           var langNames = { ts: 'TypeScript', js: 'JavaScript', py: 'Python', xml: 'XML', json: 'JSON', sh: 'Terminal', java: 'Java' };
@@ -1082,7 +1053,7 @@ pre {
         
         var subHdr = document.createElement('div');
         subHdr.className = 'cp-sub-header';
-        subHdr.innerHTML = '<span class="file-dot file-dot-' + lang + '">●</span><span class="file-name">' + filename + '</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button>';
+        subHdr.innerHTML = '<span class="file-dot file-dot-' + lang + '"></span><span class="file-name">' + filename + '</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button>';
         cp.appendChild(subHdr);
 
         var pre = document.createElement('pre');
@@ -1094,14 +1065,17 @@ pre {
         cs.appendChild(cp);
       });
 
-      var firstBlock = group[0];
-      firstBlock.parentNode.insertBefore(cs, firstBlock);
+      var lastBlock = group[group.length - 1];
+      if (lastBlock && lastBlock.parentNode) {
+          lastBlock.parentNode.insertBefore(cs, lastBlock.nextSibling);
+      } else {
+          container.appendChild(cs);
+      }
 
       group.forEach(function(block) {
-        block.style.display = 'none';
+        block.remove();
       });
     });
-  }
 
   function highlightKeywordsInDOM() {
     var selectors = ['.vr-ol-item', '.vr-bp-item', '.vr-qa-a', '.vr-gl-def', '.qp', '.bpl li', '.gdef', '.card p', '.card li', '.def-box p', '.def-box .lbl'];
