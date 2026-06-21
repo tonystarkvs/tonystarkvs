@@ -286,7 +286,7 @@ body .interview-box {
 /* Q&A Items Overrides (always visible, all 4 sides, round corners, soft background, readable Q/A text) */
 body .qa-item,
 body .vr-qa-wrap,
-body .qa,
+body .qi,
 body .qablock {
   border: 2px solid #0d9488 !important;
   border-left: 2px solid #0d9488 !important;
@@ -836,6 +836,45 @@ body .vr-diagram-scroll svg, body .arch-box svg, body .da svg, body .diagram-are
   height: auto !important;
   display: block !important;
 }
+
+/* Show Q&A answers when open */
+.qa-a.open,
+.vr-qa-a.open,
+.qa-ans.open,
+.qaa.open,
+.qa-answer.open,
+.qa.open,
+.qi.open > .qa,
+.open > .qa,
+.qa-item.open > .qa-a,
+.qa-block.open > .qa-a,
+.qa-card.open > .a,
+.qcard.open > .a,
+.qa-item.open > .a,
+.qa-block.open > .a,
+.qablock.open > .a,
+.qa-wrap.open > .vr-qa-a,
+.qa-wrap.open > .qa-a,
+.qa-wrap.open > .qa-ans,
+.qa-wrap.open > .qaa,
+.qa-wrap.open > .qa-answer,
+.qa-wrap.open > .a {
+  display: block !important;
+}
+
+/* Chevron rotations */
+.chevron.open,
+.chevron-icon.open,
+.qi.open .chevron-icon,
+.qi.open .chevron,
+.open > .qa-q .qa-toggle,
+.open > .vr-qa-q .qa-toggle,
+.open > .qq .chevron-icon,
+.qa-item.open .qa-toggle,
+.qa-item.open .chevron,
+.vr-qa-wrap.open .qa-toggle {
+  transform: rotate(180deg) !important;
+}
 `;
     document.head.appendChild(s);
   }
@@ -1301,7 +1340,7 @@ body .vr-diagram-scroll svg, body .arch-box svg, body .da svg, body .diagram-are
     
     rawBlocks = rawBlocks.filter(function(block) {
       if (block.dataset.vrCodeDone) return false;
-      if (block.closest('.cs, .cp, .cpan, .cwrap, .vr-cb-body, .ex-panel, .code-panel, .code-area, .cpanel, .cpan2, .code-section-wrap')) return false;
+      if (block.closest('.cs, .cp, .cpan, .cwrap, .vr-cb-body, .ex-panel, .code-panel, .code-area, .cpanel, .cpan2, .code-section-wrap, .ctabs-wrap, .cblocks, .code-tab-content, .ctbar, .cblk')) return false;
       
       // Exclude nested elements to avoid duplicate tabs
       var tag = block.tagName.toLowerCase();
@@ -1675,17 +1714,17 @@ body .vr-diagram-scroll svg, body .arch-box svg, body .da svg, body .diagram-are
     });
 
     // 4. Q&A
-    pan.querySelectorAll('.qa, .qa-item, .qablock, .qa-block, .qa-card, .qcard, .qa-wrap').forEach(function(el) {
+    pan.querySelectorAll('.qa-item, .qablock, .qa-block, .qa-card, .qcard, .qa-wrap, .qi').forEach(function(el) {
       if (el.dataset.vrQaWrapDone) return;
       el.dataset.vrQaWrapDone = '1';
       el.classList.add('vr-qa-wrap');
     });
-    pan.querySelectorAll('.qq, .qa-q, .qaq, .qa-card .q, .qcard .q, .qa-item .q, .qa-block .q, .qablock .q, .qa .q').forEach(function(el) {
+    pan.querySelectorAll('.qq, .qa-q, .qaq, .qa-card .q, .qcard .q, .qa-item .q, .qa-block .q, .qablock .q').forEach(function(el) {
       if (el.dataset.vrQaQDone) return;
       el.dataset.vrQaQDone = '1';
       el.classList.add('vr-qa-q');
     });
-    pan.querySelectorAll('.qa-ans, .qa-a, .qaa, .qa-answer, .qa-card .a, .qcard .a, .qa-item .a, .qa-block .a, .qablock .a, .qa .a').forEach(function(el) {
+    pan.querySelectorAll('.qa-ans, .qa-a, .qaa, .qa-answer, .qa-card .a, .qcard .a, .qa-item .a, .qa-block .a, .qablock .a, .qa').forEach(function(el) {
       if (el.dataset.vrQaADone) return;
       el.dataset.vrQaADone = '1';
       el.classList.add('vr-qa-a');
@@ -1703,6 +1742,13 @@ body .vr-diagram-scroll svg, body .arch-box svg, body .da svg, body .diagram-are
         var wrapper = qEl.closest('.vr-qa-wrap');
         if (wrapper) {
           wrapper.classList.toggle('open');
+        } else {
+          // If no wrapper is found, toggle 'open' on both the question and the next element (answer)
+          qEl.classList.toggle('open');
+          var ans = qEl.nextElementSibling;
+          if (ans && (ans.classList.contains('vr-qa-a') || ans.classList.contains('qa-a') || ans.classList.contains('qa-answer') || ans.classList.contains('qa-ans') || ans.classList.contains('qaa'))) {
+            ans.classList.toggle('open');
+          }
         }
       });
     });
@@ -1819,12 +1865,29 @@ body .vr-diagram-scroll svg, body .arch-box svg, body .da svg, body .diagram-are
     fixGlobalLayout();
     enhanceUniversal();
 
+    // Highlight initially active visible code blocks
+    setTimeout(function() {
+      var visibleCodes = document.querySelectorAll('.code-tab-content.on code, .cblk.active code, .cp.active code, .cpan.active code');
+      visibleCodes.forEach(function(codeEl) {
+        if (window.Prism) {
+          Prism.highlightElement(codeEl);
+        }
+      });
+    }, 120);
+
     /* Click listener to re-run on tab switches (since content might become visible) */
     document.addEventListener('click', function(e) {
       var tgt = e.target; if (!tgt) return;
-      var cls = tgt.className || '';
-      if (/stab|secbtn|ctb|sbtn|nav-btn|pill|ctab|tab|tb|sec-btn/.test(cls)) {
+      if (tgt.closest('.stab, .secbtn, .ctb, .sbtn, .nav-btn, .pill, .ctab, .tab, .tb, .sec-btn, .ct, .ctbar')) {
         setTimeout(enhanceUniversal, 80);
+        setTimeout(function() {
+          var visibleCodes = document.querySelectorAll('.code-tab-content.on code, .cblk.active code, .cp.active code, .cpan.active code');
+          visibleCodes.forEach(function(codeEl) {
+            if (window.Prism) {
+              Prism.highlightElement(codeEl);
+            }
+          });
+        }, 100);
       }
     }, true);
 
