@@ -6,75 +6,100 @@
   <title>REST Assured: Parallel Runs, OAuth2 & Schema Validation (Sessions 18 to 20)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans,'Segoe UI',sans-serif);font-size:13px;color:var(--color-text-primary);background:transparent}
-.wrap{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
-.topbar{background:var(--color-background-secondary);padding:10px 14px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
-.badges{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-.bdg{font-size:11px;font-weight:500;padding:3px 10px;border-radius:var(--border-radius-md);letter-spacing:.3px}
-.bi{background:var(--color-background-info);color:var(--color-text-info);border:0.5px solid var(--color-border-info)}
-.bg{background:var(--color-background-success);color:var(--color-text-success);border:0.5px solid var(--color-border-success)}
-.bw{background:var(--color-background-warning);color:var(--color-text-warning);border:0.5px solid var(--color-border-warning)}
-.stab-row{display:flex;overflow-x:auto;scrollbar-width:none;gap:2px}
-.stab-row::-webkit-scrollbar{display:none}
-.stab{flex-shrink:0;padding:8px 20px;font-size:11px;font-weight:500;cursor:pointer;border-radius:6px 6px 0 0;border:0.5px solid var(--color-border-secondary);border-bottom:none;color:var(--color-text-secondary);background:transparent;white-space:nowrap;user-select:none;transition:color .15s,background .15s}
-.stab:hover{color:var(--color-text-primary);background:var(--color-background-primary)}
-.stab.active{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-info);border-bottom:2px solid var(--color-background-primary);font-weight:500}
-.stab.done::after{content:' ✓';color:var(--color-text-success);font-size:9px}
-.session{display:none;background:var(--color-background-primary)}
-.session.active{display:block}
-.sp{padding:16px}
-.sec{font-size:10px;font-weight:500;letter-spacing:1.2px;color:var(--color-text-info);text-transform:uppercase;margin:20px 0 8px;display:flex;align-items:center;gap:8px}
-.sec::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
-.ovg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-.ovc{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px}
-.ov-ic{font-size:18px;margin-bottom:4px}
-.ov-t{font-size:10px;font-weight:500;color:var(--color-text-info);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
-.ov-tx{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
-.kw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.kwi{background:var(--color-background-secondary);border-left:2px solid var(--color-border-info);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:7px 10px}
-.kw-k{font-family:var(--font-mono);font-size:11px;color:var(--color-text-info);font-weight:500;margin-bottom:2px}
-.kw-v{font-size:11px;color:var(--color-text-secondary);line-height:1.45}
-.ol-list{display:flex;flex-direction:column;gap:5px}
-.ol{background:var(--color-background-secondary);border-left:2px solid var(--color-border-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:7px 12px;font-size:11px;color:var(--color-text-primary);line-height:1.5}
-.ol b{color:var(--color-text-info)}
-.arch-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;margin-bottom:8px}
-.arch-t{font-size:12px;font-weight:500;color:var(--color-text-warning);margin-bottom:8px}
-.arch{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);line-height:1.8;white-space:pre;overflow-x:auto}
-.arch .hl{color:#56d364}.arch .bl{color:#79c0ff}.arch .or{color:#ffa657}.arch .pk{color:#d2a8ff}.arch .rd{color:#ff7b72}.arch .cm{color:#6e7681;font-style:italic}
-.code-area{background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary)}
-.ctbar{display:flex;gap:2px;padding:8px 8px 0;overflow-x:auto;scrollbar-width:none;border-bottom:0.5px solid var(--color-border-tertiary)}
-.ctbar::-webkit-scrollbar{display:none}
-.ct{flex-shrink:0;padding:5px 12px;font-size:11px;cursor:pointer;border-radius:5px 5px 0 0;border:0.5px solid var(--color-border-secondary);border-bottom:none;color:var(--color-text-secondary);background:var(--color-background-primary);white-space:nowrap;font-weight:500;user-select:none;transition:color .15s}
-.ct:hover{color:var(--color-text-primary)}
-.ct.active{background:#0d1117;color:#e6edf3;border-color:var(--color-border-info);border-bottom:2px solid #0d1117}
-.fn-hdr{background:#0d1117;padding:5px 14px;font-family:var(--font-mono);font-size:11px;color:#79c0ff;border-bottom:0.5px solid #30363d}
-.cblk{display:none;padding:14px 16px;font-size:11.5px;line-height:1.8;color:#e6edf3;white-space:pre;overflow-x:auto;font-family:var(--font-mono);background:#0d1117;min-height:260px}
-.cblk.active{display:block}
-.kw{color:#ff7b72}.cls{color:#ffa657}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cmt{color:#6e7681;font-style:italic}.num{color:#79c0ff}.ann{color:#56d364}.vr{color:#e6edf3}
-.cl{display:flex;flex-direction:column;gap:5px}
-.ci{display:flex;align-items:flex-start;gap:8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:11px;color:var(--color-text-primary);line-height:1.5}
-.ck{color:var(--color-text-success);font-size:14px;flex-shrink:0;margin-top:1px}
-.qa-list{display:flex;flex-direction:column;gap:7px}
-.qi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
-.qq{background:var(--color-background-primary);padding:9px 14px;font-size:11px;font-weight:500;color:var(--color-text-info);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
-.qq:hover{background:var(--color-background-secondary)}
-.qtg{color:var(--color-text-secondary);font-size:15px;transition:transform .2s;flex-shrink:0}
-.qa-a{padding:0 14px;max-height:0;overflow:hidden;font-size:11px;color:var(--color-text-secondary);line-height:1.65;transition:max-height .3s ease,padding .3s}
-.qa-a.open{padding:10px 14px;max-height:400px}
-.pbar{background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary);padding:10px 14px;display:flex;align-items:center;gap:12px}
-.pw{flex:1;background:var(--color-border-tertiary);height:5px;border-radius:999px;overflow:hidden}
-.pf{height:100%;background:var(--color-text-info);border-radius:999px;transition:width .4s}
-.pt{font-size:11px;color:var(--color-text-secondary);white-space:nowrap}
-.nvb{display:flex;gap:6px}
-.nb{background:transparent;border:0.5px solid var(--color-border-secondary);color:var(--color-text-primary);padding:5px 14px;border-radius:var(--border-radius-md);font-size:11px;cursor:pointer;font-weight:500}
-.nb:hover{background:var(--color-background-secondary)}
-code{background:var(--color-background-secondary);color:var(--color-text-info);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:11px}
-.mcard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px}
-.mcard{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px}
-.mc-t{font-size:11px;font-weight:500;margin-bottom:5px}
-.mc-p{font-size:11px;color:var(--color-text-success);line-height:1.55}
-.mc-c{font-size:11px;color:var(--color-text-danger);line-height:1.55}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Outfit', -apple-system, sans-serif; font-size: 13px; background: transparent; color: #1e293b; }
+.wrap { border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff; max-width: 680px; margin: 12px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.topbar { background: #f8fafc; padding: 12px 16px 0; border-bottom: 1px solid #e2e8f0; }
+.badges { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.bdg { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; font-family: 'Outfit', sans-serif; }
+.b1 { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.b2 { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.b3 { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
+.bi { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.bg { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.bw { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
+.bdg-b { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.bdg-g { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.bdg-w { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
+.stab-row { display: flex; overflow-x: auto; scrollbar-width: none; gap: 4px; }
+.stab-row::-webkit-scrollbar { display: none; }
+.stab { flex-shrink: 0; padding: 8px 16px; font-size: 11px; font-weight: 600; cursor: pointer; border-radius: 6px 6px 0 0; border: 1px solid #e2e8f0; border-bottom: none; color: #475569; background: #f8fafc; white-space: nowrap; user-select: none; transition: all .15s; font-family: 'Outfit', sans-serif; }
+.stab:hover { color: #1e293b; background: #eaecef; }
+.stab.active { background: #ffffff; color: #534ab7; border-color: #e2e8f0; border-bottom: 2px solid #ffffff; font-weight: 700; }
+.stab.done::after { content: ' ✓'; color: #166534; font-size: 9px; }
+.session { display: none; background: #ffffff; }
+.session.active { display: block; }
+.sp { padding: 18px; }
+.sh { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; color: #534ab7; text-transform: uppercase; margin: 24px 0 12px; display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; }
+.sh::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+.ovg { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.ovc { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 12px; }
+.ov-ic { font-size: 16px; margin-bottom: 4px; }
+.ov-t { font-size: 10px; font-weight: 700; color: #534ab7; margin-bottom: 4px; text-transform: uppercase; font-family: 'Outfit', sans-serif; }
+.ov-tx { font-size: 11px; color: #475569; line-height: 1.5; font-family: 'Outfit', sans-serif; }
+.kw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 640px) { .kw-grid { grid-template-columns: 1fr; } }
+.kwi { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 3px solid #1f6feb; border-radius: 0 6px 6px 0; padding: 8px 12px; }
+.kw-k { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #1f6feb; font-weight: 700; margin-bottom: 2px; }
+.kw-v { font-size: 11px; color: #475569; line-height: 1.4; font-family: 'Outfit', sans-serif; }
+.ol-list { display: flex; flex-direction: column; gap: 6px; }
+.ol { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 3px solid #64748b; border-radius: 0 6px 6px 0; padding: 8px 12px; font-size: 11px; color: #1e293b; line-height: 1.5; font-family: 'Outfit', sans-serif; }
+.ol b { color: #534ab7; }
+.arch-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+.arch-t { font-size: 12px; font-weight: 700; color: #9a3412; margin-bottom: 8px; font-family: 'Outfit', sans-serif; }
+.arch { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #334155; line-height: 1.8; white-space: pre; overflow-x: auto; }
+.arch .hl { color: #166534; font-weight: 700; }
+.arch .bl { color: #0369a1; }
+.arch .or { color: #b45309; }
+.arch .pk { color: #6b21a8; }
+.arch .rd { color: #991b1b; }
+.arch .cm { color: #64748b; font-style: italic; }
+.code-area { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-top: 16px; }
+.ctbar { display: flex; gap: 4px; padding: 8px 8px 0; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid #cbd5e1; background: #f1f5f9; }
+.ctbar::-webkit-scrollbar { display: none; }
+.ct { flex-shrink: 0; padding: 6px 14px; font-size: 11px; cursor: pointer; border-radius: 6px 6px 0 0; border: 1px solid #cbd5e1; border-bottom: none; color: #475569; background: #f8fafc; white-space: nowrap; font-weight: 700; user-select: none; transition: all .15s; font-family: 'Outfit', sans-serif; }
+.ct:hover { color: #1e293b; background: #eaecef; }
+.ct.active { background: #ffffff; color: #000000; border-color: #cbd5e1; border-bottom: 2px solid #ffffff; z-index: 1; }
+.fn-hdr { background: #ffffff; padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0369a1; border-bottom: 1px dashed #cbd5e1; font-weight: 600; }
+.cblk { display: none !important; padding: 14px 18px; font-size: 11.5px; line-height: 1.8; color: #1e293b; white-space: pre; overflow-x: auto; font-family: 'JetBrains Mono', monospace; background: #ffffff; min-height: 240px; }
+.cblk.active { display: block !important; }
+.kw { color: #d73a49; font-weight: bold; }
+.cls { color: #6f42c1; font-weight: bold; }
+.fn { color: #005cc5; }
+.str { color: #032f62; }
+.cmt, .cm { color: #6a737d; font-style: italic; }
+.num { color: #005cc5; }
+.ann { color: #22863a; }
+.vr { color: #24292e; }
+.cl { display: flex; flex-direction: column; gap: 6px; }
+.ci { display: flex; align-items: flex-start; gap: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #166534; line-height: 1.5; font-family: 'Outfit', sans-serif; }
+.ck { color: #166534; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.qa-list { display: flex; flex-direction: column; gap: 8px; }
+.qi { background: #f8fafc; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; margin-bottom: 8px; }
+.qq { background: #f1f5f9; padding: 10px 14px; font-size: 11px; font-weight: 700; color: #534ab7; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; font-family: 'Outfit', sans-serif; transition: background .15s; }
+.qq:hover { background: #eaecef; }
+.qtg { color: #64748b; font-size: 15px; flex-shrink: 0; }
+.qa-a { padding: 0 14px; max-height: 0; overflow: hidden; font-size: 11px; color: #475569; line-height: 1.65; transition: max-height .3s ease, padding .3s; font-family: 'Outfit', sans-serif; background: #ffffff; }
+.qa-a.open { padding: 10px 14px; max-height: 400px; border-top: 1px solid #e2e8f0; }
+.pbar { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+.pw { flex: 1; background: #e2e8f0; height: 6px; border-radius: 999px; overflow: hidden; }
+.pf { height: 100%; background: linear-gradient(90deg, #534ab7, #16a34a); border-radius: 999px; transition: width .4s; }
+.pt { font-size: 11px; color: #475569; white-space: nowrap; font-family: 'Outfit', sans-serif; }
+.nvb { display: flex; gap: 6px; }
+.nb { background: #ffffff; border: 1px solid #cbd5e1; color: #334155; padding: 6px 16px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; font-family: 'Outfit', sans-serif; transition: all 0.15s; }
+.nb:hover { background: #f1f5f9; color: #000000; border-color: #94a3b8; }
+code { background: rgba(83, 74, 183, 0.08); color: #534ab7; padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.mcard-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px}
+.mcard{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px}
+.mc-t{font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;margin-bottom:5px}
+.mc-p{font-family:'Outfit',sans-serif;font-size:11px;color:#166534;line-height:1.55}
+.mc-c{font-family:'Outfit',sans-serif;font-size:11px;color:#991b1b;line-height:1.55}
+.fl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:8px 0}
+.fb{background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:6px 12px;font-family:'Outfit',sans-serif;font-size:11px;color:#1e293b;text-align:center;min-width:80px}
+.fb.g{border-color:#bbf7d0;color:#166534;background:#f0fdf4}
+.fb.b{border-color:#bfdbfe;color:#1e40af;background:#eff6ff}
+.fb.o{border-color:#ffedd5;color:#9a3412;background:#fff7ed}
+.fa{color:#64748b;font-size:13px}
 </style>
     <link rel="stylesheet" href="../responsive.css">
 
@@ -106,30 +131,30 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
 <div class="session active" id="session-0">
 <div class="sp">
 
-<div class="sec">Overview — What / Why / When / Where / How</div>
+<div class="sh">Overview — What / Why / When / Where / How</div>
 <div class="ovg">
-  <div class="ovc"><div class="ov-ic">⚡</div><div class="ov-t">What</div><div class="ov-tx">Parallel execution = running multiple REST Assured test methods or classes simultaneously in separate threads, slashing total test suite runtime.</div></div>
-  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">API tests are I/O-bound (HTTP calls, network wait). Running 100 tests sequentially may take 5 minutes; in parallel with 10 threads, same suite completes in ~30 seconds.</div></div>
-  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Use in CI/CD pipelines when test suite grows beyond 50 tests and sequential run time exceeds 2–3 minutes. Enable after test independence is confirmed.</div></div>
-  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx">Configured in <code>testng.xml</code> with <code>parallel</code> and <code>thread-count</code> attributes. REST Assured itself is stateless per request — safe for parallel use.</div></div>
-  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Set <code>parallel="methods"</code> in testng.xml → avoid shared mutable state → use <code>ThreadLocal</code> for per-thread data → configure <code>RestAssuredConfig</code> per request.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">⚡</div><div class="ov-t">What</div><div class="ov-tx">Parallel execution = running multiple REST Assured test methods or classes simultaneously in separate threads, slashing total test suite runtime.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">API tests are I/O-bound (HTTP calls, network wait). Running 100 tests sequentially may take 5 minutes; in parallel with 10 threads, same suite completes in ~30 seconds.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Use in CI/CD pipelines when test suite grows beyond 50 tests and sequential run time exceeds 2–3 minutes. Enable after test independence is confirmed.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx">Configured in <code>testng.xml</code> with <code>parallel</code> and <code>thread-count</code> attributes. REST Assured itself is stateless per request — safe for parallel use.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Set <code>parallel="methods"</code> in testng.xml → avoid shared mutable state → use <code>ThreadLocal</code> for per-thread data → configure <code>RestAssuredConfig</code> per request.</div></div>
 </div>
 
-<div class="sec">Keyword Glossary</div>
+<div class="sh">Keyword Glossary</div>
 <div class="kw-grid">
-  <div class="kwi"><div class="kw-k">parallel="methods"</div><div class="kw-v">TestNG attribute: each <code>@Test</code> method runs in its own thread simultaneously.</div></div>
-  <div class="kwi"><div class="kw-k">parallel="classes"</div><div class="kw-v">TestNG attribute: each test class runs in its own thread; methods within a class run sequentially.</div></div>
-  <div class="kwi"><div class="kw-k">thread-count</div><div class="kw-v">Number of threads in the TestNG thread pool (e.g. 5 means 5 tests run at once).</div></div>
-  <div class="kwi"><div class="kw-k">ThreadLocal&lt;T&gt;</div><div class="kw-v">Java class providing per-thread variable storage — each thread gets its own isolated copy. Essential for thread-safe token/config sharing.</div></div>
-  <div class="kwi"><div class="kw-k">Race condition</div><div class="kw-v">Bug where two threads read/write shared state simultaneously causing unpredictable results — the #1 parallel testing problem.</div></div>
-  <div class="kwi"><div class="kw-k">RequestSpecification</div><div class="kw-v">REST Assured object bundling baseURI, headers, auth — create a new instance per test thread, never share across threads.</div></div>
-  <div class="kwi"><div class="kw-k">RestAssured.baseURI</div><div class="kw-v">Static field on RestAssured class — NOT thread-safe. One thread changing it affects all threads. Use request-level config instead.</div></div>
-  <div class="kwi"><div class="kw-k">synchronized</div><div class="kw-v">Java keyword making a block/method accessible by only one thread at a time — used for shared resource protection like token stores.</div></div>
-  <div class="kwi"><div class="kw-k">AtomicReference</div><div class="kw-v">Thread-safe wrapper for an object reference — compareAndSet() allows lock-free atomic updates to shared variables.</div></div>
-  <div class="kwi"><div class="kw-k">data-provider parallel</div><div class="kw-v">TestNG feature: <code>@DataProvider(parallel=true)</code> runs the same test method with different data in parallel threads.</div></div>
+  <div class="gi"><div class="gk">parallel="methods"</div><div class="gd">TestNG attribute: each <code>@Test</code> method runs in its own thread simultaneously.</div></div>
+  <div class="gi"><div class="gk">parallel="classes"</div><div class="gd">TestNG attribute: each test class runs in its own thread; methods within a class run sequentially.</div></div>
+  <div class="gi"><div class="gk">thread-count</div><div class="gd">Number of threads in the TestNG thread pool (e.g. 5 means 5 tests run at once).</div></div>
+  <div class="gi"><div class="gk">ThreadLocal&lt;T&gt;</div><div class="gd">Java class providing per-thread variable storage — each thread gets its own isolated copy. Essential for thread-safe token/config sharing.</div></div>
+  <div class="gi"><div class="gk">Race condition</div><div class="gd">Bug where two threads read/write shared state simultaneously causing unpredictable results — the #1 parallel testing problem.</div></div>
+  <div class="gi"><div class="gk">RequestSpecification</div><div class="gd">REST Assured object bundling baseURI, headers, auth — create a new instance per test thread, never share across threads.</div></div>
+  <div class="gi"><div class="gk">RestAssured.baseURI</div><div class="gd">Static field on RestAssured class — NOT thread-safe. One thread changing it affects all threads. Use request-level config instead.</div></div>
+  <div class="gi"><div class="gk">synchronized</div><div class="gd">Java keyword making a block/method accessible by only one thread at a time — used for shared resource protection like token stores.</div></div>
+  <div class="gi"><div class="gk">AtomicReference</div><div class="gd">Thread-safe wrapper for an object reference — compareAndSet() allows lock-free atomic updates to shared variables.</div></div>
+  <div class="gi"><div class="gk">data-provider parallel</div><div class="gd">TestNG feature: <code>@DataProvider(parallel=true)</code> runs the same test method with different data in parallel threads.</div></div>
 </div>
 
-<div class="sec">Architecture — Parallel Execution Flow</div>
+<div class="sh">Architecture — Parallel Execution Flow</div>
 <div class="arch-box">
   <div class="arch-t">TestNG parallel execution model with REST Assured</div>
   <div class="arch"><span class="hl">testng.xml config:</span>
@@ -174,17 +199,17 @@ Make your test code equally stateless — no shared mutable variables.</span></d
   <span class="pk">@AfterMethod → TOKEN.remove()  ← IMPORTANT: prevents memory leak</span></div>
 </div>
 
-<div class="sec">Interview One-Liners</div>
+<div class="sh">Interview One-Liners</div>
 <div class="ol-list">
-  <div class="ol"><b>parallel="methods"</b> in testng.xml runs each @Test method in its own thread — the most granular parallelism, best for I/O-bound REST API tests.</div>
-  <div class="ol"><b>RestAssured.baseURI</b> is a static field — NOT thread-safe — setting it in one thread affects all parallel threads; always use <code>given().baseUri()</code> per request instead.</div>
-  <div class="ol"><b>ThreadLocal&lt;T&gt;</b> gives each thread its own isolated copy of a variable — used to store auth tokens, request specs, or user credentials safely across parallel tests.</div>
-  <div class="ol"><b>Race condition</b> = when two threads read and modify the same shared variable simultaneously causing unpredictable behavior — eliminated by making each test fully self-contained.</div>
-  <div class="ol"><b>@DataProvider(parallel=true)</b> is TestNG's way to run the same test with different data sets in parallel — ideal for testing multiple user roles or environments simultaneously.</div>
-  <div class="ol"><b>Thread pool size</b> (thread-count) should be set based on available CPU cores × 2 for I/O-bound tests — too many threads causes overhead; typical range is 5–15 for REST API suites.</div>
+  <div class="oneliner"><b>parallel="methods"</b> in testng.xml runs each @Test method in its own thread — the most granular parallelism, best for I/O-bound REST API tests.</div>
+  <div class="oneliner"><b>RestAssured.baseURI</b> is a static field — NOT thread-safe — setting it in one thread affects all parallel threads; always use <code>given().baseUri()</code> per request instead.</div>
+  <div class="oneliner"><b>ThreadLocal&lt;T&gt;</b> gives each thread its own isolated copy of a variable — used to store auth tokens, request specs, or user credentials safely across parallel tests.</div>
+  <div class="oneliner"><b>Race condition</b> = when two threads read and modify the same shared variable simultaneously causing unpredictable behavior — eliminated by making each test fully self-contained.</div>
+  <div class="oneliner"><b>@DataProvider(parallel=true)</b> is TestNG's way to run the same test with different data sets in parallel — ideal for testing multiple user roles or environments simultaneously.</div>
+  <div class="oneliner"><b>Thread pool size</b> (thread-count) should be set based on available CPU cores × 2 for I/O-bound tests — too many threads causes overhead; typical range is 5–15 for REST API suites.</div>
 </div>
 
-<div class="sec">Code Examples — Parallel Execution</div>
+<div class="sh">Code Examples — Parallel Execution</div>
 <div class="code-area">
   <div class="ctbar" id="ct-s18">
     <div class="ct active" data-ci="0" data-cs="s18">testng-parallel.xml</div>
@@ -596,22 +621,22 @@ Make your test code equally stateless — no shared mutable variables.</span></d
 }</div>
 </div>
 
-<div class="sec">Best Practices</div>
+<div class="sh">Best Practices</div>
 <div class="cl">
-  <div class="ci"><span class="ck">✔</span> Never use <code>RestAssured.baseURI</code>, <code>RestAssured.port</code>, or any static RestAssured field in parallel tests — they are shared across all threads. Use <code>given().baseUri()</code> per request.</div>
-  <div class="ci"><span class="ck">✔</span> Always call <code>ThreadLocal.remove()</code> in <code>@AfterMethod</code> — thread pool threads are reused, so old ThreadLocal values persist indefinitely causing memory leaks and stale data bugs.</div>
-  <div class="ci"><span class="ck">✔</span> Prefer <code>parallel="methods"</code> for API tests — HTTP calls are I/O-bound, so method-level parallelism maximises CPU utilisation without needing extra test class structure.</div>
-  <div class="ci"><span class="ck">✔</span> Use <code>@DataProvider(parallel=true)</code> for data-driven API tests — it's the cleanest way to run the same endpoint across multiple users, IDs, or environments in parallel.</div>
-  <div class="ci"><span class="ck">✔</span> Set <code>thread-count</code> to 5–10 for REST API suites — higher counts give diminishing returns beyond the server's connection pool limit and may cause 429 Too Many Requests.</div>
+  <div class="check-item"><span class="ck">✔</span> Never use <code>RestAssured.baseURI</code>, <code>RestAssured.port</code>, or any static RestAssured field in parallel tests — they are shared across all threads. Use <code>given().baseUri()</code> per request.</div>
+  <div class="check-item"><span class="ck">✔</span> Always call <code>ThreadLocal.remove()</code> in <code>@AfterMethod</code> — thread pool threads are reused, so old ThreadLocal values persist indefinitely causing memory leaks and stale data bugs.</div>
+  <div class="check-item"><span class="ck">✔</span> Prefer <code>parallel="methods"</code> for API tests — HTTP calls are I/O-bound, so method-level parallelism maximises CPU utilisation without needing extra test class structure.</div>
+  <div class="check-item"><span class="ck">✔</span> Use <code>@DataProvider(parallel=true)</code> for data-driven API tests — it's the cleanest way to run the same endpoint across multiple users, IDs, or environments in parallel.</div>
+  <div class="check-item"><span class="ck">✔</span> Set <code>thread-count</code> to 5–10 for REST API suites — higher counts give diminishing returns beyond the server's connection pool limit and may cause 429 Too Many Requests.</div>
 </div>
 
-<div class="sec">Interview Q&amp;A</div>
+<div class="sh">Interview Q&amp;A</div>
 <div class="qa-list">
-  <div class="qi"><div class="qq">Q1: Why is RestAssured.baseURI unsafe for parallel tests? <span class="qtg">+</span></div><div class="qa-a">RestAssured.baseURI is a public static field — a single shared value across the JVM. Thread-1 might set it to "https://staging.api.com" while Thread-2 sets it to "https://prod.api.com". Thread-1 then reads "https://prod.api.com" — the wrong value. Solution: use given().baseUri() inline per request, or store a per-thread RequestSpecification in a ThreadLocal.</div></div>
-  <div class="qi"><div class="qq">Q2: What is a race condition in parallel testing and how do you avoid it? <span class="qtg">+</span></div><div class="qa-a">A race condition occurs when two threads read and write the same variable simultaneously with unpredictable interleaving — e.g. both threads read token="old", both try to refresh, one overwrites the other. Avoid by: (1) ThreadLocal for per-thread values, (2) AtomicReference for shared values with compare-and-set, (3) synchronized blocks for critical sections, (4) making test methods fully self-contained with no shared mutable state.</div></div>
-  <div class="qi"><div class="qq">Q3: What is the difference between parallel="methods" and parallel="classes"? <span class="qtg">+</span></div><div class="qa-a">parallel="methods" runs each @Test method in a separate thread — maximum parallelism, all methods of all classes run concurrently. parallel="classes" runs each test class in its own thread, but methods within a class run sequentially. Use "methods" for independent API tests. Use "classes" when tests within a class have ordering dependencies (dependsOnMethods) but tests in different classes are independent.</div></div>
-  <div class="qi"><div class="qq">Q4: How does @DataProvider(parallel=true) work? <span class="qtg">+</span></div><div class="qa-a">@DataProvider(parallel=true) tells TestNG to run each data row in a separate thread from the thread pool. The test method is invoked once per data row — all invocations run concurrently. The thread-count attribute in testng.xml controls the thread pool size. Data rows must be fully independent — avoid shared state between data iterations. Perfect for testing multiple user IDs, environments, or API endpoints simultaneously.</div></div>
-  <div class="qi"><div class="qq">Q5: When should you NOT run REST Assured tests in parallel? <span class="qtg">+</span></div><div class="qa-a">Avoid parallel execution when: (1) tests have sequential dependencies (CRUD chains where step 2 depends on step 1 data), (2) tests share a unique resource (single test user account), (3) the API has rate limiting that rejects concurrent requests, (4) tests clean up shared data (one test deletes data another test needs), or (5) the API server is a single-threaded local dev server that can't handle concurrent connections.</div></div>
+  <div class="qa-item"><div class="qq">Q1: Why is RestAssured.baseURI unsafe for parallel tests? <span class="qtg">+</span></div><div class="qa-a">RestAssured.baseURI is a public static field — a single shared value across the JVM. Thread-1 might set it to "https://staging.api.com" while Thread-2 sets it to "https://prod.api.com". Thread-1 then reads "https://prod.api.com" — the wrong value. Solution: use given().baseUri() inline per request, or store a per-thread RequestSpecification in a ThreadLocal.</div></div>
+  <div class="qa-item"><div class="qq">Q2: What is a race condition in parallel testing and how do you avoid it? <span class="qtg">+</span></div><div class="qa-a">A race condition occurs when two threads read and write the same variable simultaneously with unpredictable interleaving — e.g. both threads read token="old", both try to refresh, one overwrites the other. Avoid by: (1) ThreadLocal for per-thread values, (2) AtomicReference for shared values with compare-and-set, (3) synchronized blocks for critical sections, (4) making test methods fully self-contained with no shared mutable state.</div></div>
+  <div class="qa-item"><div class="qq">Q3: What is the difference between parallel="methods" and parallel="classes"? <span class="qtg">+</span></div><div class="qa-a">parallel="methods" runs each @Test method in a separate thread — maximum parallelism, all methods of all classes run concurrently. parallel="classes" runs each test class in its own thread, but methods within a class run sequentially. Use "methods" for independent API tests. Use "classes" when tests within a class have ordering dependencies (dependsOnMethods) but tests in different classes are independent.</div></div>
+  <div class="qa-item"><div class="qq">Q4: How does @DataProvider(parallel=true) work? <span class="qtg">+</span></div><div class="qa-a">@DataProvider(parallel=true) tells TestNG to run each data row in a separate thread from the thread pool. The test method is invoked once per data row — all invocations run concurrently. The thread-count attribute in testng.xml controls the thread pool size. Data rows must be fully independent — avoid shared state between data iterations. Perfect for testing multiple user IDs, environments, or API endpoints simultaneously.</div></div>
+  <div class="qa-item"><div class="qq">Q5: When should you NOT run REST Assured tests in parallel? <span class="qtg">+</span></div><div class="qa-a">Avoid parallel execution when: (1) tests have sequential dependencies (CRUD chains where step 2 depends on step 1 data), (2) tests share a unique resource (single test user account), (3) the API has rate limiting that rejects concurrent requests, (4) tests clean up shared data (one test deletes data another test needs), or (5) the API server is a single-threaded local dev server that can't handle concurrent connections.</div></div>
 </div>
 
 </div></div>
@@ -620,30 +645,30 @@ Make your test code equally stateless — no shared mutable variables.</span></d
 <div class="session" id="session-1">
 <div class="sp">
 
-<div class="sec">Overview — What / Why / When / Where / How</div>
+<div class="sh">Overview — What / Why / When / Where / How</div>
 <div class="ovg">
-  <div class="ovc"><div class="ov-ic">🔑</div><div class="ov-t">What</div><div class="ov-tx">OAuth2 token refresh = automatically obtaining a new access token before the old one expires — keeping a long-running test suite authenticated throughout execution.</div></div>
-  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">Access tokens expire (typically 1 hour). A 500-test suite may run for 2+ hours. Without refresh, tests start failing with 401 Unauthorized midway — silently breaking coverage.</div></div>
-  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Needed for any test suite longer than the token's expiry window — usually 3600 seconds. Check token expiry in <code>@BeforeMethod</code> and refresh proactively before expiry.</div></div>
-  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx">Implement in a <code>TokenManager</code> utility class. Called from <code>@BeforeSuite</code>, <code>@BeforeClass</code>, or <code>@BeforeMethod</code> depending on token lifetime vs test count.</div></div>
-  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Store token + expiry timestamp. Before each request, check if <code>currentTime + buffer &gt; expiry</code>. If so, call the login/refresh endpoint → store new token → continue.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">🔑</div><div class="ov-t">What</div><div class="ov-tx">OAuth2 token refresh = automatically obtaining a new access token before the old one expires — keeping a long-running test suite authenticated throughout execution.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">Access tokens expire (typically 1 hour). A 500-test suite may run for 2+ hours. Without refresh, tests start failing with 401 Unauthorized midway — silently breaking coverage.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Needed for any test suite longer than the token's expiry window — usually 3600 seconds. Check token expiry in <code>@BeforeMethod</code> and refresh proactively before expiry.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx">Implement in a <code>TokenManager</code> utility class. Called from <code>@BeforeSuite</code>, <code>@BeforeClass</code>, or <code>@BeforeMethod</code> depending on token lifetime vs test count.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Store token + expiry timestamp. Before each request, check if <code>currentTime + buffer &gt; expiry</code>. If so, call the login/refresh endpoint → store new token → continue.</div></div>
 </div>
 
-<div class="sec">Keyword Glossary</div>
+<div class="sh">Keyword Glossary</div>
 <div class="kw-grid">
-  <div class="kwi"><div class="kw-k">OAuth2</div><div class="kw-v">Authorization framework — client gets an access token from an auth server and passes it in every API request header.</div></div>
-  <div class="kwi"><div class="kw-k">Access Token</div><div class="kw-v">Short-lived credential (JWT or opaque) sent in Authorization: Bearer header — typically expires in 1 hour.</div></div>
-  <div class="kwi"><div class="kw-k">Refresh Token</div><div class="kw-v">Long-lived credential (days/weeks) used exclusively to obtain a new access token without re-entering credentials.</div></div>
-  <div class="kwi"><div class="kw-k">JWT (JSON Web Token)</div><div class="kw-v">Self-contained token with header.payload.signature — payload contains <code>exp</code> claim (expiry as Unix timestamp).</div></div>
-  <div class="kwi"><div class="kw-k">exp claim</div><div class="kw-v">JWT payload field holding expiry as Unix epoch seconds — parse it to know exactly when the token expires.</div></div>
-  <div class="kwi"><div class="kw-k">grant_type</div><div class="kw-v">OAuth2 request field specifying the flow — <code>password</code> for direct credentials, <code>refresh_token</code> for token refresh.</div></div>
-  <div class="kwi"><div class="kw-k">client_credentials</div><div class="kw-v">OAuth2 grant type for service-to-service auth — no user involved, app authenticates with client_id + client_secret.</div></div>
-  <div class="kwi"><div class="kw-k">@BeforeSuite</div><div class="kw-v">TestNG annotation — runs once before the entire test suite. Use for initial token fetch shared across all tests.</div></div>
-  <div class="kwi"><div class="kw-k">buffer window</div><div class="kw-v">Refresh the token X seconds BEFORE actual expiry — prevents edge case where token expires mid-request.</div></div>
-  <div class="kwi"><div class="kw-k">synchronized</div><div class="kw-v">Java keyword ensuring only one thread executes the token refresh block — prevents multiple parallel threads from refreshing simultaneously.</div></div>
+  <div class="gi"><div class="gk">OAuth2</div><div class="gd">Authorization framework — client gets an access token from an auth server and passes it in every API request header.</div></div>
+  <div class="gi"><div class="gk">Access Token</div><div class="gd">Short-lived credential (JWT or opaque) sent in Authorization: Bearer header — typically expires in 1 hour.</div></div>
+  <div class="gi"><div class="gk">Refresh Token</div><div class="gd">Long-lived credential (days/weeks) used exclusively to obtain a new access token without re-entering credentials.</div></div>
+  <div class="gi"><div class="gk">JWT (JSON Web Token)</div><div class="gd">Self-contained token with header.payload.signature — payload contains <code>exp</code> claim (expiry as Unix timestamp).</div></div>
+  <div class="gi"><div class="gk">exp claim</div><div class="gd">JWT payload field holding expiry as Unix epoch seconds — parse it to know exactly when the token expires.</div></div>
+  <div class="gi"><div class="gk">grant_type</div><div class="gd">OAuth2 request field specifying the flow — <code>password</code> for direct credentials, <code>refresh_token</code> for token refresh.</div></div>
+  <div class="gi"><div class="gk">client_credentials</div><div class="gd">OAuth2 grant type for service-to-service auth — no user involved, app authenticates with client_id + client_secret.</div></div>
+  <div class="gi"><div class="gk">@BeforeSuite</div><div class="gd">TestNG annotation — runs once before the entire test suite. Use for initial token fetch shared across all tests.</div></div>
+  <div class="gi"><div class="gk">buffer window</div><div class="gd">Refresh the token X seconds BEFORE actual expiry — prevents edge case where token expires mid-request.</div></div>
+  <div class="gi"><div class="gk">synchronized</div><div class="gd">Java keyword ensuring only one thread executes the token refresh block — prevents multiple parallel threads from refreshing simultaneously.</div></div>
 </div>
 
-<div class="sec">OAuth2 Token Refresh Architecture</div>
+<div class="sh">OAuth2 Token Refresh Architecture</div>
 <div class="arch-box">
   <div class="arch-t">OAuth2 flow — initial auth + automatic refresh in test suite</div>
   <div class="arch"><span class="hl">INITIAL AUTH (@BeforeSuite):</span>
@@ -686,17 +711,17 @@ Make your test code equally stateless — no shared mutable variables.</span></d
   <span class="hl">long expiryMs = exp * 1000L;   // compare against System.currentTimeMillis()</span></div>
 </div>
 
-<div class="sec">Interview One-Liners</div>
+<div class="sh">Interview One-Liners</div>
 <div class="ol-list">
-  <div class="ol"><b>access_token</b> expires typically in 3600 seconds — a long test suite must proactively refresh it before expiry to avoid 401 Unauthorized failures mid-suite.</div>
-  <div class="ol"><b>Refresh token</b> is a long-lived credential used only to obtain a new access token — sent with <code>grant_type=refresh_token</code> to the auth server's token endpoint.</div>
-  <div class="ol"><b>Buffer window</b> = refresh the token 60 seconds BEFORE actual expiry — prevents edge cases where a token expires between the check and the actual API call.</div>
-  <div class="ol"><b>@BeforeSuite</b> fetches the initial token once for the entire suite; <code>@BeforeMethod</code> checks expiry and refreshes if needed — together they handle any suite duration.</div>
-  <div class="ol"><b>synchronized(lock)</b> in the refresh method ensures only one thread calls the auth endpoint at a time — without it, 10 parallel threads would each fire a separate refresh simultaneously.</div>
-  <div class="ol"><b>JWT exp claim</b> = Unix timestamp in the token payload — decode the base64url payload, extract <code>exp</code>, compare with current time to determine if refresh is needed.</div>
+  <div class="oneliner"><b>access_token</b> expires typically in 3600 seconds — a long test suite must proactively refresh it before expiry to avoid 401 Unauthorized failures mid-suite.</div>
+  <div class="oneliner"><b>Refresh token</b> is a long-lived credential used only to obtain a new access token — sent with <code>grant_type=refresh_token</code> to the auth server's token endpoint.</div>
+  <div class="oneliner"><b>Buffer window</b> = refresh the token 60 seconds BEFORE actual expiry — prevents edge cases where a token expires between the check and the actual API call.</div>
+  <div class="oneliner"><b>@BeforeSuite</b> fetches the initial token once for the entire suite; <code>@BeforeMethod</code> checks expiry and refreshes if needed — together they handle any suite duration.</div>
+  <div class="oneliner"><b>synchronized(lock)</b> in the refresh method ensures only one thread calls the auth endpoint at a time — without it, 10 parallel threads would each fire a separate refresh simultaneously.</div>
+  <div class="oneliner"><b>JWT exp claim</b> = Unix timestamp in the token payload — decode the base64url payload, extract <code>exp</code>, compare with current time to determine if refresh is needed.</div>
 </div>
 
-<div class="sec">Code Examples — OAuth2 Token Refresh</div>
+<div class="sh">Code Examples — OAuth2 Token Refresh</div>
 <div class="code-area">
   <div class="ctbar" id="ct-s19">
     <div class="ct active" data-ci="0" data-cs="s19">TokenManager.java</div>
@@ -1171,22 +1196,22 @@ Make your test code equally stateless — no shared mutable variables.</span></d
 }</div>
 </div>
 
-<div class="sec">Best Practices</div>
+<div class="sh">Best Practices</div>
 <div class="cl">
-  <div class="ci"><span class="ck">✔</span> Always read credentials from environment variables (<code>System.getenv()</code>) — never hardcode client_id, client_secret, or passwords in test code or version control.</div>
-  <div class="ci"><span class="ck">✔</span> Use a 60-second buffer window — refresh the token before it actually expires. A token valid at check time may expire during the API call's network round-trip.</div>
-  <div class="ci"><span class="ck">✔</span> Use <code>synchronized</code> around the refresh block with double-checked locking — prevents N parallel threads each firing a separate refresh request simultaneously.</div>
-  <div class="ci"><span class="ck">✔</span> Update the refresh_token every time you receive a new one — some OAuth2 servers rotate refresh tokens on each use; storing the old one will cause future refresh calls to fail.</div>
-  <div class="ci"><span class="ck">✔</span> Declare <code>accessToken</code> and <code>refreshToken</code> as <code>volatile</code> when shared across threads — ensures all threads immediately see any value written by another thread.</div>
+  <div class="check-item"><span class="ck">✔</span> Always read credentials from environment variables (<code>System.getenv()</code>) — never hardcode client_id, client_secret, or passwords in test code or version control.</div>
+  <div class="check-item"><span class="ck">✔</span> Use a 60-second buffer window — refresh the token before it actually expires. A token valid at check time may expire during the API call's network round-trip.</div>
+  <div class="check-item"><span class="ck">✔</span> Use <code>synchronized</code> around the refresh block with double-checked locking — prevents N parallel threads each firing a separate refresh request simultaneously.</div>
+  <div class="check-item"><span class="ck">✔</span> Update the refresh_token every time you receive a new one — some OAuth2 servers rotate refresh tokens on each use; storing the old one will cause future refresh calls to fail.</div>
+  <div class="check-item"><span class="ck">✔</span> Declare <code>accessToken</code> and <code>refreshToken</code> as <code>volatile</code> when shared across threads — ensures all threads immediately see any value written by another thread.</div>
 </div>
 
-<div class="sec">Interview Q&amp;A</div>
+<div class="sh">Interview Q&amp;A</div>
 <div class="qa-list">
-  <div class="qi"><div class="qq">Q1: How do you handle OAuth2 token expiry in a long test suite? <span class="qtg">+</span></div><div class="qa-a">Create a TokenManager singleton with fetchInitialToken() called in @BeforeSuite and a getToken() method that checks isExpiringSoon() before every return. Store the token expiry as System.currentTimeMillis() + expires_in*1000. Add a 60-second buffer. Use synchronized to prevent parallel threads from each refreshing simultaneously. Call getToken() in @BeforeMethod or directly in each test's given() block.</div></div>
-  <div class="qi"><div class="qq">Q2: What is the difference between password grant and client_credentials grant? <span class="qtg">+</span></div><div class="qa-a">Password grant (grant_type=password) authenticates a real user — requires username + password alongside client credentials. Returns both access_token and refresh_token. Client credentials grant (grant_type=client_credentials) authenticates the application itself — no user involved, just client_id + client_secret. Returns access_token but typically no refresh_token (re-authenticate to get a new token). Use client_credentials for microservice-to-microservice API testing.</div></div>
-  <div class="qi"><div class="qq">Q3: Why use volatile for shared token fields? <span class="qtg">+</span></div><div class="qa-a">Without volatile, Java's memory model allows each thread to cache a variable's value in its local CPU cache. Thread-1 may update accessToken but Thread-2 still reads the stale cached value. volatile forces all reads/writes to go directly to main memory — guaranteeing all threads see the latest written value immediately. It doesn't make compound operations atomic (for that you need synchronized or AtomicReference), but it ensures visibility for simple assignment and read operations.</div></div>
-  <div class="qi"><div class="qq">Q4: How do you parse the JWT exp claim without adding an external JWT library? <span class="qtg">+</span></div><div class="qa-a">Split the JWT on "\\." to get [header, payload, signature]. Take parts[1] (payload). Add base64url padding if needed (4-length % 4 equals signs). Decode with Base64.getUrlDecoder().decode() — must use URL decoder not standard (JWT uses - and _ not + and /). Convert bytes to String. Use JsonPath.from(payload).getLong("exp") to extract the exp value. Multiply by 1000L to convert Unix seconds to Java milliseconds for comparison with System.currentTimeMillis().</div></div>
-  <div class="qi"><div class="qq">Q5: What is double-checked locking and why is it needed for token refresh? <span class="qtg">+</span></div><div class="qa-a">Double-checked locking = check the condition BEFORE acquiring the lock (fast path — no synchronization overhead for most calls), then check AGAIN INSIDE the synchronized block. Pattern: if(expired){synchronized(lock){if(expired){refresh();}}}. The second check is critical: Thread-1 and Thread-2 both pass the outer check simultaneously, Thread-1 acquires the lock and refreshes, Thread-2 then acquires the lock — without the inner check, Thread-2 would refresh again unnecessarily, causing double network calls to the auth server.</div></div>
+  <div class="qa-item"><div class="qq">Q1: How do you handle OAuth2 token expiry in a long test suite? <span class="qtg">+</span></div><div class="qa-a">Create a TokenManager singleton with fetchInitialToken() called in @BeforeSuite and a getToken() method that checks isExpiringSoon() before every return. Store the token expiry as System.currentTimeMillis() + expires_in*1000. Add a 60-second buffer. Use synchronized to prevent parallel threads from each refreshing simultaneously. Call getToken() in @BeforeMethod or directly in each test's given() block.</div></div>
+  <div class="qa-item"><div class="qq">Q2: What is the difference between password grant and client_credentials grant? <span class="qtg">+</span></div><div class="qa-a">Password grant (grant_type=password) authenticates a real user — requires username + password alongside client credentials. Returns both access_token and refresh_token. Client credentials grant (grant_type=client_credentials) authenticates the application itself — no user involved, just client_id + client_secret. Returns access_token but typically no refresh_token (re-authenticate to get a new token). Use client_credentials for microservice-to-microservice API testing.</div></div>
+  <div class="qa-item"><div class="qq">Q3: Why use volatile for shared token fields? <span class="qtg">+</span></div><div class="qa-a">Without volatile, Java's memory model allows each thread to cache a variable's value in its local CPU cache. Thread-1 may update accessToken but Thread-2 still reads the stale cached value. volatile forces all reads/writes to go directly to main memory — guaranteeing all threads see the latest written value immediately. It doesn't make compound operations atomic (for that you need synchronized or AtomicReference), but it ensures visibility for simple assignment and read operations.</div></div>
+  <div class="qa-item"><div class="qq">Q4: How do you parse the JWT exp claim without adding an external JWT library? <span class="qtg">+</span></div><div class="qa-a">Split the JWT on "\\." to get [header, payload, signature]. Take parts[1] (payload). Add base64url padding if needed (4-length % 4 equals signs). Decode with Base64.getUrlDecoder().decode() — must use URL decoder not standard (JWT uses - and _ not + and /). Convert bytes to String. Use JsonPath.from(payload).getLong("exp") to extract the exp value. Multiply by 1000L to convert Unix seconds to Java milliseconds for comparison with System.currentTimeMillis().</div></div>
+  <div class="qa-item"><div class="qq">Q5: What is double-checked locking and why is it needed for token refresh? <span class="qtg">+</span></div><div class="qa-a">Double-checked locking = check the condition BEFORE acquiring the lock (fast path — no synchronization overhead for most calls), then check AGAIN INSIDE the synchronized block. Pattern: if(expired){synchronized(lock){if(expired){refresh();}}}. The second check is critical: Thread-1 and Thread-2 both pass the outer check simultaneously, Thread-1 acquires the lock and refreshes, Thread-2 then acquires the lock — without the inner check, Thread-2 would refresh again unnecessarily, causing double network calls to the auth server.</div></div>
 </div>
 
 </div></div>
@@ -1195,30 +1220,30 @@ Make your test code equally stateless — no shared mutable variables.</span></d
 <div class="session" id="session-2">
 <div class="sp">
 
-<div class="sec">Overview — What / Why / When / Where / How</div>
+<div class="sh">Overview — What / Why / When / Where / How</div>
 <div class="ovg">
-  <div class="ovc"><div class="ov-ic">📋</div><div class="ov-t">What</div><div class="ov-tx">JSON Schema validation = asserting that a response's JSON structure matches a predefined schema contract — field names, data types, required fields, and value constraints.</div></div>
-  <div class="ovc"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">Body assertions check individual values. Schema validation checks the complete contract — catching type changes (int → string), missing required fields, and structural regressions.</div></div>
-  <div class="ovc"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Add schema validation to every critical endpoint after the first passing test. Run in CI to catch API contract breaking changes before they reach production.</div></div>
-  <div class="ovc"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx">In REST Assured's <code>then()</code> chain: <code>.body(matchesJsonSchemaInClasspath("schema.json"))</code>. Schema files live in <code>src/test/resources/schemas/</code>.</div></div>
-  <div class="ovc"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Add <code>rest-assured:json-schema-validator</code> dependency. Write JSON Schema file. Use <code>matchesJsonSchemaInClasspath()</code> matcher in the then() assertion chain.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">📋</div><div class="ov-t">What</div><div class="ov-tx">JSON Schema validation = asserting that a response's JSON structure matches a predefined schema contract — field names, data types, required fields, and value constraints.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">💡</div><div class="ov-t">Why</div><div class="ov-tx">Body assertions check individual values. Schema validation checks the complete contract — catching type changes (int → string), missing required fields, and structural regressions.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">⏰</div><div class="ov-t">When</div><div class="ov-tx">Add schema validation to every critical endpoint after the first passing test. Run in CI to catch API contract breaking changes before they reach production.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">📍</div><div class="ov-t">Where</div><div class="ov-tx">In REST Assured's <code>then()</code> chain: <code>.body(matchesJsonSchemaInClasspath("schema.json"))</code>. Schema files live in <code>src/test/resources/schemas/</code>.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic">⚙️</div><div class="ov-t">How</div><div class="ov-tx">Add <code>rest-assured:json-schema-validator</code> dependency. Write JSON Schema file. Use <code>matchesJsonSchemaInClasspath()</code> matcher in the then() assertion chain.</div></div>
 </div>
 
-<div class="sec">Keyword Glossary</div>
+<div class="sh">Keyword Glossary</div>
 <div class="kw-grid">
-  <div class="kwi"><div class="kw-k">JSON Schema</div><div class="kw-v">A JSON document describing the expected structure of another JSON document — defines types, required fields, formats, and constraints.</div></div>
-  <div class="kwi"><div class="kw-k">$schema</div><div class="kw-v">Top-level JSON Schema field declaring which draft version is used — e.g. <code>"https://json-schema.org/draft/2020-12/schema"</code>.</div></div>
-  <div class="kwi"><div class="kw-k">properties</div><div class="kw-v">JSON Schema keyword: defines the expected fields of an object with their type and constraints.</div></div>
-  <div class="kwi"><div class="kw-k">required</div><div class="kw-v">JSON Schema keyword: array of field names that must be present in the JSON response — validation fails if any are missing.</div></div>
-  <div class="kwi"><div class="kw-k">type</div><div class="kw-v">JSON Schema constraint: valid values are <code>string</code>, <code>integer</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>null</code>.</div></div>
-  <div class="kwi"><div class="kw-k">format</div><div class="kw-v">JSON Schema field: validates string format — <code>email</code>, <code>uri</code>, <code>date-time</code>, <code>uuid</code>. Note: format validation is not enforced by default in all validators.</div></div>
-  <div class="kwi"><div class="kw-k">$ref</div><div class="kw-v">JSON Schema: reference to a reusable schema definition — e.g. <code>{"$ref":"#/$defs/Address"}</code> reuses the Address schema definition.</div></div>
-  <div class="kwi"><div class="kw-k">matchesJsonSchemaInClasspath</div><div class="kw-v">REST Assured static import matcher — validates response body against a JSON Schema file on the classpath.</div></div>
-  <div class="kwi"><div class="kw-k">json-schema-validator</div><div class="kw-v">REST Assured add-on module: <code>io.rest-assured:json-schema-validator</code> — provides schema validation matchers.</div></div>
-  <div class="kwi"><div class="kw-k">additionalProperties</div><div class="kw-v">JSON Schema keyword: <code>false</code> = reject any JSON fields not declared in properties. <code>true</code> = allow any extra fields.</div></div>
+  <div class="gi"><div class="gk">JSON Schema</div><div class="gd">A JSON document describing the expected structure of another JSON document — defines types, required fields, formats, and constraints.</div></div>
+  <div class="gi"><div class="gk">$schema</div><div class="gd">Top-level JSON Schema field declaring which draft version is used — e.g. <code>"https://json-schema.org/draft/2020-12/schema"</code>.</div></div>
+  <div class="gi"><div class="gk">properties</div><div class="gd">JSON Schema keyword: defines the expected fields of an object with their type and constraints.</div></div>
+  <div class="gi"><div class="gk">required</div><div class="gd">JSON Schema keyword: array of field names that must be present in the JSON response — validation fails if any are missing.</div></div>
+  <div class="gi"><div class="gk">type</div><div class="gd">JSON Schema constraint: valid values are <code>string</code>, <code>integer</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>null</code>.</div></div>
+  <div class="gi"><div class="gk">format</div><div class="gd">JSON Schema field: validates string format — <code>email</code>, <code>uri</code>, <code>date-time</code>, <code>uuid</code>. Note: format validation is not enforced by default in all validators.</div></div>
+  <div class="gi"><div class="gk">$ref</div><div class="gd">JSON Schema: reference to a reusable schema definition — e.g. <code>{"$ref":"#/$defs/Address"}</code> reuses the Address schema definition.</div></div>
+  <div class="gi"><div class="gk">matchesJsonSchemaInClasspath</div><div class="gd">REST Assured static import matcher — validates response body against a JSON Schema file on the classpath.</div></div>
+  <div class="gi"><div class="gk">json-schema-validator</div><div class="gd">REST Assured add-on module: <code>io.rest-assured:json-schema-validator</code> — provides schema validation matchers.</div></div>
+  <div class="gi"><div class="gk">additionalProperties</div><div class="gd">JSON Schema keyword: <code>false</code> = reject any JSON fields not declared in properties. <code>true</code> = allow any extra fields.</div></div>
 </div>
 
-<div class="sec">JSON Schema Validation Architecture</div>
+<div class="sh">JSON Schema Validation Architecture</div>
 <div class="arch-box">
   <div class="arch-t">How schema validation works in REST Assured</div>
   <div class="arch"><span class="hl">TEST CODE:</span>
@@ -1265,17 +1290,17 @@ Make your test code equally stateless — no shared mutable variables.</span></d
 <span class="bl">}</span></div>
 </div>
 
-<div class="sec">Interview One-Liners</div>
+<div class="sh">Interview One-Liners</div>
 <div class="ol-list">
-  <div class="ol"><b>JSON Schema validation</b> validates the complete response contract — field names, data types, required fields, and value constraints — in one assertion, replacing dozens of individual body() checks.</div>
-  <div class="ol"><b>matchesJsonSchemaInClasspath("schema.json")</b> = REST Assured matcher that loads a schema file from <code>src/test/resources</code> and validates the full response JSON against it.</div>
-  <div class="ol"><b>"required":["id","email"]</b> = the most critical JSON Schema keyword — it explicitly fails the test if any listed field is absent from the response, catching API regressions immediately.</div>
-  <div class="ol"><b>additionalProperties: false</b> = rejects any JSON response fields not declared in the schema — enforces that the API contract is exact and doesn't silently add undocumented fields.</div>
-  <div class="ol"><b>$ref and $defs</b> = JSON Schema's composition mechanism — define a reusable sub-schema once in <code>$defs</code> and reference it multiple times across the schema file to avoid repetition.</div>
-  <div class="ol"><b>Schema-first API contract testing</b> = generate schemas from OpenAPI/Swagger spec → use in tests — any API breaking change immediately fails the schema assertion before it reaches consumers.</div>
+  <div class="oneliner"><b>JSON Schema validation</b> validates the complete response contract — field names, data types, required fields, and value constraints — in one assertion, replacing dozens of individual body() checks.</div>
+  <div class="oneliner"><b>matchesJsonSchemaInClasspath("schema.json")</b> = REST Assured matcher that loads a schema file from <code>src/test/resources</code> and validates the full response JSON against it.</div>
+  <div class="oneliner"><b>"required":["id","email"]</b> = the most critical JSON Schema keyword — it explicitly fails the test if any listed field is absent from the response, catching API regressions immediately.</div>
+  <div class="oneliner"><b>additionalProperties: false</b> = rejects any JSON response fields not declared in the schema — enforces that the API contract is exact and doesn't silently add undocumented fields.</div>
+  <div class="oneliner"><b>$ref and $defs</b> = JSON Schema's composition mechanism — define a reusable sub-schema once in <code>$defs</code> and reference it multiple times across the schema file to avoid repetition.</div>
+  <div class="oneliner"><b>Schema-first API contract testing</b> = generate schemas from OpenAPI/Swagger spec → use in tests — any API breaking change immediately fails the schema assertion before it reaches consumers.</div>
 </div>
 
-<div class="sec">Code Examples — JSON Schema Validation</div>
+<div class="sh">Code Examples — JSON Schema Validation</div>
 <div class="code-area">
   <div class="ctbar" id="ct-s20">
     <div class="ct active" data-ci="0" data-cs="s20">user-schema.json</div>
@@ -1760,22 +1785,22 @@ No additional dependencies needed!
 }</div>
 </div>
 
-<div class="sec">Best Practices</div>
+<div class="sh">Best Practices</div>
 <div class="cl">
-  <div class="ci"><span class="ck">✔</span> Always specify <code>"required"</code> explicitly in your schema — a schema without required fields only validates types but silently passes when fields go missing entirely.</div>
-  <div class="ci"><span class="ck">✔</span> Store schema files in <code>src/test/resources/schemas/</code> — one file per endpoint type. Name them after the resource: <code>user-schema.json</code>, <code>post-schema.json</code>, <code>order-schema.json</code>.</div>
-  <div class="ci"><span class="ck">✔</span> Use <code>$ref</code> and <code>$defs</code> to reuse sub-schemas — if Address appears in User and Order schemas, define it once and reference it to keep schemas DRY and consistent.</div>
-  <div class="ci"><span class="ck">✔</span> Run schema validation in CI — commit schemas to version control and treat schema violations the same as test failures. Schema diffs on PR review catch API breaking changes before merge.</div>
-  <div class="ci"><span class="ck">✔</span> Combine schema validation with value assertions in the same test — schema validates structure, body() validates content. Together they provide complete API contract coverage.</div>
+  <div class="check-item"><span class="ck">✔</span> Always specify <code>"required"</code> explicitly in your schema — a schema without required fields only validates types but silently passes when fields go missing entirely.</div>
+  <div class="check-item"><span class="ck">✔</span> Store schema files in <code>src/test/resources/schemas/</code> — one file per endpoint type. Name them after the resource: <code>user-schema.json</code>, <code>post-schema.json</code>, <code>order-schema.json</code>.</div>
+  <div class="check-item"><span class="ck">✔</span> Use <code>$ref</code> and <code>$defs</code> to reuse sub-schemas — if Address appears in User and Order schemas, define it once and reference it to keep schemas DRY and consistent.</div>
+  <div class="check-item"><span class="ck">✔</span> Run schema validation in CI — commit schemas to version control and treat schema violations the same as test failures. Schema diffs on PR review catch API breaking changes before merge.</div>
+  <div class="check-item"><span class="ck">✔</span> Combine schema validation with value assertions in the same test — schema validates structure, body() validates content. Together they provide complete API contract coverage.</div>
 </div>
 
-<div class="sec">Interview Q&amp;A</div>
+<div class="sh">Interview Q&amp;A</div>
 <div class="qa-list">
-  <div class="qi"><div class="qq">Q1: What does JSON Schema validation catch that regular body() assertions don't? <span class="qtg">+</span></div><div class="qa-a">body() assertions check specific individual values. JSON Schema validation catches: (1) field type changes — id changed from integer to string, (2) required fields going missing — email removed from response, (3) structural changes — address changed from object to null, (4) value constraints — negative id, empty name string. One schema assertion replaces 20+ body() assertions while also catching structural regressions that no body() assertion would notice.</div></div>
-  <div class="qi"><div class="qq">Q2: What is the required pom.xml dependency for REST Assured schema validation? <span class="qtg">+</span></div><div class="qa-a">Add io.rest-assured:json-schema-validator (same version as rest-assured, e.g. 5.3.2) with scope=test. This module bundles the Everit/FGE JSON schema validator and provides the matchesJsonSchemaInClasspath() matcher. The static import is: import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;</div></div>
-  <div class="qi"><div class="qq">Q3: What is the difference between matchesJsonSchemaInClasspath and matchesJsonSchema? <span class="qtg">+</span></div><div class="qa-a">matchesJsonSchemaInClasspath("path") loads the schema file from the Java classpath — the file must be in src/test/resources. matchesJsonSchema(String) takes a schema as a Java String — useful for inline, dynamically generated, or environment-specific schemas. matchesJsonSchema(File) and matchesJsonSchema(InputStream) load from a file object or input stream respectively. All produce identical validation behavior; the difference is only the schema source.</div></div>
-  <div class="qi"><div class="qq">Q4: What does additionalProperties: false do in a JSON Schema? <span class="qtg">+</span></div><div class="qa-a">additionalProperties:false rejects any field in the JSON response that is NOT declared in the schema's properties section. This enforces an exact API contract — any field the API adds that isn't in your schema causes the test to fail. Without it (default: true), the schema is lenient about extra fields. Use false in strict contract testing where you want to detect any undocumented additions. Use true (or omit) when you only care about required fields and want to allow the API to add new fields freely.</div></div>
-  <div class="qi"><div class="qq">Q5: How do you generate JSON Schemas from an OpenAPI/Swagger specification? <span class="qtg">+</span></div><div class="qa-a">Tools: (1) openapi-generator-cli generates JSON schemas from OpenAPI component schemas. (2) Swagger UI and Swagger Parser can extract component schemas. (3) Manually copy the schema object from the OpenAPI spec — each component's "schema" section IS a JSON Schema. (4) Use json-schema-generator Maven plugin to generate schemas from POJO classes. Best practice: treat the OpenAPI spec as the single source of truth; generate both API implementation and test schemas from it to guarantee they stay in sync.</div></div>
+  <div class="qa-item"><div class="qq">Q1: What does JSON Schema validation catch that regular body() assertions don't? <span class="qtg">+</span></div><div class="qa-a">body() assertions check specific individual values. JSON Schema validation catches: (1) field type changes — id changed from integer to string, (2) required fields going missing — email removed from response, (3) structural changes — address changed from object to null, (4) value constraints — negative id, empty name string. One schema assertion replaces 20+ body() assertions while also catching structural regressions that no body() assertion would notice.</div></div>
+  <div class="qa-item"><div class="qq">Q2: What is the required pom.xml dependency for REST Assured schema validation? <span class="qtg">+</span></div><div class="qa-a">Add io.rest-assured:json-schema-validator (same version as rest-assured, e.g. 5.3.2) with scope=test. This module bundles the Everit/FGE JSON schema validator and provides the matchesJsonSchemaInClasspath() matcher. The static import is: import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;</div></div>
+  <div class="qa-item"><div class="qq">Q3: What is the difference between matchesJsonSchemaInClasspath and matchesJsonSchema? <span class="qtg">+</span></div><div class="qa-a">matchesJsonSchemaInClasspath("path") loads the schema file from the Java classpath — the file must be in src/test/resources. matchesJsonSchema(String) takes a schema as a Java String — useful for inline, dynamically generated, or environment-specific schemas. matchesJsonSchema(File) and matchesJsonSchema(InputStream) load from a file object or input stream respectively. All produce identical validation behavior; the difference is only the schema source.</div></div>
+  <div class="qa-item"><div class="qq">Q4: What does additionalProperties: false do in a JSON Schema? <span class="qtg">+</span></div><div class="qa-a">additionalProperties:false rejects any field in the JSON response that is NOT declared in the schema's properties section. This enforces an exact API contract — any field the API adds that isn't in your schema causes the test to fail. Without it (default: true), the schema is lenient about extra fields. Use false in strict contract testing where you want to detect any undocumented additions. Use true (or omit) when you only care about required fields and want to allow the API to add new fields freely.</div></div>
+  <div class="qa-item"><div class="qq">Q5: How do you generate JSON Schemas from an OpenAPI/Swagger specification? <span class="qtg">+</span></div><div class="qa-a">Tools: (1) openapi-generator-cli generates JSON schemas from OpenAPI component schemas. (2) Swagger UI and Swagger Parser can extract component schemas. (3) Manually copy the schema object from the OpenAPI spec — each component's "schema" section IS a JSON Schema. (4) Use json-schema-generator Maven plugin to generate schemas from POJO classes. Best practice: treat the OpenAPI spec as the single source of truth; generate both API implementation and test schemas from it to guarantee they stay in sync.</div></div>
 </div>
 
 </div></div>

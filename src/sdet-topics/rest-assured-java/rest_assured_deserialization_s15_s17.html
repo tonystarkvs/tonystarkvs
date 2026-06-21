@@ -6,80 +6,100 @@
   <title>REST Assured: Deserialization Concepts (Sessions 15 to 17)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans,'Segoe UI',sans-serif);font-size:13px;color:var(--color-text-primary);background:transparent}
-.wrap{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
-.topbar{background:var(--color-background-secondary);padding:10px 14px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
-.badges{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-.bdg{font-size:11px;font-weight:500;padding:3px 10px;border-radius:var(--border-radius-md);letter-spacing:.3px}
-.bdg-b{background:var(--color-background-info);color:var(--color-text-info);border:0.5px solid var(--color-border-info)}
-.bdg-g{background:var(--color-background-success);color:var(--color-text-success);border:0.5px solid var(--color-border-success)}
-.bdg-w{background:var(--color-background-warning);color:var(--color-text-warning);border:0.5px solid var(--color-border-warning)}
-.stab-row{display:flex;overflow-x:auto;scrollbar-width:none;gap:2px}
-.stab-row::-webkit-scrollbar{display:none}
-.stab{flex-shrink:0;padding:8px 20px;font-size:11px;font-weight:500;cursor:pointer;border-radius:6px 6px 0 0;border:0.5px solid var(--color-border-secondary);border-bottom:none;color:var(--color-text-secondary);background:transparent;white-space:nowrap;user-select:none;transition:color .15s,background .15s}
-.stab:hover{color:var(--color-text-primary);background:var(--color-background-primary)}
-.stab.active{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-info);border-bottom:2px solid var(--color-background-primary);font-weight:500}
-.session{display:none;background:var(--color-background-primary)}
-.session.active{display:block}
-.sp{padding:16px}
-.sec{font-size:10px;font-weight:500;letter-spacing:1.2px;color:var(--color-text-info);text-transform:uppercase;margin:20px 0 8px;display:flex;align-items:center;gap:8px}
-.sec::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
-.ovg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:4px}
-.ovc{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px}
-.ov-ic{font-size:18px;margin-bottom:4px}
-.ov-t{font-size:10px;font-weight:500;color:var(--color-text-info);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
-.ov-tx{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
-.kw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:4px}
-.kw-item{background:var(--color-background-secondary);border-left:2px solid var(--color-border-info);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:7px 10px}
-.kw-k{font-family:var(--font-mono);font-size:11px;color:var(--color-text-info);font-weight:500;margin-bottom:2px}
-.kw-v{font-size:11px;color:var(--color-text-secondary);line-height:1.45}
-.ol-list{display:flex;flex-direction:column;gap:5px}
-.ol{background:var(--color-background-secondary);border-left:2px solid var(--color-border-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:7px 12px;font-size:11px;color:var(--color-text-primary);line-height:1.5}
-.ol b{color:var(--color-text-info)}
-.arch-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;margin-bottom:8px}
-.arch-t{font-size:12px;font-weight:500;color:var(--color-text-warning);margin-bottom:8px}
-.arch{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);line-height:1.8;white-space:pre;overflow-x:auto}
-.arch .hl{color:#56d364}.arch .bl{color:#79c0ff}.arch .or{color:#ffa657}.arch .pk{color:#d2a8ff}.arch .rd{color:#ff7b72}.arch .cm{color:#6e7681;font-style:italic}
-.mcard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px}
-.mcard{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px}
-.mc-t{font-size:11px;font-weight:500;margin-bottom:5px}
-.mc-p{font-size:11px;color:var(--color-text-success);line-height:1.55}
-.mc-c{font-size:11px;color:var(--color-text-danger);line-height:1.55}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Outfit', -apple-system, sans-serif; font-size: 13px; background: transparent; color: #1e293b; }
+.wrap { border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff; max-width: 680px; margin: 12px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.topbar { background: #f8fafc; padding: 12px 16px 0; border-bottom: 1px solid #e2e8f0; }
+.badges { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.bdg { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; font-family: 'Outfit', sans-serif; }
+.b1 { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.b2 { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.b3 { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
+.bi { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.bg { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.bw { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
+.bdg-b { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.bdg-g { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.bdg-w { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
+.stab-row { display: flex; overflow-x: auto; scrollbar-width: none; gap: 4px; }
+.stab-row::-webkit-scrollbar { display: none; }
+.stab { flex-shrink: 0; padding: 8px 16px; font-size: 11px; font-weight: 600; cursor: pointer; border-radius: 6px 6px 0 0; border: 1px solid #e2e8f0; border-bottom: none; color: #475569; background: #f8fafc; white-space: nowrap; user-select: none; transition: all .15s; font-family: 'Outfit', sans-serif; }
+.stab:hover { color: #1e293b; background: #eaecef; }
+.stab.active { background: #ffffff; color: #534ab7; border-color: #e2e8f0; border-bottom: 2px solid #ffffff; font-weight: 700; }
+.stab.done::after { content: ' ✓'; color: #166534; font-size: 9px; }
+.session { display: none; background: #ffffff; }
+.session.active { display: block; }
+.sp { padding: 18px; }
+.sh { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; color: #534ab7; text-transform: uppercase; margin: 24px 0 12px; display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; }
+.sh::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+.ovg { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.ovc { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 12px; }
+.ov-ic { font-size: 16px; margin-bottom: 4px; }
+.ov-t { font-size: 10px; font-weight: 700; color: #534ab7; margin-bottom: 4px; text-transform: uppercase; font-family: 'Outfit', sans-serif; }
+.ov-tx { font-size: 11px; color: #475569; line-height: 1.5; font-family: 'Outfit', sans-serif; }
+.kw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 640px) { .kw-grid { grid-template-columns: 1fr; } }
+.kwi { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 3px solid #1f6feb; border-radius: 0 6px 6px 0; padding: 8px 12px; }
+.kw-k { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #1f6feb; font-weight: 700; margin-bottom: 2px; }
+.kw-v { font-size: 11px; color: #475569; line-height: 1.4; font-family: 'Outfit', sans-serif; }
+.ol-list { display: flex; flex-direction: column; gap: 6px; }
+.ol { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 3px solid #64748b; border-radius: 0 6px 6px 0; padding: 8px 12px; font-size: 11px; color: #1e293b; line-height: 1.5; font-family: 'Outfit', sans-serif; }
+.ol b { color: #534ab7; }
+.arch-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+.arch-t { font-size: 12px; font-weight: 700; color: #9a3412; margin-bottom: 8px; font-family: 'Outfit', sans-serif; }
+.arch { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #334155; line-height: 1.8; white-space: pre; overflow-x: auto; }
+.arch .hl { color: #166534; font-weight: 700; }
+.arch .bl { color: #0369a1; }
+.arch .or { color: #b45309; }
+.arch .pk { color: #6b21a8; }
+.arch .rd { color: #991b1b; }
+.arch .cm { color: #64748b; font-style: italic; }
+.code-area { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-top: 16px; }
+.ctbar { display: flex; gap: 4px; padding: 8px 8px 0; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid #cbd5e1; background: #f1f5f9; }
+.ctbar::-webkit-scrollbar { display: none; }
+.ct { flex-shrink: 0; padding: 6px 14px; font-size: 11px; cursor: pointer; border-radius: 6px 6px 0 0; border: 1px solid #cbd5e1; border-bottom: none; color: #475569; background: #f8fafc; white-space: nowrap; font-weight: 700; user-select: none; transition: all .15s; font-family: 'Outfit', sans-serif; }
+.ct:hover { color: #1e293b; background: #eaecef; }
+.ct.active { background: #ffffff; color: #000000; border-color: #cbd5e1; border-bottom: 2px solid #ffffff; z-index: 1; }
+.fn-hdr { background: #ffffff; padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0369a1; border-bottom: 1px dashed #cbd5e1; font-weight: 600; }
+.cblk { display: none !important; padding: 14px 18px; font-size: 11.5px; line-height: 1.8; color: #1e293b; white-space: pre; overflow-x: auto; font-family: 'JetBrains Mono', monospace; background: #ffffff; min-height: 240px; }
+.cblk.active { display: block !important; }
+.kw { color: #d73a49; font-weight: bold; }
+.cls { color: #6f42c1; font-weight: bold; }
+.fn { color: #005cc5; }
+.str { color: #032f62; }
+.cmt, .cm { color: #6a737d; font-style: italic; }
+.num { color: #005cc5; }
+.ann { color: #22863a; }
+.vr { color: #24292e; }
+.cl { display: flex; flex-direction: column; gap: 6px; }
+.ci { display: flex; align-items: flex-start; gap: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #166534; line-height: 1.5; font-family: 'Outfit', sans-serif; }
+.ck { color: #166534; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.qa-list { display: flex; flex-direction: column; gap: 8px; }
+.qi { background: #f8fafc; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; margin-bottom: 8px; }
+.qq { background: #f1f5f9; padding: 10px 14px; font-size: 11px; font-weight: 700; color: #534ab7; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; font-family: 'Outfit', sans-serif; transition: background .15s; }
+.qq:hover { background: #eaecef; }
+.qtg { color: #64748b; font-size: 15px; flex-shrink: 0; }
+.qa-a { padding: 0 14px; max-height: 0; overflow: hidden; font-size: 11px; color: #475569; line-height: 1.65; transition: max-height .3s ease, padding .3s; font-family: 'Outfit', sans-serif; background: #ffffff; }
+.qa-a.open { padding: 10px 14px; max-height: 400px; border-top: 1px solid #e2e8f0; }
+.pbar { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+.pw { flex: 1; background: #e2e8f0; height: 6px; border-radius: 999px; overflow: hidden; }
+.pf { height: 100%; background: linear-gradient(90deg, #534ab7, #16a34a); border-radius: 999px; transition: width .4s; }
+.pt { font-size: 11px; color: #475569; white-space: nowrap; font-family: 'Outfit', sans-serif; }
+.nvb { display: flex; gap: 6px; }
+.nb { background: #ffffff; border: 1px solid #cbd5e1; color: #334155; padding: 6px 16px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; font-family: 'Outfit', sans-serif; transition: all 0.15s; }
+.nb:hover { background: #f1f5f9; color: #000000; border-color: #94a3b8; }
+code { background: rgba(83, 74, 183, 0.08); color: #534ab7; padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.mcard-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px}
+.mcard{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px}
+.mc-t{font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;margin-bottom:5px}
+.mc-p{font-family:'Outfit',sans-serif;font-size:11px;color:#166534;line-height:1.55}
+.mc-c{font-family:'Outfit',sans-serif;font-size:11px;color:#991b1b;line-height:1.55}
 .fl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:8px 0}
-.fb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 10px;font-size:11px;color:var(--color-text-primary);text-align:center;min-width:80px}
-.fb.g{border-color:var(--color-border-success);color:var(--color-text-success)}
-.fb.b{border-color:var(--color-border-info);color:var(--color-text-info)}
-.fb.o{border-color:var(--color-border-warning);color:var(--color-text-warning)}
-.fa{color:var(--color-text-secondary);font-size:13px}
-.code-area{background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary)}
-.ctbar{display:flex;gap:2px;padding:8px 8px 0;overflow-x:auto;scrollbar-width:none;border-bottom:0.5px solid var(--color-border-tertiary)}
-.ctbar::-webkit-scrollbar{display:none}
-.ct{flex-shrink:0;padding:5px 12px;font-size:11px;cursor:pointer;border-radius:5px 5px 0 0;border:0.5px solid var(--color-border-secondary);border-bottom:none;color:var(--color-text-secondary);background:var(--color-background-primary);white-space:nowrap;font-weight:500;user-select:none;transition:color .15s}
-.ct:hover{color:var(--color-text-primary)}
-.ct.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-info);border-bottom:2px solid var(--color-background-secondary)}
-.fn-hdr{background:#0d1117;padding:5px 14px;font-family:var(--font-mono);font-size:11px;color:#79c0ff;border-bottom:0.5px solid #30363d}
-.cblk{display:none;padding:14px 16px;font-size:11.5px;line-height:1.8;color:#e6edf3;white-space:pre;overflow-x:auto;font-family:var(--font-mono);background:#0d1117;min-height:280px}
-.cblk.active{display:block}
-.kw{color:#ff7b72}.cls{color:#ffa657}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#6e7681;font-style:italic}.num{color:#79c0ff}.ann{color:#56d364}.vr{color:#e6edf3}
-.cl{display:flex;flex-direction:column;gap:5px}
-.ci{display:flex;align-items:flex-start;gap:8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:11px;color:var(--color-text-primary);line-height:1.5}
-.ck{color:var(--color-text-success);font-size:14px;flex-shrink:0;margin-top:1px}
-.qa{display:flex;flex-direction:column;gap:7px}
-.qi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
-.qq{background:var(--color-background-primary);padding:9px 14px;font-size:11px;font-weight:500;color:var(--color-text-info);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;border-bottom:0.5px solid transparent}
-.qq:hover{background:var(--color-background-secondary)}
-.qtg{color:var(--color-text-secondary);font-size:15px;transition:transform .2s;flex-shrink:0}
-.qa-ans{padding:0 14px;max-height:0;overflow:hidden;font-size:11px;color:var(--color-text-secondary);line-height:1.65;transition:max-height .3s ease,padding .3s}
-.qa-ans.open{padding:10px 14px;max-height:500px}
-.pbar{background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary);padding:10px 14px;display:flex;align-items:center;gap:12px}
-.pw{flex:1;background:var(--color-border-tertiary);height:5px;border-radius:999px;overflow:hidden}
-.pf{height:100%;background:var(--color-text-info);border-radius:999px;transition:width .4s}
-.pt{font-size:11px;color:var(--color-text-secondary);white-space:nowrap}
-.nvb{display:flex;gap:6px}
-.nb{background:transparent;border:0.5px solid var(--color-border-secondary);color:var(--color-text-primary);padding:5px 14px;border-radius:var(--border-radius-md);font-size:11px;cursor:pointer;font-weight:500}
-.nb:hover{background:var(--color-background-secondary)}
-code{background:var(--color-background-secondary);color:var(--color-text-info);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:11px}
+.fb{background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:6px 12px;font-family:'Outfit',sans-serif;font-size:11px;color:#1e293b;text-align:center;min-width:80px}
+.fb.g{border-color:#bbf7d0;color:#166534;background:#f0fdf4}
+.fb.b{border-color:#bfdbfe;color:#1e40af;background:#eff6ff}
+.fb.o{border-color:#ffedd5;color:#9a3412;background:#fff7ed}
+.fa{color:#64748b;font-size:13px}
 </style>
     <link rel="stylesheet" href="../responsive.css">
 
@@ -114,30 +134,30 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
 <div class="session active" id="session-0">
 <div class="sp">
 
-<div class="sec">Overview — What / Why / When / Where / How</div>
+<div class="sh">Overview — What / Why / When / Where / How</div>
 <div class="ovg">
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-arrow-down-circle" aria-hidden="true"></i></div><div class="ov-t">What</div><div class="ov-tx">Deserialization = converting a JSON response string back into a usable Java object — string, number, List, Map, or POJO — so you can assert and reuse values in tests.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-bulb" aria-hidden="true"></i></div><div class="ov-t">Why</div><div class="ov-tx">Raw JSON strings are unusable in logic. Deserialization gives you typed Java values — so <code>user.getName()</code> is safer and cleaner than parsing a raw string manually.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-clock" aria-hidden="true"></i></div><div class="ov-t">When</div><div class="ov-tx">Every time you need to extract response data to use in follow-up API calls, assertions, reports, or data-driven tests — not just verify it inline.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-map-pin" aria-hidden="true"></i></div><div class="ov-t">Where</div><div class="ov-tx">In REST Assured: <code>extract().asString()</code>, <code>extract().path()</code>, <code>response.jsonPath()</code>, <code>extract().as(Class)</code> — all trigger different deserialization levels.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-settings" aria-hidden="true"></i></div><div class="ov-t">How</div><div class="ov-tx">5 techniques: plain String, path() method, JsonPath object, as(Map.class), as(POJO.class). Complexity scales from simple field extraction to full object graph mapping.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-arrow-down-circle" aria-hidden="true"></i></div><div class="ov-t">What</div><div class="ov-tx">Deserialization = converting a JSON response string back into a usable Java object — string, number, List, Map, or POJO — so you can assert and reuse values in tests.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-bulb" aria-hidden="true"></i></div><div class="ov-t">Why</div><div class="ov-tx">Raw JSON strings are unusable in logic. Deserialization gives you typed Java values — so <code>user.getName()</code> is safer and cleaner than parsing a raw string manually.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-clock" aria-hidden="true"></i></div><div class="ov-t">When</div><div class="ov-tx">Every time you need to extract response data to use in follow-up API calls, assertions, reports, or data-driven tests — not just verify it inline.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-map-pin" aria-hidden="true"></i></div><div class="ov-t">Where</div><div class="ov-tx">In REST Assured: <code>extract().asString()</code>, <code>extract().path()</code>, <code>response.jsonPath()</code>, <code>extract().as(Class)</code> — all trigger different deserialization levels.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-settings" aria-hidden="true"></i></div><div class="ov-t">How</div><div class="ov-tx">5 techniques: plain String, path() method, JsonPath object, as(Map.class), as(POJO.class). Complexity scales from simple field extraction to full object graph mapping.</div></div>
 </div>
 
-<div class="sec">Keyword Glossary</div>
+<div class="sh">Keyword Glossary</div>
 <div class="kw-grid">
-  <div class="kw-item"><div class="kw-k">Deserialization</div><div class="kw-v">Converting JSON string → typed Java object. Opposite of serialization. Libraries: Jackson, Gson.</div></div>
-  <div class="kw-item"><div class="kw-k">extract()</div><div class="kw-v">REST Assured method to exit the fluent assertion chain and retrieve values from the response.</div></div>
-  <div class="kw-item"><div class="kw-k">asString()</div><div class="kw-v">Returns the entire response body as a raw Java String. No parsing — just the raw text bytes.</div></div>
-  <div class="kw-item"><div class="kw-k">path(expression)</div><div class="kw-v">Short-cut on Response to extract a single value using a GPath/JSONPath expression. Returns Object.</div></div>
-  <div class="kw-item"><div class="kw-k">JsonPath</div><div class="kw-v">REST Assured class providing typed getter methods: getString, getInt, getList, getMap, getFloat.</div></div>
-  <div class="kw-item"><div class="kw-k">jsonPath()</div><div class="kw-v">Method on Response that returns a JsonPath object to navigate the JSON body.</div></div>
-  <div class="kw-item"><div class="kw-k">GPath</div><div class="kw-v">Groovy Path — expression language inside body() assertions. Uses dot notation and [n] array indexing.</div></div>
-  <div class="kw-item"><div class="kw-k">TypeRef</div><div class="kw-v">REST Assured generic type token — preserves List&lt;User&gt; type at runtime, solving Java type erasure.</div></div>
-  <div class="kw-item"><div class="kw-k">Response</div><div class="kw-v">Interface wrapping the full HTTP response: status code, headers, cookies, and body.</div></div>
-  <div class="kw-item"><div class="kw-k">Type Erasure</div><div class="kw-v">Java removes generic type info at runtime — List&lt;User&gt;.class doesn't exist. TypeRef solves this.</div></div>
+  <div class="gi"><div class="gk">Deserialization</div><div class="gd">Converting JSON string → typed Java object. Opposite of serialization. Libraries: Jackson, Gson.</div></div>
+  <div class="gi"><div class="gk">extract()</div><div class="gd">REST Assured method to exit the fluent assertion chain and retrieve values from the response.</div></div>
+  <div class="gi"><div class="gk">asString()</div><div class="gd">Returns the entire response body as a raw Java String. No parsing — just the raw text bytes.</div></div>
+  <div class="gi"><div class="gk">path(expression)</div><div class="gd">Short-cut on Response to extract a single value using a GPath/JSONPath expression. Returns Object.</div></div>
+  <div class="gi"><div class="gk">JsonPath</div><div class="gd">REST Assured class providing typed getter methods: getString, getInt, getList, getMap, getFloat.</div></div>
+  <div class="gi"><div class="gk">jsonPath()</div><div class="gd">Method on Response that returns a JsonPath object to navigate the JSON body.</div></div>
+  <div class="gi"><div class="gk">GPath</div><div class="gd">Groovy Path — expression language inside body() assertions. Uses dot notation and [n] array indexing.</div></div>
+  <div class="gi"><div class="gk">TypeRef</div><div class="gd">REST Assured generic type token — preserves List&lt;User&gt; type at runtime, solving Java type erasure.</div></div>
+  <div class="gi"><div class="gk">Response</div><div class="gd">Interface wrapping the full HTTP response: status code, headers, cookies, and body.</div></div>
+  <div class="gi"><div class="gk">Type Erasure</div><div class="gd">Java removes generic type info at runtime — List&lt;User&gt;.class doesn't exist. TypeRef solves this.</div></div>
 </div>
 
-<div class="sec">Deserialization Flow — Architecture Diagram</div>
+<div class="sh">Deserialization Flow — Architecture Diagram</div>
 <div class="arch-box">
   <div class="arch-t">Complete deserialization pipeline — 5 levels</div>
   <div class="arch"><span class="hl">HTTP RESPONSE (from server)</span>
@@ -174,7 +194,7 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
 <span class="pk">  POJO ──────────── ObjectMapper.writeValueAsString() ──► JSON String</span></div>
 </div>
 
-<div class="sec">Methods Compared</div>
+<div class="sh">Methods Compared</div>
 <div class="mcard-grid">
   <div class="mcard"><div class="mc-t" style="color:var(--color-text-info)">asString()</div><div class="mc-p">✔ Full body access<br>✔ No library needed<br>✔ Good for logging</div><div class="mc-c">✘ No parsing<br>✘ Must parse manually</div></div>
   <div class="mcard"><div class="mc-t" style="color:var(--color-text-success)">path("field")</div><div class="mc-p">✔ One-liner extraction<br>✔ Nested dot notation<br>✔ Auto type casting</div><div class="mc-c">✘ Returns Object<br>✘ Single value only</div></div>
@@ -184,17 +204,17 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
   <div class="mcard"><div class="mc-t" style="color:var(--color-text-warning)">TypeRef&lt;List&gt;</div><div class="mc-p">✔ Typed list result<br>✔ Solves erasure<br>✔ Iterator-friendly</div><div class="mc-c">✘ Verbose syntax<br>✘ Jackson required</div></div>
 </div>
 
-<div class="sec">Interview One-Liners</div>
+<div class="sh">Interview One-Liners</div>
 <div class="ol-list">
-  <div class="ol"><b>Deserialization</b> = converting a JSON response string back into a typed Java object so test code can use it safely — driven by Jackson or Gson underneath REST Assured.</div>
-  <div class="ol"><b>extract().asString()</b> = returns the raw response body as a plain Java String with zero parsing — useful for logging, file writing, or manual string operations on the body.</div>
-  <div class="ol"><b>response.path("address.city")</b> = single-field extraction using GPath dot notation — fastest way to pull one value from a nested JSON response without creating a JsonPath object.</div>
-  <div class="ol"><b>jsonPath().getList("items", Product.class)</b> = deserializes a JSON array directly into a typed Java List of POJO objects — combining JsonPath extraction with Jackson deserialization.</div>
-  <div class="ol"><b>TypeRef&lt;List&lt;User&gt;&gt;</b> = REST Assured's solution to Java type erasure — creates an anonymous subclass that preserves generic type information at runtime for Jackson to use.</div>
-  <div class="ol"><b>extract().as(User.class)</b> = instructs REST Assured to delegate to Jackson's ObjectMapper to convert the full JSON response body into a User POJO instance with field mapping.</div>
+  <div class="oneliner"><b>Deserialization</b> = converting a JSON response string back into a typed Java object so test code can use it safely — driven by Jackson or Gson underneath REST Assured.</div>
+  <div class="oneliner"><b>extract().asString()</b> = returns the raw response body as a plain Java String with zero parsing — useful for logging, file writing, or manual string operations on the body.</div>
+  <div class="oneliner"><b>response.path("address.city")</b> = single-field extraction using GPath dot notation — fastest way to pull one value from a nested JSON response without creating a JsonPath object.</div>
+  <div class="oneliner"><b>jsonPath().getList("items", Product.class)</b> = deserializes a JSON array directly into a typed Java List of POJO objects — combining JsonPath extraction with Jackson deserialization.</div>
+  <div class="oneliner"><b>TypeRef&lt;List&lt;User&gt;&gt;</b> = REST Assured's solution to Java type erasure — creates an anonymous subclass that preserves generic type information at runtime for Jackson to use.</div>
+  <div class="oneliner"><b>extract().as(User.class)</b> = instructs REST Assured to delegate to Jackson's ObjectMapper to convert the full JSON response body into a User POJO instance with field mapping.</div>
 </div>
 
-<div class="sec">Code Examples — String Extraction &amp; JsonPath</div>
+<div class="sh">Code Examples — String Extraction &amp; JsonPath</div>
 <div class="code-area">
   <div class="ctbar" id="ct-s15">
     <div class="ct active" data-ci="0" data-cs="s15">AsStringTest.java</div>
@@ -752,22 +772,22 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
 }</div>
 </div>
 
-<div class="sec">Best Practices</div>
+<div class="sh">Best Practices</div>
 <div class="cl">
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Always store the <code>Response</code> object when you need both assertions AND extraction — avoids making two HTTP calls to the same endpoint.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use typed <code>getList("path", String.class)</code> over untyped <code>getList("path")</code> to avoid runtime <code>ClassCastException</code> when iterating results.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use <code>JsonPath.from(rawString)</code> when you already have a JSON string (e.g. from a file or DB) and need to parse it — no HTTP call needed.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use Groovy <code>findAll{}</code> and <code>find{}</code> closures for filtering arrays in assertions — avoids pulling the whole list into Java just to filter it.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Never chain more <code>.body()</code> assertions after <code>.extract()</code> — extraction terminates the fluent chain; put all assertions before the extract call.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Always store the <code>Response</code> object when you need both assertions AND extraction — avoids making two HTTP calls to the same endpoint.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use typed <code>getList("path", String.class)</code> over untyped <code>getList("path")</code> to avoid runtime <code>ClassCastException</code> when iterating results.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use <code>JsonPath.from(rawString)</code> when you already have a JSON string (e.g. from a file or DB) and need to parse it — no HTTP call needed.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use Groovy <code>findAll{}</code> and <code>find{}</code> closures for filtering arrays in assertions — avoids pulling the whole list into Java just to filter it.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Never chain more <code>.body()</code> assertions after <code>.extract()</code> — extraction terminates the fluent chain; put all assertions before the extract call.</div>
 </div>
 
-<div class="sec">Interview Q&amp;A</div>
-<div class="qa" id="qa-s15">
-  <div class="qi"><div class="qq">Q1: What is the difference between extract().asString() and extract().path("field")? <span class="qtg">+</span></div><div class="qa-ans">asString() returns the entire response body as a raw Java String — no JSON parsing, no field access. path("field") parses the JSON and extracts one specific value using a GPath expression, returning an Object that Java auto-casts. Use asString() when you need the full body text; use path() when you need one field quickly.</div></div>
-  <div class="qi"><div class="qq">Q2: Why can't you assert AND extract in the same then() chain? <span class="qtg">+</span></div><div class="qa-ans">Calling extract() terminates the ValidatableResponse fluent chain and returns an ExtractableResponse — you can no longer add .body() assertions after it. The solution is to store the full Response object first using extract().response(), then run assertions separately on res.then() and extract values using res.jsonPath().</div></div>
-  <div class="qi"><div class="qq">Q3: What is a Groovy closure in REST Assured's JsonPath? <span class="qtg">+</span></div><div class="qa-ans">A Groovy closure is an anonymous function block written as {it.field condition}. In JsonPath: getList("findAll{it.userId == 1}.title") filters elements where userId equals 1 and extracts title. The 'it' keyword is the implicit parameter representing the current element. find{} returns the first match; findAll{} returns all matches as a List.</div></div>
-  <div class="qi"><div class="qq">Q4: When would you use XmlPath instead of JsonPath? <span class="qtg">+</span></div><div class="qa-ans">Use XmlPath when the API's Content-Type is application/xml or text/xml — typically legacy SOAP-based REST APIs or banking systems. XmlPath uses the same dot-notation as JsonPath. REST Assured auto-detects content type in body() assertions. You can also call xmlPath() explicitly on the Response. The @ prefix accesses XML attributes: xp.getString("user.@id").</div></div>
-  <div class="qi"><div class="qq">Q5: What is the difference between path() on Response and extract().path() in the chain? <span class="qtg">+</span></div><div class="qa-ans">response.path("field") is called on an already-stored Response object — you can call it multiple times on the same response without any HTTP calls. extract().path("field") is used inside the then() chain — it exits the chain and returns a single extracted value. Both use GPath internally; the difference is context — one is on a stored object, the other terminates the fluent chain.</div></div>
+<div class="sh">Interview Q&amp;A</div>
+<div class="qa-list" id="qa-s15">
+  <div class="qa-item"><div class="qq">Q1: What is the difference between extract().asString() and extract().path("field")? <span class="qtg">+</span></div><div class="qa-a">asString() returns the entire response body as a raw Java String — no JSON parsing, no field access. path("field") parses the JSON and extracts one specific value using a GPath expression, returning an Object that Java auto-casts. Use asString() when you need the full body text; use path() when you need one field quickly.</div></div>
+  <div class="qa-item"><div class="qq">Q2: Why can't you assert AND extract in the same then() chain? <span class="qtg">+</span></div><div class="qa-a">Calling extract() terminates the ValidatableResponse fluent chain and returns an ExtractableResponse — you can no longer add .body() assertions after it. The solution is to store the full Response object first using extract().response(), then run assertions separately on res.then() and extract values using res.jsonPath().</div></div>
+  <div class="qa-item"><div class="qq">Q3: What is a Groovy closure in REST Assured's JsonPath? <span class="qtg">+</span></div><div class="qa-a">A Groovy closure is an anonymous function block written as {it.field condition}. In JsonPath: getList("findAll{it.userId == 1}.title") filters elements where userId equals 1 and extracts title. The 'it' keyword is the implicit parameter representing the current element. find{} returns the first match; findAll{} returns all matches as a List.</div></div>
+  <div class="qa-item"><div class="qq">Q4: When would you use XmlPath instead of JsonPath? <span class="qtg">+</span></div><div class="qa-a">Use XmlPath when the API's Content-Type is application/xml or text/xml — typically legacy SOAP-based REST APIs or banking systems. XmlPath uses the same dot-notation as JsonPath. REST Assured auto-detects content type in body() assertions. You can also call xmlPath() explicitly on the Response. The @ prefix accesses XML attributes: xp.getString("user.@id").</div></div>
+  <div class="qa-item"><div class="qq">Q5: What is the difference between path() on Response and extract().path() in the chain? <span class="qtg">+</span></div><div class="qa-a">response.path("field") is called on an already-stored Response object — you can call it multiple times on the same response without any HTTP calls. extract().path("field") is used inside the then() chain — it exits the chain and returns a single extracted value. Both use GPath internally; the difference is context — one is on a stored object, the other terminates the fluent chain.</div></div>
 </div>
 
 </div></div>
@@ -776,30 +796,30 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
 <div class="session" id="session-1">
 <div class="sp">
 
-<div class="sec">Overview — HashMap, JSONObject &amp; Gson Deserialization</div>
+<div class="sh">Overview — HashMap, JSONObject &amp; Gson Deserialization</div>
 <div class="ovg">
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-map" aria-hidden="true"></i></div><div class="ov-t">What</div><div class="ov-tx">Converting JSON response bodies into Java Maps, org.json's JSONObject, or Gson-deserialized POJOs — giving typed access without writing dedicated Jackson POJO classes.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-bulb" aria-hidden="true"></i></div><div class="ov-t">Why</div><div class="ov-tx">HashMap deserialization needs no extra dependency. JSONObject allows key-safe access. Gson POJO deserialization is lighter than Jackson for simple structures.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-clock" aria-hidden="true"></i></div><div class="ov-t">When</div><div class="ov-tx">Use Map deserialization for dynamic/unknown JSON, quick prototypes, or data-driven tests where the schema is not fixed in advance.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-map-pin" aria-hidden="true"></i></div><div class="ov-t">Where</div><div class="ov-tx"><code>extract().as(Map.class)</code> for HashMap. For Gson: <code>gson.fromJson(body, User.class)</code>. For JSONObject: <code>new JSONObject(body)</code>.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-settings" aria-hidden="true"></i></div><div class="ov-t">How</div><div class="ov-tx">REST Assured delegates to Jackson for <code>as(Map.class)</code>. Gson's <code>fromJson()</code> does its own deserialization. org.json's JSONObject parses a raw string.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-map" aria-hidden="true"></i></div><div class="ov-t">What</div><div class="ov-tx">Converting JSON response bodies into Java Maps, org.json's JSONObject, or Gson-deserialized POJOs — giving typed access without writing dedicated Jackson POJO classes.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-bulb" aria-hidden="true"></i></div><div class="ov-t">Why</div><div class="ov-tx">HashMap deserialization needs no extra dependency. JSONObject allows key-safe access. Gson POJO deserialization is lighter than Jackson for simple structures.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-clock" aria-hidden="true"></i></div><div class="ov-t">When</div><div class="ov-tx">Use Map deserialization for dynamic/unknown JSON, quick prototypes, or data-driven tests where the schema is not fixed in advance.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-map-pin" aria-hidden="true"></i></div><div class="ov-t">Where</div><div class="ov-tx"><code>extract().as(Map.class)</code> for HashMap. For Gson: <code>gson.fromJson(body, User.class)</code>. For JSONObject: <code>new JSONObject(body)</code>.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-settings" aria-hidden="true"></i></div><div class="ov-t">How</div><div class="ov-tx">REST Assured delegates to Jackson for <code>as(Map.class)</code>. Gson's <code>fromJson()</code> does its own deserialization. org.json's JSONObject parses a raw string.</div></div>
 </div>
 
-<div class="sec">Keyword Glossary</div>
+<div class="sh">Keyword Glossary</div>
 <div class="kw-grid">
-  <div class="kw-item"><div class="kw-k">as(Map.class)</div><div class="kw-v">REST Assured method — deserializes JSON object into <code>Map&lt;String,Object&gt;</code>. Jackson handles conversion.</div></div>
-  <div class="kw-item"><div class="kw-k">as(List.class)</div><div class="kw-v">Deserializes JSON array into <code>List&lt;Object&gt;</code> — each element becomes a <code>LinkedHashMap</code> for objects.</div></div>
-  <div class="kw-item"><div class="kw-k">LinkedHashMap</div><div class="kw-v">Jackson's default Map type when deserializing JSON objects — preserves insertion order unlike HashMap.</div></div>
-  <div class="kw-item"><div class="kw-k">gson.fromJson()</div><div class="kw-v">Gson method converting JSON string to a Java object. fromJson(json, Class) → typed POJO.</div></div>
-  <div class="kw-item"><div class="kw-k">JSONObject(string)</div><div class="kw-v">org.json constructor that parses a JSON string into a JSONObject instance for key-based access.</div></div>
-  <div class="kw-item"><div class="kw-k">optString()</div><div class="kw-v">JSONObject method returning a String value or empty string if key missing — null-safe alternative to getString().</div></div>
-  <div class="kw-item"><div class="kw-k">getJSONObject()</div><div class="kw-v">JSONObject method to retrieve a nested JSON object by key — returns a JSONObject, not a String.</div></div>
-  <div class="kw-item"><div class="kw-k">getJSONArray()</div><div class="kw-v">JSONObject method to retrieve a JSON array field — returns JSONArray for iteration.</div></div>
-  <div class="kw-item"><div class="kw-k">TypeToken</div><div class="kw-v">Gson's equivalent of Jackson's TypeRef — preserves generic type like <code>List&lt;User&gt;</code> for deserialization.</div></div>
-  <div class="kw-item"><div class="kw-k">unchecked cast</div><div class="kw-v">Casting Object to a generic type like Map without type-checking — produces compiler warning, can throw ClassCastException at runtime.</div></div>
+  <div class="gi"><div class="gk">as(Map.class)</div><div class="gd">REST Assured method — deserializes JSON object into <code>Map&lt;String,Object&gt;</code>. Jackson handles conversion.</div></div>
+  <div class="gi"><div class="gk">as(List.class)</div><div class="gd">Deserializes JSON array into <code>List&lt;Object&gt;</code> — each element becomes a <code>LinkedHashMap</code> for objects.</div></div>
+  <div class="gi"><div class="gk">LinkedHashMap</div><div class="gd">Jackson's default Map type when deserializing JSON objects — preserves insertion order unlike HashMap.</div></div>
+  <div class="gi"><div class="gk">gson.fromJson()</div><div class="gd">Gson method converting JSON string to a Java object. fromJson(json, Class) → typed POJO.</div></div>
+  <div class="gi"><div class="gk">JSONObject(string)</div><div class="gd">org.json constructor that parses a JSON string into a JSONObject instance for key-based access.</div></div>
+  <div class="gi"><div class="gk">optString()</div><div class="gd">JSONObject method returning a String value or empty string if key missing — null-safe alternative to getString().</div></div>
+  <div class="gi"><div class="gk">getJSONObject()</div><div class="gd">JSONObject method to retrieve a nested JSON object by key — returns a JSONObject, not a String.</div></div>
+  <div class="gi"><div class="gk">getJSONArray()</div><div class="gd">JSONObject method to retrieve a JSON array field — returns JSONArray for iteration.</div></div>
+  <div class="gi"><div class="gk">TypeToken</div><div class="gd">Gson's equivalent of Jackson's TypeRef — preserves generic type like <code>List&lt;User&gt;</code> for deserialization.</div></div>
+  <div class="gi"><div class="gk">unchecked cast</div><div class="gd">Casting Object to a generic type like Map without type-checking — produces compiler warning, can throw ClassCastException at runtime.</div></div>
 </div>
 
-<div class="sec">Deserialization Architecture — Map vs JSONObject vs Gson</div>
+<div class="sh">Deserialization Architecture — Map vs JSONObject vs Gson</div>
 <div class="arch-box">
   <div class="arch-t">Three approaches for non-POJO deserialization</div>
   <div class="arch"><span class="hl">JSON RESPONSE BODY:</span> <span class="bl">{ "id":1, "name":"Chitti", "address":{"city":"Delhi"} }</span>
@@ -825,17 +845,17 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
   <span class="pk">Map     → as(Map.class)  → Jackson auto-detects → returns LinkedHashMap</span></div>
 </div>
 
-<div class="sec">Interview One-Liners</div>
+<div class="sh">Interview One-Liners</div>
 <div class="ol-list">
-  <div class="ol"><b>as(Map.class)</b> = tells REST Assured to deserialize the JSON response body into a Java <code>Map&lt;String,Object&gt;</code> using Jackson — nested objects become <code>LinkedHashMap</code>, arrays become <code>ArrayList</code>.</div>
-  <div class="ol"><b>new JSONObject(rawString)</b> = org.json constructor that parses a raw JSON string into a <code>JSONObject</code> instance — allowing key-based access via getString(), getInt(), getJSONObject() etc.</div>
-  <div class="ol"><b>gson.fromJson(json, User.class)</b> = Gson's deserialization method that converts a JSON string into a typed User POJO — Gson accesses fields directly without requiring getters.</div>
-  <div class="ol"><b>LinkedHashMap</b> = Jackson's default implementation when deserializing JSON objects — it preserves insertion order and is what you actually get when you cast the Map value of a nested field.</div>
-  <div class="ol"><b>TypeToken&lt;List&lt;User&gt;&gt;</b> = Gson's solution to Java type erasure — analogous to REST Assured's TypeRef, it preserves generic type information for Gson to deserialize arrays of typed objects.</div>
-  <div class="ol"><b>optString("key", "default")</b> = JSONObject's null-safe field accessor — returns the field value or the provided default string if the key is absent, preventing JSONException.</div>
+  <div class="oneliner"><b>as(Map.class)</b> = tells REST Assured to deserialize the JSON response body into a Java <code>Map&lt;String,Object&gt;</code> using Jackson — nested objects become <code>LinkedHashMap</code>, arrays become <code>ArrayList</code>.</div>
+  <div class="oneliner"><b>new JSONObject(rawString)</b> = org.json constructor that parses a raw JSON string into a <code>JSONObject</code> instance — allowing key-based access via getString(), getInt(), getJSONObject() etc.</div>
+  <div class="oneliner"><b>gson.fromJson(json, User.class)</b> = Gson's deserialization method that converts a JSON string into a typed User POJO — Gson accesses fields directly without requiring getters.</div>
+  <div class="oneliner"><b>LinkedHashMap</b> = Jackson's default implementation when deserializing JSON objects — it preserves insertion order and is what you actually get when you cast the Map value of a nested field.</div>
+  <div class="oneliner"><b>TypeToken&lt;List&lt;User&gt;&gt;</b> = Gson's solution to Java type erasure — analogous to REST Assured's TypeRef, it preserves generic type information for Gson to deserialize arrays of typed objects.</div>
+  <div class="oneliner"><b>optString("key", "default")</b> = JSONObject's null-safe field accessor — returns the field value or the provided default string if the key is absent, preventing JSONException.</div>
 </div>
 
-<div class="sec">Code Examples — HashMap, JSONObject &amp; Gson</div>
+<div class="sh">Code Examples — HashMap, JSONObject &amp; Gson</div>
 <div class="code-area">
   <div class="ctbar" id="ct-s16">
     <div class="ct active" data-ci="0" data-cs="s16">AsMapFlatTest.java</div>
@@ -1332,22 +1352,22 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
 }</div>
 </div>
 
-<div class="sec">Best Practices</div>
+<div class="sh">Best Practices</div>
 <div class="cl">
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> When using <code>as(Map.class)</code>, always cast numeric values via <code>(Number).intValue()</code> — Jackson may deserialize small integers as Integer or long ones as Long depending on value magnitude.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Prefer <code>optString(key, "default")</code> over <code>getString(key)</code> in JSONObject when fields are optional — avoids <code>JSONException</code> on missing keys.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use Gson <code>TypeToken&lt;List&lt;MyClass&gt;&gt;</code> for JSON arrays — never pass <code>List.class</code> to <code>fromJson()</code> which produces raw-type <code>List&lt;LinkedHashMap&gt;</code>, not <code>List&lt;MyClass&gt;</code>.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Create one <code>Gson</code> instance per test class or use a shared utility — Gson is thread-safe after construction and reusing avoids repeated object creation overhead.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Prefer <code>as(Map.class)</code> over JSONObject for dynamic JSON — it requires one less dependency (org.json) and integrates naturally with REST Assured's Jackson-based pipeline.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> When using <code>as(Map.class)</code>, always cast numeric values via <code>(Number).intValue()</code> — Jackson may deserialize small integers as Integer or long ones as Long depending on value magnitude.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Prefer <code>optString(key, "default")</code> over <code>getString(key)</code> in JSONObject when fields are optional — avoids <code>JSONException</code> on missing keys.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use Gson <code>TypeToken&lt;List&lt;MyClass&gt;&gt;</code> for JSON arrays — never pass <code>List.class</code> to <code>fromJson()</code> which produces raw-type <code>List&lt;LinkedHashMap&gt;</code>, not <code>List&lt;MyClass&gt;</code>.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Create one <code>Gson</code> instance per test class or use a shared utility — Gson is thread-safe after construction and reusing avoids repeated object creation overhead.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Prefer <code>as(Map.class)</code> over JSONObject for dynamic JSON — it requires one less dependency (org.json) and integrates naturally with REST Assured's Jackson-based pipeline.</div>
 </div>
 
-<div class="sec">Interview Q&amp;A</div>
-<div class="qa" id="qa-s16">
-  <div class="qi"><div class="qq">Q1: What does Jackson produce when you deserialize a JSON object into Map.class? <span class="qtg">+</span></div><div class="qa-ans">Jackson creates a LinkedHashMap, not a plain HashMap. LinkedHashMap preserves key insertion order — the order matches the original JSON key order. Nested JSON objects become nested LinkedHashMaps, JSON arrays become ArrayLists, numbers become Integer or Long, strings stay as String, booleans stay as Boolean, and JSON null becomes Java null.</div></div>
-  <div class="qi"><div class="qq">Q2: Why do you need TypeToken in Gson when deserializing a list? <span class="qtg">+</span></div><div class="qa-ans">Java type erasure removes generic type information at runtime — List&lt;GsonPost&gt;.class is impossible, only List.class exists. Without TypeToken, Gson has no way to know what type to create for each array element, so it falls back to LinkedHashMap. TypeToken creates an anonymous subclass that captures List&lt;GsonPost&gt; in its class hierarchy, which Gson can inspect via reflection using getType().</div></div>
-  <div class="qi"><div class="qq">Q3: What is the difference between getString() and optString() in JSONObject? <span class="qtg">+</span></div><div class="qa-ans">getString(key) throws JSONException if the key is absent from the JSON object. optString(key) returns an empty string "" if the key is missing — never throws. optString(key, "default") returns the specified default value if missing. Use getString() when the field is guaranteed to be present; use optString() for optional or nullable fields to write more resilient parsing code.</div></div>
-  <div class="qi"><div class="qq">Q4: Gson vs Jackson for REST Assured deserialization — which is better? <span class="qtg">+</span></div><div class="qa-ans">Jackson is better integrated — REST Assured auto-detects it via classpath scanning, so extract().as(User.class) works without any configuration. Gson requires manual setup: extract raw string with asString(), then call gson.fromJson(body, User.class) explicitly. Jackson also has richer annotations (@JsonIgnore, @JsonAlias, @JsonCreator) and better REST Assured integration. Use Gson only if your project already standardizes on it.</div></div>
-  <div class="qi"><div class="qq">Q5: How do you handle a JSON number that might be int or long in Map deserialization? <span class="qtg">+</span></div><div class="qa-ans">Never cast directly to Integer — Jackson deserializes numbers as Integer if the value fits in 32 bits, or Long if it doesn't. The safe pattern is: int id = ((Number) map.get("id")).intValue(); This works whether Jackson chose Integer or Long. Alternatively, use jsonPath().getInt("id") which always returns a primitive int regardless of how Jackson stored it internally.</div></div>
+<div class="sh">Interview Q&amp;A</div>
+<div class="qa-list" id="qa-s16">
+  <div class="qa-item"><div class="qq">Q1: What does Jackson produce when you deserialize a JSON object into Map.class? <span class="qtg">+</span></div><div class="qa-a">Jackson creates a LinkedHashMap, not a plain HashMap. LinkedHashMap preserves key insertion order — the order matches the original JSON key order. Nested JSON objects become nested LinkedHashMaps, JSON arrays become ArrayLists, numbers become Integer or Long, strings stay as String, booleans stay as Boolean, and JSON null becomes Java null.</div></div>
+  <div class="qa-item"><div class="qq">Q2: Why do you need TypeToken in Gson when deserializing a list? <span class="qtg">+</span></div><div class="qa-a">Java type erasure removes generic type information at runtime — List&lt;GsonPost&gt;.class is impossible, only List.class exists. Without TypeToken, Gson has no way to know what type to create for each array element, so it falls back to LinkedHashMap. TypeToken creates an anonymous subclass that captures List&lt;GsonPost&gt; in its class hierarchy, which Gson can inspect via reflection using getType().</div></div>
+  <div class="qa-item"><div class="qq">Q3: What is the difference between getString() and optString() in JSONObject? <span class="qtg">+</span></div><div class="qa-a">getString(key) throws JSONException if the key is absent from the JSON object. optString(key) returns an empty string "" if the key is missing — never throws. optString(key, "default") returns the specified default value if missing. Use getString() when the field is guaranteed to be present; use optString() for optional or nullable fields to write more resilient parsing code.</div></div>
+  <div class="qa-item"><div class="qq">Q4: Gson vs Jackson for REST Assured deserialization — which is better? <span class="qtg">+</span></div><div class="qa-a">Jackson is better integrated — REST Assured auto-detects it via classpath scanning, so extract().as(User.class) works without any configuration. Gson requires manual setup: extract raw string with asString(), then call gson.fromJson(body, User.class) explicitly. Jackson also has richer annotations (@JsonIgnore, @JsonAlias, @JsonCreator) and better REST Assured integration. Use Gson only if your project already standardizes on it.</div></div>
+  <div class="qa-item"><div class="qq">Q5: How do you handle a JSON number that might be int or long in Map deserialization? <span class="qtg">+</span></div><div class="qa-a">Never cast directly to Integer — Jackson deserializes numbers as Integer if the value fits in 32 bits, or Long if it doesn't. The safe pattern is: int id = ((Number) map.get("id")).intValue(); This works whether Jackson chose Integer or Long. Alternatively, use jsonPath().getInt("id") which always returns a primitive int regardless of how Jackson stored it internally.</div></div>
 </div>
 
 </div></div>
@@ -1356,30 +1376,30 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
 <div class="session" id="session-2">
 <div class="sp">
 
-<div class="sec">Overview — POJO + Jackson Full Deserialization Mastery</div>
+<div class="sh">Overview — POJO + Jackson Full Deserialization Mastery</div>
 <div class="ovg">
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-package" aria-hidden="true"></i></div><div class="ov-t">What</div><div class="ov-tx">POJO + Jackson deserialization = converting JSON response into a fully typed Java object graph — nested POJOs, List&lt;POJO&gt;, and deeply nested structures mapped with compile-time type safety.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-bulb" aria-hidden="true"></i></div><div class="ov-t">Why</div><div class="ov-tx">Full type safety, IDE autocomplete, refactoring support. Chain method calls like <code>order.getCustomer().getAddress().getCity()</code> — no casting, no magic strings.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-clock" aria-hidden="true"></i></div><div class="ov-t">When</div><div class="ov-tx">For complex nested response schemas, data-driven tests, CRUD chains where response data feeds the next request, and enterprise-grade test frameworks.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-map-pin" aria-hidden="true"></i></div><div class="ov-t">Where</div><div class="ov-tx">POJO classes in <code>src/test/java/model/</code>. In tests: <code>extract().as(UserModel.class)</code>. For lists: <code>extract().as(new TypeRef&lt;List&lt;UserModel&gt;&gt;(){})</code>.</div></div>
-  <div class="ovc"><div class="ov-ic"><i class="ti ti-settings" aria-hidden="true"></i></div><div class="ov-t">How</div><div class="ov-tx">Design POJO → annotate → extract().as(Class). Jackson reads JSON field names, matches to POJO fields/getters via @JsonProperty, and recursively builds the object graph.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-package" aria-hidden="true"></i></div><div class="ov-t">What</div><div class="ov-tx">POJO + Jackson deserialization = converting JSON response into a fully typed Java object graph — nested POJOs, List&lt;POJO&gt;, and deeply nested structures mapped with compile-time type safety.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-bulb" aria-hidden="true"></i></div><div class="ov-t">Why</div><div class="ov-tx">Full type safety, IDE autocomplete, refactoring support. Chain method calls like <code>order.getCustomer().getAddress().getCity()</code> — no casting, no magic strings.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-clock" aria-hidden="true"></i></div><div class="ov-t">When</div><div class="ov-tx">For complex nested response schemas, data-driven tests, CRUD chains where response data feeds the next request, and enterprise-grade test frameworks.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-map-pin" aria-hidden="true"></i></div><div class="ov-t">Where</div><div class="ov-tx">POJO classes in <code>src/test/java/model/</code>. In tests: <code>extract().as(UserModel.class)</code>. For lists: <code>extract().as(new TypeRef&lt;List&lt;UserModel&gt;&gt;(){})</code>.</div></div>
+  <div class="ovc ov-card"><div class="ov-ic"><i class="ti ti-settings" aria-hidden="true"></i></div><div class="ov-t">How</div><div class="ov-tx">Design POJO → annotate → extract().as(Class). Jackson reads JSON field names, matches to POJO fields/getters via @JsonProperty, and recursively builds the object graph.</div></div>
 </div>
 
-<div class="sec">Keyword Glossary</div>
+<div class="sh">Keyword Glossary</div>
 <div class="kw-grid">
-  <div class="kw-item"><div class="kw-k">extract().as(Class)</div><div class="kw-v">REST Assured method that delegates to Jackson's ObjectMapper to deserialize the full response body into the given class.</div></div>
-  <div class="kw-item"><div class="kw-k">TypeRef&lt;T&gt;</div><div class="kw-v">REST Assured generic type token — <code>new TypeRef&lt;List&lt;User&gt;&gt;(){}</code> — preserves List&lt;User&gt; type info for Jackson at runtime.</div></div>
-  <div class="kw-item"><div class="kw-k">@JsonIgnoreProperties</div><div class="kw-v">Class-level annotation: <code>ignoreUnknown=true</code> silently ignores JSON fields with no matching POJO field — prevents UnrecognizedPropertyException.</div></div>
-  <div class="kw-item"><div class="kw-k">@JsonProperty</div><div class="kw-v">Field-level annotation mapping a Java field name to a different JSON key. Used for both serialization and deserialization.</div></div>
-  <div class="kw-item"><div class="kw-k">@JsonAlias</div><div class="kw-v">Field-level annotation accepting multiple alternative JSON key names for deserialization only — primary name used for serialization.</div></div>
-  <div class="kw-item"><div class="kw-k">@JsonIgnore</div><div class="kw-v">Field-level annotation: completely excludes a field from both reading (deserialization) and writing (serialization).</div></div>
-  <div class="kw-item"><div class="kw-k">ObjectMapper</div><div class="kw-v">Jackson's core class for all serialization/deserialization. readValue(json, Class) = deserialize. writeValueAsString(obj) = serialize.</div></div>
-  <div class="kw-item"><div class="kw-k">readValue()</div><div class="kw-v">ObjectMapper method: reads a JSON string (or stream) and creates a typed Java object. Throws JsonProcessingException on failure.</div></div>
-  <div class="kw-item"><div class="kw-k">POJO (Plain Old Java Object)</div><div class="kw-v">Simple Java class with private fields + public getters/setters + no-arg constructor. Jackson maps JSON keys to fields via getters/setters.</div></div>
-  <div class="kw-item"><div class="kw-k">no-arg constructor</div><div class="kw-v">A constructor with no parameters — REQUIRED by Jackson for deserialization. Jackson creates the object then sets fields using setters.</div></div>
+  <div class="gi"><div class="gk">extract().as(Class)</div><div class="gd">REST Assured method that delegates to Jackson's ObjectMapper to deserialize the full response body into the given class.</div></div>
+  <div class="gi"><div class="gk">TypeRef&lt;T&gt;</div><div class="gd">REST Assured generic type token — <code>new TypeRef&lt;List&lt;User&gt;&gt;(){}</code> — preserves List&lt;User&gt; type info for Jackson at runtime.</div></div>
+  <div class="gi"><div class="gk">@JsonIgnoreProperties</div><div class="gd">Class-level annotation: <code>ignoreUnknown=true</code> silently ignores JSON fields with no matching POJO field — prevents UnrecognizedPropertyException.</div></div>
+  <div class="gi"><div class="gk">@JsonProperty</div><div class="gd">Field-level annotation mapping a Java field name to a different JSON key. Used for both serialization and deserialization.</div></div>
+  <div class="gi"><div class="gk">@JsonAlias</div><div class="gd">Field-level annotation accepting multiple alternative JSON key names for deserialization only — primary name used for serialization.</div></div>
+  <div class="gi"><div class="gk">@JsonIgnore</div><div class="gd">Field-level annotation: completely excludes a field from both reading (deserialization) and writing (serialization).</div></div>
+  <div class="gi"><div class="gk">ObjectMapper</div><div class="gd">Jackson's core class for all serialization/deserialization. readValue(json, Class) = deserialize. writeValueAsString(obj) = serialize.</div></div>
+  <div class="gi"><div class="gk">readValue()</div><div class="gd">ObjectMapper method: reads a JSON string (or stream) and creates a typed Java object. Throws JsonProcessingException on failure.</div></div>
+  <div class="gi"><div class="gk">POJO (Plain Old Java Object)</div><div class="gd">Simple Java class with private fields + public getters/setters + no-arg constructor. Jackson maps JSON keys to fields via getters/setters.</div></div>
+  <div class="gi"><div class="gk">no-arg constructor</div><div class="gd">A constructor with no parameters — REQUIRED by Jackson for deserialization. Jackson creates the object then sets fields using setters.</div></div>
 </div>
 
-<div class="sec">Full POJO Deserialization Architecture</div>
+<div class="sh">Full POJO Deserialization Architecture</div>
 <div class="arch-box">
   <div class="arch-t">Jackson deserialization pipeline — POJO + nested objects + arrays</div>
   <div class="arch"><span class="hl">JSON RESPONSE (4-level deep):</span>
@@ -1409,17 +1429,17 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
 <span class="or">        user.getOrders().get(0).getOrderId() →  "ORD-1"</span></div>
 </div>
 
-<div class="sec">Interview One-Liners</div>
+<div class="sh">Interview One-Liners</div>
 <div class="ol-list">
-  <div class="ol"><b>extract().as(UserModel.class)</b> = REST Assured delegates to Jackson's ObjectMapper to deserialize the JSON response body into a fully populated UserModel POJO instance.</div>
-  <div class="ol"><b>TypeRef&lt;List&lt;User&gt;&gt;</b> = REST Assured's solution to Java type erasure — an anonymous subclass that retains generic type info at runtime so Jackson can create a typed List of User objects, not raw LinkedHashMaps.</div>
-  <div class="ol"><b>Recursive deserialization</b> = when a POJO has a field typed as another POJO (e.g. AddressModel), Jackson automatically deserializes the nested JSON object into that type — no extra configuration needed.</div>
-  <div class="ol"><b>@JsonIgnoreProperties(ignoreUnknown=true)</b> = the single most important annotation for defensive deserialization — prevents tests from breaking when the API adds new response fields that aren't in your POJO.</div>
-  <div class="ol"><b>SoftAssert with POJO</b> = using TestNG SoftAssert on deserialized POJO fields lets all field validations run even if one fails — providing a full picture of API contract violations in one test run.</div>
-  <div class="ol"><b>ObjectMapper.readValue(body, Class)</b> = Jackson's direct deserialization API — equivalent to extract().as(Class) but gives you full control over ObjectMapper configuration like date formats and null handling.</div>
+  <div class="oneliner"><b>extract().as(UserModel.class)</b> = REST Assured delegates to Jackson's ObjectMapper to deserialize the JSON response body into a fully populated UserModel POJO instance.</div>
+  <div class="oneliner"><b>TypeRef&lt;List&lt;User&gt;&gt;</b> = REST Assured's solution to Java type erasure — an anonymous subclass that retains generic type info at runtime so Jackson can create a typed List of User objects, not raw LinkedHashMaps.</div>
+  <div class="oneliner"><b>Recursive deserialization</b> = when a POJO has a field typed as another POJO (e.g. AddressModel), Jackson automatically deserializes the nested JSON object into that type — no extra configuration needed.</div>
+  <div class="oneliner"><b>@JsonIgnoreProperties(ignoreUnknown=true)</b> = the single most important annotation for defensive deserialization — prevents tests from breaking when the API adds new response fields that aren't in your POJO.</div>
+  <div class="oneliner"><b>SoftAssert with POJO</b> = using TestNG SoftAssert on deserialized POJO fields lets all field validations run even if one fails — providing a full picture of API contract violations in one test run.</div>
+  <div class="oneliner"><b>ObjectMapper.readValue(body, Class)</b> = Jackson's direct deserialization API — equivalent to extract().as(Class) but gives you full control over ObjectMapper configuration like date formats and null handling.</div>
 </div>
 
-<div class="sec">Code Examples — POJO + Jackson Full Deserialization</div>
+<div class="sh">Code Examples — POJO + Jackson Full Deserialization</div>
 <div class="code-area">
   <div class="ctbar" id="ct-s17">
     <div class="ct active" data-ci="0" data-cs="s17">UserModel.java</div>
@@ -2025,22 +2045,22 @@ code{background:var(--color-background-secondary);color:var(--color-text-info);p
 }</div>
 </div>
 
-<div class="sec">Best Practices</div>
+<div class="sh">Best Practices</div>
 <div class="cl">
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Always add <code>@JsonIgnoreProperties(ignoreUnknown = true)</code> to every POJO class — this single annotation prevents test breakage when APIs add new response fields.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Always provide a no-arg constructor in every POJO — Jackson requires it to instantiate the object before setting fields via setters or direct field access.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use <code>TypeRef&lt;List&lt;UserModel&gt;&gt;</code> (not <code>List.class</code>) when deserializing JSON arrays — plain <code>List.class</code> loses generic type information and produces <code>List&lt;LinkedHashMap&gt;</code>.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Store the <code>Response</code> object when you need both Hamcrest assertions AND POJO deserialization — run <code>res.then().body()</code> for Hamcrest, then <code>res.as(Class)</code> for POJO.</div>
-  <div class="ci"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use <code>ObjectMapper.readTree(json).at("/address/city")</code> with JSON Pointer syntax for dynamic field access on unknown/variable JSON structures — avoids creating a POJO for one-off structures.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Always add <code>@JsonIgnoreProperties(ignoreUnknown = true)</code> to every POJO class — this single annotation prevents test breakage when APIs add new response fields.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Always provide a no-arg constructor in every POJO — Jackson requires it to instantiate the object before setting fields via setters or direct field access.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use <code>TypeRef&lt;List&lt;UserModel&gt;&gt;</code> (not <code>List.class</code>) when deserializing JSON arrays — plain <code>List.class</code> loses generic type information and produces <code>List&lt;LinkedHashMap&gt;</code>.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Store the <code>Response</code> object when you need both Hamcrest assertions AND POJO deserialization — run <code>res.then().body()</code> for Hamcrest, then <code>res.as(Class)</code> for POJO.</div>
+  <div class="check-item"><span class="ck"><i class="ti ti-check" aria-hidden="true"></i></span> Use <code>ObjectMapper.readTree(json).at("/address/city")</code> with JSON Pointer syntax for dynamic field access on unknown/variable JSON structures — avoids creating a POJO for one-off structures.</div>
 </div>
 
-<div class="sec">Interview Q&amp;A</div>
-<div class="qa" id="qa-s17">
-  <div class="qi"><div class="qq">Q1: What happens when a JSON field has no matching POJO field during deserialization? <span class="qtg">+</span></div><div class="qa-ans">Without @JsonIgnoreProperties(ignoreUnknown=true): Jackson throws UnrecognizedPropertyException and the test fails. With the annotation: the field is silently ignored. This is why it must be on every POJO — APIs regularly add new response fields that your POJO hasn't caught up with yet. The annotation acts as a defensive buffer against API evolution.</div></div>
-  <div class="qi"><div class="qq">Q2: Why must every POJO have a no-arg constructor for Jackson? <span class="qtg">+</span></div><div class="qa-ans">Jackson's default deserialization strategy is: (1) call no-arg constructor to create an empty instance, (2) iterate JSON fields and call the matching setter for each. Without a no-arg constructor, Jackson throws InvalidDefinitionException at step 1. The workaround is @JsonCreator on a parameterized constructor, but then every constructor parameter needs @JsonProperty to specify which JSON field maps to it.</div></div>
-  <div class="qi"><div class="qq">Q3: How does Jackson.deserialize a List&lt;POJO&gt; field inside a parent POJO? <span class="qtg">+</span></div><div class="qa-ans">Jackson inspects the generic type of the List field via reflection — List&lt;LineItemModel&gt; retains its generic type in the field declaration (unlike method return types which suffer erasure). Jackson sees the List field, reads the JSON array, and for each element calls readValue recursively with LineItemModel.class. This is why declaring fields as List&lt;LineItemModel&gt; (not raw List) is essential for correct nested POJO deserialization.</div></div>
-  <div class="qi"><div class="qq">Q4: What is the difference between @JsonProperty and @JsonAlias for deserialization? <span class="qtg">+</span></div><div class="qa-ans">@JsonProperty("userId") sets ONE mapping used for BOTH directions — it renames the field both when reading from JSON (deserialization) and writing to JSON (serialization). @JsonAlias({"userId","user_id"}) adds ALTERNATIVE names for DESERIALIZATION ONLY — Jackson accepts any alias as input, but serialization always uses the primary Java field name or @JsonProperty name. Use @JsonAlias when an API is mid-migration between naming conventions.</div></div>
-  <div class="qi"><div class="qq">Q5: How do you deserialize a nested JSON array of objects into a typed List inside a POJO? <span class="qtg">+</span></div><div class="qa-ans">Declare the POJO field as List&lt;LineItemModel&gt; (with the type parameter). Jackson reads the JSON array, creates an ArrayList, and for each JSON element recursively calls readValue with LineItemModel.class to create a typed POJO. The type parameter on the field declaration is preserved at compile time (unlike generic method return types), so Jackson can determine the element type. LineItemModel must have @JsonIgnoreProperties and a no-arg constructor like all nested POJOs.</div></div>
+<div class="sh">Interview Q&amp;A</div>
+<div class="qa-list" id="qa-s17">
+  <div class="qa-item"><div class="qq">Q1: What happens when a JSON field has no matching POJO field during deserialization? <span class="qtg">+</span></div><div class="qa-a">Without @JsonIgnoreProperties(ignoreUnknown=true): Jackson throws UnrecognizedPropertyException and the test fails. With the annotation: the field is silently ignored. This is why it must be on every POJO — APIs regularly add new response fields that your POJO hasn't caught up with yet. The annotation acts as a defensive buffer against API evolution.</div></div>
+  <div class="qa-item"><div class="qq">Q2: Why must every POJO have a no-arg constructor for Jackson? <span class="qtg">+</span></div><div class="qa-a">Jackson's default deserialization strategy is: (1) call no-arg constructor to create an empty instance, (2) iterate JSON fields and call the matching setter for each. Without a no-arg constructor, Jackson throws InvalidDefinitionException at step 1. The workaround is @JsonCreator on a parameterized constructor, but then every constructor parameter needs @JsonProperty to specify which JSON field maps to it.</div></div>
+  <div class="qa-item"><div class="qq">Q3: How does Jackson.deserialize a List&lt;POJO&gt; field inside a parent POJO? <span class="qtg">+</span></div><div class="qa-a">Jackson inspects the generic type of the List field via reflection — List&lt;LineItemModel&gt; retains its generic type in the field declaration (unlike method return types which suffer erasure). Jackson sees the List field, reads the JSON array, and for each element calls readValue recursively with LineItemModel.class. This is why declaring fields as List&lt;LineItemModel&gt; (not raw List) is essential for correct nested POJO deserialization.</div></div>
+  <div class="qa-item"><div class="qq">Q4: What is the difference between @JsonProperty and @JsonAlias for deserialization? <span class="qtg">+</span></div><div class="qa-a">@JsonProperty("userId") sets ONE mapping used for BOTH directions — it renames the field both when reading from JSON (deserialization) and writing to JSON (serialization). @JsonAlias({"userId","user_id"}) adds ALTERNATIVE names for DESERIALIZATION ONLY — Jackson accepts any alias as input, but serialization always uses the primary Java field name or @JsonProperty name. Use @JsonAlias when an API is mid-migration between naming conventions.</div></div>
+  <div class="qa-item"><div class="qq">Q5: How do you deserialize a nested JSON array of objects into a typed List inside a POJO? <span class="qtg">+</span></div><div class="qa-a">Declare the POJO field as List&lt;LineItemModel&gt; (with the type parameter). Jackson reads the JSON array, creates an ArrayList, and for each JSON element recursively calls readValue with LineItemModel.class to create a typed POJO. The type parameter on the field declaration is preserved at compile time (unlike generic method return types), so Jackson can determine the element type. LineItemModel must have @JsonIgnoreProperties and a no-arg constructor like all nested POJOs.</div></div>
 </div>
 
 </div></div>

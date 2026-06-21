@@ -58,6 +58,7 @@
             // Apply visual enhancements & Prism highlight layers inside the iframe
             try {
                 var doc = iframe.contentDocument || iframe.contentWindow.document;
+                var replacedCodes = [];
 
                 // Find all plain text code containers across templates
                 var codeDivs = doc.querySelectorAll(".code, .cb, .tree, .cblock, .cblk, .cb-body, pre:not([class*=\"language-\"])");
@@ -66,6 +67,9 @@
 
                     // Skip if it's already a code element or wrapped in a Prism block
                     if (el.tagName === "CODE" || el.closest("pre[class*=\"language-\"]")) {
+                        continue;
+                    }
+                    if (el.tagName === "PRE" && el.querySelector("code[class*=\"language-\"]")) {
                         continue;
                     }
 
@@ -98,15 +102,40 @@
 
                     pre.appendChild(code);
 
+                    // Carry over original ID, class, and attributes to preserve tab behavior & layout
+                    if (el.id) {
+                        pre.id = el.id;
+                    }
+                    if (el.className) {
+                        var classes = el.className.split(/\s+/);
+                        for (var c = 0; c < classes.length; c++) {
+                            var clsName = classes[c].trim();
+                            if (clsName && !pre.classList.contains(clsName)) {
+                                pre.classList.add(clsName);
+                            }
+                        }
+                    }
+                    if (el.attributes) {
+                        for (var attrIdx = 0; attrIdx < el.attributes.length; attrIdx++) {
+                            var attr = el.attributes[attrIdx];
+                            if (attr.name !== "id" && attr.name !== "class") {
+                                pre.setAttribute(attr.name, attr.value);
+                            }
+                        }
+                    }
+
                     // Replace original box with formatted block
                     if (el.parentNode) {
                         el.parentNode.replaceChild(pre, el);
+                        replacedCodes.push(code);
                     }
                 }
 
-                // Fire highlight
+                // Fire highlight only on the newly replaced elements
                 if (iframe.contentWindow.Prism) {
-                    iframe.contentWindow.Prism.highlightAll();
+                    for (var r = 0; r < replacedCodes.length; r++) {
+                        iframe.contentWindow.Prism.highlightElement(replacedCodes[r]);
+                    }
                 } else {
                     // Self-healing: dynamically pull Prism assets if missing
                     var link = doc.createElement("link");
@@ -118,7 +147,9 @@
                     script.src = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js";
                     script.onload = function () {
                         if (iframe.contentWindow.Prism) {
-                            iframe.contentWindow.Prism.highlightAll();
+                            for (var r = 0; r < replacedCodes.length; r++) {
+                                iframe.contentWindow.Prism.highlightElement(replacedCodes[r]);
+                            }
                         }
                     };
                     doc.body.appendChild(script);
