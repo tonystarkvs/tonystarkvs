@@ -682,6 +682,7 @@
 
     // ── Global Search Functionality & Event Bindings ──────────────────
     var globalSearchInput = document.getElementById("globalSearchInput");
+    var clearSearchBtn = document.getElementById("clearSearchBtn");
     var prevSearchBtn = document.getElementById("prevSearchBtn");
     var nextSearchBtn = document.getElementById("nextSearchBtn");
     var searchResultCount = document.getElementById("searchResultCount");
@@ -1067,6 +1068,9 @@
     var searchDebounceTimer;
     if (globalSearchInput) {
         globalSearchInput.addEventListener("input", function() {
+            if (clearSearchBtn) {
+                clearSearchBtn.style.display = globalSearchInput.value ? "flex" : "none";
+            }
             clearTimeout(searchDebounceTimer);
             searchDebounceTimer = setTimeout(function() {
                 runGlobalSearch(false);
@@ -1082,6 +1086,15 @@
                     runGlobalSearch(true);
                 }
             }
+        });
+    }
+
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener("click", function() {
+            globalSearchInput.value = "";
+            clearSearchBtn.style.display = "none";
+            runGlobalSearch(false);
+            globalSearchInput.focus();
         });
     }
 
