@@ -17,12 +17,12 @@ my-learning-portal/
 │       ├── java-learning/          ← Core Java lesson files
 │       ├── load-testing/           ← JMeter & Postman load testing
 │       ├── manual-testing/         ← Manual QA testing lessons
-│       ├── playwright-ts/          ← Playwright lesson HTML files
+│       ├── playwright-typescript/  ← Playwright lesson HTML files
 │       ├── postman-learning/       ← Postman interview notes
 │       ├── python-learning/        ← Python lesson files
-│       ├── restAssure-Java/        ← REST Assured lesson files
+│       ├── rest-assured-java/      ← REST Assured lesson files
 │       ├── selenium-java/          ← Selenium lesson HTML files
-│       ├── testNg-learning/        ← TestNG framework lessons
+│       ├── testng-learning/        ← TestNG framework lessons
 │       ├── typescript-learning/    ← TypeScript lesson files
 │       └── sql-learning/           ← SQL lessons (coming soon)
 │
