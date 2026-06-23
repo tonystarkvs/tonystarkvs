@@ -1,0 +1,91 @@
+# ANTIGRAVITY AGENT INSTRUCTIONS & CONSTRAINTS
+
+This ruleset is executed/loaded automatically by the Antigravity agent before performing any instructions or code changes.
+
+---
+
+## 🚨 1. COMMAND & RUNTIME CONSTRAINTS (CRITICAL)
+
+> [!IMPORTANT]
+> - **NEVER RUN LOCAL SERVERS/NO LOCALHOST RUNS FIRST AND LAST**: Do not start local servers (`npm run dev`, `npm start`, python HTTP servers, etc.) or open localhost ports at the start, during, or end of execution under any circumstances.
+> - **ALWAYS FOLLOW AC'S FIRST**: Prioritize satisfying all Acceptance Criteria (AC) listed in this document and [PAGE_AC.md](file:///c:/Users/viksingh44/Pictures/my-learning-portal/PAGE_AC.md) before considering a task finished.
+> - **SINGLE PERMISSION REQUEST**: Request all needed permissions in one single prompt at the start of the task. Do not continuously block or prompt for minor filesystem/command approvals throughout execution.
+> - **ALL-IN-ONE FIX DELIVERY**: Analyze, implement, and verify all code changes, layout standardizations, and bug fixes at once in a single turn. Do not break simple fixes into multiple incremental updates requiring intermediate approvals.
+
+- **NEVER RUN LOCAL SERVERS / DEPLOY SERVERS**: Do not execute command-line instructions that attempt to bind network ports or run local listener processes.
+- **NO LOCALHOST WEB AUTOMATION / TESTING**: Do not run or command localhost operations.
+- **ALLOWED SCOPE**: Focus edits strictly on the files directly causing or related to the reported issue.
+- **PRESERVE EXTRA SECTIONS**: If a page contains extra sections or flows with valid educational/technical details, do not delete them. Instead, preserve them by refactoring or merging the content into the 8 standard layout components (e.g., adding tabs in the Mock Code Editor, items in the Q&A accordion, keywords in the Glossary, etc.). Only delete redundant, duplicated, or completely irrelevant placeholder/out-of-scope content.
+
+---
+
+## 📋 2. KEY ACCEPTANCE CRITERIA (AC) CHECKLIST
+
+Always verify that the learning portals satisfy these criteria from [PAGE_AC.md](file:///c:/Users/viksingh44/Pictures/my-learning-portal/PAGE_AC.md):
+- **AC 1: Session Switching**: Only one session topic is visible. Tabs switch sessions instantly. Progress dots (green for done, blue for active, gray for remaining) must paint correctly.
+- **AC 2: Search**: Highlights matching text in yellow. Automatically opens closed accordions/code tabs/sections to show search matches.
+- **AC 3: Q&A Accordions**: Expand/collapse dropdowns. Questions styled dark red (`#b91c1c`), answers dark blue (`#1e3a8a`).
+- **AC 4: Code Blocks**: Mock terminal frame, copying copyable text (changes label to "Copied!" for 2 seconds), and file tab switches working instantly. Prism syntax highlighting must render cleanly.
+- **AC 5: Borders & Theme Colors**: Outlines on all 4 sides of elements:
+  - `.section`, `.sec`: `border: 2.5px solid var(--pc, #6C5CE7) !important;`
+  - Sub-cards (`.kc-card`, `.oneliner`): `border: 2px solid #534AB7 !important;`
+  - Checklist boxes: `border: 2px solid #16a34a !important;`
+  - Q&A boxes (`.qi`): `border: 2px solid #0d9488 !important;`
+- **AC 7: Readability**: Use high-contrast CSS colors (WCAG AA). Inline keywords outside of code blocks must use `<span class="hl-kw">`.
+
+---
+
+## ⚠️ 3. KNOWN BUGS & HOW TO AVOID REGRESSIONS
+
+To prevent recurring bugs in the learning portal pages:
+
+### A. CSS Stacking Bug (Multiple visible sections)
+- Keep this exact override block in every page's `<style>` tag to prevent multiple session panels from displaying at once:
+  ```css
+  html body div.section { display: none !important; }
+  html body div.section.active { display: block !important; }
+  html body div.section.visible { display: block !important; }
+  ```
+
+### B. Q&A Accordion Double-Toggle Bug
+- The global script `portal-enhance.js` automatically binds a click-toggle listener to `.vr-qa-q` (which is compiled from `.qq`).
+- **DO NOT** bind a second `DOMContentLoaded` click toggle listener on the page that replicates this function, or the click event will trigger twice and immediately close/hide the accordion.
+- To prevent duplicate bindings by `portal-enhance.js`, mark the element synchronously in your script/HTML initialization:
+  ```javascript
+  // Set dataset.vrQaToggleDone = '1' synchronously during page rendering or before enhance script executes
+  document.querySelectorAll('.qq').forEach(q => {
+      q.dataset.vrQaToggleDone = '1';
+  });
+  ```
+
+### C. Prism Highlight Mutation Observer
+- Pages with dynamic content must include the Prism mutation observer at the bottom of the body (before `portal-enhance.js`):
+  ```javascript
+  if (window.Prism) {
+      document.addEventListener('DOMContentLoaded', () => {
+          const observer = new MutationObserver((mutations) => {
+              let needsHighlight = false;
+              mutations.forEach(m => {
+                  if (m.addedNodes.length) {
+                      m.addedNodes.forEach(n => {
+                          if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                          if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                      });
+                  }
+              });
+              if (needsHighlight) { Prism.highlightAll(); }
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
+      });
+  }
+  ```
+
+---
+
+## 🔍 4. PRE-FLIGHT VERIFICATION PROCEDURES
+
+Before submitting any task, the agent must perform the following checklist:
+1. **No Stacking**: Click every session tab and verify that the previous session hides and only the new one displays.
+2. **Accordion Check**: Click Q&A items to verify that they open and close properly, and do not double-toggle.
+3. **Copy Functionality**: Click the "Copy" buttons in code tabs and verify the text changes to "Copied!".
+4. **No Port Openings**: Confirm that no background processes are running or listening on local ports.

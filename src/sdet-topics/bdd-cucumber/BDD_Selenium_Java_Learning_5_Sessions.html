@@ -1,0 +1,2465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BDD with Cucumber + Selenium Java — Beginner to Practical Learning in 5 Sessions</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Prism Syntax Highlighting -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../responsive.css">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --color-background-secondary: #f8fafc;
+      --color-border-tertiary: #cbd5e1;
+      --color-text-primary: #1e293b;
+      --color-text-secondary: #475569;
+      --border-radius-md: 6px;
+      --border-radius-lg: 8px;
+      --pc: #6C5CE7;
+      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Courier New', monospace;
+    }
+    body {
+      background: #f1f5f9;
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      padding: 1rem;
+    }
+    .hub {
+      padding: 1rem 0;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .pbar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .pp {
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      border: 1.5px solid;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .ph1 { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+    .ph2 { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+    .ph3 { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+    .ph4 { background: #FAECE7; color: #712B13; border-color: #F0997B; }
+    .ph5 { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
+
+    .stabs {
+      display: flex;
+      border-bottom: 1.5px solid var(--color-border-tertiary);
+      overflow-x: auto;
+      margin-bottom: 10px;
+    }
+    .stab {
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      border-bottom: 2.5px solid transparent;
+      margin-bottom: -1.5px;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+    .stab.active {
+      color: #ffffff;
+      border-bottom-color: #7F77DD;
+      background: #7F77DD;
+      border-radius: 6px 6px 0 0;
+    }
+    .stab:hover:not(.active) {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+
+    .prow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      background: #EEEDFE;
+      border: 1.5px solid #AFA9EC;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.dn { background: #1D9E75; }
+    .dot.ac { background: #7F77DD; }
+    .dot.td { background: #D3D1C7; }
+    .plbl {
+      font-size: 11px;
+      color: #3C3489;
+      font-weight: 500;
+    }
+
+    /* Section wrapper styling with thick 4-sided borders to prevent stacking bugs */
+    html body div.section {
+      display: none !important;
+      border: 2.5px solid var(--pc, #6C5CE7) !important;
+      border-radius: 10px;
+      background: #ffffff;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    html body div.section.active, html body div.section.visible {
+      display: block !important;
+    }
+
+    .obanner {
+      background: #faf5ff;
+      padding: 16px;
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+    .obanner h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #3730a3;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      border: none !important;
+      border-left: 4px solid var(--pc, #6C5CE7) !important;
+      padding-left: 12px !important;
+    }
+    .obanner p {
+      font-size: 13px;
+      color: #312e81;
+      line-height: 1.6;
+    }
+
+    .sec {
+      padding: 16px;
+      border: 2.5px solid var(--pc, #6C5CE7) !important;
+      border-radius: var(--border-radius-md);
+      margin: 14px;
+      background: #ffffff;
+    }
+    .sec h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      border: none !important;
+      border-left: 4px solid var(--pc, #6C5CE7) !important;
+      padding-left: 12px !important;
+    }
+
+    /* What/Why Table style */
+    .abox {
+      background: #faf5ff;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-lg);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .dr {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      padding: 8px 0;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .dr:last-child {
+      border-bottom: none;
+    }
+
+    /* Glossary grid style */
+    .glosgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media(max-width: 640px) {
+      .glosgrid, .igrid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    .gitem {
+      background: #faf5ff;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .gitem:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .gkw {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3730a3;
+      font-family: var(--font-mono);
+      margin-bottom: 4px;
+    }
+    .gdef {
+      font-size: 11.5px;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* One-Liners */
+    .igrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .qp {
+      background: #f8fafc;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--color-text-primary);
+      line-height: 1.5;
+      position: relative;
+      padding-left: 28px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .qp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .qp:before {
+      content: "❝";
+      position: absolute;
+      left: 10px;
+      top: 6px;
+      font-size: 20px;
+      color: #7F77DD;
+      font-family: serif;
+      line-height: 1;
+    }
+
+    /* Code Tabs Frame */
+    .cs {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1 !important;
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .csh {
+      display: flex;
+      align-items: center !important;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .csh span {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      color: #475569;
+      letter-spacing: .08em !important;
+      text-transform: uppercase;
+      font-family: var(--font-sans) !important;
+    }
+    .dr2 {
+      display: flex;
+      gap: 5px;
+    }
+    .md {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .mr { background: #ef4444; }
+    .my { background: #f59e0b; }
+    .mg { background: #10b981; }
+
+    .ctbar {
+      display: flex;
+      background: #f1f5f9;
+      border-bottom: 1px solid #cbd5e1;
+      overflow-x: auto;
+    }
+    .ct {
+      padding: 9px 14px;
+      font-size: 11.5px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #475569;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      border-bottom: 2.5px solid transparent;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .ct.active {
+      color: #0969da;
+      border-bottom-color: #0969da;
+      background: #ffffff;
+    }
+    .ct:hover:not(.active) {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .cp {
+      display: none;
+      background: #ffffff;
+      border: none !important;
+    }
+    .cp.active {
+      display: block;
+    }
+    .cp-sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .file-dot {
+      color: #6C5CE7;
+      margin-right: 6px;
+      font-size: 10px;
+    }
+    .file-name {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #475569;
+      font-weight: 500;
+    }
+    .cpbtn {
+      padding: 4px 10px;
+      font-size: 11px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      color: #475569;
+      transition: all 0.2s ease;
+    }
+    .cpbtn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+    
+    .cs pre {
+      border: none !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      background: #fafafa !important;
+    }
+    
+    .cs pre code {
+      font-family: var(--font-mono) !important;
+      font-size: 12px !important;
+    }
+
+    /* Flow step visual diagrams */
+    .flowrow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 12px 0;
+      border-radius: var(--border-radius-md);
+      overflow: hidden;
+      border: 1.5px solid #cbd5e1 !important;
+    }
+    @media(max-width: 640px) {
+      .flowrow {
+        flex-direction: column;
+        gap: 8px;
+        border: none !important;
+      }
+            .fstep {
+        border-right: none !important;
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: var(--border-radius-md);
+      }
+    }
+    .fstep {
+      flex: 1;
+      padding: 12px 10px;
+      font-size: 11.5px;
+      text-align: center;
+      border-right: 1px solid #cbd5e1;
+      background: #faf5ff;
+    }
+    .fstep:last-child {
+      border-right: none;
+    }
+    .fstep .fn {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 12.5px;
+      color: #3730a3;
+    }
+    .fstep .fd {
+      color: var(--color-text-secondary);
+      font-size: 11px;
+      font-style: italic;
+    }
+
+    /* Best Practices list style */
+    .bpl {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+    .bpl li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12.5px;
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      padding: 8px 12px;
+      background: #faf5ff;
+      border: 2px solid #16a34a !important;
+      border-radius: var(--border-radius-md);
+    }
+    .bpc {
+      background: #d1fae5;
+      color: #065f46;
+      border: 0.5px solid #a7f3d0;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Q&A Accordion blocks */
+    .ql {
+      display: grid;
+      gap: 10px;
+    }
+    .qi {
+      background: #ffffff;
+      border: 2px solid #0d9488 !important;
+      border-radius: var(--border-radius-md);
+      padding: 12px 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .qi:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .qq {
+      font-size: 13px;
+      font-weight: 700;
+      color: #b91c1c;
+      margin-bottom: 0px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-sans);
+    }
+    .qi.open .qq {
+      margin-bottom: 6px;
+    }
+    .qq i {
+      transition: transform 0.2s ease;
+    }
+    .qi.open .qq i {
+      transform: rotate(180deg) !important;
+    }
+    .qa {
+      font-size: 12.5px;
+      color: #1e3a8a;
+      line-height: 1.6;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 8px;
+      margin-top: 6px;
+      font-family: var(--font-sans);
+    }
+    .qi.open > .qa {
+      display: block !important;
+    }
+
+    /* Technical keyword highlighting */
+    .hl-kw {
+      font-family: var(--font-mono) !important;
+      font-weight: 700 !important;
+      color: #9f1239 !important;
+      background: #ffe4e6 !important;
+      border: 0.5px solid #f8bbd0 !important;
+      border-radius: 3px !important;
+      padding: 1px 4px !important;
+      font-size: 0.9em !important;
+      display: inline-block !important;
+    }
+
+    /* Reset left borders for nested headings inside cards, accordions, glossary or code panels */
+    .qi h1, .qi h2, .qi h3, .qi h4, .qi h5, .qi h6, .qi .qq,
+    .cp h1, .cp h2, .cp h3, .cp h4, .cp h5, .cp h6,
+    .gitem h1, .gitem h2, .gitem h3, .gitem h4, .gitem h5, .gitem h6,
+    .qp h1, .qp h2, .qp h3, .qp h4, .qp h5, .qp h6,
+    .abox h1, .abox h2, .abox h3, .abox h4, .abox h5, .abox h6 {
+      border: none !important;
+      border-left: none !important;
+      padding-left: 0 !important;
+    }
+
+    /* Concepts - Flow Visuals Colorful & Responsive Styles */
+    .fstep.ns1 { background: #EEEDFE !important; color: #3C3489 !important; border-color: #AFA9EC !important; }
+    .fstep.ns2 { background: #E1F5EE !important; color: #085041 !important; border-color: #5DCAA5 !important; }
+    .fstep.ns3 { background: #E6F1FB !important; color: #0C447C !important; border-color: #85B7EB !important; }
+    .fstep.ns4 { background: #FAECE7 !important; color: #712B13 !important; border-color: #F0997B !important; }
+    .fstep.ns5 { background: #FAEEDA !important; color: #633806 !important; border-color: #EF9F27 !important; }
+    
+    .fstep.ns1 .fn, .fstep.ns1 .fd { color: #3C3489 !important; }
+    .fstep.ns2 .fn, .fstep.ns2 .fd { color: #085041 !important; }
+    .fstep.ns3 .fn, .fstep.ns3 .fd { color: #0C447C !important; }
+    .fstep.ns4 .fn, .fstep.ns4 .fd { color: #712B13 !important; }
+    .fstep.ns5 .fn, .fstep.ns5 .fd { color: #633806 !important; }
+
+    .fstep {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .fstep:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    
+    @media(max-width: 640px) {
+      .fstep.ns1, .fstep.ns2, .fstep.ns3, .fstep.ns4, .fstep.ns5 {
+        border: 1.5px solid !important;
+        margin-bottom: 4px;
+        border-radius: var(--border-radius-md) !important;
+      }
+    }
+
+    /* Responsive & Colorful Images */
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+      border-radius: var(--border-radius-md) !important;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
+      border: 2.5px solid var(--pc, #6C5CE7) !important;
+      display: block !important;
+      margin: 12px auto !important;
+    }
+  </style>
+</head>
+<body class="line-numbers">
+  <div class="hub">
+  <div class="pbar">
+    <span class="pp ph1">S1 · FOUNDATION</span>
+    <span class="pp ph2">S2 · GHERKIN + STEP DEF</span>
+    <span class="pp ph3">S3 · ADVANCED FEATURES</span>
+    <span class="pp ph4">S4 · TEST RUNNER, TAGS,</span>
+    <span class="pp ph5">S5 · REPORTING + LIVING</span>
+  </div>
+
+  <div class="stabs" id="sTabs">
+    <button class="stab active" onclick="sw(0)">S1 · FOUNDATION</button>
+    <button class="stab" onclick="sw(1)">S2 · GHERKIN + STEP DEF</button>
+    <button class="stab" onclick="sw(2)">S3 · ADVANCED FEATURES</button>
+    <button class="stab" onclick="sw(3)">S4 · TEST RUNNER, TAGS,</button>
+    <button class="stab" onclick="sw(4)">S5 · REPORTING + LIVING</button>
+  </div>
+
+  <div class="prow">
+    <span id="pd"></span>
+    <span class="plbl" id="pl">Session 1 of 5</span>
+  </div>
+
+
+    <div id="allS">
+<div class="section active" id="s0">
+  <div class="obanner">
+    <h2>FOUNDATION — BDD with Cucumber + Selenium Java</h2>
+    <p>Understand BDD philosophy and why Cucumber + Selenium Java is a popular combination for UI automation</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>BDD (Behavior-Driven Development) describes what the system should do in plain English; Cucumber reads those feature files and runs them as <span class="hl-kw">Selenium</span> <span class="hl-kw">Java</span> tests.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>It connects business language (Gherkin) to real browser actions (<span class="hl-kw">Selenium</span>) so PO, dev, and QA share the same source of truth.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Use it for any UI feature where the business cares about user flows — login, search, checkout, profile updates.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>In a <span class="hl-kw">Maven</span> <span class="hl-kw">Java</span> project: feature files under src/test/resources, step definitions + runners under src/test/java.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Discuss examples (Three Amigos) -&gt; write Gherkin -&gt; create <span class="hl-kw">Selenium</span> step definitions -&gt; wire a TestRunner -&gt; run via <span class="hl-kw">Maven</span> Surefire.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">BDD</div><div class="gdef">Behavior-Driven Development — describing software with examples of behavior.</div></div>
+      <div class="gitem"><div class="gkw">Cucumber</div><div class="gdef">Tool that reads Gherkin feature files and runs them against <span class="hl-kw">Java</span> step definitions.</div></div>
+      <div class="gitem"><div class="gkw">Gherkin</div><div class="gdef">Plain-English language used inside .feature files.</div></div>
+      <div class="gitem"><div class="gkw">Selenium</div><div class="gdef"><span class="hl-kw">Java</span> library that drives Chrome, Firefox, Edge browsers.</div></div>
+      <div class="gitem"><div class="gkw">Selenium Manager</div><div class="gdef">Built-in <span class="hl-kw">Selenium</span> 4 driver resolver — auto-downloads drivers.</div></div>
+      <div class="gitem"><div class="gkw">Three Amigos</div><div class="gdef">Product Owner + Developer + QA discussing examples before coding.</div></div>
+      <div class="gitem"><div class="gkw">Feature File</div><div class="gdef">File ending in .feature containing a Feature and Scenarios.</div></div>
+      <div class="gitem"><div class="gkw">Step Definition</div><div class="gdef"><span class="hl-kw">Java</span> method mapped to a Gherkin step using @Given/@When/@Then.</div></div>
+      <div class="gitem"><div class="gkw">Test Runner</div><div class="gdef"><span class="hl-kw">Java</span> class with @CucumberOptions that tells Cucumber what to run.</div></div>
+      <div class="gitem"><div class="gkw">Living Documentation</div><div class="gdef">Up-to-date docs that come from passing feature files.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Cucumber gives the language; <span class="hl-kw">Selenium</span> does the clicking.</div>
+      <div class="qp"><span class="hl-kw"><span class="hl-kw">Selenium</span> Manager</span> removed driver-management pain in <span class="hl-kw">Selenium</span> 4.</div>
+      <div class="qp">Feature files are not test scripts — they are shared specifications.</div>
+      <div class="qp">Three Amigos is where most BDD value is created, not in tools.</div>
+      <div class="qp">BDD pays off long term through living documentation.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — BDD + Selenium Loop</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Discuss Examples</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Write Feature</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Write Step Defs</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Selenium Drives Browser</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Report</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This is the daily BDD + Selenium development loop.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Tooling Stack</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Gherkin (.feature)</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Cucumber</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Step Definitions</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Selenium WebDriver</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Browser</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Each layer has one clear responsibility.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Project Layout</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">src/test/resources</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Feature Files</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">src/test/java</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Step + Runner</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Maven Surefire</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Cucumber follows standard Maven conventions for easy CI.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 1</span>
+      </div>
+      <div class="ctbar" id="ctbar-0">
+        <button class="ct active" onclick="sc(0,0)"><span class="lang-pill lang-md">.md</span> bdd-intro.md</button>
+        <button class="ct" onclick="sc(0,1)"><span class="lang-pill lang-xml">.xml</span> pom.xml</button>
+        <button class="ct" onclick="sc(0,2)"><span class="lang-pill lang-feature">.feature</span> src/test/resources/features/login.feature</button>
+        <button class="ct" onclick="sc(0,3)"><span class="lang-pill lang-txt">.txt</span> project-structure.txt</button>
+        <button class="ct" onclick="sc(0,4)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/base/DriverFactory.java</button>
+        <button class="ct" onclick="sc(0,5)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/base/BaseTest.java</button>
+      </div>
+      <div class="cp active" id="c0-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">bdd-intro.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># BDD with Cucumber + Selenium Java
+
+## What we get
+- **Business-readable tests** in Gherkin
+- **Real browser validation** via Selenium
+- **Living documentation** that always reflects passing scenarios
+
+## Stack
+- Cucumber 7.18 (cucumber-java, cucumber-testng)
+- Selenium 4.21 (Selenium Manager)
+- TestNG 7.10 (runner + assertions)
+- Maven (build + Surefire)
+
+## Mindset
+- Feature files describe **what**, not **how**.
+- Step definitions are thin — they call Page Objects.
+- Page Objects know **how** to click and read.</code></pre>
+      </div>
+      <div class="cp" id="c0-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-xml">●</span>
+          <span class="file-name">pom.xml</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.learn&lt;/groupId&gt;
+  &lt;artifactId&gt;bdd-selenium-learning&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+
+  &lt;properties&gt;
+    &lt;maven.compiler.source&gt;17&lt;/maven.compiler.source&gt;
+    &lt;maven.compiler.target&gt;17&lt;/maven.compiler.target&gt;
+    &lt;cucumber.version&gt;7.18.0&lt;/cucumber.version&gt;
+  &lt;/properties&gt;
+
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;io.cucumber&lt;/groupId&gt;
+      &lt;artifactId&gt;cucumber-java&lt;/artifactId&gt;
+      &lt;version&gt;${cucumber.version}&lt;/version&gt;
+      &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;io.cucumber&lt;/groupId&gt;
+      &lt;artifactId&gt;cucumber-testng&lt;/artifactId&gt;
+      &lt;version&gt;${cucumber.version}&lt;/version&gt;
+      &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.seleniumhq.selenium&lt;/groupId&gt;
+      &lt;artifactId&gt;selenium-java&lt;/artifactId&gt;
+      &lt;version&gt;4.21.0&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.testng&lt;/groupId&gt;
+      &lt;artifactId&gt;testng&lt;/artifactId&gt;
+      &lt;version&gt;7.10.2&lt;/version&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;</code></pre>
+      </div>
+      <div class="cp" id="c0-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">src/test/resources/features/login.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: User Login
+
+  Scenario: Successful login with valid credentials
+    Given the user is on the login page
+    When the user logs in with "vikrant" and "Pass@123"
+    Then the dashboard page should be displayed</code></pre>
+      </div>
+      <div class="cp" id="c0-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">project-structure.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">bdd-selenium-learning/
+├── pom.xml
+├── src/test/
+│   ├── java/com/learn/
+│   │   ├── base/DriverFactory.java
+│   │   ├── base/BaseTest.java
+│   │   ├── stepdefs/LoginSteps.java
+│   │   └── runners/TestRunner.java
+│   └── resources/
+│       └── features/login.feature
+└── target/
+    └── cucumber.html</code></pre>
+      </div>
+      <div class="cp" id="c0-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/base/DriverFactory.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.base;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+public class DriverFactory {
+
+    // ThreadLocal so each test gets its own driver — safe for parallel
+    private static final ThreadLocal&lt;WebDriver&gt; tlDriver = new ThreadLocal&lt;&gt;();
+
+    public static WebDriver getDriver() {
+        if (tlDriver.get() == null) {
+            // Selenium 4 auto-downloads the right driver
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--start-maximized");
+            tlDriver.set(new ChromeDriver(options));
+        }
+        return tlDriver.get();
+    }
+
+    public static void quitDriver() {
+        if (tlDriver.get() != null) {
+            tlDriver.get().quit();
+            tlDriver.remove();
+        }
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c0-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/base/BaseTest.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.base;
+
+import org.openqa.selenium.WebDriver;
+
+public class BaseTest {
+    // Tiny helper so step defs can just call driver()
+    protected WebDriver driver() {
+        return DriverFactory.getDriver();
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Start with one stable Feature file and one step definition class.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw"><span class="hl-kw">Selenium</span> Manager</span> — do not commit chromedriver.exe.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use Cucumber Expressions ({string}, {int}) instead of raw regex.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep feature files focused on business behavior, not UI mechanics.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use ThreadLocal <span class="hl-kw">WebDriver</span> from day one to support parallel later.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Externalize URLs and credentials into config files.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">TestNG</span> Assert for verifications inside <span class="hl-kw">steps</span>.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use explicit waits (Duration.ofSeconds) — never Thread.sleep.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep step definitions short — push UI logic into Page Objects.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Document the team&#x27;s tag vocabulary (e.g. @smoke, @regression) in TAGS.md.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. What is BDD in one line? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A way to build software based on examples of behavior that everyone understands.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. Why use Cucumber with Selenium Java? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Because Cucumber gives business-readable feature files and <span class="hl-kw">Selenium</span> drives the browser to validate them.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. What is Selenium Manager? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A <span class="hl-kw">Selenium</span> 4 feature that auto-downloads the correct browser driver.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. Where do feature files belong? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Under src/test/resources, usually in a features folder.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Who attends a Three Amigos meeting? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Product Owner, Developer, and QA.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s1">
+  <div class="obanner">
+    <h2>GHERKIN + STEP DEFINITIONS FOR SELENIUM UI</h2>
+    <p>Map Gherkin scenarios to Selenium 4 step definitions using Cucumber Expressions and explicit waits</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Step definitions are <span class="hl-kw">Java</span> methods that turn each Gherkin step into a <span class="hl-kw">Selenium</span> action or assertion.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Without step definitions, Cucumber cannot run any browser action — the Gherkin is just text.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Write them right after a feature file is reviewed and agreed by the Three Amigos.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>In src/test/java under a stepdefs package; one class per business area is a good rule.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Use @Given/@When/@Then with Cucumber Expressions, call <span class="hl-kw">Selenium</span> methods, and assert with <span class="hl-kw">TestNG</span>.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">@Given</div><div class="gdef">Cucumber annotation for a Given step.</div></div>
+      <div class="gitem"><div class="gkw">@When</div><div class="gdef">Cucumber annotation for a When step.</div></div>
+      <div class="gitem"><div class="gkw">@Then</div><div class="gdef">Cucumber annotation for a Then step.</div></div>
+      <div class="gitem"><div class="gkw">Cucumber Expression</div><div class="gdef">Modern parameter syntax like {string}, {int}, {word}.</div></div>
+      <div class="gitem"><div class="gkw">By</div><div class="gdef"><span class="hl-kw">Selenium</span> class for locators like By.id, By.cssSelector.</div></div>
+      <div class="gitem"><div class="gkw">WebDriverWait</div><div class="gdef"><span class="hl-kw">Selenium</span> class for explicit waits.</div></div>
+      <div class="gitem"><div class="gkw">ExpectedConditions</div><div class="gdef">Helper used with WebDriverWait — visibility, clickable, etc.</div></div>
+      <div class="gitem"><div class="gkw">Duration</div><div class="gdef"><span class="hl-kw">Java</span> time class used as Duration.ofSeconds(10).</div></div>
+      <div class="gitem"><div class="gkw">Assert</div><div class="gdef"><span class="hl-kw">TestNG</span> class for assertions inside step methods.</div></div>
+      <div class="gitem"><div class="gkw">Scenario Outline</div><div class="gdef">Gherkin template that runs once per Examples row.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Step definitions should read like one short sentence in <span class="hl-kw">Java</span>.</div>
+      <div class="qp">Cucumber Expressions are easier and safer than raw regex.</div>
+      <div class="qp">Use explicit waits with Duration.ofSeconds — never Thread.sleep.</div>
+      <div class="qp">Use By.id when possible; fall back to By.cssSelector before XPath.</div>
+      <div class="qp">Keep assertions in @Then, not in @Given or @When.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Gherkin to Java Mapping</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Gherkin Step</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Annotation Pattern</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Matching Java Method</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Selenium Action</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Result</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Cucumber matches steps to methods using the annotation pattern.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Cucumber Expression Parameters</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">{string} -&gt; String</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">{int} -&gt; int</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">{word} -&gt; String</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">{float} -&gt; float</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Custom Parameter Type</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This removes most of the regex complexity.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Stable UI Step</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Locate Element</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Wait Until Ready</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Perform Action</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Assert Outcome</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Move On</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Every reliable UI step follows this shape.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 2</span>
+      </div>
+      <div class="ctbar" id="ctbar-1">
+        <button class="ct active" onclick="sc(1,0)"><span class="lang-pill lang-feature">.feature</span> src/test/resources/features/search.feature</button>
+        <button class="ct" onclick="sc(1,1)"><span class="lang-pill lang-feature">.feature</span> src/test/resources/features/outline-search.feature</button>
+        <button class="ct" onclick="sc(1,2)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/stepdefs/LoginSteps.java</button>
+        <button class="ct" onclick="sc(1,3)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/stepdefs/SearchSteps.java</button>
+        <button class="ct" onclick="sc(1,4)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/stepdefs/AssertionsSteps.java</button>
+        <button class="ct" onclick="sc(1,5)"><span class="lang-pill lang-md">.md</span> cucumber-expressions-cheatsheet.md</button>
+      </div>
+      <div class="cp active" id="c1-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">src/test/resources/features/search.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: Product Search
+
+  Scenario: Search returns matching products
+    Given the user is on the home page
+    When the user searches for "Laptop"
+    And applies the filter "In Stock"
+    Then matching results should be shown
+    But out-of-stock items should not be visible</code></pre>
+      </div>
+      <div class="cp" id="c1-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">src/test/resources/features/outline-search.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: Search across categories
+
+  Scenario Outline: Search returns results in &lt;category&gt;
+    Given the user is on the home page
+    When the user searches for "&lt;term&gt;" in "&lt;category&gt;"
+    Then at least &lt;minCount&gt; results should be shown
+
+    Examples:
+      | term     | category    | minCount |
+      | Laptop   | Electronics | 5        |
+      | T-Shirt  | Fashion     | 10       |
+      | Novel    | Books       | 3        |</code></pre>
+      </div>
+      <div class="cp" id="c1-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/stepdefs/LoginSteps.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.stepdefs;
+
+import com.learn.base.DriverFactory;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
+import io.cucumber.java.en.Then;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import java.time.Duration;
+
+public class LoginSteps {
+
+    private final WebDriver driver = DriverFactory.getDriver();
+    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+    @Given("the user is on the login page")
+    public void openLogin() {
+        driver.get("https://qa.example.com/login");
+    }
+
+    // {string} captures any quoted text — no regex needed
+    @When("the user logs in with {string} and {string}")
+    public void loginWith(String username, String password) {
+        driver.findElement(By.id("username")).sendKeys(username);
+        driver.findElement(By.id("password")).sendKeys(password);
+        driver.findElement(By.id("loginBtn")).click();
+    }
+
+    @Then("the dashboard page should be displayed")
+    public void dashboardShown() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dashboardTitle")));
+        Assert.assertTrue(driver.findElement(By.id("dashboardTitle")).isDisplayed());
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c1-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/stepdefs/SearchSteps.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.stepdefs;
+
+import com.learn.base.DriverFactory;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
+
+public class SearchSteps {
+
+    private final WebDriver driver = DriverFactory.getDriver();
+
+    @Given("the user is on the home page")
+    public void openHome() {
+        driver.get("https://qa.example.com");
+    }
+
+    // Two {string} parameters from Scenario Outline columns
+    @When("the user searches for {string} in {string}")
+    public void searchInCategory(String term, String category) {
+        driver.findElement(By.id("category")).sendKeys(category);
+        driver.findElement(By.id("q")).sendKeys(term);
+        driver.findElement(By.id("searchBtn")).click();
+    }
+
+    @Then("at least {int} results should be shown")
+    public void atLeastResults(int minCount) {
+        int found = driver.findElements(By.cssSelector(".result-item")).size();
+        Assert.assertTrue(found &gt;= minCount, "Expected at least " + minCount + " results");
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c1-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/stepdefs/AssertionsSteps.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.stepdefs;
+
+import com.learn.base.DriverFactory;
+import io.cucumber.java.en.Then;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
+
+public class AssertionsSteps {
+
+    private final WebDriver driver = DriverFactory.getDriver();
+
+    @Then("matching results should be shown")
+    public void resultsShown() {
+        boolean hasResults = !driver.findElements(By.cssSelector(".result-item")).isEmpty();
+        Assert.assertTrue(hasResults, "No search results visible");
+    }
+
+    @Then("out-of-stock items should not be visible")
+    public void outOfStockHidden() {
+        boolean anyOOS = !driver.findElements(By.cssSelector(".result-item.out-of-stock")).isEmpty();
+        Assert.assertFalse(anyOOS, "Out-of-stock items should be hidden");
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c1-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">cucumber-expressions-cheatsheet.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># Cucumber Expressions Cheatsheet
+
+| Expression | Captures           | Java Type |
+|------------|--------------------|-----------|
+| {string}   | "quoted text"      | String    |
+| {int}      | 42                 | int       |
+| {float}    | 3.14               | float     |
+| {word}     | single word        | String    |
+| {bigdecimal}| 100.50            | BigDecimal|
+
+## Rules of thumb
+- Use {string} for any quoted business value.
+- Use {int} for counts and amounts.
+- Use {word} when no spaces or quotes are expected.
+- Use Custom Parameter Types for domain words like {currency}.
+
+## Tip
+If your annotation starts with ^ and ends with $, you are using regex.
+Otherwise you are using a Cucumber Expression.</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use one step definition class per business area, not per feature.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Prefer Cucumber Expressions over raw regex.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use ExpectedConditions.visibilityOfElementLocated for read <span class="hl-kw">steps</span>.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use ExpectedConditions.elementToBeClickable for click <span class="hl-kw">steps</span>.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Centralize wait timeouts in a constants class.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">TestNG</span> Assert.assertEquals / assertTrue inside @Then <span class="hl-kw">steps</span>.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Avoid hardcoded URLs — read them from config.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Reuse the same DriverFactory across all step classes.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Move long <span class="hl-kw">Selenium</span> logic into Page Objects (next session).</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Run feature files locally before pushing to CI.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. Cucumber Expression vs Regex? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Cucumber Expression is simpler (uses {string}, {int}); regex is more powerful but harder to read.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. Why not Thread.sleep? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">It wastes time and still flakes — explicit waits are reliable and faster.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. Where should assertions live? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Inside @Then <span class="hl-kw">steps</span> so they describe the expected outcome.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. How do step definitions get the WebDriver? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">From a shared DriverFactory (ThreadLocal) so all <span class="hl-kw">steps</span> use the same driver per scenario.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Can one step definition match many feature lines? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Yes — parameters let one method handle many similar Gherkin <span class="hl-kw">steps</span>.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s2">
+  <div class="obanner">
+    <h2>ADVANCED FEATURES — Background, Hooks, Data Tables, Page Object Model</h2>
+    <p>Reuse setup, capture screenshots on failure, pass tabular data, and integrate Cucumber with POM</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Background reuses setup <span class="hl-kw">steps</span>, Hooks run setup/teardown automatically, Data Tables pass tabular data, and <span class="hl-kw">Page Object Model</span> keeps step defs clean.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Without these, feature files repeat, step defs grow huge, and a UI change breaks ten places at once.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Add Background and <span class="hl-kw">POM</span> as soon as you have more than one or two scenarios; add screenshots-on-failure from day one.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Background lives in .feature files; Hooks and Page Objects live in <span class="hl-kw">Java</span> packages alongside step definitions.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Write Background once, hook @Before/@After in a Hooks class, declare List&lt;Map&gt; for data tables, and call Page Object methods from step defs.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Background</div><div class="gdef">Steps that run before each scenario in the feature.</div></div>
+      <div class="gitem"><div class="gkw">Hook</div><div class="gdef">Method that runs before/after a scenario or step.</div></div>
+      <div class="gitem"><div class="gkw">@Before</div><div class="gdef">Cucumber hook running before each scenario.</div></div>
+      <div class="gitem"><div class="gkw">@After</div><div class="gdef">Cucumber hook running after each scenario.</div></div>
+      <div class="gitem"><div class="gkw">Tagged Hook</div><div class="gdef">Hook that runs only for matching tagged scenarios.</div></div>
+      <div class="gitem"><div class="gkw">Data Table</div><div class="gdef">Tabular data passed inside a step.</div></div>
+      <div class="gitem"><div class="gkw">List&lt;Map&gt;</div><div class="gdef">Common <span class="hl-kw">Java</span> type for headered Data Tables.</div></div>
+      <div class="gitem"><div class="gkw">Page Object Model</div><div class="gdef">Pattern where each page is a <span class="hl-kw">Java</span> class with locators and actions.</div></div>
+      <div class="gitem"><div class="gkw">TakesScreenshot</div><div class="gdef"><span class="hl-kw">Selenium</span> interface to capture screenshots.</div></div>
+      <div class="gitem"><div class="gkw">Scenario.attach</div><div class="gdef">Cucumber method to attach evidence to the report.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Background is for setup, not for behavior.</div>
+      <div class="qp">Hooks are perfect for browser launch and screenshot on failure.</div>
+      <div class="qp">Tagged hooks let me reset DB only for @db scenarios.</div>
+      <div class="qp">Data Tables shine when a step needs many fields, not just one or two.</div>
+      <div class="qp"><span class="hl-kw">POM</span> keeps step defs short and stable when the UI changes.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Background Reuse</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Common Setup</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Background Block</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Each Scenario Inherits</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">No Copy-Paste</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Cleaner Feature</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Background runs automatically before each Scenario.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Hook + Screenshot</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Scenario Fails</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">@After Triggers</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">TakesScreenshot Captures</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">scenario.attach()</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Report Shows Image</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This pattern makes every failure debuggable from the HTML report.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — POM Integration</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Step Definition</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Calls Page Object</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Page Uses WebDriver</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Action Performed</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Step Verifies</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Steps stay business-focused; pages handle UI mechanics.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 3</span>
+      </div>
+      <div class="ctbar" id="ctbar-2">
+        <button class="ct active" onclick="sc(2,0)"><span class="lang-pill lang-feature">.feature</span> src/test/resources/features/background-login.feature</button>
+        <button class="ct" onclick="sc(2,1)"><span class="lang-pill lang-feature">.feature</span> src/test/resources/features/data-table-users.feature</button>
+        <button class="ct" onclick="sc(2,2)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/hooks/Hooks.java</button>
+        <button class="ct" onclick="sc(2,3)"><span class="lang-pill lang-java">.java</span> src/main/java/com/learn/pages/LoginPage.java</button>
+        <button class="ct" onclick="sc(2,4)"><span class="lang-pill lang-java">.java</span> src/main/java/com/learn/pages/HomePage.java</button>
+        <button class="ct" onclick="sc(2,5)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/stepdefs/LoginSteps.java</button>
+      </div>
+      <div class="cp active" id="c2-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">src/test/resources/features/background-login.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: Login with Background
+
+  Background:
+    Given the user is on the login page
+
+  Scenario: Successful login
+    When the user logs in with "vikrant" and "Pass@123"
+    Then the dashboard page should be displayed
+
+  Scenario: Wrong password shows error
+    When the user logs in with "vikrant" and "Wrong"
+    Then an error message "Invalid credentials" should be shown</code></pre>
+      </div>
+      <div class="cp" id="c2-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">src/test/resources/features/data-table-users.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: Add multiple users
+
+  Scenario: Bulk user creation
+    Given the admin is on the users page
+    When the following users are created:
+      | username | email                  | role  |
+      | vikrant  | vikrant@example.com    | admin |
+      | rajat    | rajat@example.com      | qa    |
+      | aman     | aman@example.com       | dev   |
+    Then the user count should be 3</code></pre>
+      </div>
+      <div class="cp" id="c2-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/hooks/Hooks.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.hooks;
+
+import com.learn.base.DriverFactory;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+
+public class Hooks {
+
+    @Before
+    public void beforeScenario(Scenario scenario) {
+        // Driver is created lazily by DriverFactory.getDriver()
+        System.out.println("Starting: " + scenario.getName());
+    }
+
+    @After
+    public void afterScenario(Scenario scenario) {
+        WebDriver driver = DriverFactory.getDriver();
+
+        // Attach screenshot only when scenario fails
+        if (scenario.isFailed()) {
+            byte[] png = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+            scenario.attach(png, "image/png", scenario.getName());
+        }
+        DriverFactory.quitDriver();
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c2-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/main/java/com/learn/pages/LoginPage.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+
+public class LoginPage {
+    private final WebDriver driver;
+    private final WebDriverWait wait;
+
+    private final By username = By.id("username");
+    private final By password = By.id("password");
+    private final By loginBtn = By.id("loginBtn");
+
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
+
+    public void open() {
+        driver.get("https://qa.example.com/login");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(username));
+    }
+
+    // Business-friendly method used by step definitions
+    public void loginAs(String user, String pwd) {
+        driver.findElement(username).sendKeys(user);
+        driver.findElement(password).sendKeys(pwd);
+        driver.findElement(loginBtn).click();
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c2-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/main/java/com/learn/pages/HomePage.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+
+public class HomePage {
+    private final WebDriver driver;
+    private final WebDriverWait wait;
+    private final By dashboardTitle = By.id("dashboardTitle");
+
+    public HomePage(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
+
+    public boolean isDashboardVisible() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(dashboardTitle));
+        return driver.findElement(dashboardTitle).isDisplayed();
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c2-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/stepdefs/LoginSteps.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.stepdefs;
+
+import com.learn.base.DriverFactory;
+import com.learn.pages.HomePage;
+import com.learn.pages.LoginPage;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
+import io.cucumber.java.en.Then;
+import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
+
+public class LoginSteps {
+
+    private final WebDriver driver = DriverFactory.getDriver();
+    private final LoginPage loginPage = new LoginPage(driver);
+    private final HomePage homePage   = new HomePage(driver);
+
+    @Given("the user is on the login page")
+    public void openLogin() {
+        loginPage.open();
+    }
+
+    @When("the user logs in with {string} and {string}")
+    public void login(String user, String pwd) {
+        loginPage.loginAs(user, pwd);
+    }
+
+    @Then("the dashboard page should be displayed")
+    public void assertDashboard() {
+        Assert.assertTrue(homePage.isDashboardVisible());
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep Background under 4 <span class="hl-kw">steps</span> and use it only when EVERY scenario needs that setup.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use Hooks for browser launch, screenshot on failure, and browser quit.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Take screenshots only on failure to control disk usage.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use tagged hooks like @Before(&quot;@db&quot;) for special-case setup.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Prefer List&lt;Map&lt;String,String&gt;&gt; for headered Data Tables.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Move all UI actions into Page Objects — step defs should call methods, not click directly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Name page methods with business verbs (loginAs, addToCart).</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use explicit waits inside Page Objects, never in step definitions.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Centralize <span class="hl-kw">WebDriver</span> creation in DriverFactory.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Avoid putting assertions in Page Objects — keep them in @Then <span class="hl-kw">steps</span>.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. Why use Background? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">To remove repetition when every scenario starts with the same setup <span class="hl-kw">steps</span>.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. How is a Data Table different from a Scenario Outline? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Data Table passes a table into one step; Scenario Outline runs a whole scenario per row.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. Why use Page Object Model with Cucumber? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Because step defs should describe behavior, not click buttons — Page Objects handle the clicking.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. How do you capture a screenshot on failure? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">In @After, check scenario.isFailed(), then use TakesScreenshot and scenario.attach to attach the image.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. What is a tagged hook? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A hook that runs only for scenarios with a matching tag, like @Before(&quot;@db&quot;).</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s3">
+  <div class="obanner">
+    <h2>TEST RUNNER, TAGS, PARALLEL EXECUTION</h2>
+    <p>Wire features to TestNG, choose what runs with tag expressions, and speed up the suite with parallel execution</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>The TestRunner is the entry point Cucumber uses; tags decide what runs; parallel makes the suite faster.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Without a Runner, nothing runs; without tags, everything runs; without parallel, big suites take hours.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Set up the Runner on day one, add tags when you have more than ~10 scenarios, add parallel once tests are isolated.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Runner classes in src/test/java/.../runners; junit-platform.properties + testng.xml under src/test/resources.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Add @CucumberOptions on the Runner, tag scenarios in features, override scenarios() with parallel DataProvider for <span class="hl-kw">TestNG</span>.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Test Runner</div><div class="gdef">Class with @CucumberOptions used to run Cucumber scenarios.</div></div>
+      <div class="gitem"><div class="gkw">@CucumberOptions</div><div class="gdef">Annotation that configures features, glue, tags, plugin.</div></div>
+      <div class="gitem"><div class="gkw">Glue</div><div class="gdef">Package path Cucumber scans for step definitions.</div></div>
+      <div class="gitem"><div class="gkw">Tag</div><div class="gdef">Label like @smoke on Feature or Scenario.</div></div>
+      <div class="gitem"><div class="gkw">Tag Expression</div><div class="gdef">Boolean like @smoke and not @wip for filtering.</div></div>
+      <div class="gitem"><div class="gkw">AbstractTestNGCucumberTests</div><div class="gdef">Cucumber base class for <span class="hl-kw">TestNG</span> integration.</div></div>
+      <div class="gitem"><div class="gkw">DataProvider</div><div class="gdef"><span class="hl-kw">TestNG</span> mechanism used here to enable parallel scenarios.</div></div>
+      <div class="gitem"><div class="gkw">Parallel</div><div class="gdef">Running scenarios at the same time using threads.</div></div>
+      <div class="gitem"><div class="gkw">Surefire</div><div class="gdef"><span class="hl-kw">Maven</span> plugin that executes the Runner via testng.xml.</div></div>
+      <div class="gitem"><div class="gkw">Thread Count</div><div class="gdef">Number of parallel scenarios allowed at once.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">The TestRunner is the bridge between <span class="hl-kw">Maven</span> Surefire and Cucumber.</div>
+      <div class="qp">Tags are the cleanest way to choose what runs in CI.</div>
+      <div class="qp">Tag expressions let me combine tags like @smoke and not @wip.</div>
+      <div class="qp">Parallel works only after tests are isolated and data-safe.</div>
+      <div class="qp">I keep one Runner per logical pack — smoke, sanity, regression.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Runner Wiring</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">@CucumberOptions</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">features=</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">glue=</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">tags=</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">plugin=</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Five attributes are enough to wire up a real project.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Tag Filtering</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Add @smoke</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Configure tags</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">CI Runs @smoke</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Other Scenarios Skip</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Faster Feedback</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Standard way to keep CI fast.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Parallel Run</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Override scenarios()</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">parallel=true</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">TestNG Threads</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Multiple Drivers</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Faster Suite</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Parallel via cucumber-testng DataProvider.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 4</span>
+      </div>
+      <div class="ctbar" id="ctbar-3">
+        <button class="ct active" onclick="sc(3,0)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/runners/TestRunner.java</button>
+        <button class="ct" onclick="sc(3,1)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/runners/ParallelTestRunner.java</button>
+        <button class="ct" onclick="sc(3,2)"><span class="lang-pill lang-xml">.xml</span> testng.xml</button>
+        <button class="ct" onclick="sc(3,3)"><span class="lang-pill lang-md">.md</span> tag-expressions.md</button>
+        <button class="ct" onclick="sc(3,4)"><span class="lang-pill lang-properties">.properties</span> src/test/resources/junit-platform.properties</button>
+        <button class="ct" onclick="sc(3,5)"><span class="lang-pill lang-xml">.xml</span> pom-surefire-snippet.xml</button>
+      </div>
+      <div class="cp active" id="c3-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/runners/TestRunner.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.runners;
+
+import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
+
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue     = {"com.learn.stepdefs", "com.learn.hooks"},
+    tags     = "@smoke and not @wip",
+    plugin   = {
+        "pretty",
+        "html:target/cucumber.html",
+        "json:target/cucumber.json"
+    },
+    monochrome = true
+)
+public class TestRunner extends AbstractTestNGCucumberTests {
+    // TestNG + Maven Surefire picks this up
+}</code></pre>
+      </div>
+      <div class="cp" id="c3-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/runners/ParallelTestRunner.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.runners;
+
+import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
+import org.testng.annotations.DataProvider;
+
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue     = {"com.learn.stepdefs", "com.learn.hooks"},
+    plugin   = {"pretty", "html:target/cucumber.html"},
+    monochrome = true
+)
+public class ParallelTestRunner extends AbstractTestNGCucumberTests {
+
+    // parallel = true makes TestNG run scenarios in parallel
+    @Override
+    @DataProvider(parallel = true)
+    public Object[][] scenarios() {
+        return super.scenarios();
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c3-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-xml">●</span>
+          <span class="file-name">testng.xml</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-xml">&lt;!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd"&gt;
+&lt;suite name="CucumberSuite" parallel="methods" thread-count="4"&gt;
+  &lt;test name="BDDTests"&gt;
+    &lt;classes&gt;
+      &lt;class name="com.learn.runners.ParallelTestRunner"/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+&lt;/suite&gt;</code></pre>
+      </div>
+      <div class="cp" id="c3-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">tag-expressions.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># Cucumber Tag Expressions
+
+| Expression                 | Meaning                                  |
+|----------------------------|------------------------------------------|
+| `@smoke`                   | Only @smoke scenarios                    |
+| `@smoke and @login`        | Must have both tags                      |
+| `@smoke and not @wip`      | @smoke but skip work-in-progress         |
+| `@smoke or @sanity`        | Either one                               |
+| `not @manual`              | Skip anything tagged manual              |
+
+## Tips
+- Keep tags lowercase and short.
+- One tag per intent: pack (@smoke), area (@login), state (@wip).
+- Combine with care — too many tags becomes a maze.</code></pre>
+      </div>
+      <div class="cp" id="c3-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-properties">●</span>
+          <span class="file-name">src/test/resources/junit-platform.properties</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># Enable Cucumber parallel scenarios at the engine level
+cucumber.execution.parallel.enabled=true
+cucumber.execution.parallel.config.strategy=fixed
+cucumber.execution.parallel.config.fixed.parallelism=4</code></pre>
+      </div>
+      <div class="cp" id="c3-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-xml">●</span>
+          <span class="file-name">pom-surefire-snippet.xml</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-xml">&lt;plugin&gt;
+  &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+  &lt;version&gt;3.2.5&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;suiteXmlFiles&gt;
+      &lt;suiteXmlFile&gt;testng.xml&lt;/suiteXmlFile&gt;
+    &lt;/suiteXmlFiles&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use one Runner per pack (TestRunnerSmoke, TestRunnerRegression).</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Set monochrome = true for clean console output.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Add plugin = pretty, html, json by default.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use clear tag vocabulary: @smoke, @regression, @wip, @db.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Never run @wip in CI — only locally.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use tag expressions for combinations like @smoke and not @wip.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Override scenarios() with parallel = true only after ThreadLocal driver is in place.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Pick thread count based on CPU and app capacity, not blindly high numbers.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use junit-platform.properties for declarative parallel config.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Document tags in a TAGS.md so new joiners know the convention.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. What does @CucumberOptions configure? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Where to find features, glue (step defs), which tags to run, and which plugins (reporters) to use.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. How do tags help in CI? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">They let CI run only what is needed, like @smoke on every PR and @regression at night.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. How do you enable parallel with cucumber-testng? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Extend AbstractTestNGCucumberTests, override scenarios() and annotate with @DataProvider(parallel = true).</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. What is a tag expression? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A boolean filter like @smoke and not @wip used to choose scenarios.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Why use junit-platform.properties? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">To enable Cucumber parallel scenarios declaratively without changing <span class="hl-kw">Java</span> code.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s4">
+  <div class="obanner">
+    <h2>REPORTING + LIVING DOCUMENTATION + FRAMEWORK INTEGRATION</h2>
+    <p>Generate readable reports, attach screenshots, and wire everything into a maintainable framework</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Reporting turns Cucumber runs into living documentation; framework integration keeps the codebase clean and stable.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Reports give the team confidence and a clean framework reduces maintenance pain when features grow.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Add basic reports from day one; add Extent Spark + screenshots when you start showing reports to stakeholders.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Reports land under target/ and test-output/; helpers live alongside Page Objects and step definitions.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Add Cucumber plugins, drop in Extent Spark adapter, attach screenshots in hooks, and document a small set of framework rules.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Living Documentation</div><div class="gdef">Up-to-date docs generated from passing feature files.</div></div>
+      <div class="gitem"><div class="gkw">Cucumber HTML Report</div><div class="gdef">Built-in plugin that produces a readable <span class="hl-kw">HTML report</span>.</div></div>
+      <div class="gitem"><div class="gkw">Cucumber JSON Report</div><div class="gdef">Machine-readable output used by other tools.</div></div>
+      <div class="gitem"><div class="gkw">Extent Reports</div><div class="gdef">Popular third-party <span class="hl-kw">HTML report</span> with rich UI.</div></div>
+      <div class="gitem"><div class="gkw">Spark Reporter</div><div class="gdef">Modern ExtentReports HTML reporter.</div></div>
+      <div class="gitem"><div class="gkw">ChainTest</div><div class="gdef">aventstack adapter that hooks into Cucumber lifecycle.</div></div>
+      <div class="gitem"><div class="gkw">Screenshot</div><div class="gdef">PNG of browser at failure point via TakesScreenshot.</div></div>
+      <div class="gitem"><div class="gkw">scenario.attach</div><div class="gdef">Cucumber method to add evidence into the <span class="hl-kw">HTML report</span>.</div></div>
+      <div class="gitem"><div class="gkw">Jenkins archiveArtifacts</div><div class="gdef">Pipeline step to save reports as build artifacts.</div></div>
+      <div class="gitem"><div class="gkw">publishHTML</div><div class="gdef"><span class="hl-kw">Jenkins</span> plugin step to display <span class="hl-kw">HTML report</span> on build page.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Reports must be generated even when scenarios fail.</div>
+      <div class="qp">Living documentation is the long-term payoff of BDD.</div>
+      <div class="qp">I attach screenshot, page source, and console log on failure.</div>
+      <div class="qp">Extent Spark + Cucumber JSON gives the best of both worlds.</div>
+      <div class="qp">A small, well-documented framework beats a large messy one.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Living Documentation</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Write Feature</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Run TestRunner</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Cucumber Plugin</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">HTML Report</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Share with Team</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Each successful run is a fresh snapshot of how the system behaves.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Report Generation</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Cucumber Plugins</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">html + json</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Extent Spark Adapter</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Reports in target/</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Open or Archive</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Use multiple report formats for different audiences.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Jenkins Integration</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">mvn clean test</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Generate Reports</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">archiveArtifacts</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">publishHTML</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Team Reviews</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This is the standard handoff from local runs to CI.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 5</span>
+      </div>
+      <div class="ctbar" id="ctbar-4">
+        <button class="ct active" onclick="sc(4,0)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/runners/TestRunner.java</button>
+        <button class="ct" onclick="sc(4,1)"><span class="lang-pill lang-properties">.properties</span> src/test/resources/extent.properties</button>
+        <button class="ct" onclick="sc(4,2)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/utils/ScreenshotUtil.java</button>
+        <button class="ct" onclick="sc(4,3)"><span class="lang-pill lang-java">.java</span> src/test/java/com/learn/base/BaseTest.java</button>
+        <button class="ct" onclick="sc(4,4)"><span class="lang-pill lang-txt">.txt</span> reports-output.txt</button>
+        <button class="ct" onclick="sc(4,5)"><span class="lang-pill lang-md">.md</span> framework-best-practices.md</button>
+      </div>
+      <div class="cp active" id="c4-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/runners/TestRunner.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.runners;
+
+import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
+
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue     = {"com.learn.stepdefs", "com.learn.hooks"},
+    plugin   = {
+        "pretty",
+        "html:target/cucumber.html",
+        "json:target/cucumber.json",
+        // Spark / Extent adapter via aventstack ChainTest
+        "com.aventstack.chaintest.plugins.ChainTestCucumberListener:test-output/chaintest"
+    },
+    monochrome = true
+)
+public class TestRunner extends AbstractTestNGCucumberTests {
+}</code></pre>
+      </div>
+      <div class="cp" id="c4-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-properties">●</span>
+          <span class="file-name">src/test/resources/extent.properties</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># Configuration for Extent / Spark report
+extent.reporter.spark.start=true
+extent.reporter.spark.out=test-output/SparkReport/Spark.html
+screenshot.dir=test-output/SparkReport/screenshots/
+screenshot.rel.path=./screenshots/</code></pre>
+      </div>
+      <div class="cp" id="c4-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/utils/ScreenshotUtil.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.utils;
+
+import io.cucumber.java.Scenario;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+
+public class ScreenshotUtil {
+
+    public static void attachOnFailure(Scenario scenario, WebDriver driver) {
+        // Only attach when the scenario failed — saves disk and noise
+        if (scenario.isFailed() &amp;&amp; driver != null) {
+            byte[] png = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+            scenario.attach(png, "image/png", scenario.getName());
+        }
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c4-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-java">●</span>
+          <span class="file-name">src/test/java/com/learn/base/BaseTest.java</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-java">package com.learn.base;
+
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+
+public class BaseTest {
+
+    @BeforeMethod
+    public void setUp() {
+        // Driver launched lazily via DriverFactory.getDriver()
+        DriverFactory.getDriver();
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        DriverFactory.quitDriver();
+    }
+
+    protected WebDriver driver() {
+        return DriverFactory.getDriver();
+    }
+}</code></pre>
+      </div>
+      <div class="cp" id="c4-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">reports-output.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">After running TestRunner you will find:
+
+  target/cucumber.html              -&gt; Cucumber HTML report (humans)
+  target/cucumber.json              -&gt; Cucumber JSON report (tools)
+  test-output/SparkReport/Spark.html-&gt; Extent Spark report (stakeholders)
+
+In Jenkins (pipeline snippet):
+  post {
+    always {
+      archiveArtifacts artifacts: 'target/cucumber.*, test-output/**', allowEmptyArchive: true
+      publishHTML(target: [reportDir: 'target', reportFiles: 'cucumber.html', reportName: 'Cucumber Report'])
+    }
+  }</code></pre>
+      </div>
+      <div class="cp" id="c4-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">framework-best-practices.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># BDD + Selenium Framework — 10 Maintainable Rules
+
+1. **Selenium Manager** for drivers — no manual chromedriver downloads.
+2. **DriverFactory + ThreadLocal** for parallel-safe WebDriver.
+3. **Page Object Model** — all UI clicks live in page classes.
+4. **Thin step definitions** — call page methods, do not click.
+5. **Explicit waits** with Duration.ofSeconds, never Thread.sleep.
+6. **Cucumber Expressions** over raw regex.
+7. **Hooks** for browser launch, screenshot on failure, browser quit.
+8. **Tag vocabulary** documented in TAGS.md (@smoke, @regression, @wip).
+9. **Reports archived** in CI (html + json + Spark).
+10. **Living documentation** — every passing run is the spec.</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Always configure at least html and json Cucumber plugins.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Add Extent Spark reporter for stakeholder-friendly reports.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Attach screenshots only on failure to save disk and time.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Treat every run&#x27;s <span class="hl-kw">HTML report</span> as living documentation.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep <span class="hl-kw">WebDriver</span> creation centralized in DriverFactory (ThreadLocal).</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw"><span class="hl-kw">Selenium</span> Manager</span> (<span class="hl-kw">Selenium</span> 4) — no manual driver downloads.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Move all UI actions into Page Objects.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep step definitions short and business-focused.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Avoid Thread.sleep — use explicit waits in Page Objects.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Archive HTML + JSON reports in CI as build artifacts.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. What is living documentation? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Documentation that comes from your passing feature files, so it never goes stale.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. How do you attach a screenshot to a Cucumber report? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Capture bytes with TakesScreenshot and call scenario.attach(bytes, &quot;image/png&quot;, name) inside @After.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. Why use Extent Spark with Cucumber? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Because it gives a modern themed <span class="hl-kw">HTML report</span> that stakeholders find easy to read.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. How is the report published in Jenkins? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Archive HTML + JSON via archiveArtifacts, then use publishHTML to surface the report on the build page.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Top one rule for a maintainable BDD + Selenium framework? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Keep step definitions thin — push UI logic into Page Objects and infrastructure logic into helpers.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+    </div>
+  </div>
+
+  <!-- Script Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    // Bind local accordion Q&A toggle click handler immediately to prevent portal-enhance.js double-toggle
+    document.querySelectorAll('.qq').forEach(q => {
+      q.dataset.vrQaToggleDone = '1';
+      q.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const item = q.closest('.qi');
+        if (item) {
+          item.classList.toggle('open');
+        }
+      });
+    });
+
+    /* =====================================================================
+       LOCAL NAVIGATION ENGINE
+       ===================================================================== */
+    let cur = 0;
+    const cP = {
+      "0": [
+            "c0-0",
+            "c0-1",
+            "c0-2",
+            "c0-3",
+            "c0-4",
+            "c0-5"
+      ],
+      "1": [
+            "c1-0",
+            "c1-1",
+            "c1-2",
+            "c1-3",
+            "c1-4",
+            "c1-5"
+      ],
+      "2": [
+            "c2-0",
+            "c2-1",
+            "c2-2",
+            "c2-3",
+            "c2-4",
+            "c2-5"
+      ],
+      "3": [
+            "c3-0",
+            "c3-1",
+            "c3-2",
+            "c3-3",
+            "c3-4",
+            "c3-5"
+      ],
+      "4": [
+            "c4-0",
+            "c4-1",
+            "c4-2",
+            "c4-3",
+            "c4-4",
+            "c4-5"
+      ]
+};
+    const sNums = Array.from({length: 5}, (_, i) => i + 1);
+
+    function sw(n) {
+      cur = n;
+      // Toggle active classes on sections
+      for (let i = 0; i < 5; i++) {
+        const sec = document.getElementById('s' + i);
+        if (sec) {
+          if (i === n) {
+            sec.classList.add('active');
+          } else {
+            sec.classList.remove('active');
+          }
+        }
+      }
+      // Toggle active classes on tabs
+      const tabs = document.getElementById('sTabs').children;
+      for (let i = 0; i < tabs.length; i++) {
+        if (i === n) {
+          tabs[i].classList.add('active');
+        } else {
+          tabs[i].classList.remove('active');
+        }
+      }
+      upP();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function sc(sec, tab) {
+      const ids = cP[sec];
+      for (let i = 0; i < ids.length; i++) {
+        const panel = document.getElementById(ids[i]);
+        if (panel) {
+          if (i === tab) {
+            panel.classList.add('active');
+          } else {
+            panel.classList.remove('active');
+          }
+        }
+      }
+      const btns = document.getElementById('ctbar-' + sec).children;
+      for (let i = 0; i < btns.length; i++) {
+        if (i === tab) {
+          btns[i].classList.add('active');
+        } else {
+          btns[i].classList.remove('active');
+        }
+      }
+    }
+
+    function upP() {
+      const dots = document.getElementById('pd');
+      let dotHtml = '';
+      for (let i = 0; i < 5; i++) {
+        if (i < cur) {
+          dotHtml += '<span class="dot dn"></span>';
+        } else if (i === cur) {
+          dotHtml += '<span class="dot ac"></span>';
+        } else {
+          dotHtml += '<span class="dot td"></span>';
+        }
+      }
+      dots.innerHTML = dotHtml;
+      document.getElementById('pl').textContent = 'Session ' + (cur + 1) + ' of 5';
+    }
+
+    // Copy code helper
+    function copyPreText(btn) {
+      const pre = btn.closest('.cp').querySelector('pre');
+      const code = pre.querySelector('code');
+      const text = code ? code.innerText : pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.style.background = '#d1fae5';
+        btn.style.color = '#065f46';
+        setTimeout(() => {
+          btn.innerText = original;
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      upP();
+    });
+
+    // Prism MutationObserver for dynamic layouts
+    if (window.Prism) {
+      document.addEventListener('DOMContentLoaded', () => {
+        const observer = new MutationObserver((mutations) => {
+          let needsHighlight = false;
+          mutations.forEach(m => {
+            if (m.addedNodes.length) {
+              m.addedNodes.forEach(n => {
+                if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+              });
+            }
+          });
+          if (needsHighlight) { Prism.highlightAll(); }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      });
+    }
+  </script>
+  <script src="../portal-enhance.js"></script>
+</body>
+</html>
