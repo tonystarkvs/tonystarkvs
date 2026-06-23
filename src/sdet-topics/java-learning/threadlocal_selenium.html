@@ -1,0 +1,2911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selenium Java: ThreadLocal Mastery (Sessions 1 to 5)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  
+  <!-- CSS Styling matching ideal reference and contrast requirements -->
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --color-background-secondary: #f8fafc;
+      --color-border-tertiary: #cbd5e1;
+      --color-text-primary: #1e293b;
+      --color-text-secondary: #475569;
+      --border-radius-md: 6px;
+      --border-radius-lg: 8px;
+      --pc: #6C5CE7;
+      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Courier New', monospace;
+    }
+    body {
+      background: #f1f5f9;
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      padding: 1rem;
+    }
+    .hub {
+      padding: 1rem 0;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .pbar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .pp {
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      border: 1.5px solid;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .ph1 { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+    .ph2 { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+    .ph3 { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+    .ph4 { background: #FAECE7; color: #712B13; border-color: #F0997B; }
+    .ph5 { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
+
+    .stabs {
+      display: flex;
+      border-bottom: 1.5px solid var(--color-border-tertiary);
+      overflow-x: auto;
+      margin-bottom: 10px;
+    }
+    .stab {
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      border-bottom: 2.5px solid transparent;
+      margin-bottom: -1.5px;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+    .stab.active {
+      color: #ffffff;
+      border-bottom-color: #7F77DD;
+      background: #7F77DD;
+      border-radius: 6px 6px 0 0;
+    }
+    .stab:hover:not(.active) {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+
+    .prow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      background: #EEEDFE;
+      border: 1.5px solid #AFA9EC;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.dn { background: #1D9E75; }
+    .dot.ac { background: #7F77DD; }
+    .dot.td { background: #D3D1C7; }
+    .plbl {
+      font-size: 11px;
+      color: #3C3489;
+      font-weight: 500;
+    }
+
+    /* Section wrapper styling with thick 4-sided borders */
+    html body div.section {
+      display: none !important;
+      border: 2.5px solid var(--pc) !important;
+      border-radius: 10px;
+      background: #ffffff;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    html body div.section.active, html body div.section.visible {
+      display: block !important;
+    }
+
+    .obanner {
+      background: #faf5ff;
+      padding: 16px;
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+    .obanner h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #3730a3;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      border-left: 4px solid var(--pc) !important;
+      padding-left: 12px !important;
+    }
+    .obanner p {
+      font-size: 13px;
+      color: #312e81;
+      line-height: 1.6;
+    }
+
+    .sec {
+      padding: 16px;
+      border-bottom: 1.5px solid var(--color-border-tertiary);
+    }
+    .sec:last-child {
+      border-bottom: none;
+    }
+    .sec h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--pc) !important;
+      padding-left: 12px !important;
+    }
+
+    /* What/Why Table style */
+    .abox {
+      background: #faf5ff;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-lg);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .dr {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      padding: 8px 0;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .dr:last-child {
+      border-bottom: none;
+    }
+
+    /* Glossary grid style */
+    .glosgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media(max-width: 640px) {
+      .glosgrid, .igrid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    .gitem {
+      background: #faf5ff;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .gitem:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .gkw {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3730a3;
+      font-family: var(--font-mono);
+      margin-bottom: 4px;
+    }
+    .gdef {
+      font-size: 11.5px;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* One-Liners */
+    .igrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .qp {
+      background: #f8fafc;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--color-text-primary);
+      line-height: 1.5;
+      position: relative;
+      padding-left: 28px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .qp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .qp:before {
+      content: "❝";
+      position: absolute;
+      left: 10px;
+      top: 8px;
+      color: var(--pc);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    /* Diagram Placeholders */
+    .diagram-wrap {
+      overflow-x: auto;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1 !important;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 10px 0;
+    }
+    .thread-svg {
+      display: block;
+    }
+    .td-thread { fill: #eff6ff; stroke: #3b82f6; stroke-width: 1.4; }
+    .td-thread-text { fill: #1e3a8a; font-size: 11px; font-weight: 700; font-family: var(--font-sans); }
+    .td-manager { fill: #faf5ff; stroke: var(--pc); stroke-width: 1.6; }
+    .td-manager-text { fill: #3730a3; font-size: 11px; font-weight: 800; font-family: var(--font-sans); }
+    .td-driver { fill: #e1f5ee; stroke: #16a34a; stroke-width: 1.4; }
+    .td-driver-text { fill: #085041; font-size: 10.5px; font-weight: 700; font-family: var(--font-sans); }
+    .td-page { fill: #fffbeb; stroke: #d97706; stroke-width: 1.4; }
+    .td-page-text { fill: #92400e; font-size: 10.5px; font-weight: 700; font-family: var(--font-sans); }
+    .td-page-text.small { font-size: 9px; font-weight: 600; }
+    .td-line { stroke: #94a3b8; stroke-width: 1.3; }
+
+    /* Flowrow styles */
+    .flowrow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 12px 0;
+      border-radius: var(--border-radius-md);
+      overflow-x: auto;
+      border: 1.5px solid #cbd5e1 !important;
+    }
+    .fstep {
+      flex: 1;
+      min-width: 150px;
+      padding: 12px 10px;
+      font-size: 11px;
+      text-align: center;
+      border-right: 1.5px solid #cbd5e1 !important;
+      background: #ffffff;
+    }
+    .fstep:last-child {
+      border-right: none !important;
+    }
+    .fstep .fn {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: var(--pc);
+    }
+    .fstep .fd {
+      color: var(--color-text-secondary);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .arr {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      color: #94a3b8;
+      font-weight: 700;
+      font-size: 14px;
+      background: #f8fafc;
+      flex-shrink: 0;
+      border-right: 1.5px solid #cbd5e1 !important;
+    }
+
+    /* Mock Code Editor */
+    .cs {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1 !important;
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      margin: 12px 0;
+    }
+    .csh {
+      display: flex;
+      align-items: center !important;
+      gap: 8px;
+      padding: 8px 14px;
+      background: #f1f5f9;
+      border-bottom: 1.5px solid #cbd5e1;
+    }
+    .csh span {
+      font-size: 11.5px !important;
+      font-weight: 700 !important;
+      color: #334155;
+      text-transform: uppercase;
+      font-family: var(--font-sans) !important;
+    }
+    .dr2 {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .md {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .mr { background: #ff5f57; }
+    .my { background: #febc2e; }
+    .mg { background: #28c840; }
+    .ctbar {
+      display: flex;
+      background: #e2e8f0;
+      border-bottom: 1.5px solid #cbd5e1;
+      overflow-x: auto;
+    }
+    .ct {
+      padding: 8px 12px;
+      font-size: 11px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #475569;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      border-bottom: 2px solid transparent;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .ct.active {
+      color: #0969da;
+      border-bottom-color: #0969da;
+      background: #ffffff;
+      font-weight: 700;
+    }
+    .ct:hover:not(.active) {
+      background: #cbd5e1;
+      color: #1e293b;
+      transform: translateY(-1px);
+    }
+    .cp {
+      display: none;
+      padding: 0;
+      background: #ffffff;
+    }
+    .cp.active {
+      display: block;
+    }
+    .cp-sub-header {
+      padding: 8px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .file-name {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-secondary);
+      font-weight: 700;
+    }
+    .file-dot {
+      color: #0969da;
+      margin-right: 4px;
+    }
+    .cpbtn {
+      padding: 3px 8px;
+      font-size: 11px;
+      background: #ffffff;
+      border: 1px solid var(--color-border-tertiary);
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .cpbtn:hover {
+      background: #f1f5f9;
+      color: var(--color-text-primary);
+    }
+    pre {
+      margin: 0 !important;
+      padding: 12px 14px !important;
+      font-family: var(--font-mono) !important;
+      font-size: 11.5px !important;
+      line-height: 1.6 !important;
+      overflow-x: auto !important;
+      border: none !important; /* Disables outer borders inside .cs to avoid double borders */
+    }
+
+    /* Best Practices list with green 4-sided borders */
+    .bpl {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+    .bpl li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12.5px;
+      color: var(--color-text-primary);
+      line-height: 1.5;
+      background: #f0fdf4;
+      border: 2px solid #16a34a !important;
+      border-radius: var(--border-radius-md);
+      padding: 10px;
+    }
+    .bpc {
+      background: #16a34a;
+      color: #ffffff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Interview Prep Q&A with 2px teal borders */
+    .ql {
+      display: grid;
+      gap: 10px;
+    }
+    .qi {
+      background: #ffffff;
+      border: 2px solid #0d9488 !important;
+      border-radius: var(--border-radius-md);
+      padding: 12px 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .qi:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .qq {
+      font-size: 13px;
+      font-weight: 700;
+      color: #b91c1c; /* Dark red for questions */
+      margin-bottom: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-sans);
+    }
+    .qq i {
+      transition: transform 0.2s ease;
+    }
+    .qi.open .qq i {
+      transform: rotate(180deg) !important;
+    }
+    .qa {
+      font-size: 12.5px;
+      color: #1e3a8a; /* Dark blue for answers */
+      line-height: 1.6;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 8px;
+      margin-top: 6px;
+      font-family: var(--font-sans);
+    }
+
+    /* Technical keyword highlighting */
+    .hl-kw {
+      background: #ffe4e6;
+      color: #9f1239;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.9em;
+      border: 0.5px solid #f8bbd0;
+      display: inline-block;
+      line-height: 1.2;
+    }
+
+    /* Disabled left border overrides for nested components */
+    .qi h3, .gitem h3, .cs h3, .qp h3 {
+      border: none !important;
+      border-left: none !important;
+      padding-left: 0 !important;
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../responsive.css">
+
+  <!-- Prism High Contrast CSS styling -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+</head>
+<body class="line-numbers">
+<div class="hub">
+  
+  <!-- Topic Header tags -->
+  <div class="pbar">
+    <span class="pp ph1">S1 · ThreadLocal Fundamentals</span>
+    <span class="pp ph2">S2 · DriverManager Design Pattern</span>
+    <span class="pp ph3">S3 · Page Objects &amp; WaitUtils</span>
+    <span class="pp ph4">S4 · Parallel Execution (5 Threads)</span>
+    <span class="pp ph5">S5 · Advanced Patterns (10 Threads)</span>
+  </div>
+
+  <!-- Session Tabs Selector -->
+  <div class="stabs" id="sTabs">
+    <button class="stab active" onclick="sw(0)">S1 · ThreadLocal Fundamentals</button>
+    <button class="stab" onclick="sw(1)">S2 · DriverManager Pattern</button>
+    <button class="stab" onclick="sw(2)">S3 · Page/WaitUtils Integration</button>
+    <button class="stab" onclick="sw(3)">S4 · 5-Thread Parallel Flow</button>
+    <button class="stab" onclick="sw(4)">S5 · Advanced &amp; 10-Thread Flow</button>
+  </div>
+
+  <!-- Progress dots bar -->
+  <div class="prow">
+    <span id="pd"></span>
+    <span class="plbl" id="pl">Session 1 of 5</span>
+  </div>
+
+  <!-- Main Sessions Container -->
+  <div id="allS">
+
+    <!-- ══════════════════════ SESSION 1 ══════════════════════ -->
+    <div id="s0" class="section active">
+      <div class="obanner">
+        <h2>Selenium Java: ThreadLocal Fundamentals &amp; Driver Lifecycle</h2>
+        <p><span class="hl-kw">ThreadLocal</span> is a core <span class="hl-kw">java.lang</span> class that gives every thread its own private, isolated copy of a variable while all threads still refer to it through the exact same <span class="hl-kw">ThreadLocal</span> reference. In Selenium parallel automation, <span class="hl-kw">ThreadLocal&lt;WebDriver&gt;</span> is the standard mechanism that hands each test thread its own browser session — no shared state, no race conditions, no cross-test bleed.</p>
+      </div>
+
+      <div class="sec">
+        <h3>What / Why / When / Where / How</h3>
+        <div class="abox">
+          <div class="dr">
+            <span style="color:#3C3489; font-weight:700; width:65px; flex-shrink:0">What</span>
+            <span>A <span class="hl-kw">java.lang.ThreadLocal&lt;T&gt;</span> object that stores a separate value of type T per calling thread, keyed implicitly against <span class="hl-kw">Thread.currentThread()</span>.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#085041; font-weight:700; width:65px; flex-shrink:0">Why</span>
+            <span>Removes shared/static <span class="hl-kw">WebDriver</span> from the equation so parallel threads never overwrite each other's browser session — eliminates <span class="hl-kw">StaleElementReferenceException</span> and session-bleed bugs.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#712B13; font-weight:700; width:65px; flex-shrink:0">When</span>
+            <span>Declared once when the framework loads; <span class="hl-kw">set()</span> happens in <span class="hl-kw">@BeforeMethod</span>, <span class="hl-kw">get()</span> is called throughout the test/page/util classes, and <span class="hl-kw">remove()</span> happens in <span class="hl-kw">@AfterMethod</span>.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#633806; font-weight:700; width:65px; flex-shrink:0">Where</span>
+            <span>Lives only inside a dedicated <span class="hl-kw">DriverManager</span> utility class — never declared inside a Test class or a Page class directly.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#0C447C; font-weight:700; width:65px; flex-shrink:0">How</span>
+            <span><span class="hl-kw">ThreadLocal&lt;WebDriver&gt; tl = new ThreadLocal&lt;&gt;();</span> → <span class="hl-kw">tl.set(new ChromeDriver())</span> → <span class="hl-kw">tl.get()</span> → <span class="hl-kw">tl.remove()</span>.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Keyword Glossary</h3>
+        <div class="glosgrid">
+          <div class="gitem">
+            <div class="gkw">ThreadLocal&lt;T&gt;</div>
+            <div class="gdef">Java class providing per-thread isolated storage for a value of type T; same object reference, different value per thread.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">set(T value)</div>
+            <div class="gdef">Stores the value in the calling thread's own private slot — invisible to every other thread.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">get()</div>
+            <div class="gdef">Retrieves the value stored for the calling thread; returns null if that thread never called set() (and no initial supplier exists).</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">remove()</div>
+            <div class="gdef">Clears the calling thread's stored value so it can be garbage collected — critical cleanup step, easy to forget.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">withInitial(Supplier)</div>
+            <div class="gdef">Factory method that lazily produces a default value the first time a thread calls get() without ever calling set().</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">ThreadLocalMap</div>
+            <div class="gdef">The actual internal hash-map structure that lives inside the Thread object itself and stores every ThreadLocal entry for that thread.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Thread.currentThread()</div>
+            <div class="gdef">Returns the Thread instance executing the current line of code — the implicit key behind every ThreadLocal lookup.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Memory Leak (TL)</div>
+            <div class="gdef">Happens when set() is called but remove() never is, especially dangerous because TestNG/JUnit thread pools recycle OS threads across tests.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Static WebDriver</div>
+            <div class="gdef">The legacy anti-pattern of declaring driver as a static field — all parallel threads share and corrupt the same instance.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Thread Confinement</div>
+            <div class="gdef">A concurrency design principle: data is only ever touched by the thread that owns it, so no locking is needed.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Interview One-Liners</h3>
+        <div class="igrid">
+          <div class="qp">ThreadLocal gives every test thread its own private WebDriver — same variable name, completely different object per thread.</div>
+          <div class="qp">Without remove(), thread-pooled test runners can leak WebDriver instances between runs, because OS-level threads get reused by TestNG's executor.</div>
+          <div class="qp">Static WebDriver fields fail under parallel execution because every thread overwrites the same reference; ThreadLocal isolates each one instead.</div>
+          <div class="qp">get() before set() simply returns null unless you used ThreadLocal.withInitial() to supply a lazy default.</div>
+          <div class="qp">A ThreadLocal's storage actually lives inside the Thread object's own ThreadLocalMap — the ThreadLocal instance is only ever used as the lookup key.</div>
+          <div class="qp">Always pair set() in @BeforeMethod with remove() in @AfterMethod — it's the exact same discipline as opening and closing a resource.</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Concepts — Architecture &amp; Flow</h3>
+        <div class="concept-block">
+          <h4 style="font-size:12px; margin-bottom:6px">1. Where ThreadLocal data actually lives</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">A common misconception is that the ThreadLocal object itself stores the values. It does not. Every <span class="hl-kw">Thread</span> object carries its own internal <span class="hl-kw">ThreadLocalMap</span>, and the ThreadLocal instance is merely used as a (weakly-referenced) key into that map. That is exactly why two threads calling <span class="hl-kw">driver.get()</span> on the same static ThreadLocal reference receive two completely different WebDriver objects — each thread is really reading from its own private map.</p>
+        </div>
+        <div class="diagram-placeholder" data-type="map"></div>
+
+        <div class="concept-block" style="margin-top:16px">
+          <h4 style="font-size:12px; margin-bottom:6px">2. Driver isolation across threads</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">In a parallel Selenium run, every thread independently calls <span class="hl-kw">DriverManager.setDriver()</span>, which stores a brand-new browser instance into that thread's ThreadLocalMap slot. From that point, any class on that thread — Test, Page, or WaitUtils — calling <span class="hl-kw">DriverManager.getDriver()</span> transparently receives the correct, isolated instance.</p>
+        </div>
+        <div class="diagram-placeholder" data-type="thread" data-threads="3"></div>
+
+        <div class="concept-block" style="margin-top:16px">
+          <h4 style="font-size:12px; margin-bottom:6px">3. Driver lifecycle, start to finish</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">Every test method follows the same four-beat lifecycle below — declare once, set per test, get repeatedly, remove always.</p>
+        </div>
+        <div class="flowrow">
+          <div class="fstep"><div class="fn">1. Declare</div><div class="fd"><span class="hl-kw">static ThreadLocal&lt;&gt;</span><br>One static field in DriverManager, created once at class-load time.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">2. Set</div><div class="fd"><span class="hl-kw">driver.set(new ChromeDriver())</span><br>@BeforeMethod creates a fresh browser and stores it for this thread.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">3. Get</div><div class="fd"><span class="hl-kw">driver.get()</span><br>Test body, Page classes and WaitUtils all pull the same per-thread instance.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">4. Remove</div><div class="fd"><span class="hl-kw">driver.remove()</span><br>@AfterMethod clears the slot so the thread can be safely reused.</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Best Practices Checklist</h3>
+        <ul class="bpl">
+          <li><span class="bpc">✓</span><span>Always declare <span class="hl-kw">ThreadLocal&lt;WebDriver&gt;</span> as <span class="hl-kw">private static final</span> inside a dedicated DriverManager class.</span></li>
+          <li><span class="bpc">✓</span><span>Never expose the raw ThreadLocal object — only expose static <span class="hl-kw">getDriver()</span> / <span class="hl-kw">setDriver()</span> / <span class="hl-kw">unload()</span> wrapper methods.</span></li>
+          <li><span class="bpc">✓</span><span>Always call <span class="hl-kw">remove()</span> in <span class="hl-kw">@AfterMethod(alwaysRun = true)</span>, never rely on JVM shutdown to clean it up.</span></li>
+          <li><span class="bpc">✓</span><span>Never fall back to a static WebDriver field "just for one quick test" — it silently breaks the moment parallelism is enabled.</span></li>
+          <li><span class="bpc">✓</span><span>Use <span class="hl-kw">withInitial()</span> cautiously for WebDriver — prefer explicit set() so you control browser type, capabilities and timing.</span></li>
+          <li><span class="bpc">✓</span><span>Wrap driver creation/teardown in try-finally so remove() still runs even when a test throws.</span></li>
+          <li><span class="bpc">✓</span><span>Never store ThreadLocal as a non-static instance field on an object that gets recreated per test — keep it static at class level.</span></li>
+          <li><span class="bpc">✓</span><span>Log <span class="hl-kw">Thread.currentThread().getId()</span> next to the driver's identity hash code during debugging to prove isolation.</span></li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <h3>Interview Prep — SDET Q&amp;A</h3>
+        <div class="ql">
+          <div class="qi">
+            <div class="qq">Q1. Why can't we just use a static WebDriver field for parallel Selenium execution? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">A static field belongs to the class, not to any thread, so every parallel thread reads and writes the exact same reference. The last thread to call set() effectively "steals" the driver from every other thread, producing NoSuchSessionException, randomly-failing tests, and one thread silently driving another thread's browser. ThreadLocal solves this by giving each thread its own private copy behind that same reference.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q2. What happens if you forget to call remove() on a ThreadLocal in a TestNG parallel suite? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">TestNG's thread pool reuses a fixed number of OS threads across many test methods/classes. If remove() is skipped, a stale WebDriver reference can remain attached to that thread's ThreadLocalMap entry after the test ends, preventing garbage collection of the old browser session and slowly leaking memory across a long suite run.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q3. Where, internally, is a ThreadLocal value actually stored? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Not inside the ThreadLocal object itself — inside a ThreadLocalMap that belongs to the Thread object. The ThreadLocal instance is only used as a weakly-referenced lookup key into that per-thread map, which is why remove() matters even though the key can eventually be garbage collected on its own.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q4. What's the difference between get() returning null and get() throwing an exception? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">get() never throws for a missing entry. It simply returns null unless withInitial() supplied a default supplier. This means framework code calling DriverManager.getDriver() should defensively null-check (or guarantee set() always runs first in @BeforeMethod) before using the driver.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q5. How would you prove driver isolation between two parallel threads while debugging? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Log Thread.currentThread().getId() together with System.identityHashCode(driver.get()) from inside a test. Two parallel threads producing two different hash codes for the "same" getDriver() call confirms each thread is reading its own private ThreadLocalMap entry, not a shared object.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Code Examples — 10 Files</h3>
+        <div class="cs">
+          <div class="csh">
+            <div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+            <span>CODE EXAMPLES — S1 · ThreadLocal Fundamentals</span>
+          </div>
+          <div class="ctbar" id="ctbar-0">
+            <button class="ct active" onclick="sc(0,0)">1. ThreadLocal Basics</button>
+            <button class="ct" onclick="sc(0,1)">2. Set &amp; Get Driver</button>
+            <button class="ct" onclick="sc(0,2)">3. Remove Driver</button>
+            <button class="ct" onclick="sc(0,3)">4. withInitial()</button>
+            <button class="ct" onclick="sc(0,4)">5. Null-Check Pitfall</button>
+            <button class="ct" onclick="sc(0,5)">6. Memory Leak Demo</button>
+            <button class="ct" onclick="sc(0,6)">7. ThreadLocal vs Static</button>
+            <button class="ct" onclick="sc(0,7)">8. ThreadLocalMap Internals</button>
+            <button class="ct" onclick="sc(0,8)">9. Simple DriverManager v1</button>
+            <button class="ct" onclick="sc(0,9)">10. Thread Id Logger</button>
+          </div>
+
+          <!-- Code Content Panels -->
+          <div class="cp active" id="c0-0">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ThreadLocalBasics.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Declaring a ThreadLocal<WebDriver> — the absolute basics ===
+import org.openqa.selenium.WebDriver;
+
+public class ThreadLocalBasics {
+
+    // One static field shared by reference, but its VALUE is per-thread
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
+    public static void main(String[] args) {
+        // Each thread that touches "tlDriver" gets its OWN slot
+        // No two threads will ever see each other's WebDriver here
+        System.out.println("ThreadLocal declared for thread: "
+                + Thread.currentThread().getId());
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c0-1">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>SetAndGetDriver.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === set() stores a value for the CURRENT thread only ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class SetAndGetDriver {
+
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
+    public static void setDriver() {
+        // Creates a brand-new browser and stores it in THIS thread's slot
+        tlDriver.set(new ChromeDriver());
+    }
+
+    public static WebDriver getDriver() {
+        // Returns the WebDriver belonging to the CALLING thread
+        return tlDriver.get();
+    }
+
+    public static void demo() {
+        setDriver();                 // store driver for current thread
+        WebDriver d = getDriver();   // fetch it back, same thread
+        System.out.println("Driver hash: " + System.identityHashCode(d)
+                + " on thread " + Thread.currentThread().getId());
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c0-2">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>RemoveDriver.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === remove() — the step everyone forgets ===
+import org.openqa.selenium.WebDriver;
+
+public class RemoveDriver {
+
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
+    public static void cleanup() {
+        WebDriver d = tlDriver.get();
+        if (d != null) {
+            d.quit();        // 1. close the actual browser process first
+        }
+        tlDriver.remove();   // 2. THEN clear this thread's map entry
+        // Skipping remove() leaves the browser reference reachable
+        // from the thread's ThreadLocalMap until the thread itself dies
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c0-3">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>WithInitialDemo.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === withInitial() supplies a lazy default the first time get() runs ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class WithInitialDemo {
+
+    // Supplier runs ONCE PER THREAD, only on the first get() call
+    private static ThreadLocal<WebDriver> tlDriver =
+            ThreadLocal.withInitial(() -> new ChromeDriver());
+
+    public static WebDriver getDriver() {
+        // No explicit set() needed — first call auto-creates the driver
+        return tlDriver.get();
+    }
+
+    // CAUTION: for WebDriver this hides WHEN/HOW the browser is created
+    // Prefer explicit setDriver() in real frameworks (see Session 2)
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c0-4">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>NullCheckPitfall.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === get() WITHOUT set() returns null — not an exception ===
+import org.openqa.selenium.WebDriver;
+
+public class NullCheckPitfall {
+
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
+    public static void riskyUsage() {
+        WebDriver d = tlDriver.get();   // nobody called set() on this thread
+        // d is now null — calling d.get("url") throws NullPointerException
+        if (d == null) {
+            throw new IllegalStateException(
+                "Driver not initialized for thread "
+                + Thread.currentThread().getId()
+                + " — did @BeforeMethod run setDriver()?");
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c0-5">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>MemoryLeakDemo.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === How a leak happens in a reused thread pool ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class MemoryLeakDemo {
+
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
+    public static void leakyTest() {
+        tlDriver.set(new ChromeDriver());
+        // ... test runs ...
+        // BUG: forgot tlDriver.remove() here!
+    }
+
+    // TestNG thread-count=5 means only 5 physical worker threads exist.
+    // Thread #3 runs Test A (leaks driver), later runs Test B —
+    // Test B's thread STILL holds Test A's old ChromeDriver reference
+    // pinned in memory until that worker thread eventually terminates.
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c0-6">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ThreadLocalVsStaticDriver.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Side-by-side: the anti-pattern vs the correct pattern ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class ThreadLocalVsStaticDriver {
+
+    // ANTI-PATTERN — shared by ALL threads, corrupted under parallel runs
+    public static WebDriver staticDriver;
+
+    // CORRECT — isolated per thread, safe under any thread-count
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
+    public static void badInit() {
+        staticDriver = new ChromeDriver();   // every thread overwrites this
+    }
+
+    public static void goodInit() {
+        tlDriver.set(new ChromeDriver());    // each thread gets its own
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c0-7">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ThreadLocalMapInternalsDemo.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Conceptual illustration of what the JDK does internally ===
+public class ThreadLocalMapInternalsDemo {
+
+    // Inside java.lang.Thread (simplified, JDK source):
+    //
+    //   class Thread {
+    //       ThreadLocal.ThreadLocalMap threadLocals = null;
+    //   }
+    //
+    // Inside java.lang.ThreadLocal (simplified):
+    //
+    //   public T get() {
+    //       Thread t = Thread.currentThread();
+    //       ThreadLocalMap map = t.threadLocals;     // PER-THREAD map
+    //       Entry e = map.getEntry(this);             // "this" = the key
+    //       return (T) e.value;
+    //   }
+    //
+    // Key takeaway: the WebDriver value lives inside the Thread,
+    // not inside the static ThreadLocal field that you declared.
+    public static void explain() {
+        System.out.println("Each Thread owns its own ThreadLocalMap.");
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c0-8">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>SimpleDriverManagerV1.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === First, minimal version of DriverManager (refined in Session 2) ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class SimpleDriverManagerV1 {
+
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
+    // Private constructor — this class should never be instantiated
+    private SimpleDriverManagerV1() { }
+
+    public static void setDriver() {
+        tlDriver.set(new ChromeDriver());
+    }
+
+    public static WebDriver getDriver() {
+        return tlDriver.get();
+    }
+
+    public static void unload() {
+        if (tlDriver.get() != null) {
+            tlDriver.get().quit();
+        }
+        tlDriver.remove();
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c0-9">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ThreadIdHashLogger.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Prove isolation by logging thread id + driver identity hash ===
+import org.openqa.selenium.WebDriver;
+
+public class ThreadIdHashLogger {
+
+    public static void logDriverState(WebDriver driver) {
+        long threadId = Thread.currentThread().getId();
+        int driverHash = System.identityHashCode(driver);
+
+        // Two parallel threads must NEVER print the same driverHash
+        System.out.println("[Thread-" + threadId + "] "
+                + "WebDriver identity hash = " + driverHash);
+    }
+}</code></pre>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ SESSION 2 ══════════════════════ -->
+    <div id="s1" class="section">
+      <div class="obanner">
+        <h2>Selenium Java: DriverManager Design Pattern — Singleton + ThreadLocal</h2>
+        <p>A production framework never scatters <span class="hl-kw">ThreadLocal&lt;WebDriver&gt;</span> logic across Test classes. Instead it centralises creation, storage and teardown inside one non-instantiable <span class="hl-kw">DriverManager</span> class, backed by a <span class="hl-kw">DriverFactory</span> for browser construction, and wired into a <span class="hl-kw">BaseTest</span> via <span class="hl-kw">@BeforeMethod</span> / <span class="hl-kw">@AfterMethod</span> hooks — so every Test, Page and WaitUtils class calls the exact same static accessor.</p>
+      </div>
+
+      <div class="sec">
+        <h3>What / Why / When / Where / How</h3>
+        <div class="abox">
+          <div class="dr">
+            <span style="color:#3C3489; font-weight:700; width:65px; flex-shrink:0">What</span>
+            <span>A utility class wrapping <span class="hl-kw">ThreadLocal&lt;WebDriver&gt;</span> behind static <span class="hl-kw">getDriver()</span>/<span class="hl-kw">setDriver()</span>/<span class="hl-kw">unload()</span> methods, plus a <span class="hl-kw">DriverFactory</span> that builds the correct browser instance.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#085041; font-weight:700; width:65px; flex-shrink:0">Why</span>
+            <span>Centralises driver creation/teardown in one place so every Test, Page and WaitUtils class shares identical thread-safety logic instead of re-implementing it.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#712B13; font-weight:700; width:65px; flex-shrink:0">When</span>
+            <span><span class="hl-kw">setDriver()</span> runs once per test method in <span class="hl-kw">@BeforeMethod</span>; <span class="hl-kw">getDriver()</span> is called repeatedly through the test/page/util layers; <span class="hl-kw">unload()</span> runs in <span class="hl-kw">@AfterMethod</span>.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#633806; font-weight:700; width:65px; flex-shrink:0">Where</span>
+            <span>DriverManager sits in a <span class="hl-kw">utils/core</span> package; BaseTest extends it; Page and WaitUtils classes call <span class="hl-kw">DriverManager.getDriver()</span> directly — they never hold their own field.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#0C447C; font-weight:700; width:65px; flex-shrink:0">How</span>
+            <span><span class="hl-kw">DriverFactory.createDriver(browser)</span> → <span class="hl-kw">DriverManager.setDriver(instance)</span> → used everywhere via <span class="hl-kw">getDriver()</span> → <span class="hl-kw">DriverManager.unload()</span> in @AfterMethod.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Keyword Glossary</h3>
+        <div class="glosgrid">
+          <div class="gitem">
+            <div class="gkw">DriverManager</div>
+            <div class="gdef">Non-instantiable static utility class that owns the ThreadLocal&lt;WebDriver&gt; and exposes get/set/unload.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">DriverFactory</div>
+            <div class="gdef">Separate class responsible only for constructing the right WebDriver implementation (Chrome/Firefox/Edge) from a browser name.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">BaseTest</div>
+            <div class="gdef">Parent class every Test class extends; houses the @BeforeMethod/@AfterMethod hooks that call DriverManager.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">@BeforeMethod</div>
+            <div class="gdef">TestNG annotation — runs before every single @Test method, ideal place to call setDriver().</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">@AfterMethod</div>
+            <div class="gdef">TestNG annotation — runs after every @Test method, ideal place to call unload()/remove().</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Private constructor</div>
+            <div class="gdef">Pattern used on DriverManager to physically prevent anyone from doing "new DriverManager()".</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">ConfigReader</div>
+            <div class="gdef">Utility that reads browser name / environment / headless flag from a properties or YAML file.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">BrowserType (enum)</div>
+            <div class="gdef">Type-safe enum (CHROME, FIREFOX, EDGE) used instead of raw Strings to avoid typo-driven bugs.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">unload()</div>
+            <div class="gdef">DriverManager method that quits the browser AND calls ThreadLocal.remove() in the correct order.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Thread-safe init</div>
+            <div class="gdef">Guard logic ensuring setDriver() never silently overwrites (and leaks) an already-running driver on the same thread.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Interview One-Liners</h3>
+        <div class="igrid">
+          <div class="qp">DriverManager is the single source of truth — no Test or Page class should ever instantiate a WebDriver directly.</div>
+          <div class="qp">DriverFactory only knows HOW to build a browser; DriverManager only knows HOW to store and hand it back per thread — single responsibility, split clean.</div>
+          <div class="qp">A private constructor on DriverManager is a one-line guarantee that nobody accidentally creates a stateful instance of what should be a stateless static utility.</div>
+          <div class="qp">Calling setDriver() twice on the same thread without quitting the first browser is a textbook leak — always quit-before-overwrite.</div>
+          <div class="qp">BaseTest's @BeforeMethod and @AfterMethod are the only two places in the whole framework allowed to call setDriver() and unload().</div>
+          <div class="qp">Using a BrowserType enum instead of a raw String for browser selection turns a runtime typo into a compile-time error.</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Concepts — Architecture &amp; Flow</h3>
+        <div class="concept-block">
+          <h4 style="font-size:12px; margin-bottom:6px">1. The three-layer architecture</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">Every Test class only ever talks to BaseTest. BaseTest only ever talks to DriverManager. DriverManager is the only class allowed to talk to DriverFactory. This strict layering is what makes the framework thread-safe by construction — nobody downstream can bypass the ThreadLocal.</p>
+        </div>
+        <div class="flowrow">
+          <div class="fstep"><div class="fn">Test Class</div><div class="fd">LoginPageTest, SearchTest, CheckoutTest...</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">BaseTest</div><div class="fd">@BeforeMethod / @AfterMethod hooks</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">DriverManager</div><div class="fd">Manages ThreadLocal&lt;WebDriver&gt;</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">DriverFactory</div><div class="fd">Creates Chrome, Firefox, or Edge sessions</div></div>
+        </div>
+
+        <div class="concept-block" style="margin-top:16px">
+          <h4 style="font-size:12px; margin-bottom:6px">2. Per-thread lifecycle inside a parallel run</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">When TestNG spins up parallel threads, each one independently walks through the exact same BaseTest hooks — calling DriverManager with no knowledge of any other thread doing the same thing simultaneously.</p>
+        </div>
+        <div class="diagram-placeholder" data-type="thread" data-threads="4"></div>
+
+        <div class="concept-block" style="margin-top:16px">
+          <h4 style="font-size:12px; margin-bottom:6px">3. setDriver → getDriver → unload, every test method</h4>
+        </div>
+        <div class="flowrow">
+          <div class="fstep"><div class="fn">1. Before</div><div class="fd">@BeforeMethod<br>BaseTest calls DriverFactory.createDriver() then DriverManager.setDriver().</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">2. During</div><div class="fd">DriverManager.getDriver()<br>Every Page/WaitUtils call inside the test fetches the same per-thread instance.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">3. After</div><div class="fd">@AfterMethod<br>BaseTest calls DriverManager.unload() — quits browser, then removes ThreadLocal entry.</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Best Practices Checklist</h3>
+        <ul class="bpl">
+          <li><span class="bpc">✓</span><span>Keep every DriverManager method <span class="hl-kw">static</span> and the class itself non-instantiable via a private constructor.</span></li>
+          <li><span class="bpc">✓</span><span>Always wrap driver creation in try/catch so a failed browser launch doesn't leave a half-initialised ThreadLocal entry.</span></li>
+          <li><span class="bpc">✓</span><span>Validate the browser parameter through a <span class="hl-kw">BrowserType</span> enum, never a raw String compared with <span class="hl-kw">.equals()</span>.</span></li>
+          <li><span class="bpc">✓</span><span>Guarantee <span class="hl-kw">unload()</span> runs even on test failure using <span class="hl-kw">@AfterMethod(alwaysRun = true)</span>.</span></li>
+          <li><span class="bpc">✓</span><span>Never expose the ThreadLocal field as <span class="hl-kw">public</span> or <span class="hl-kw">protected</span> — only the wrapper methods should be visible.</span></li>
+          <li><span class="bpc">✓</span><span>Log the WebDriver session id (from RemoteWebDriver) alongside the thread id for full execution traceability.</span></li>
+          <li><span class="bpc">✓</span><span>Support a headless toggle from configuration rather than hard-coding it inside DriverFactory.</span></li>
+          <li><span class="bpc">✓</span><span>Never call <span class="hl-kw">Thread.sleep()</span> inside DriverFactory — wait on actual browser-ready conditions instead.</span></li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <h3>Interview Prep — SDET Q&amp;A</h3>
+        <div class="ql">
+          <div class="qi">
+            <div class="qq">Q1. Why combine the Singleton-style static class with ThreadLocal instead of just a normal Singleton? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">A classic Singleton holds exactly one shared instance for the whole JVM — exactly what we must avoid for WebDriver under parallel execution. DriverManager is "singleton-shaped" (one class, static access, no public constructor) but the value it hands back is per-thread because the underlying storage is a ThreadLocal, not a single field.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q2. What happens if setDriver() is called twice on the same thread without quitting the previous browser? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">The ThreadLocal slot is simply overwritten with the new WebDriver reference. The previous ChromeDriver process is never told to quit() and becomes an orphaned browser process plus a leaked object reference — DriverManager.setDriver() should always check for and quit() any existing driver before overwriting.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q3. Why does DriverFactory exist as a separate class from DriverManager? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Single Responsibility Principle: DriverFactory only knows the mechanics of constructing a ChromeDriver/FirefoxDriver/EdgeDriver from configuration, while DriverManager only knows how to store/retrieve/cleanup that instance per thread. Splitting them lets you unit-test browser construction logic in isolation from threading concerns.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q4. How does a config-driven browser selection typically work in this pattern? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">ConfigReader loads a property like browser=chrome from a properties/YAML file (often overridable via -Dbrowser=firefox on the command line). BaseTest reads that value and passes it to DriverFactory.createDriver(BrowserType.valueOf(browser.toUpperCase())) inside @BeforeMethod, so the same suite can run against any browser without code changes.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q5. How would you unit test DriverManager itself without launching a real browser? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Inject a mock WebDriver via setDriver() directly (bypassing DriverFactory), then assert getDriver() returns that exact mock on the same thread, and assert it returns null/throws on a different thread or after unload() — proving thread-isolation and cleanup behaviour without ever opening Chrome.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Code Examples — 10 Files</h3>
+        <div class="cs">
+          <div class="csh">
+            <div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+            <span>CODE EXAMPLES — S2 · DriverManager Design Pattern</span>
+          </div>
+          <div class="ctbar" id="ctbar-1">
+            <button class="ct active" onclick="sc(1,0)">1. DriverManager</button>
+            <button class="ct" onclick="sc(1,1)">2. DriverFactory</button>
+            <button class="ct" onclick="sc(1,2)">3. BaseTest</button>
+            <button class="ct" onclick="sc(1,3)">4. ConfigReader</button>
+            <button class="ct" onclick="sc(1,4)">5. BrowserType Enum</button>
+            <button class="ct" onclick="sc(1,5)">6. Private Constructor</button>
+            <button class="ct" onclick="sc(1,6)">7. Set-Twice Leak</button>
+            <button class="ct" onclick="sc(1,7)">8. Safe Unload</button>
+            <button class="ct" onclick="sc(1,8)">9. Headless Config</button>
+            <button class="ct" onclick="sc(1,9)">10. Sample Test</button>
+          </div>
+
+          <!-- Code Content Panels -->
+          <div class="cp active" id="c1-0">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>DriverManager.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Production-style DriverManager — the single source of truth ===
+import org.openqa.selenium.WebDriver;
+
+public class DriverManager {
+
+    // Static + ThreadLocal = one class, isolated value per thread
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
+    // Private constructor blocks "new DriverManager()" forever
+    private DriverManager() { }
+
+    public static void setDriver(WebDriver driver) {
+        if (tlDriver.get() != null) {
+            tlDriver.get().quit();      // never overwrite a live driver
+        }
+        tlDriver.set(driver);
+    }
+
+    public static WebDriver getDriver() {
+        WebDriver d = tlDriver.get();
+        if (d == null) {
+            throw new IllegalStateException(
+                "No driver set for thread " + Thread.currentThread().getId());
+        }
+        return d;
+    }
+
+    public static void unload() {
+        WebDriver d = tlDriver.get();
+        if (d != null) {
+            d.quit();        // close the browser process
+        }
+        tlDriver.remove();   // THEN clear the ThreadLocalMap entry
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c1-1">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>DriverFactory.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === DriverFactory — only responsibility: BUILD the right browser ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+
+public class DriverFactory {
+
+    public static WebDriver createDriver(BrowserType type, boolean headless) {
+        switch (type) {
+            case CHROME:
+                ChromeOptions opts = new ChromeOptions();
+                if (headless) {
+                    opts.addArguments("--headless=new");
+                }
+                return new ChromeDriver(opts);
+
+            case FIREFOX:
+                return new FirefoxDriver();
+
+            case EDGE:
+                return new EdgeDriver();
+
+            default:
+                throw new IllegalArgumentException("Unsupported browser: " + type);
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c1-2">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>BaseTest.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === BaseTest — the ONLY class allowed to call setDriver()/unload() ===
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+
+public class BaseTest {
+
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
+        String browser = ConfigReader.get("browser");          // e.g. "chrome"
+        boolean headless = Boolean.parseBoolean(
+                ConfigReader.get("headless"));
+
+        DriverManager.setDriver(
+            DriverFactory.createDriver(
+                BrowserType.valueOf(browser.toUpperCase()), headless));
+
+        DriverManager.getDriver().manage().window().maximize();
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void tearDown() {
+        DriverManager.unload();   // quit + remove, always runs
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c1-3">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ConfigReader.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === ConfigReader — pulls browser/env settings out of properties file ===
+import java.io.InputStream;
+import java.util.Properties;
+
+public class ConfigReader {
+
+    private static Properties props = new Properties();
+
+    static {
+        try (InputStream in = ConfigReader.class
+                .getClassLoader()
+                .getResourceAsStream("config.properties")) {
+            props.load(in);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load config.properties", e);
+        }
+    }
+
+    public static String get(String key) {
+        // -D system property always wins over the file value
+        String override = System.getProperty(key);
+        return override != null ? override : props.getProperty(key);
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c1-4">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>BrowserType.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Type-safe browser selection — no raw Strings, no typo bugs ===
+public enum BrowserType {
+    CHROME,
+    FIREFOX,
+    EDGE;
+
+    // BrowserType.valueOf("chrome".toUpperCase()) throws a clear
+    // IllegalArgumentException at startup instead of a silent
+    // "if (browser.equals('chrom'))" bug discovered mid-suite.
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c1-5">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>DriverManagerPrivateConstructor.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Why the private constructor matters ===
+public class DriverManagerPrivateConstructor {
+
+    private DriverManagerPrivateConstructor() {
+        // Throwing here protects even reflection-based instantiation
+        throw new UnsupportedOperationException(
+            "DriverManager is a static utility class — do not instantiate");
+    }
+
+    // Without this, someone could write:
+    //   DriverManager dm = new DriverManager();
+    // ...and mistakenly believe "dm" carries its own driver state,
+    // when in reality ALL state lives in the static ThreadLocal field.
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c1-6">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>SetDriverTwiceLeakDemo.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === What goes wrong WITHOUT the quit-before-overwrite guard ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class SetDriverTwiceLeakDemo {
+
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
+    // BUGGY version — no check for an existing driver
+    public static void unsafeSetDriver(WebDriver driver) {
+        tlDriver.set(driver);   // old browser process is now orphaned!
+    }
+
+    public static void demoLeak() {
+        unsafeSetDriver(new ChromeDriver());   // browser #1 launches
+        unsafeSetDriver(new ChromeDriver());   // browser #1 leaks, #2 launches
+        // Two Chrome processes are now running, only one is reachable
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c1-7">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>SafeUnloadFinally.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Guaranteeing cleanup even when the test throws ===
+import org.openqa.selenium.WebDriver;
+
+public class SafeUnloadFinally {
+
+    public static void runTestSafely(Runnable testBody) {
+        try {
+            testBody.run();             // the actual @Test logic
+        } finally {
+            // finally GUARANTEES this runs even on exception/assert failure
+            DriverManager.unload();
+        }
+    }
+
+    // In TestNG this same guarantee comes from:
+    //   @AfterMethod(alwaysRun = true)
+    // which fires even if @BeforeMethod itself partially failed.
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c1-8">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>HeadlessConfigDemo.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Driving headless mode from config, not hard-coded booleans ===
+// config.properties:
+//   browser=chrome
+//   headless=true
+//
+import org.openqa.selenium.chrome.ChromeOptions;
+
+public class HeadlessConfigDemo {
+
+    public static ChromeOptions buildOptions() {
+        ChromeOptions options = new ChromeOptions();
+        boolean headless = Boolean.parseBoolean(ConfigReader.get("headless"));
+
+        if (headless) {
+            options.addArguments("--headless=new");
+            options.addArguments("--window-size=1920,1080");
+        }
+        return options;
+        // CI pipelines flip headless=true via -Dheadless=true
+        // Local debugging keeps headless=false to watch the browser
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c1-9">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>DriverManagerSampleTest.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === A real @Test consuming DriverManager through BaseTest only ===
+import org.testng.annotations.Test;
+import org.openqa.selenium.WebDriver;
+
+public class DriverManagerSampleTest extends BaseTest {
+
+    @Test
+    public void loginPageTitleIsCorrect() {
+        // Notice: this class NEVER creates a WebDriver itself
+        WebDriver driver = DriverManager.getDriver();
+
+        driver.get("https://example.com/login");
+
+        org.testng.Assert.assertEquals(driver.getTitle(), "Login | Example");
+        // No setUp()/tearDown() written here — BaseTest already
+        // wired @BeforeMethod/@AfterMethod for every subclass
+    }
+}</code></pre>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ SESSION 3 ══════════════════════ -->
+    <div id="s2" class="section">
+      <div class="obanner">
+        <h2>Selenium Java: Page Object &amp; WaitUtils Integration</h2>
+        <p>A thread-safe <span class="hl-kw">DriverManager</span> is only half the job. Page Object classes and Wait utility classes must also be written so they never cache a driver reference beyond the lifetime of one test thread — they always pull the current thread's driver from <span class="hl-kw">DriverManager</span> at the exact moment they need it, never store it statically.</p>
+      </div>
+
+      <div class="sec">
+        <h3>What / Why / When / Where / How</h3>
+        <div class="abox">
+          <div class="dr">
+            <span style="color:#3C3489; font-weight:700; width:65px; flex-shrink:0">What</span>
+            <span>BasePage / WaitUtils classes that fetch <span class="hl-kw">DriverManager.getDriver()</span> internally instead of accepting and caching a driver forever.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#085041; font-weight:700; width:65px; flex-shrink:0">Why</span>
+            <span>Guarantees that a Page object created on Thread-2 can never accidentally end up driving Thread-5's browser, even if Page objects are reused or shared by mistake.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#712B13; font-weight:700; width:65px; flex-shrink:0">When</span>
+            <span>Page objects are instantiated fresh inside each <span class="hl-kw">@Test</span> method (or step), right after the driver is already set by <span class="hl-kw">@BeforeMethod</span>.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#633806; font-weight:700; width:65px; flex-shrink:0">Where</span>
+            <span>BasePage lives in a <span class="hl-kw">pages</span> package; WaitUtils lives in <span class="hl-kw">utils</span>; neither holds a driver field longer than the current method scope needs.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#0C447C; font-weight:700; width:65px; flex-shrink:0">How</span>
+            <span><span class="hl-kw">new LoginPage()</span> → constructor calls <span class="hl-kw">DriverManager.getDriver()</span> → <span class="hl-kw">PageFactory.initElements(driver, this)</span> → WaitUtils does the same per call.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Keyword Glossary</h3>
+        <div class="glosgrid">
+          <div class="gitem">
+            <div class="gkw">BasePage</div>
+            <div class="gdef">Parent class for all Page Objects; pulls the thread-correct WebDriver from DriverManager in its constructor.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">PageFactory</div>
+            <div class="gdef">Selenium utility that initialises @FindBy-annotated WebElement fields lazily against a given driver instance.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">@FindBy</div>
+            <div class="gdef">Annotation that declares a locator strategy (id/css/xpath) for a WebElement field, resolved by PageFactory.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">WaitUtils</div>
+            <div class="gdef">Thread-aware utility class wrapping WebDriverWait/FluentWait, always fetching the live driver per call rather than caching it.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">FluentWait</div>
+            <div class="gdef">Configurable Selenium wait that lets you set polling interval and which exceptions to ignore while waiting.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">ExpectedConditions</div>
+            <div class="gdef">Built-in library of common wait predicates (visibilityOf, elementToBeClickable, etc).</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Lazy initialization</div>
+            <div class="gdef">Elements are NOT located on the page until they are actually interacted with — avoids stale references.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Constructor injection</div>
+            <div class="gdef">Pattern where a Page class receives its WebDriver via the constructor rather than reaching for a global/static.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Stale Page anti-pattern</div>
+            <div class="gdef">Caching a Page object across multiple test methods/threads instead of creating it fresh each time.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Static Page field</div>
+            <div class="gdef">The dangerous mistake of declaring a Page Object as a static class field — instantly breaks thread isolation.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Interview One-Liners</h3>
+        <div class="igrid">
+          <div class="qp">It is perfectly safe for a Page class to hold WebDriver in a normal (non-static) instance field — AS LONG AS the Page object itself is created fresh, per thread, per test.</div>
+          <div class="qp">The real anti-pattern was never "storing driver in a field" — it was making that field, or the Page object holding it, static.</div>
+          <div class="qp">WaitUtils should pull DriverManager.getDriver() on every call, not cache it once in a constructor that might outlive the current test.</div>
+          <div class="qp">PageFactory.initElements() works fine under parallel execution as long as it's invoked separately, per thread, inside each Page constructor.</div>
+          <div class="qp">A LoginPage built on Thread-3 and a LoginPage built on Thread-7 are two completely separate Java objects pointing at two completely separate browsers — that's the whole point.</div>
+          <div class="qp">Never let a Page Object outlive the @Test method that created it — instantiate it fresh every time, never as a class-level cached field.</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Concepts — Architecture &amp; Flow</h3>
+        <div class="concept-block">
+          <h4 style="font-size:12px; margin-bottom:6px">1. Layered access — Page/WaitUtils sit downstream of DriverManager</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">BasePage and WaitUtils never know or care which thread they are running on. They simply call <span class="hl-kw">DriverManager.getDriver()</span> at the moment they need the browser, and DriverManager's ThreadLocal silently routes them to the correct instance.</p>
+        </div>
+        <div class="flowrow">
+          <div class="fstep"><div class="fn">DriverManager</div><div class="fd">Manages ThreadLocal&lt;WebDriver&gt;</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">BasePage</div><div class="fd">driver = getDriver() in constructor</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">Pages</div><div class="fd">LoginPage / HomePage extends BasePage</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">WaitUtils</div><div class="fd">waitFor(...) — also calls getDriver()</div></div>
+        </div>
+
+        <div class="concept-block" style="margin-top:16px">
+          <h4 style="font-size:12px; margin-bottom:6px">2. Per-thread Page Object instantiation</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">Each thread builds its own Page objects from its own DriverManager-supplied driver — none of these objects are ever shared across the boundary back to another thread.</p>
+        </div>
+        <div class="diagram-placeholder" data-type="thread" data-threads="3"></div>
+
+        <div class="concept-block" style="margin-top:16px">
+          <h4 style="font-size:12px; margin-bottom:6px">3. Safe vs unsafe Page construction</h4>
+        </div>
+        <div class="flowrow">
+          <div class="fstep"><div class="fn">1. Unsafe</div><div class="fd"><span class="hl-kw">static LoginPage page;</span><br>Shared across every thread — second thread overwrites the first thread's page/driver pairing.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">2. Safe</div><div class="fd"><span class="hl-kw">LoginPage page = new LoginPage();</span><br>Created fresh inside the test method — constructor resolves the correct thread's driver.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">3. WaitUtils</div><div class="fd"><span class="hl-kw">WaitUtils.until(...)</span><br>Re-fetches driver internally on every invocation, never trusts a cached field.</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Best Practices Checklist</h3>
+        <ul class="bpl">
+          <li><span class="bpc">✓</span><span>Never declare a Page Object class field as <span class="hl-kw">static</span> — always instantiate fresh per test method.</span></li>
+          <li><span class="bpc">✓</span><span>Resolve the driver inside the Page constructor via <span class="hl-kw">DriverManager.getDriver()</span>, never pass a globally cached reference.</span></li>
+          <li><span class="bpc">✓</span><span>WaitUtils methods should call <span class="hl-kw">DriverManager.getDriver()</span> internally on every invocation, not just once at construction.</span></li>
+          <li><span class="bpc">✓</span><span>Use <span class="hl-kw">FluentWait</span> with an explicit polling interval and ignored-exception list rather than relying purely on implicit waits.</span></li>
+          <li><span class="bpc">✓</span><span>Centralise timeout values (e.g. 10s default, 30s for slow pages) in ConfigReader, not scattered magic numbers.</span></li>
+          <li><span class="bpc">✓</span><span>Never mix implicit waits and explicit waits in the same framework — pick one strategy (explicit) and stay consistent.</span></li>
+          <li><span class="bpc">✓</span><span>Keep PageFactory.initElements(driver, this) inside the BasePage constructor so every subclass inherits correct lazy element binding.</span></li>
+          <li><span class="bpc">✓</span><span>Avoid exposing the raw WebDriver out of a Page class — expose business actions instead (login(), addToCart()).</span></li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <h3>Interview Prep — SDET Q&amp;A</h3>
+        <div class="ql">
+          <div class="qi">
+            <div class="qq">Q1. Is it OK for a Page class to store WebDriver in an instance field — doesn't that break thread safety? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">It is completely fine, as long as the Page object itself is created fresh on the thread that will use it, and never shared back across threads. The Page's instance field then simply holds "this thread's driver" because DriverManager.getDriver() resolved it correctly at construction time. The actual danger is only ever making the field (or the whole Page object) static.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q2. Why must WaitUtils re-fetch the driver on every call instead of caching it once? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">If WaitUtils were constructed once and reused across multiple test methods (e.g. injected as a long-lived field in BaseTest), a cached driver reference could go stale the moment that thread's test ends and DriverManager.unload() quits the browser. Re-fetching via getDriver() on every call guarantees WaitUtils always operates against the currently-live driver for that thread.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q3. Does PageFactory.initElements() work safely with parallel execution? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Yes — PageFactory.initElements(driver, this) just wires @FindBy fields to lazy proxies bound to whichever driver instance you pass in. As long as each thread calls it separately (typically inside each Page constructor, once per Page object), the resulting proxies are correctly bound to that thread's browser.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q4. What is the actual anti-pattern in Page Objects under parallel Selenium, if not instance fields? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">The anti-pattern is reuse across threads: a static Page field, a cached singleton Page instance, or passing a Page object created on one thread into work being done by another thread. The fix is always the same — create Page objects fresh, scoped to a single test method on a single thread.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q5. How would WaitUtils differ for explicit waits across a multi-browser parallel suite? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">WaitUtils should never hardcode a WebDriverWait against one captured driver. Instead each method (e.g. waitForVisible(By locator)) should internally do "new WebDriverWait(DriverManager.getDriver(), timeout)" so the wait object is always built fresh against whichever thread's browser is currently calling it — correct even if different threads are running Chrome, Firefox and Edge simultaneously.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Code Examples — 10 Files</h3>
+        <div class="cs">
+          <div class="csh">
+            <div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+            <span>CODE EXAMPLES — S3 · Page Objects &amp; WaitUtils Integration</span>
+          </div>
+          <div class="ctbar" id="ctbar-2">
+            <button class="ct active" onclick="sc(2,0)">1. BasePage</button>
+            <button class="ct" onclick="sc(2,1)">2. LoginPage</button>
+            <button class="ct" onclick="sc(2,2)">3. HomePage</button>
+            <button class="ct" onclick="sc(2,3)">4. WaitUtils</button>
+            <button class="ct" onclick="sc(2,4)">5. FluentWaitUtil</button>
+            <button class="ct" onclick="sc(2,5)">6. Safe PageFactory</button>
+            <button class="ct" onclick="sc(2,6)">7. Static Page Bug</button>
+            <button class="ct" onclick="sc(2,7)">8. Safe Test Instantiation</button>
+            <button class="ct" onclick="sc(2,8)">9. ActionsUtil</button>
+            <button class="ct" onclick="sc(2,9)">10. E2E Integration Test</button>
+          </div>
+
+          <!-- Code Content Panels -->
+          <div class="cp active" id="c2-0">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>BasePage.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === BasePage — resolves the CORRECT per-thread driver in constructor ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+
+public class BasePage {
+
+    protected WebDriver driver;
+
+    public BasePage() {
+        // Always pulled fresh from DriverManager — never cached globally
+        this.driver = DriverManager.getDriver();
+        PageFactory.initElements(driver, this);
+        // Every subclass (LoginPage, HomePage...) inherits this wiring
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c2-1">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>LoginPage.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === LoginPage — created fresh per test, never stored statically ===
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class LoginPage extends BasePage {
+
+    @FindBy(id = "username")
+    private WebElement usernameField;
+
+    @FindBy(id = "password")
+    private WebElement passwordField;
+
+    @FindBy(css = "button[type='submit']")
+    private WebElement loginButton;
+
+    public HomePage loginAs(String user, String pass) {
+        usernameField.sendKeys(user);
+        passwordField.sendKeys(pass);
+        loginButton.click();
+        return new HomePage();   // next page object, fresh on this thread
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c2-2">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>HomePage.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === HomePage — another Page Object following the same pattern ===
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class HomePage extends BasePage {
+
+    @FindBy(css = ".welcome-banner")
+    private WebElement welcomeBanner;
+
+    public String getWelcomeText() {
+        // WaitUtils call below also re-resolves the driver internally
+        WaitUtils.waitForVisible(welcomeBanner);
+        return welcomeBanner.getText();
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c2-3">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>WaitUtils.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === WaitUtils — thread-aware, re-fetches driver on EVERY call ===
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import java.time.Duration;
+
+public class WaitUtils {
+
+    public static void waitForVisible(WebElement element) {
+        // NOT cached — built fresh against THIS call's calling thread
+        WebDriverWait wait = new WebDriverWait(
+                DriverManager.getDriver(), Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOf(element));
+    }
+
+    public static void waitForClickable(WebElement element) {
+        WebDriverWait wait = new WebDriverWait(
+                DriverManager.getDriver(), Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c2-4">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>FluentWaitUtil.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === FluentWait variant — custom polling, ignored exceptions ===
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
+import java.time.Duration;
+import java.util.function.Function;
+
+public class FluentWaitUtil {
+
+    public static WebElement waitFluently(By locator) {
+        Wait<WebDriver> wait = new FluentWait<>(DriverManager.getDriver())
+                .withTimeout(Duration.ofSeconds(15))
+                .pollingEvery(Duration.ofMillis(300))
+                .ignoring(NoSuchElementException.class);
+
+        return wait.until(new Function<WebDriver, WebElement>() {
+            public WebElement apply(WebDriver d) {
+                return d.findElement(locator);
+            }
+        });
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c2-5">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>PageFactoryThreadSafe.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Confirming PageFactory binds to the driver passed at THAT moment ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+
+public class PageFactoryThreadSafe {
+
+    public static Object buildPage(Class<?> pageClass) {
+        WebDriver threadDriver = DriverManager.getDriver();
+
+        // initElements binds lazily — fields resolve on first access,
+        // always against "threadDriver", never some other thread's driver
+        return PageFactory.initElements(threadDriver, pageClass);
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c2-6">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>AntiPatternStaticPage.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === THE REAL ANTI-PATTERN — a STATIC Page Object reference ===
+public class AntiPatternStaticPage {
+
+    // DANGEROUS: shared across every parallel thread
+    public static LoginPage sharedLoginPage;
+
+    public static void badSetup() {
+        sharedLoginPage = new LoginPage();
+        // Thread-A creates this page bound to Thread-A's driver...
+        // Thread-B then reads "sharedLoginPage" and unknowingly
+        // drives Thread-A's browser, or worse, a browser that has
+        // already been quit() by Thread-A's @AfterMethod
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c2-7">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>CorrectPageInstantiationTest.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === The fix: build Page Objects fresh, inside the test method ===
+import org.testng.annotations.Test;
+
+public class CorrectPageInstantiationTest extends BaseTest {
+
+    @Test
+    public void loginRedirectsToHomePage() {
+        // Created HERE, scoped to this thread, this test method only
+        LoginPage loginPage = new LoginPage();
+
+        HomePage home = loginPage.loginAs("qa_user", "S3cret!");
+
+        org.testng.Assert.assertTrue(
+            home.getWelcomeText().contains("Welcome"));
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c2-8">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ActionsUtilThreadLocal.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Actions class also needs to be built fresh per thread ===
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+
+public class ActionsUtilThreadLocal {
+
+    public static void hoverAndClick(WebElement element) {
+        // Actions wraps a driver internally — must be built fresh,
+        // never stored as a static field shared across threads
+        Actions actions = new Actions(DriverManager.getDriver());
+        actions.moveToElement(element).click().perform();
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c2-9">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>PageObjectIntegrationTest.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === End-to-end: DriverManager -> BasePage -> Pages -> WaitUtils ===
+import org.testng.annotations.Test;
+import org.testng.Assert;
+
+public class PageObjectIntegrationTest extends BaseTest {
+
+    @Test
+    public void fullLoginFlowUsesIsolatedDriverEverywhere() {
+        LoginPage login = new LoginPage();           // fresh, this thread
+        HomePage home = login.loginAs("qa", "pass");  // fresh, this thread
+
+        WaitUtils.waitForVisible(
+            DriverManager.getDriver().findElement(
+                org.openqa.selenium.By.cssSelector(".welcome-banner")));
+
+        Assert.assertEquals(
+            DriverManager.getDriver().getCurrentUrl(),
+            "https://example.com/home");
+        // Every call above resolved through the SAME thread's driver
+    }
+}</code></pre>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ SESSION 4 ══════════════════════ -->
+    <div id="s3" class="section">
+      <div class="obanner">
+        <h2>Selenium Java: Parallel Execution Flow — 5 Threads with ThreadLocal</h2>
+        <p>This session traces exactly what happens when <span class="hl-kw">testng.xml</span> is configured with <span class="hl-kw">thread-count="5"</span>. Five TestNG worker threads run concurrently, each one independently walking through BaseTest → DriverManager → DriverFactory → Page classes → WaitUtils, completely isolated from the other four — and each worker thread gets reused across multiple test classes/methods as the suite progresses.</p>
+      </div>
+
+      <div class="sec">
+        <h3>What / Why / When / Where / How</h3>
+        <div class="abox">
+          <div class="dr">
+            <span style="color:#3C3489; font-weight:700; width:65px; flex-shrink:0">What</span>
+            <span>A TestNG suite XML attribute <span class="hl-kw">thread-count="5"</span> combined with <span class="hl-kw">parallel="methods"</span> (or "classes"/"tests") that spins up 5 concurrent worker threads.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#085041; font-weight:700; width:65px; flex-shrink:0">Why</span>
+            <span>Cuts total suite wall-clock time roughly by a factor close to 5 (CPU/grid-capacity permitting) while ThreadLocal keeps every worker's WebDriver fully isolated.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#712B13; font-weight:700; width:65px; flex-shrink:0">When</span>
+            <span>Configured once in <span class="hl-kw">testng.xml</span> at suite level; takes effect the moment <span class="hl-kw">mvn test</span> / the TestNG runner launches the suite.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#633806; font-weight:700; width:65px; flex-shrink:0">Where</span>
+            <span><span class="hl-kw">&lt;suite thread-count="5" parallel="methods"&gt;</span> in testng.xml; ITestListener classes for thread-aware logging live in a <span class="hl-kw">listeners</span> package.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#0C447C; font-weight:700; width:65px; flex-shrink:0">How</span>
+            <span>TestNG's internal executor schedules each @Test method onto one of 5 worker threads; each worker independently triggers BaseTest's hooks for that method.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Keyword Glossary</h3>
+        <div class="glosgrid">
+          <div class="gitem">
+            <div class="gkw">thread-count</div>
+            <div class="gdef">testng.xml attribute controlling how many concurrent worker threads TestNG's internal executor creates.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">parallel="methods"</div>
+            <div class="gdef">TestNG mode where every individual @Test method (even within the same class) can run on a different thread.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">parallel="classes"</div>
+            <div class="gdef">TestNG mode where all methods inside one Test class run on the same thread, but different classes run in parallel.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">parallel="tests"</div>
+            <div class="gdef">TestNG mode parallelising at the &lt;test&gt; tag level inside the suite — coarsest granularity.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">data-provider-thread-count</div>
+            <div class="gdef">Separate attribute controlling parallelism specifically for @DataProvider(parallel = true) iterations.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">ITestListener</div>
+            <div class="gdef">TestNG interface for hooking into test lifecycle events (onTestStart, onTestSuccess...) — ideal for thread-aware logging.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Worker thread reuse</div>
+            <div class="gdef">TestNG does not spawn a brand-new OS thread per test method; it reuses a fixed pool of "thread-count" workers across the whole suite.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Thread pool starvation</div>
+            <div class="gdef">Setting thread-count higher than available CPU cores/grid capacity, causing contention rather than real speedup.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">MDC (logging)</div>
+            <div class="gdef">Mapped Diagnostic Context — attaches the current thread id to every log line automatically for traceable parallel logs.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">ExtentTest / Allure thread grouping</div>
+            <div class="gdef">Reporting libraries that must be configured to group steps by thread id, or parallel logs interleave unreadably.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Interview One-Liners</h3>
+        <div class="igrid">
+          <div class="qp">thread-count="5" in testng.xml does not mean "5 browsers open forever" — it means 5 worker threads that get reused across the whole suite.</div>
+          <div class="qp">parallel="methods" is the most aggressive setting — even two @Test methods in the same class can run on two different threads simultaneously.</div>
+          <div class="qp">Because worker threads are reused, a leaked ThreadLocal entry from Test #1 can resurface and corrupt Test #47 if it happens to land on the same recycled thread.</div>
+          <div class="qp">Setting thread-count above your CPU core count (or your Selenium Grid node capacity) usually slows things down via contention, not speeds them up.</div>
+          <div class="qp">@DataProvider(parallel = true) has its OWN separate thread-count knob — data-provider-thread-count — distinct from the suite-level thread-count.</div>
+          <div class="qp">An ITestListener logging Thread.currentThread().getId() in onTestStart/onTestSuccess is the fastest way to PROVE your suite is actually running in parallel.</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Concepts — Architecture &amp; Flow</h3>
+        <div class="concept-block">
+          <h4 style="font-size:12px; margin-bottom:6px">1. Five independent lanes, one shared framework</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">With thread-count="5", TestNG's internal executor schedules @Test methods across exactly 5 worker threads. Each lane below runs the identical BaseTest → DriverManager → DriverFactory → Page/WaitUtils chain completely independently — none of them are aware the other four even exist.</p>
+        </div>
+        <div class="diagram-placeholder" data-type="thread" data-threads="5"></div>
+
+        <div class="concept-block" style="margin-top:16px">
+          <h4 style="font-size:12px; margin-bottom:6px">2. Why worker-thread reuse matters</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">TestNG does not create a new OS thread for every test method — it keeps a pool of exactly "thread-count" workers alive for the whole suite and reassigns the next pending test method to whichever worker frees up first. This is precisely why a missing remove() in Session 1/2 becomes dangerous: that same worker thread will run a completely different test class later in the suite, inheriting any leaked ThreadLocal state.</p>
+        </div>
+        <div class="flowrow">
+          <div class="fstep"><div class="fn">1. Suite Starts</div><div class="fd"><span class="hl-kw">thread-count="5"</span><br>TestNG creates exactly 5 worker threads for the entire suite run.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">2. Schedule</div><div class="fd"><span class="hl-kw">parallel="methods"</span><br>Each pending @Test method is assigned to the next free worker thread.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">3. Execute</div><div class="fd">BaseTest hooks fire<br>That worker runs setDriver → test body → unload, fully isolated.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">4. Reuse</div><div class="fd">worker becomes free<br>Same physical thread immediately picks up the next queued test method.</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Best Practices Checklist</h3>
+        <ul class="bpl">
+          <li><span class="bpc">✓</span><span>Set <code>thread-count</code> close to (but not exceeding) available CPU cores locally, or Selenium Grid node capacity in CI.</span></li>
+          <li><span class="bpc">✓</span><span>Prefer <code>parallel="methods"</code> only when test methods are fully independent — use <code>"classes"</code> if methods share class-level state.</span></li>
+          <li><span class="bpc">✓</span><span>Never let any utility class (Faker, SoftAssert, report writer) be a plain static field — wrap each in its own ThreadLocal, exactly like the driver.</span></li>
+          <li><span class="bpc">✓</span><span>Always wire an ITestListener that logs thread id + test name at start/end — it is your cheapest parallel-safety smoke test.</span></li>
+          <li><span class="bpc">✓</span><span>Configure your reporting library (Extent/Allure) to group steps by thread id, or merged logs become unreadable.</span></li>
+          <li><span class="bpc">✓</span><span>Keep <code>data-provider-thread-count</code> explicit and separate from suite thread-count — don't assume they default to the same value.</span></li>
+          <li><span class="bpc">✓</span><span>Avoid global mutable static state anywhere in the framework — if it must be shared, make it immutable (e.g. config values loaded once, read-only).</span></li>
+          <li><span class="bpc">✓</span><span>Run a short "thread isolation smoke suite" (just the ThreadIdListener) before trusting a new framework under full parallel load.</span></li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <h3>Interview Prep — SDET Q&amp;A</h3>
+        <div class="ql">
+          <div class="qi">
+            <div class="qq">Q1. How do you configure TestNG to run exactly 5 tests in parallel, and what does each setting actually control? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">In testng.xml, set the suite tag to &lt;suite name="..." parallel="methods" thread-count="5"&gt;. "parallel" decides the GRANULARITY (methods/classes/tests) — i.e. what unit of work gets distributed — while "thread-count" decides how many concurrent WORKER THREADS exist to execute those units.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q2. What happens if thread-count is set higher than the number of CPU cores available? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">TestNG will still create that many worker threads, but the OS now has more runnable threads than physical cores, causing context-switching overhead and resource contention (especially CPU and memory for each Chrome process). Beyond a certain point this makes the suite SLOWER, not faster — thread-count should be tuned against real hardware/grid capacity, not maximised blindly.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q3. Why does TestNG's thread pool reuse matter for ThreadLocal-based frameworks? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Because TestNG keeps exactly "thread-count" worker threads alive for the whole suite rather than spawning a fresh thread per test, any ThreadLocal entry that isn't cleaned up via remove() in @AfterMethod can still be sitting in that worker thread's ThreadLocalMap when the SAME physical thread later picks up a completely unrelated test method — silently leaking state or driver references across unrelated tests.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q4. How is data-provider-thread-count different from the suite-level thread-count? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Suite-level thread-count controls how many @Test methods/classes run concurrently as scheduled by the "parallel" attribute. data-provider-thread-count is a separate, narrower setting that only applies to a single @Test method using @DataProvider(parallel = true) — it controls how many of THAT data provider's rows execute concurrently, independent of the outer suite parallelism.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q5. How would you prove to a skeptical teammate that your suite is genuinely running 5 tests in parallel and not just fast sequentially? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Attach an ITestListener that logs Thread.currentThread().getId() plus a timestamp in onTestStart() for every test. If you see 5 distinct thread ids with overlapping start timestamps (not strictly sequential), that's concrete proof of true concurrency — sequential "fast" execution would show only 1-2 thread ids reused back-to-back with non-overlapping timestamps.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Code Examples — 10 Files</h3>
+        <div class="cs">
+          <div class="csh">
+            <div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+            <span>CODE EXAMPLES — S4 · Parallel Execution (5 Threads)</span>
+          </div>
+          <div class="ctbar" id="ctbar-3">
+            <button class="ct active" onclick="sc(3,0)">1. testng-5-threads.xml</button>
+            <button class="ct" onclick="sc(3,1)">2. BaseTestParallel</button>
+            <button class="ct" onclick="sc(3,2)">3. ThreadIdListener</button>
+            <button class="ct" onclick="sc(3,3)">4. ParallelLoginTest</button>
+            <button class="ct" onclick="sc(3,4)">5. ParallelSearchTest</button>
+            <button class="ct" onclick="sc(3,5)">6. DataProvider Parallel</button>
+            <button class="ct" onclick="sc(3,6)">7. Thread-Safe Faker</button>
+            <button class="ct" onclick="sc(3,7)">8. Thread-Aware Logs</button>
+            <button class="ct" onclick="sc(3,8)">9. junit5 config</button>
+            <button class="ct" onclick="sc(3,9)">10. Flow Summary</button>
+          </div>
+
+          <!-- Code Content Panels -->
+          <div class="cp active" id="c3-0">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>testng-5-threads.xml</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-xml">&lt;!-- === Suite configured for 5 parallel worker threads === --&gt;
+&lt;!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd"&gt;
+&lt;suite name="RegressionSuite" parallel="methods" thread-count="5"&gt;
+
+    &lt;test name="ParallelBrowserTests"&gt;
+        &lt;classes&gt;
+            &lt;class name="tests.ParallelLoginTest"/&gt;
+            &lt;class name="tests.ParallelSearchTest"/&gt;
+        &lt;/classes&gt;
+    &lt;/test&gt;
+
+    &lt;!-- parallel="methods"  -&gt; finest granularity, per @Test method   --&gt;
+    &lt;!-- thread-count="5"    -&gt; exactly 5 concurrent worker threads    --&gt;
+&lt;/suite&gt;</code></pre>
+          </div>
+
+          <div class="cp" id="c3-1">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>BaseTestParallel.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === BaseTest, unchanged logic, but now actually exercised in parallel ===
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+import org.testng.ITestResult;
+
+public class BaseTestParallel {
+
+    @BeforeMethod(alwaysRun = true)
+    public void setUp(ITestResult result) {
+        DriverManager.setDriver(
+            DriverFactory.createDriver(BrowserType.CHROME, true));
+
+        System.out.println("[Thread-" + Thread.currentThread().getId() + "] "
+                + "START " + result.getMethod().getMethodName());
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void tearDown(ITestResult result) {
+        System.out.println("[Thread-" + Thread.currentThread().getId() + "] "
+                + "END   " + result.getMethod().getMethodName());
+        DriverManager.unload();
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c3-2">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ThreadIdListener.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === ITestListener — the cheapest way to PROVE real parallelism ===
+import org.testng.ITestListener;
+import org.testng.ITestResult;
+
+public class ThreadIdListener implements ITestListener {
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        System.out.println("START [" + result.getMethod().getMethodName()
+                + "] on Thread-" + Thread.currentThread().getId()
+                + " @ " + System.currentTimeMillis());
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        System.out.println("PASS  [" + result.getMethod().getMethodName()
+                + "] on Thread-" + Thread.currentThread().getId());
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        System.out.println("FAIL  [" + result.getMethod().getMethodName()
+                + "] on Thread-" + Thread.currentThread().getId());
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c3-3">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ParallelLoginTest.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === One of several classes scheduled across the 5 worker threads ===
+import org.testng.annotations.Test;
+import org.testng.Assert;
+
+public class ParallelLoginTest extends BaseTestParallel {
+
+    @Test
+    public void validLoginSucceeds() {
+        LoginPage login = new LoginPage();
+        HomePage home = login.loginAs("validUser", "validPass");
+        Assert.assertTrue(home.getWelcomeText().contains("Welcome"));
+    }
+
+    @Test
+    public void invalidLoginShowsError() {
+        LoginPage login = new LoginPage();
+        login.loginAs("badUser", "wrongPass");
+        Assert.assertTrue(
+            DriverManager.getDriver().getPageSource().contains("Invalid credentials"));
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c3-4">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ParallelSearchTest.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === A second class running CONCURRENTLY with ParallelLoginTest ===
+import org.testng.annotations.Test;
+import org.testng.Assert;
+import org.openqa.selenium.By;
+
+public class ParallelSearchTest extends BaseTestParallel {
+
+    @Test
+    public void searchReturnsResults() {
+        DriverManager.getDriver().get("https://example.com/search");
+        DriverManager.getDriver()
+                .findElement(By.id("q")).sendKeys("selenium threadlocal");
+        DriverManager.getDriver().findElement(By.id("searchBtn")).click();
+
+        WaitUtils.waitForVisible(
+            DriverManager.getDriver().findElement(By.cssSelector(".results")));
+
+        Assert.assertTrue(
+            DriverManager.getDriver().findElements(By.cssSelector(".result-item")).size() > 0);
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c3-5">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>DataProviderParallelDemo.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === @DataProvider(parallel = true) — its OWN thread-count knob ===
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+public class DataProviderParallelDemo extends BaseTestParallel {
+
+    @DataProvider(name = "users", parallel = true)
+    public Object[][] users() {
+        return new Object[][]{
+            {"user1", "pass1"}, {"user2", "pass2"},
+            {"user3", "pass3"}, {"user4", "pass4"}
+        };
+    }
+
+    @Test(dataProvider = "users")
+    public void loginWithMultipleUsers(String user, String pass) {
+        // Governed by <suite data-provider-thread-count="4"> in testng.xml,
+        // NOT by the outer thread-count="5" suite-level setting
+        LoginPage login = new LoginPage();
+        login.loginAs(user, pass);
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c3-6">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ThreadSafeFaker.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === The SAME ThreadLocal pattern applied beyond just WebDriver ===
+import com.github.javafaker.Faker;
+
+public class ThreadSafeFaker {
+
+    // ANY shared utility needs this treatment under parallel execution,
+    // not just the WebDriver — Faker is a perfect second example
+    private static ThreadLocal<Faker> tlFaker =
+            ThreadLocal.withInitial(Faker::new);
+
+    public static Faker get() {
+        return tlFaker.get();
+    }
+
+    public static void demo() {
+        String randomEmail = get().internet().emailAddress();
+        System.out.println("[Thread-" + Thread.currentThread().getId()
+                + "] generated " + randomEmail);
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c3-7">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ParallelExecutionLogUtil.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Thread-aware logging so parallel logs stay readable ===
+public class ParallelExecutionLogUtil {
+
+    public static void log(String message) {
+        long tid = Thread.currentThread().getId();
+        String threadName = Thread.currentThread().getName();
+        System.out.printf("[%s | tid=%d] %s%n", threadName, tid, message);
+        // Prefixing every line with thread id/name is the manual
+        // equivalent of using MDC with Log4j2 (see Session 5)
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c3-8">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>junit-platform.properties</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-properties"># === JUnit 5 equivalent of TestNG's thread-count="5" ===
+junit.jupiter.execution.parallel.enabled = true
+junit.jupiter.execution.parallel.mode.default = concurrent
+
+# Fixed strategy pins the pool size directly to 5, mirroring TestNG
+junit.jupiter.execution.parallel.config.strategy = fixed
+junit.jupiter.execution.parallel.config.fixed.parallelism = 5
+
+# JUnit5 needs ThreadLocal<WebDriver> in DriverManager exactly the
+# same way TestNG does - the parallelism engine differs, the
+# thread-isolation requirement on WebDriver does NOT.</code></pre>
+          </div>
+
+          <div class="cp" id="c3-9">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>FiveThreadFlowSummary.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Walkthrough in comments: what 5 threads really do, end to end ===
+public class FiveThreadFlowSummary {
+
+    // 1. testng.xml boots with thread-count="5" -> 5 workers created
+    // 2. TestNG queues every @Test method from every <class> in the suite
+    // 3. Worker-1 picks up method A -> BaseTest.setUp() -> DriverManager
+    //    .setDriver() stores Chrome instance #1 in Worker-1's ThreadLocalMap
+    // 4. Simultaneously Worker-2..5 do the SAME for methods B,C,D,E,
+    //    each storing a COMPLETELY SEPARATE Chrome instance
+    // 5. Page Objects + WaitUtils inside each method call getDriver(),
+    //    transparently routed to the correct one of the 5 instances
+    // 6. @AfterMethod -> DriverManager.unload() quits + removes for
+    //    whichever worker just finished
+    // 7. That worker is now FREE -> TestNG assigns it the NEXT queued
+    //    method (could be from a totally different test class)
+    // 8. Repeat steps 3-7 until every queued method has executed
+    public static void summary() { /* see comments above */ }
+}</code></pre>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ SESSION 5 ══════════════════════ -->
+    <div id="s4" class="section">
+      <div class="obanner">
+        <h2>Selenium Java: Advanced ThreadLocal Patterns &amp; 10-Thread End-to-End Flow</h2>
+        <p>The final session pushes the framework to <span class="hl-kw">thread-count="10"</span>, examines InheritableThreadLocal and why it is dangerous for WebDriver, looks deeper at the weak-reference/strong-reference mechanics behind ThreadLocal leaks, and assembles a production-grade, leak-proof wiring of DriverManager + DriverFactory + BasePage + WaitUtils + Listeners across 10 concurrent threads.</p>
+      </div>
+
+      <div class="sec">
+        <h3>What / Why / When / Where / How</h3>
+        <div class="abox">
+          <div class="dr">
+            <span style="color:#3C3489; font-weight:700; width:65px; flex-shrink:0">What</span>
+            <span>Production-hardening patterns: InheritableThreadLocal awareness, ThreadLocalMap weak-key mechanics, <span class="hl-kw">@AfterSuite</span> safety-net cleanup, thread-aware logging (MDC), and a 10-thread end-to-end wiring.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#085041; font-weight:700; width:65px; flex-shrink:0">Why</span>
+            <span>At higher thread-counts, any small leak or static-state mistake multiplies — a framework that "seemed fine" at 5 threads can visibly degrade or randomly fail at 10.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#712B13; font-weight:700; width:65px; flex-shrink:0">When</span>
+            <span>Applied once the base framework (Sessions 1–4) is stable and you are scaling thread-count up for CI/Grid execution or larger regression suites.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#633806; font-weight:700; width:65px; flex-shrink:0">Where</span>
+            <span>Safety-net listeners live in <span class="hl-kw">@AfterSuite</span>; thread-aware logging is wired via Log4j2 MDC at the logging configuration layer.</span>
+          </div>
+          <div class="dr">
+            <span style="color:#0C447C; font-weight:700; width:65px; flex-shrink:0">How</span>
+            <span><span class="hl-kw">thread-count="10"</span> in testng.xml → same DriverManager/Page/WaitUtils chain as Session 4, plus an AfterSuite listener that force-quits any still-open driver as a last line of defence.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Keyword Glossary</h3>
+        <div class="glosgrid">
+          <div class="gitem">
+            <div class="gkw">InheritableThreadLocal</div>
+            <div class="gdef">ThreadLocal subclass that copies the PARENT thread's value into any CHILD thread it spawns — copied once at child-creation time only.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">WeakReference key</div>
+            <div class="gdef">ThreadLocalMap stores the ThreadLocal itself as a WeakReference, allowing the key to be garbage-collected once no strong references remain.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Strong reference value</div>
+            <div class="gdef">The VALUE stored (e.g. the WebDriver) is held strongly — it survives until remove() is called or the owning thread dies.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">@AfterSuite</div>
+            <div class="gdef">TestNG annotation that runs exactly once after the entire suite finishes — used here as a last-resort cleanup safety net.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">MDC (Mapped Diagnostic Context)</div>
+            <div class="gdef">Log4j2/SLF4J feature that auto-attaches a key like threadId to every log line automatically for traceable parallel logs.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Leak audit registry</div>
+            <div class="gdef">A custom thread-safe counter/list tracking how many ThreadLocal driver entries are currently "live", used to detect leaks in CI.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Thread pool starvation (Grid)</div>
+            <div class="gdef">Requesting more parallel sessions than a Selenium Grid node/hub can actually serve, causing queued or timed-out sessions.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">SoftAssert ThreadLocal</div>
+            <div class="gdef">Wrapping TestNG's SoftAssert in its own ThreadLocal so assertion collection is also isolated per parallel test thread.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Grid node capacity</div>
+            <div class="gdef">The maximum concurrent browser sessions a Selenium Grid node advertises — thread-count should respect this ceiling.</div>
+          </div>
+          <div class="gitem">
+            <div class="gkw">Leak-proof design</div>
+            <div class="gdef">A framework where every set() has a guaranteed, exception-safe, reachable remove() — verified, not assumed.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Interview One-Liners</h3>
+        <div class="igrid">
+          <div class="qp">InheritableThreadLocal copies the parent's value into a child thread exactly once, at the moment the child is created — it is NOT live-synced, and for WebDriver it means two threads could end up sharing the same browser object.</div>
+          <div class="qp">Never use InheritableThreadLocal for WebDriver — TestNG/JUnit worker threads aren't parent-child related to your test logic anyway.</div>
+          <div class="qp">ThreadLocal keys are weakly referenced so the JVM CAN clean up an orphaned key — but the VALUE (your WebDriver) is strongly referenced, so the browser object itself will NOT be collected until you call remove() or the thread dies.</div>
+          <div class="qp">A 10-thread suite leaks twice as fast, in wall-clock terms, as a 5-thread suite with the same per-test leak rate — scaling up thread-count is also scaling up the blast radius.</div>
+          <div class="qp">@AfterSuite is not a substitute for @AfterMethod cleanup — it is a last-resort safety net that should rarely, if ever, actually find something to clean up.</div>
+          <div class="qp">Thread-aware logging via MDC means you stop manually prefixing every log line with Thread.currentThread().getId() — the logging framework does it for you.</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Concepts — Architecture &amp; Flow</h3>
+        <div class="concept-block">
+          <h4 style="font-size:12px; margin-bottom:6px">1. Scaling the same architecture to 10 threads</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">Nothing about the DriverManager/BasePage/WaitUtils design changes between 5 and 10 threads — only the suite-level thread-count. A correctly isolated design scales linearly without new bugs appearing.</p>
+        </div>
+        <div class="diagram-placeholder" data-type="thread" data-threads="10"></div>
+
+        <div class="concept-block" style="margin-top:16px">
+          <h4 style="font-size:12px; margin-bottom:6px">2. Weak key, strong value — why remove() still matters</h4>
+          <p style="font-size:12.5px; line-height:1.5; color:var(--color-text-secondary); margin-bottom:10px">Even though ThreadLocalMap holds its keys as WeakReferences (letting the JVM reclaim an orphaned ThreadLocal key), the VALUE you stored — your live WebDriver — is held with a normal strong reference inside that Entry. A garbage-collected key does not free the value; only an explicit remove() (or the death of the owning thread) does.</p>
+        </div>
+        <div class="diagram-placeholder" data-type="map"></div>
+
+        <div class="concept-block" style="margin-top:16px">
+          <h4 style="font-size:12px; margin-bottom:6px">3. The full safety-net flow</h4>
+        </div>
+        <div class="flowrow">
+          <div class="fstep"><div class="fn">1. Per-Test</div><div class="fd">@AfterMethod<br>Primary cleanup path — quits + removes for every single test method.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">2. Per-Class</div><div class="fd">@AfterClass<br>Optional secondary check — confirms no driver lingers after a test class finishes.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">3. Per-Suite</div><div class="fd">@AfterSuite<br>Last-resort safety net — force-quits anything that somehow survived.</div></div>
+          <div class="arr">→</div>
+          <div class="fstep"><div class="fn">4. CI Audit</div><div class="fd">LeakAuditUtil.report()<br>Logs how many ThreadLocal entries were force-cleaned — should always read zero.</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Best Practices Checklist</h3>
+        <ul class="bpl">
+          <li><span class="bpc">✓</span><span>Never use <code>InheritableThreadLocal</code> for WebDriver — stick with plain <code>ThreadLocal</code> at all times.</span></li>
+          <li><span class="bpc">✓</span><span>Treat <code>@AfterSuite</code> cleanup as a safety net that should find nothing — if it regularly does, fix the real leak in @AfterMethod.</span></li>
+          <li><span class="bpc">✓</span><span>Apply the exact same ThreadLocal isolation pattern to every other shared utility: SoftAssert, Faker, report writers, custom test-data builders.</span></li>
+          <li><span class="bpc">✓</span><span>Adopt MDC-based thread-aware logging (Log4j2/SLF4J) instead of manually concatenating thread ids into every log line.</span></li>
+          <li><span class="bpc">✓</span><span>Keep <code>thread-count</code> aligned with real Selenium Grid node capacity — oversubscribing a grid queues or times out sessions, it does not parallelise them.</span></li>
+          <li><span class="bpc">✓</span><span>Build a lightweight leak-audit utility that counts active ThreadLocal driver entries and asserts the count returns to zero after the suite.</span></li>
+          <li><span class="bpc">✓</span><span>Run your highest thread-count configuration in CI regularly, not just locally at low thread-count, to catch race conditions early.</span></li>
+          <li><span class="bpc">✓</span><span>Document the full cleanup chain (@AfterMethod → @AfterClass → @AfterSuite) so new framework contributors understand WHY each layer exists.</span></li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <h3>Interview Prep — SDET Q&amp;A</h3>
+        <div class="ql">
+          <div class="qi">
+            <div class="qq">Q1. What is the difference between ThreadLocal and InheritableThreadLocal, and why is the latter dangerous for WebDriver? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">InheritableThreadLocal automatically copies the value from a PARENT thread into any CHILD thread that parent spawns, at the moment of child-thread creation — it is a one-time copy, not a live link. For WebDriver this is dangerous because the child thread would receive a reference to the SAME WebDriver object the parent is using, not a new isolated one — reintroducing the exact shared-state race condition plain ThreadLocal was designed to eliminate. Test framework worker threads also generally aren't parent/child of your test logic in a way that makes this feature useful.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q2. How would you design a leak-proof framework for 10+ parallel threads? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Layer the cleanup: primary @AfterMethod(alwaysRun=true) quits and removes for every test; an @AfterSuite listener acts as a last-resort force-cleanup; a lightweight leak-audit registry tracks how many ThreadLocal entries are currently live and asserts it returns to zero at suite end; and every shared utility (not just WebDriver) gets the same ThreadLocal treatment so nothing is accidentally static.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q3. ThreadLocal keys are weak references but values are strong references — what is the practical consequence? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">The JVM can garbage-collect an orphaned ThreadLocal KEY on its own, but that does NOT free the VALUE (the WebDriver) stored alongside it — the Entry still holds a strong reference to that value until either remove() is explicitly called or the owning Thread itself terminates. In a long-lived, reused thread pool (exactly what TestNG/JUnit use), threads rarely terminate mid-suite, so relying on GC instead of remove() is not a safe strategy.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q4. How would you debug a flaky parallel suite suspected of "thread bleed" between tests? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">Add a thread-aware ITestListener/logging layer (MDC) that logs thread id + driver identity hash at the start and end of every test; look for the same driver hash appearing on two different test names, or a thread id reused mid-suite while still showing a previous test's data — both are smoking guns for a missing remove() or a static field that should have been ThreadLocal.</div>
+          </div>
+          <div class="qi">
+            <div class="qq">Q5. How do you scale this ThreadLocal pattern to Selenium Grid with multiple nodes? <i class="ti ti-chevron-down"></i></div>
+            <div class="qa">The ThreadLocal logic itself does not change — DriverFactory simply builds a RemoteWebDriver pointed at the Grid hub URL instead of a local ChromeDriver. The thing that DOES need attention is thread-count: it must respect total Grid node capacity (sum of max sessions across nodes), or threads will queue waiting for a free Grid slot rather than truly running in parallel, which looks identical to a "hang" from the test runner's perspective.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3>Code Examples — 10 Files</h3>
+        <div class="cs">
+          <div class="csh">
+            <div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+            <span>CODE EXAMPLES — S5 · Advanced Patterns (10 Threads)</span>
+          </div>
+          <div class="ctbar" id="ctbar-4">
+            <button class="ct active" onclick="sc(4,0)">1. InheritableTL Risk</button>
+            <button class="ct" onclick="sc(4,1)">2. Map Weak Key</button>
+            <button class="ct" onclick="sc(4,2)">3. DriverManager Final</button>
+            <button class="ct" onclick="sc(4,3)">4. AfterSuite Net</button>
+            <button class="ct" onclick="sc(4,4)">5. Log MDC</button>
+            <button class="ct" onclick="sc(4,5)">6. SoftAssert TL</button>
+            <button class="ct" onclick="sc(4,6)">7. testng-10-threads.xml</button>
+            <button class="ct" onclick="sc(4,7)">8. TenThread E2E Flow</button>
+            <button class="ct" onclick="sc(4,8)">9. Leak Audit</button>
+            <button class="ct" onclick="sc(4,9)">10. Full Wiring Demo</button>
+          </div>
+
+          <!-- Code Content Panels -->
+          <div class="cp active" id="c4-0">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>InheritableThreadLocalRisk.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Why InheritableThreadLocal is the WRONG tool for WebDriver ===
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class InheritableThreadLocalRisk {
+
+    // DANGEROUS for WebDriver:
+    private static InheritableThreadLocal<WebDriver> tlDriver =
+            new InheritableThreadLocal<>();
+
+    public static void parentSetsDriver() {
+        tlDriver.set(new ChromeDriver());
+
+        // If THIS parent thread spawns a child thread now, the child
+        // receives a COPY OF THE SAME REFERENCE to that one ChromeDriver
+        Thread child = new Thread(() -> {
+            WebDriver sharedSameInstance = tlDriver.get();
+            // Both parent and child are now driving ONE browser - a race
+        });
+        child.start();
+    }
+    // Correct fix: just use plain ThreadLocal, never inherit WebDriver
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c4-1">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ThreadLocalMapInternalsExplained.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Deep dive: weak key vs strong value, fully commented ===
+public class ThreadLocalMapInternalsExplained {
+
+    // Simplified shape of ThreadLocal.ThreadLocalMap.Entry (JDK source):
+    //
+    //   static class Entry extends WeakReference<ThreadLocal<?>> {
+    //       Object value;                 // <-- STRONG reference
+    //       Entry(ThreadLocal<?> k, Object v) {
+    //           super(k);                 // <-- key wrapped as WEAK ref
+    //           value = v;
+    //       }
+    //   }
+    //
+    // Consequence:
+    //   - If your static "tlDriver" field itself becomes unreachable
+    //     (e.g. the whole DriverManager class is unloaded), the WEAK
+    //     key can be collected, leaving a "stale entry" with key=null.
+    //   - The STRONG "value" (your WebDriver) is NOT freed just because
+    //     the key was collected - it sits there until ThreadLocalMap's
+    //     own internal expungeStaleEntries() runs, OR remove() is called.
+    //   - In a long-lived TestNG worker thread, that cleanup may not
+    //     happen for a very long time -> explicit remove() is mandatory.
+    public static void explain() { /* see comments above */ }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c4-2">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>DriverManagerProductionFinal.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Final, hardened DriverManager used across the whole framework ===
+import org.openqa.selenium.WebDriver;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class DriverManagerProductionFinal {
+
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+    // Tracks how many ThreadLocal driver entries are currently "live"
+    private static AtomicInteger liveCount = new AtomicInteger(0);
+
+    private DriverManagerProductionFinal() { }
+
+    public static void setDriver(WebDriver driver) {
+        if (tlDriver.get() != null) {
+            unload();   // never overwrite without cleaning up first
+        }
+        tlDriver.set(driver);
+        liveCount.incrementAndGet();
+    }
+
+    public static WebDriver getDriver() {
+        WebDriver d = tlDriver.get();
+        if (d == null) {
+            throw new IllegalStateException("No driver on thread "
+                    + Thread.currentThread().getId());
+        }
+        return d;
+    }
+
+    public static void unload() {
+        WebDriver d = tlDriver.get();
+        if (d != null) {
+            try {
+                d.quit();
+            } finally {
+                tlDriver.remove();
+                liveCount.decrementAndGet();
+            }
+        }
+    }
+
+    public static int liveDriverCount() {
+        return liveCount.get();   // should read 0 after @AfterSuite
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c4-3">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>AfterSuiteSafetyNetListener.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Last-resort cleanup — should almost NEVER find anything ===
+import org.testng.annotations.AfterSuite;
+
+public class AfterSuiteSafetyNetListener {
+
+    @AfterSuite(alwaysRun = true)
+    public void forceCleanupAnyLeakedDrivers() {
+        int leaked = DriverManagerProductionFinal.liveDriverCount();
+
+        if (leaked > 0) {
+            System.err.println("WARNING: " + leaked
+                    + " WebDriver instance(s) were not cleaned up "
+                    + "by @AfterMethod - check for missing remove() calls.");
+            DriverManagerProductionFinal.unload();
+        } else {
+            System.out.println("Leak audit clean - 0 lingering drivers.");
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c4-4">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>ThreadAwareLogger.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === MDC pattern — thread id attached to every log line automatically ===
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
+
+public class ThreadAwareLogger {
+
+    private static final Logger log = LogManager.getLogger(ThreadAwareLogger.class);
+
+    public static void setupForCurrentThread() {
+        // Put thread id into the Mapped Diagnostic Context ONCE
+        ThreadContext.put("threadId", String.valueOf(Thread.currentThread().getId()));
+    }
+
+    public static void logStep(String step) {
+        // log4j2 pattern layout can now print %X{threadId} automatically
+        log.info("Step executed: {}", step);
+    }
+
+    public static void clear() {
+        ThreadContext.clearAll();   // call in @AfterMethod, like remove()
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c4-5">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>SoftAssertThreadLocal.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Same isolation pattern applied to TestNG's SoftAssert ===
+import org.testng.asserts.SoftAssert;
+
+public class SoftAssertThreadLocal {
+
+    private static ThreadLocal<SoftAssert> tlSoftAssert =
+            ThreadLocal.withInitial(SoftAssert::new);
+
+    public static SoftAssert get() {
+        return tlSoftAssert.get();
+    }
+
+    public static void assertAllAndClear() {
+        get().assertAll();      // throws if any soft assertion failed
+        tlSoftAssert.remove();  // same cleanup discipline as the driver
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c4-6">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>testng-10-threads.xml</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-xml">&lt;!-- === Scaling the identical framework up to 10 worker threads === --&gt;
+&lt;!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd"&gt;
+&lt;suite name="FullRegressionSuite" parallel="methods" thread-count="10"&gt;
+
+    &lt;test name="ParallelBrowserTests"&gt;
+        &lt;classes&gt;
+            &lt;class name="tests.ParallelLoginTest"/&gt;
+            &lt;class name="tests.ParallelSearchTest"/&gt;
+            &lt;class name="tests.ParallelCheckoutTest"/&gt;
+        &lt;/classes&gt;
+    &lt;/test&gt;
+
+    &lt;listeners&gt;
+        &lt;listener class-name="listeners.ThreadIdListener"/&gt;
+        &lt;listener class-name="listeners.AfterSuiteSafetyNetListener"/&gt;
+    &lt;/listeners&gt;
+
+    &lt;!-- thread-count="10" must respect actual CPU cores / Grid node --&gt;
+    &lt;!-- capacity - otherwise sessions queue instead of truly paralleling --&gt;
+&lt;/suite&gt;</code></pre>
+          </div>
+
+          <div class="cp" id="c4-7">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>TenThreadEndToEndFlow.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Full wiring: DriverManager + Page + WaitUtils + Listeners, x10 ===
+import org.testng.annotations.Test;
+import org.testng.Assert;
+
+public class TenThreadEndToEndFlow extends BaseTestParallel {
+
+    @Test
+    public void endToEndCheckoutFlow() {
+        ThreadAwareLogger.setupForCurrentThread();
+        ThreadAwareLogger.logStep("Starting checkout flow");
+
+        LoginPage login = new LoginPage();
+        HomePage home = login.loginAs("qa_user", "S3cret!");
+
+        WaitUtils.waitForVisible(
+            DriverManager.getDriver().findElement(
+                org.openqa.selenium.By.cssSelector(".cart-icon")));
+
+        SoftAssertThreadLocal.get().assertTrue(
+            home.getWelcomeText().contains("Welcome"), "Welcome text missing");
+
+        SoftAssertThreadLocal.assertAllAndClear();
+        ThreadAwareLogger.clear();
+        // 10 threads running this same method concurrently never
+        // interfere - driver, page objects, soft asserts and logs
+        // are ALL isolated per thread through the same ThreadLocal idiom
+    }
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c4-8">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>LeakAuditUtil.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === Standalone utility to assert zero leaked drivers after a run ===
+public class LeakAuditUtil {
+
+    public static void assertNoLeaks() {
+        int remaining = DriverManagerProductionFinal.liveDriverCount();
+
+        if (remaining != 0) {
+            throw new AssertionError(
+                "Leak audit FAILED - " + remaining
+                + " WebDriver ThreadLocal entr" + (remaining == 1 ? "y" : "ies")
+                + " still live after suite completion.");
+        }
+        System.out.println("Leak audit PASSED - 0 live driver entries.");
+    }
+
+    // Wire this into @AfterSuite, right after the safety-net cleanup,
+    // so a leak becomes a hard CI failure instead of a silent log line
+}</code></pre>
+          </div>
+
+          <div class="cp" id="c4-9">
+            <div class="cp-sub-header"><span class="file-name"><span class="file-dot">●</span>FullFrameworkWiringDemo.java</span><button class="cpbtn" onclick="copyPreText(this)">Copy</button></div>
+            <pre class="line-numbers"><code class="language-java">// === The complete picture, S1 -> S5, in one annotated walkthrough ===
+public class FullFrameworkWiringDemo {
+
+    // S1: ThreadLocal<WebDriver> fundamentals - per-thread isolation
+    // S2: DriverManager (static, private ctor) + DriverFactory wired
+    //     into BaseTest's @BeforeMethod / @AfterMethod
+    // S3: BasePage / Page Objects / WaitUtils ALWAYS pull
+    //     DriverManager.getDriver() fresh - never cached statically
+    // S4: testng.xml thread-count="5", parallel="methods" - 5 worker
+    //     threads reused across the whole suite, ITestListener proves it
+    // S5: Scaled to thread-count="10", added InheritableThreadLocal
+    //     awareness, weak-key/strong-value internals, @AfterSuite safety
+    //     net, MDC logging, SoftAssert isolation, and a leak audit
+    //
+    // End state: a framework where EVERY piece of mutable shared state
+    // - WebDriver, Page Objects, SoftAssert, Faker, logging context -
+    // follows the identical ThreadLocal-per-thread idiom, verified by
+    // a leak audit that must read zero after every suite run.
+    public static void wiringSummary() { /* see comments above */ }
+}</code></pre>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End allS -->
+</div> <!-- End hub -->
+
+<!-- Bottom Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+<script src="../portal-enhance.js"></script>
+
+<script>
+  /* =====================================================================
+     DIAGRAM BUILDERS (INJECTED ON DOMContentLoaded)
+     ===================================================================== */
+  function getMapSVG() {
+    return `
+    <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" class="thread-svg" style="min-width:560px; max-width:100%; height:auto">
+      <rect x="20" y="20" width="150" height="44" rx="8" class="td-thread"/>
+      <text x="95" y="46" text-anchor="middle" class="td-thread-text">Thread object</text>
+      <line x1="170" y1="42" x2="230" y2="42" class="td-line"/>
+      <rect x="230" y="20" width="190" height="44" rx="8" class="td-manager"/>
+      <text x="325" y="46" text-anchor="middle" class="td-manager-text">ThreadLocalMap</text>
+      <line x1="420" y1="42" x2="480" y2="42" class="td-line"/>
+      <rect x="480" y="20" width="140" height="44" rx="8" class="td-driver"/>
+      <text x="550" y="40" text-anchor="middle" class="td-driver-text">Entry</text>
+      <text x="550" y="55" text-anchor="middle" class="td-page-text small" style="fill:#475569">key=WeakRef&lt;TL&gt;</text>
+      <line x1="550" y1="64" x2="550" y2="100" class="td-line"/>
+      <rect x="450" y="100" width="180" height="50" rx="8" class="td-page"/>
+      <text x="540" y="121" text-anchor="middle" class="td-page-text">value = WebDriver</text>
+      <text x="540" y="138" text-anchor="middle" class="td-page-text small" style="fill:#475569">(strong reference!)</text>
+      <text x="20" y="180" class="td-page-text small" style="fill:#57606a; font-size:10px">Key is weakly referenced → GC can clear it. Value is strongly referenced → must call remove() or it survives until the thread itself dies.</text>
+    </svg>`;
+  }
+
+  function getThreadSVG(n) {
+    const colW = 120, startX = 30, w = colW * n + 30, h = 320;
+    let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" class="thread-svg" style="min-width:${Math.max(560, w)}px; max-width:100%; height:auto">`;
+    for (let i = 0; i < n; i++) {
+      const cx = startX + i * colW + colW / 2 - 45;
+      s += `<rect x="${cx}" y="14" width="90" height="30" rx="6" class="td-thread"/>`;
+      s += `<text x="${cx + 45}" y="32" text-anchor="middle" class="td-thread-text">Thread-${i + 1}</text>`;
+      s += `<line x1="${cx + 45}" y1="44" x2="${w / 2}" y2="90" class="td-line"/>`;
+    }
+    s += `<rect x="${w / 2 - 140}" y="90" width="280" height="38" rx="8" class="td-manager"/>`;
+    s += `<text x="${w / 2}" y="113" text-anchor="middle" class="td-manager-text">DriverManager · ThreadLocal&lt;WebDriver&gt;</text>`;
+    for (let i = 0; i < n; i++) {
+      const cx = startX + i * colW + colW / 2 - 45;
+      s += `<line x1="${w / 2}" y1="128" x2="${cx + 45}" y2="170" class="td-line"/>`;
+      s += `<rect x="${cx}" y="170" width="90" height="30" rx="6" class="td-driver"/>`;
+      s += `<text x="${cx + 45}" y="188" text-anchor="middle" class="td-driver-text">WebDriver #${i + 1}</text>`;
+      s += `<line x1="${cx + 45}" y1="200" x2="${cx + 45}" y2="230" class="td-line"/>`;
+      s += `<rect x="${cx}" y="230" width="90" height="40" rx="6" class="td-page"/>`;
+      s += `<text x="${cx + 45}" y="246" text-anchor="middle" class="td-page-text">BasePage</text>`;
+      s += `<text x="${cx + 45}" y="260" text-anchor="middle" class="td-page-text small" style="fill:#475569">WaitUtils</text>`;
+    }
+    s += `</svg>`;
+    return s;
+  }
+
+  // Bind local accordion Q&A toggle click handler immediately to prevent portal-enhance.js double-toggle
+  document.querySelectorAll('.qq').forEach(q => {
+    q.dataset.vrQaToggleDone = '1';
+    q.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const item = q.closest('.qi');
+      if (item) {
+        item.classList.toggle('open');
+      }
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Inject SVGs into diagram placeholders
+    document.querySelectorAll('.diagram-placeholder').forEach(el => {
+      const type = el.getAttribute('data-type');
+      if (type === 'map') {
+        el.innerHTML = `<div class="diagram-wrap">${getMapSVG()}</div>`;
+      } else if (type === 'thread') {
+        const threads = parseInt(el.getAttribute('data-threads') || '3');
+        el.innerHTML = `<div class="diagram-wrap">${getThreadSVG(threads)}</div>`;
+      }
+    });
+
+    // Initial load
+    upP();
+  });
+
+  /* =====================================================================
+     LOCAL NAVIGATION ENGINE
+     ===================================================================== */
+  let cur = 0;
+  const cP = {
+    0: ["c0-0", "c0-1", "c0-2", "c0-3", "c0-4", "c0-5", "c0-6", "c0-7", "c0-8", "c0-9"],
+    1: ["c1-0", "c1-1", "c1-2", "c1-3", "c1-4", "c1-5", "c1-6", "c1-7", "c1-8", "c1-9"],
+    2: ["c2-0", "c2-1", "c2-2", "c2-3", "c2-4", "c2-5", "c2-6", "c2-7", "c2-8", "c2-9"],
+    3: ["c3-0", "c3-1", "c3-2", "c3-3", "c3-4", "c3-5", "c3-6", "c3-7", "c3-8", "c3-9"],
+    4: ["c4-0", "c4-1", "c4-2", "c4-3", "c4-4", "c4-5", "c4-6", "c4-7", "c4-8", "c4-9"]
+  };
+  const sNums = [1, 2, 3, 4, 5];
+
+  function sw(n) {
+    cur = n;
+    // Toggle active classes on sections
+    for (let i = 0; i < 5; i++) {
+      const sec = document.getElementById('s' + i);
+      if (i === n) {
+        sec.classList.add('active');
+      } else {
+        sec.classList.remove('active');
+      }
+    }
+    // Toggle active classes on tabs
+    const tabs = document.getElementById('sTabs').children;
+    for (let i = 0; i < tabs.length; i++) {
+      if (i === n) {
+        tabs[i].classList.add('active');
+      } else {
+        tabs[i].classList.remove('active');
+      }
+    }
+    upP();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function sc(sec, tab) {
+    const ids = cP[sec];
+    for (let i = 0; i < ids.length; i++) {
+      const panel = document.getElementById(ids[i]);
+      if (i === tab) {
+        panel.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+      }
+    }
+    const btns = document.getElementById('ctbar-' + sec).children;
+    for (let i = 0; i < btns.length; i++) {
+      if (i === tab) {
+        btns[i].classList.add('active');
+      } else {
+        btns[i].classList.remove('active');
+      }
+    }
+  }
+
+  function upP() {
+    const dots = document.getElementById('pd');
+    let dotHtml = '';
+    for (let i = 0; i < 5; i++) {
+      if (i < cur) {
+        dotHtml += '<span class="dot dn"></span>';
+      } else if (i === cur) {
+        dotHtml += '<span class="dot ac"></span>';
+      } else {
+        dotHtml += '<span class="dot td"></span>';
+      }
+    }
+    dots.innerHTML = dotHtml;
+    document.getElementById('pl').textContent = 'Session ' + (cur + 1) + ' of 5';
+  }
+
+  // Copy code helper
+  function copyPreText(btn) {
+    const pre = btn.closest('.cp').querySelector('pre');
+    // Remove line numbers if they exist
+    const code = pre.querySelector('code');
+    const text = code ? code.innerText : pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.background = '#d1fae5';
+      btn.style.color = '#065f46';
+      setTimeout(() => {
+        btn.innerText = original;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  // Prism MutationObserver for dynamic layouts
+  if (window.Prism) {
+    document.addEventListener('DOMContentLoaded', () => {
+      const observer = new MutationObserver((mutations) => {
+        let needsHighlight = false;
+        mutations.forEach(m => {
+          if (m.addedNodes.length) {
+            m.addedNodes.forEach(n => {
+              if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+              if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+            });
+          }
+        });
+        if (needsHighlight) { Prism.highlightAll(); }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+  }
+</script>
+</body>
+</html>

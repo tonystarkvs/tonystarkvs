@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jenkins for Playwright-TS — Beginner to Practical CI/CD Learning in 6 Sessions</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Prism Syntax Highlighting -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../responsive.css">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --color-background-secondary: #f8fafc;
+      --color-border-tertiary: #cbd5e1;
+      --color-text-primary: #1e293b;
+      --color-text-secondary: #475569;
+      --border-radius-md: 6px;
+      --border-radius-lg: 8px;
+      --pc: #6C5CE7;
+      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Courier New', monospace;
+    }
+    body {
+      background: #f1f5f9;
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      padding: 1rem;
+    }
+    .hub {
+      padding: 1rem 0;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .pbar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .pp {
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      border: 1.5px solid;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .ph1 { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+    .ph2 { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+    .ph3 { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+    .ph4 { background: #FAECE7; color: #712B13; border-color: #F0997B; }
+    .ph5 { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
+
+    .stabs {
+      display: flex;
+      border-bottom: 1.5px solid var(--color-border-tertiary);
+      overflow-x: auto;
+      margin-bottom: 10px;
+    }
+    .stab {
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      border-bottom: 2.5px solid transparent;
+      margin-bottom: -1.5px;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+    .stab.active {
+      color: #ffffff;
+      border-bottom-color: #7F77DD;
+      background: #7F77DD;
+      border-radius: 6px 6px 0 0;
+    }
+    .stab:hover:not(.active) {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+
+    .prow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      background: #EEEDFE;
+      border: 1.5px solid #AFA9EC;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.dn { background: #1D9E75; }
+    .dot.ac { background: #7F77DD; }
+    .dot.td { background: #D3D1C7; }
+    .plbl {
+      font-size: 11px;
+      color: #3C3489;
+      font-weight: 500;
+    }
+
+    /* Section wrapper styling with thick 4-sided borders to prevent stacking bugs */
+    html body div.section {
+      display: none !important;
+      border: 2.5px solid var(--pc) !important;
+      border-radius: 10px;
+      background: #ffffff;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    html body div.section.active, html body div.section.visible {
+      display: block !important;
+    }
+
+    .obanner {
+      background: #faf5ff;
+      padding: 16px;
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+    .obanner h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #3730a3;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      border-left: 4px solid var(--pc) !important;
+      padding-left: 12px !important;
+    }
+    .obanner p {
+      font-size: 13px;
+      color: #312e81;
+      line-height: 1.6;
+    }
+
+    .sec {
+      padding: 16px;
+      border-bottom: 1.5px solid var(--color-border-tertiary);
+    }
+    .sec:last-child {
+      border-bottom: none;
+    }
+    .sec h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--pc) !important;
+      padding-left: 12px !important;
+    }
+
+    /* What/Why Table style */
+    .abox {
+      background: #faf5ff;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-lg);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .dr {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      padding: 8px 0;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .dr:last-child {
+      border-bottom: none;
+    }
+
+    /* Glossary grid style */
+    .glosgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media(max-width: 640px) {
+      .glosgrid, .igrid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    .gitem {
+      background: #faf5ff;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .gitem:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .gkw {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3730a3;
+      font-family: var(--font-mono);
+      margin-bottom: 4px;
+    }
+    .gdef {
+      font-size: 11.5px;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* One-Liners */
+    .igrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .qp {
+      background: #f8fafc;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--color-text-primary);
+      line-height: 1.5;
+      position: relative;
+      padding-left: 28px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .qp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .qp:before {
+      content: "❝";
+      position: absolute;
+      left: 10px;
+      top: 6px;
+      font-size: 20px;
+      color: #7F77DD;
+      font-family: serif;
+      line-height: 1;
+    }
+
+    /* Code Tabs Frame */
+    .cs {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1 !important;
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .csh {
+      display: flex;
+      align-items: center !important;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .csh span {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      color: #475569;
+      letter-spacing: .08em !important;
+      text-transform: uppercase;
+      font-family: var(--font-sans) !important;
+    }
+    .dr2 {
+      display: flex;
+      gap: 5px;
+    }
+    .md {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .mr { background: #ef4444; }
+    .my { background: #f59e0b; }
+    .mg { background: #10b981; }
+
+    .ctbar {
+      display: flex;
+      background: #f1f5f9;
+      border-bottom: 1px solid #cbd5e1;
+      overflow-x: auto;
+    }
+    .ct {
+      padding: 9px 14px;
+      font-size: 11.5px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #475569;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      border-bottom: 2.5px solid transparent;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .ct.active {
+      color: #0969da;
+      border-bottom-color: #0969da;
+      background: #ffffff;
+    }
+    .ct:hover:not(.active) {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .cp {
+      display: none;
+      background: #ffffff;
+      border: none !important;
+    }
+    .cp.active {
+      display: block;
+    }
+    .cp-sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .file-dot {
+      color: #6C5CE7;
+      margin-right: 6px;
+      font-size: 10px;
+    }
+    .file-name {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #475569;
+      font-weight: 500;
+    }
+    .cpbtn {
+      padding: 4px 10px;
+      font-size: 11px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      color: #475569;
+      transition: all 0.2s ease;
+    }
+    .cpbtn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+    
+    .cs pre {
+      border: none !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      background: #fafafa !important;
+    }
+    
+    .cs pre code {
+      font-family: var(--font-mono) !important;
+      font-size: 12px !important;
+    }
+
+    /* Flow step visual diagrams */
+    .flowrow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 12px 0;
+      border-radius: var(--border-radius-md);
+      overflow: hidden;
+      border: 1.5px solid #cbd5e1 !important;
+    }
+    @media(max-width: 640px) {
+      .flowrow {
+        flex-direction: column;
+        gap: 8px;
+        border: none !important;
+      }
+      .fstep {
+        border-right: none !important;
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: var(--border-radius-md);
+      }
+    }
+    .fstep {
+      flex: 1;
+      padding: 12px 10px;
+      font-size: 11.5px;
+      text-align: center;
+      border-right: 1px solid #cbd5e1;
+      background: #faf5ff;
+    }
+    .fstep:last-child {
+      border-right: none;
+    }
+    .fstep .fn {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 12.5px;
+      color: #3730a3;
+    }
+    .fstep .fd {
+      color: var(--color-text-secondary);
+      font-size: 11px;
+      font-style: italic;
+    }
+
+    /* Best Practices list style */
+    .bpl {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+    .bpl li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12.5px;
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      padding: 8px 12px;
+      background: #faf5ff;
+      border: 2px solid #16a34a !important;
+      border-radius: var(--border-radius-md);
+    }
+    .bpc {
+      background: #d1fae5;
+      color: #065f46;
+      border: 0.5px solid #a7f3d0;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Q&A Accordion blocks */
+    .ql {
+      display: grid;
+      gap: 10px;
+    }
+    .qi {
+      background: #ffffff;
+      border: 2px solid #0d9488 !important;
+      border-radius: var(--border-radius-md);
+      padding: 12px 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .qi:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .qq {
+      font-size: 13px;
+      font-weight: 700;
+      color: #b91c1c;
+      margin-bottom: 0px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-sans);
+    }
+    .qi.open .qq {
+      margin-bottom: 6px;
+    }
+    .qq i {
+      transition: transform 0.2s ease;
+    }
+    .qi.open .qq i {
+      transform: rotate(180deg) !important;
+    }
+    .qa {
+      font-size: 12.5px;
+      color: #1e3a8a;
+      line-height: 1.6;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 8px;
+      margin-top: 6px;
+      font-family: var(--font-sans);
+    }
+
+    /* Technical keyword highlighting */
+    .hl-kw {
+      font-family: var(--font-mono) !important;
+      font-weight: 700 !important;
+      color: #9f1239 !important;
+      background: #ffe4e6 !important;
+      border: 0.5px solid #f8bbd0 !important;
+      border-radius: 3px !important;
+      padding: 1px 4px !important;
+      font-size: 0.9em !important;
+      display: inline-block !important;
+    }
+  
+    /* Concepts - Flow Visuals Colorful & Responsive Styles */
+    .fstep.ns1 { background: #EEEDFE !important; color: #3C3489 !important; border-color: #AFA9EC !important; }
+    .fstep.ns2 { background: #E1F5EE !important; color: #085041 !important; border-color: #5DCAA5 !important; }
+    .fstep.ns3 { background: #E6F1FB !important; color: #0C447C !important; border-color: #85B7EB !important; }
+    .fstep.ns4 { background: #FAECE7 !important; color: #712B13 !important; border-color: #F0997B !important; }
+    .fstep.ns5 { background: #FAEEDA !important; color: #633806 !important; border-color: #EF9F27 !important; }
+    
+    .fstep.ns1 .fn, .fstep.ns1 .fd { color: #3C3489 !important; }
+    .fstep.ns2 .fn, .fstep.ns2 .fd { color: #085041 !important; }
+    .fstep.ns3 .fn, .fstep.ns3 .fd { color: #0C447C !important; }
+    .fstep.ns4 .fn, .fstep.ns4 .fd { color: #712B13 !important; }
+    .fstep.ns5 .fn, .fstep.ns5 .fd { color: #633806 !important; }
+
+    .fstep {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .fstep:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    
+    @media(max-width: 640px) {
+      .fstep.ns1, .fstep.ns2, .fstep.ns3, .fstep.ns4, .fstep.ns5 {
+        border: 1.5px solid !important;
+        margin-bottom: 4px;
+        border-radius: var(--border-radius-md) !important;
+      }
+    }
+
+    /* Responsive & Colorful Images */
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+      border-radius: var(--border-radius-md) !important;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
+      border: 2.5px solid var(--pc, #6C5CE7) !important;
+      display: block !important;
+      margin: 12px auto !important;
+    }
+
+  </style>
+</head>
+<body class="line-numbers">
+  <div class="hub">
+  <div class="pbar">
+    <span class="pp ph1">S1 - Foundation Basics</span>
+    <span class="pp ph2">S2 - Jenkins Controls</span>
+    <span class="pp ph3">S3 - Node & Runner Setup</span>
+    <span class="pp ph4">S4 - Pipelines & Environments</span>
+    <span class="pp ph5">S5 - Reporting & Archiving</span>
+    <span class="pp ph1">S6 - Parameterization & Cron</span>
+  </div>
+
+  <div class="stabs" id="sTabs">
+    <button class="stab active" onclick="sw(0)">S1 - Foundation Basics</button>
+    <button class="stab" onclick="sw(1)">S2 - Jenkins Controls</button>
+    <button class="stab" onclick="sw(2)">S3 - Node & Runner Setup</button>
+    <button class="stab" onclick="sw(3)">S4 - Pipelines & Environments</button>
+    <button class="stab" onclick="sw(4)">S5 - Reporting & Archiving</button>
+    <button class="stab" onclick="sw(5)">S6 - Parameterization & Cron</button>
+  </div>
+
+  <div class="prow">
+    <span id="pd"></span>
+    <span class="plbl" id="pl">Session 1 of 6</span>
+  </div>
+
+
+    <div id="allS">
+<div class="section active" id="s0">
+  <div class="obanner">
+    <h2>FOUNDATION — Jenkins + CI/CD + Playwright-TS Basics</h2>
+    <p>What Jenkins is, why teams use it, and how Playwright tests fit into a CI/CD pipeline</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Jenkins is an automation server that runs jobs like build, test, and deploy. Playwright-TS is a browser automation framework for web testing using TypeScript.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>It helps run tests automatically after code changes, so teams catch bugs early instead of finding them late in UAT or production.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Use Jenkins when your team wants scheduled runs, pull request checks, smoke packs after deployment, or nightly regression.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>It is used in QA pipelines, DevOps pipelines, release validation, environment health checks, and browser-based test execution.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Developer pushes code → Jenkins pipeline starts → dependencies install → Playwright tests run → reports/screenshots are published.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">CI</div><div class="gdef">Continuous Integration. Code is merged often and checked automatically.</div></div>
+      <div class="gitem"><div class="gkw">CD</div><div class="gdef">Continuous Delivery/Deployment. The app is prepared or pushed to environments automatically.</div></div>
+      <div class="gitem"><div class="gkw">Pipeline</div><div class="gdef">A sequence of automated steps such as checkout, install, test, report.</div></div>
+      <div class="gitem"><div class="gkw">Agent</div><div class="gdef">The machine or worker where Jenkins runs your job.</div></div>
+      <div class="gitem"><div class="gkw">Stage</div><div class="gdef">A named pipeline step like Checkout or Run Smoke Tests.</div></div>
+      <div class="gitem"><div class="gkw">Workspace</div><div class="gdef">The Jenkins job folder where code is downloaded and executed.</div></div>
+      <div class="gitem"><div class="gkw">Artifact</div><div class="gdef">Saved output like screenshots, traces, videos, logs, reports.</div></div>
+      <div class="gitem"><div class="gkw">Playwright</div><div class="gdef">Tool used to automate Chromium, Firefox, and WebKit browsers.</div></div>
+      <div class="gitem"><div class="gkw">Node.js</div><div class="gdef">Runtime needed to install and run Playwright project commands.</div></div>
+      <div class="gitem"><div class="gkw">Test Pack</div><div class="gdef">A group of tests such as smoke, sanity, regression, checkout pack.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Jenkins is the scheduler and executor; Playwright is the browser testing engine.</div>
+      <div class="qp">In CI, every code push should quickly tell us whether the app is stable or broken.</div>
+      <div class="qp">A good SDET keeps smoke tests fast, stable, and environment-aware.</div>
+      <div class="qp">Artifacts like screenshots and traces are critical for remote failure analysis.</div>
+      <div class="qp">Pipeline stages make debugging easy because each step is visible separately.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Basic CI Run</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Code Push</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Jenkins Trigger</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">npm install</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Playwright Smoke</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Report + Status</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Use this for fast feedback after every commit or merge.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Browser Validation Path</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Config Selects Browser</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Chromium / Firefox / WebKit</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Tests Execute</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Screenshots + Videos</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Publish Artifacts</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This flow explains how one framework can validate different browsers from the same pipeline.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Test Pack Strategy</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Smoke Pack</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Sanity Pack</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Regression Pack</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Nightly Run</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Release Decision</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Real projects do not run all tests on every push. They split tests into packs based on speed and risk.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 1</span>
+      </div>
+      <div class="ctbar" id="ctbar-0">
+        <button class="ct active" onclick="sc(0,0)"><span class="lang-pill lang-json">.json</span> package.json</button>
+        <button class="ct" onclick="sc(0,1)"><span class="lang-pill lang-ts">.ts</span> playwright.config.ts</button>
+        <button class="ct" onclick="sc(0,2)"><span class="lang-pill lang-ts">.ts</span> tests/smoke/login.smoke.spec.ts</button>
+        <button class="ct" onclick="sc(0,3)"><span class="lang-pill lang-txt">.txt</span> Jenkinsfile</button>
+        <button class="ct" onclick="sc(0,4)"><span class="lang-pill lang-txt">.txt</span> project-structure.txt</button>
+        <button class="ct" onclick="sc(0,5)"><span class="lang-pill lang-sh">.sh</span> commands.sh</button>
+      </div>
+      <div class="cp active" id="c0-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-json">●</span>
+          <span class="file-name">package.json</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-json">{
+  "name": "playwright-jenkins-learning",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:smoke": "playwright test --grep @smoke",
+    "test:sanity": "playwright test --grep @sanity",
+    "test:regression": "playwright test",
+    "report:show": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.0",
+    "typescript": "^5.8.0"
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c0-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">playwright.config.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests',
+  timeout: 30 * 1000,
+  retries: 1,
+  reporter: [['html', { open: 'never' }]],
+  use: {
+    baseURL: process.env.BASE_URL || 'https://qa.example.com',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    trace: 'retain-on-failure'
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } }
+  ]
+});</code></pre>
+      </div>
+      <div class="cp" id="c0-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">tests/smoke/login.smoke.spec.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('basic home page smoke @smoke', async ({ page }) =&gt; {
+  // Open application URL from config/baseURL
+  await page.goto('/');
+
+  // Real-time example: verify login button is visible in QA build
+  await expect(page.getByRole('button', { name: /login/i })).toBeVisible();
+});</code></pre>
+      </div>
+      <div class="cp" id="c0-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">Jenkinsfile</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        // Pull latest code from Git
+        checkout scm
+      }
+    }
+
+    stage('Install') {
+      steps {
+        sh 'npm ci'
+        sh 'npx playwright install --with-deps chromium'
+      }
+    }
+
+    stage('Run Smoke') {
+      steps {
+        sh 'npm run test:smoke'
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+    }
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c0-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">project-structure.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">playwright-jenkins-learning/
+├── Jenkinsfile
+├── package.json
+├── playwright.config.ts
+├── tests/
+│   └── smoke/
+│       └── login.smoke.spec.ts
+├── playwright-report/
+└── test-results/</code></pre>
+      </div>
+      <div class="cp" id="c0-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-sh">●</span>
+          <span class="file-name">commands.sh</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-bash"># Local quick start before Jenkins setup
+npm ci
+npx playwright install --with-deps chromium
+npm run test:smoke
+npx playwright show-report
+
+# Expected result:
+# Smoke test runs on Chromium and report opens locally</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep Session 1 mindset simple: first make one stable smoke pipeline before scaling.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use separate stages for install, test, and report to isolate failures quickly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Store test code in Git and never keep test scripts manually on Jenkins server.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Start with Chromium smoke tests for speed, then add more browsers later.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Name jobs clearly, for example: PW-TS-Smoke-QA or PW-Regression-Nightly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Always archive screenshots, videos, traces, and HTML reports after a run.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use environment variables instead of hardcoded URLs and credentials.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep smoke pack small, business-critical, and under a few minutes if possible.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Write comment-heavy starter pipelines so freshers can understand each stage.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Document failure ownership: app issue, test issue, environment issue, or data issue.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. What is Jenkins in simple words? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Jenkins is a tool that automatically runs steps like build, test, and report without manual effort.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. Why do we connect Playwright with Jenkins? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Because Jenkins can trigger Playwright tests on code changes, schedules, or deployments and share results with the team.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. What is a pipeline stage? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: A stage is a named block in Jenkins that represents one clear step such as checkout, install, or run tests.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. What are artifacts in automation testing? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Artifacts are stored run outputs like reports, screenshots, videos, logs, and traces used for debugging.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. What is the difference between smoke and regression pack? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Smoke pack checks critical flows quickly, while regression pack checks many flows in detail and takes longer.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s1">
+  <div class="obanner">
+    <h2>SETUP — Create Your First Jenkins Job for Playwright-TS</h2>
+    <p>Understand Jenkins dashboard, job types, workspace, source code checkout, and first execution</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>In this session, you will connect Jenkins to your Playwright project and run your first automated job.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Without a job, Jenkins knows nothing about your code, commands, branch, or reports.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Create this job when your project already runs successfully on local machine and is pushed to Git.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Usually on a Jenkins agent/server that has Git, Node.js, and browser dependencies installed.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Create job → connect Git repo → add build steps or Jenkinsfile → run → view console output and reports.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Dashboard</div><div class="gdef">The Jenkins home page showing jobs, builds, queue, and system status.</div></div>
+      <div class="gitem"><div class="gkw">Job</div><div class="gdef">A configured task Jenkins can run manually or automatically.</div></div>
+      <div class="gitem"><div class="gkw">Freestyle Job</div><div class="gdef">Simple Jenkins job configured through UI; good for learning basics.</div></div>
+      <div class="gitem"><div class="gkw">Pipeline Job</div><div class="gdef">Advanced job defined mostly in Jenkinsfile and preferred in real projects.</div></div>
+      <div class="gitem"><div class="gkw">SCM</div><div class="gdef">Source Code Management, usually Git repository checkout.</div></div>
+      <div class="gitem"><div class="gkw">Build Step</div><div class="gdef">A command Jenkins executes, such as npm ci or npm run test:smoke.</div></div>
+      <div class="gitem"><div class="gkw">Console Output</div><div class="gdef">Execution logs for build troubleshooting.</div></div>
+      <div class="gitem"><div class="gkw">Node Tool</div><div class="gdef">Configured Node.js version Jenkins uses for npm commands.</div></div>
+      <div class="gitem"><div class="gkw">Webhook</div><div class="gdef">Automatic trigger from Git provider when code changes.</div></div>
+      <div class="gitem"><div class="gkw">Credential</div><div class="gdef">Secure stored secret like username/token/SSH key used by Jenkins.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">A job is the entry point; without it, Jenkins cannot execute your test framework.</div>
+      <div class="qp">Freestyle helps beginners learn, but pipeline jobs are better for version-controlled automation.</div>
+      <div class="qp">Console output is the first place I check when a Jenkins run fails.</div>
+      <div class="qp">The Jenkins workspace should be treated like a temporary run area, not a manual storage place.</div>
+      <div class="qp">If code runs locally but not in Jenkins, I first compare tools, paths, and environment variables.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — First Job Setup</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Create Pipeline Job</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Connect Git Repo</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Configure Node</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Run npm ci</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Run Playwright</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This is the minimum path to get your first Jenkins + Playwright job working.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Failure Debugging Path</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Build Fails</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Check Console</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Check Missing Tool</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Fix Config</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Re-run Build</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Freshers should always read console output before changing the test code.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Trigger Sources</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Manual Run</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Git Push</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Schedule</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Upstream Deploy</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Jenkins Job Starts</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Jenkins can start from different events. Same job, different trigger sources.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 2</span>
+      </div>
+      <div class="ctbar" id="ctbar-1">
+        <button class="ct active" onclick="sc(1,0)"><span class="lang-pill lang-md">.md</span> jenkins-job-steps.md</button>
+        <button class="ct" onclick="sc(1,1)"><span class="lang-pill lang-txt">.txt</span> Jenkinsfile</button>
+        <button class="ct" onclick="sc(1,2)"><span class="lang-pill lang-sh">.sh</span> verify-tools.sh</button>
+        <button class="ct" onclick="sc(1,3)"><span class="lang-pill lang-ts">.ts</span> tests/smoke/title.smoke.spec.ts</button>
+        <button class="ct" onclick="sc(1,4)"><span class="lang-pill lang-txt">.txt</span> console-output-sample.txt</button>
+        <button class="ct" onclick="sc(1,5)"><span class="lang-pill lang-txt">.txt</span> compare-environments.txt</button>
+      </div>
+      <div class="cp active" id="c1-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">jenkins-job-steps.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">1. Open Jenkins dashboard
+2. Click New Item
+3. Enter name: PW-TS-Smoke-QA
+4. Select Pipeline
+5. Connect Git repository
+6. Point pipeline to Jenkinsfile
+7. Save and click Build Now
+
+# Goal:
+# Run one simple Playwright smoke pack from Jenkins successfully</code></pre>
+      </div>
+      <div class="cp" id="c1-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">Jenkinsfile</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">pipeline {
+  agent any
+  tools {
+    nodejs 'Node18'
+  }
+  stages {
+    stage('Checkout Code') {
+      steps {
+        git branch: 'main',
+            credentialsId: 'github-token',
+            url: 'https://github.com/example/playwright-jenkins-learning.git'
+      }
+    }
+
+    stage('Install Dependencies') {
+      steps {
+        sh 'npm ci'
+        sh 'npx playwright install --with-deps chromium'
+      }
+    }
+
+    stage('Execute Smoke Pack') {
+      steps {
+        sh 'npm run test:smoke'
+      }
+    }
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c1-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-sh">●</span>
+          <span class="file-name">verify-tools.sh</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-bash"># Verify tool setup on Jenkins machine/agent
+node -v
+npm -v
+npx playwright --version
+
+# Expected:
+# Versions should print successfully without command not found errors</code></pre>
+      </div>
+      <div class="cp" id="c1-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">tests/smoke/title.smoke.spec.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('title check @smoke', async ({ page }) =&gt; {
+  await page.goto('https://playwright.dev/');
+  await expect(page).toHaveTitle(/Playwright/);
+});</code></pre>
+      </div>
+      <div class="cp" id="c1-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">console-output-sample.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">[Pipeline] sh
++ npm ci
+/var/lib/jenkins/workspace/PW-TS-Smoke-QA@tmp/durable-12345/script.sh: 1: npm: not found
+
+Root cause:
+Node.js is not configured on Jenkins server/agent.</code></pre>
+      </div>
+      <div class="cp" id="c1-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">compare-environments.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">Compare these when code works locally but fails in Jenkins:
+- Node version
+- npm lock file
+- Installed browsers
+- BASE_URL value
+- Credentials source
+- Workspace permissions</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>First validate the Playwright project locally before touching Jenkins.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use pipeline job for long-term maintainability and Git-based changes.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Set Node.js version clearly in Jenkins tools to avoid npm mismatch issues.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use Git credentials from Jenkins credential store instead of plain text.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep one clean branch for CI learning, such as main or qa-automation.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Do not install dependencies manually in workspace folders; use job steps.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Enable timestamps in console output for easier failure tracking.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use descriptive build names and display names for easier reporting.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep workspace cleanup before/after build for less flaky behavior.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Write short README notes so any tester can run the same job later.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. What is the difference between freestyle and pipeline job? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Freestyle is UI-based and simple, while pipeline is code-based, version-controlled, and more scalable.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. What should be installed on Jenkins machine for Playwright? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Git, Node.js, npm packages, and Playwright browser dependencies should be available.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. Why is Jenkins workspace important? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Jenkins checks out code and runs commands there, so build files and reports are created in the workspace.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. What is a common first-time setup failure? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Missing Node.js, missing browser dependencies, incorrect path, or wrong Git credentials are common starter issues.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Why should credentials be managed in Jenkins store? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Because it is safer than hardcoding secrets in job configs or code files.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s2">
+  <div class="obanner">
+    <h2>PIPELINE DESIGN — Jenkinsfile, Stages, Browsers, Test Packs, Environments</h2>
+    <p>Build a real beginner-friendly pipeline with parameters and environment selection</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>A Jenkinsfile is pipeline-as-code. It defines exactly what Jenkins should do in each stage.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>It removes manual UI configuration confusion and keeps pipeline logic version-controlled in Git.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Use it when you want repeatable and team-friendly CI/CD execution across branches and environments.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Store Jenkinsfile in project root so the same pipeline logic travels with your Playwright project.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Add stages, parameters, environment variables, and post actions inside a declarative Jenkins pipeline.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Jenkinsfile</div><div class="gdef">A text file that defines Jenkins pipeline steps.</div></div>
+      <div class="gitem"><div class="gkw">Declarative Pipeline</div><div class="gdef">Structured Jenkins pipeline syntax with stages, agent, post, parameters.</div></div>
+      <div class="gitem"><div class="gkw">Parameter</div><div class="gdef">User-selectable input at run time such as browser or environment.</div></div>
+      <div class="gitem"><div class="gkw">Environment Variable</div><div class="gdef">A key-value pair used by pipeline and test code.</div></div>
+      <div class="gitem"><div class="gkw">Target Environment</div><div class="gdef">QA, UAT, staging, production-like environment where tests run.</div></div>
+      <div class="gitem"><div class="gkw">Branch</div><div class="gdef">Git branch from which code is checked out for execution.</div></div>
+      <div class="gitem"><div class="gkw">grep</div><div class="gdef">Filter option Playwright uses to run only tagged tests.</div></div>
+      <div class="gitem"><div class="gkw">Project</div><div class="gdef">Playwright browser/config execution unit like chromium or firefox.</div></div>
+      <div class="gitem"><div class="gkw">post</div><div class="gdef">Jenkins section used for actions after stages such as report publish or cleanup.</div></div>
+      <div class="gitem"><div class="gkw">timeout</div><div class="gdef">Safety limit to stop long or stuck executions.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">A Jenkinsfile makes the pipeline transparent, reviewable, and reusable.</div>
+      <div class="qp">Parameters help the same pipeline run smoke, sanity, or regression without code change.</div>
+      <div class="qp">I prefer environment variables for URLs and credentials instead of hardcoded values.</div>
+      <div class="qp">A good pipeline separates browser selection from test data and environment selection.</div>
+      <div class="qp">Post actions are important because reports must be archived even when tests fail.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Parameterized Run</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Choose Browser</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Choose Pack</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Choose ENV</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Jenkinsfile Reads Params</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Playwright Executes</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>One pipeline can serve many run types with parameters instead of multiple duplicate jobs.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Environment Mapping</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">ENV=QA</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">BASE_URL=qa-app</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Test Data=qa-data</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Run Smoke</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Share Result</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This is how real-time environment-specific runs are controlled.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Browser Pack Decision</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Critical Changes</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Chromium Smoke</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Stable?</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Cross-Browser Run</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Release Confidence</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Run small and fast first, then broaden coverage if the build is healthy.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 3</span>
+      </div>
+      <div class="ctbar" id="ctbar-2">
+        <button class="ct active" onclick="sc(2,0)"><span class="lang-pill lang-txt">.txt</span> Jenkinsfile</button>
+        <button class="ct" onclick="sc(2,1)"><span class="lang-pill lang-ts">.ts</span> config/env.ts</button>
+        <button class="ct" onclick="sc(2,2)"><span class="lang-pill lang-ts">.ts</span> tests/checkout/checkout.spec.ts</button>
+        <button class="ct" onclick="sc(2,3)"><span class="lang-pill lang-ts">.ts</span> playwright.config.ts</button>
+        <button class="ct" onclick="sc(2,4)"><span class="lang-pill lang-txt">.txt</span> test-pack-strategy.txt</button>
+        <button class="ct" onclick="sc(2,5)"><span class="lang-pill lang-sh">.sh</span> run-selected-pack.sh</button>
+      </div>
+      <div class="cp active" id="c2-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">Jenkinsfile</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">pipeline {
+  agent any
+  tools { nodejs 'Node18' }
+
+  parameters {
+    choice(name: 'ENV', choices: ['qa', 'uat'], description: 'Target environment')
+    choice(name: 'BROWSER', choices: ['chromium', 'firefox', 'webkit'], description: 'Browser project')
+    choice(name: 'TEST_PACK', choices: ['@smoke', '@sanity', '@regression'], description: 'Playwright tag')
+  }
+
+  environment {
+    QA_URL  = 'https://qa.example.com'
+    UAT_URL = 'https://uat.example.com'
+  }
+
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+
+    stage('Install') {
+      steps {
+        sh 'npm ci'
+        sh 'npx playwright install --with-deps'
+      }
+    }
+
+    stage('Run Selected Pack') {
+      steps {
+        script {
+          def targetUrl = params.ENV == 'qa' ? env.QA_URL : env.UAT_URL
+          sh "BASE_URL=${targetUrl} npx playwright test --project=${params.BROWSER} --grep '${params.TEST_PACK}'"
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'playwright-report/**, test-results/**', allowEmptyArchive: true
+    }
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c2-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">config/env.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">export const envConfig = {
+  qa: {
+    baseURL: 'https://qa.example.com',
+    user: 'qa_user',
+    region: 'IN'
+  },
+  uat: {
+    baseURL: 'https://uat.example.com',
+    user: 'uat_user',
+    region: 'UK'
+  }
+} as const;
+
+export function getEnvName(): 'qa' | 'uat' {
+  return (process.env.TEST_ENV as 'qa' | 'uat') || 'qa';
+}</code></pre>
+      </div>
+      <div class="cp" id="c2-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">tests/checkout/checkout.spec.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('product search works @smoke', async ({ page }) =&gt; {
+  await page.goto('/');
+  await page.getByPlaceholder('Search').fill('Laptop');
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Laptop')).toBeVisible();
+});
+
+test('checkout end-to-end flow @regression', async ({ page }) =&gt; {
+  // Longer business validation test for nightly pipeline
+});</code></pre>
+      </div>
+      <div class="cp" id="c2-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">playwright.config.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  reporter: [['html', { open: 'never' }]],
+  use: {
+    baseURL: process.env.BASE_URL,
+    screenshot: 'only-on-failure',
+    trace: 'retain-on-failure'
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } }
+  ]
+});</code></pre>
+      </div>
+      <div class="cp" id="c2-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">test-pack-strategy.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">Smoke  -&gt; critical login, search, checkout happy path
+Sanity -&gt; recent module change validation
+Regression -&gt; broad end-to-end pack across modules
+
+Real-time example:
+- PR merge: smoke on chromium
+- Pre-UAT deploy: sanity on chromium + firefox
+- Nightly: full regression on all target browsers</code></pre>
+      </div>
+      <div class="cp" id="c2-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-sh">●</span>
+          <span class="file-name">run-selected-pack.sh</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-bash"># Example command generated by Jenkins parameters
+BASE_URL=https://qa.example.com                     npx playwright test --project=chromium --grep '@smoke'
+
+# Expected:
+# Only smoke-tagged tests run on Chromium against QA URL</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep Jenkinsfile in repository root and review changes through pull requests.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use parameters for ENV, BROWSER, and TEST_PACK to avoid job duplication.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep environment URL mapping in one place for easier maintenance.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use tags like @smoke and @regression to select suites cleanly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Always define timeout and retries with clear reasoning.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Publish reports in post { always { ... } } so failures still show artifacts.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Add comments in Jenkinsfile when training freshers or handing over framework.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Avoid mixing deploy logic and long regression logic in one messy stage.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Name stages based on business outcome, not vague names like step1 or task2.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Prefer pipeline code over too many manual UI settings for better auditability.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. Why is Jenkinsfile preferred in automation projects? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Because it keeps the pipeline in code, so changes are tracked, reviewed, and reused like application code.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. How do parameters help in a pipeline? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: They allow the same pipeline to run with different browsers, environments, or test packs without editing the code each time.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. What is a good example of environment variable usage? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: BASE_URL can switch from QA to UAT while the same test scripts remain unchanged.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. Why do we tag tests? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Tags help us run only the needed pack such as smoke or sanity for faster and more focused validation.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. What should happen after test failure in CI? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: The pipeline should still archive logs, screenshots, videos, traces, and reports for debugging.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s3">
+  <div class="obanner">
+    <h2>DATA + EXECUTION STRATEGY — Test Data, Environments, Parallel Runs, and Agents</h2>
+    <p>Learn how pipelines handle real project data, multiple environments, and faster execution</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Real-time pipelines need correct test data, selected environment, and efficient execution strategy to be useful.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Even perfect test scripts fail if data is wrong, environment is unstable, or the pipeline is too slow.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Use these patterns when your smoke pipeline is stable and you want realistic runs across modules or browsers.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>In CI environments like QA, UAT, staging, and shared test environments with multiple users and data pools.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Externalize test data, run selected suites in parallel, split jobs by browser/module, and use proper agents.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Test Data</div><div class="gdef">Input used by tests like usernames, products, account IDs, coupon codes.</div></div>
+      <div class="gitem"><div class="gkw">Seed Data</div><div class="gdef">Prepared known data state before tests run.</div></div>
+      <div class="gitem"><div class="gkw">Parallel Execution</div><div class="gdef">Running tests at the same time to reduce total duration.</div></div>
+      <div class="gitem"><div class="gkw">Shard</div><div class="gdef">Split of test execution into smaller chunks across workers or jobs.</div></div>
+      <div class="gitem"><div class="gkw">Agent Label</div><div class="gdef">Jenkins label used to route jobs to the right machine.</div></div>
+      <div class="gitem"><div class="gkw">Worker</div><div class="gdef">Playwright process that executes tests in parallel.</div></div>
+      <div class="gitem"><div class="gkw">Fixture</div><div class="gdef">Reusable test setup code in Playwright.</div></div>
+      <div class="gitem"><div class="gkw">Data Collision</div><div class="gdef">Two tests using the same record/data and affecting each other.</div></div>
+      <div class="gitem"><div class="gkw">Isolation</div><div class="gdef">Keeping tests independent so they do not share risky state.</div></div>
+      <div class="gitem"><div class="gkw">Matrix</div><div class="gdef">Pipeline strategy that runs combinations like browser × environment.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Stable automation is not only about selectors; it is equally about data control and environment discipline.</div>
+      <div class="qp">Parallel execution saves time, but only when tests are isolated and data-safe.</div>
+      <div class="qp">I avoid reusing mutable test accounts across multiple parallel tests.</div>
+      <div class="qp">Agent selection matters because browser-capable machines and lightweight agents are not always the same.</div>
+      <div class="qp">A flaky pipeline is often a data or environment problem, not just a test script problem.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Data-Driven Run</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Read ENV</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Load Data File</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Pick Account</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Execute Test</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Release/Reset Data</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This flow stops random data usage and improves repeatability.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Parallel Strategy</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Smoke Suite</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Split by Worker</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Run in Parallel</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Collect Results</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Merge Status</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Parallelism reduces time, but unhealthy shared state creates flaky results.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Agent Routing</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Job Starts</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Match Agent Label</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Install/Cache</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Run Browser Tests</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Archive Outputs</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Route jobs to the correct machine with required OS and browser dependencies.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 4</span>
+      </div>
+      <div class="ctbar" id="ctbar-3">
+        <button class="ct active" onclick="sc(3,0)"><span class="lang-pill lang-json">.json</span> test-data/qa-users.json</button>
+        <button class="ct" onclick="sc(3,1)"><span class="lang-pill lang-ts">.ts</span> utils/dataLoader.ts</button>
+        <button class="ct" onclick="sc(3,2)"><span class="lang-pill lang-ts">.ts</span> playwright.config.ts</button>
+        <button class="ct" onclick="sc(3,3)"><span class="lang-pill lang-parallel">.parallel</span> Jenkinsfile.parallel</button>
+        <button class="ct" onclick="sc(3,4)"><span class="lang-pill lang-ts">.ts</span> tests/orders/create-order.spec.ts</button>
+        <button class="ct" onclick="sc(3,5)"><span class="lang-pill lang-sh">.sh</span> precheck.sh</button>
+      </div>
+      <div class="cp active" id="c3-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-json">●</span>
+          <span class="file-name">test-data/qa-users.json</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-json">{
+  "buyers": [
+    { "username": "qa_buyer_01", "password": "Pass@123", "region": "IN" },
+    { "username": "qa_buyer_02", "password": "Pass@123", "region": "UK" }
+  ],
+  "products": ["Laptop", "Phone", "Headphones"]
+}</code></pre>
+      </div>
+      <div class="cp" id="c3-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">utils/dataLoader.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import fs from 'fs';
+import path from 'path';
+
+export function loadUsers() {
+  const filePath = path.join(process.cwd(), 'test-data', 'qa-users.json');
+  const raw = fs.readFileSync(filePath, 'utf-8');
+  return JSON.parse(raw);
+}</code></pre>
+      </div>
+      <div class="cp" id="c3-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">playwright.config.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  workers: process.env.CI ? 4 : 2,
+  fullyParallel: true,
+  retries: process.env.CI ? 1 : 0,
+  use: {
+    baseURL: process.env.BASE_URL || 'https://qa.example.com'
+  }
+});</code></pre>
+      </div>
+      <div class="cp" id="c3-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-parallel">●</span>
+          <span class="file-name">Jenkinsfile.parallel</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">pipeline {
+  agent none
+  stages {
+    stage('Run Smoke in Parallel') {
+      parallel {
+        stage('Chromium QA') {
+          agent { label 'linux-playwright' }
+          steps {
+            checkout scm
+            sh 'npm ci'
+            sh 'BASE_URL=https://qa.example.com npx playwright test --project=chromium --grep @smoke'
+          }
+        }
+        stage('Firefox QA') {
+          agent { label 'linux-playwright' }
+          steps {
+            checkout scm
+            sh 'npm ci'
+            sh 'BASE_URL=https://qa.example.com npx playwright test --project=firefox --grep @smoke'
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c3-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">tests/orders/create-order.spec.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { test, expect } from '@playwright/test';
+import { loadUsers } from '../../utils/dataLoader';
+
+test('create order with unique buyer @sanity', async ({ page }, testInfo) =&gt; {
+  const users = loadUsers();
+  const buyer = users.buyers[testInfo.parallelIndex % users.buyers.length];
+
+  // Real-time example: distribute users across parallel workers
+  await page.goto('/login');
+  await page.getByLabel('Username').fill(buyer.username);
+  await page.getByLabel('Password').fill(buyer.password);
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  await expect(page.getByText('Dashboard')).toBeVisible();
+});</code></pre>
+      </div>
+      <div class="cp" id="c3-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-sh">●</span>
+          <span class="file-name">precheck.sh</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-bash"># Simple environment health check before long pack
+curl -I "$BASE_URL"
+
+# Expected:
+# HTTP 200/302 should return quickly before tests begin</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Externalize test data into files, fixtures, or helper layers rather than hardcoded inline values.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use unique users/orders where business flows modify records.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Reset or clean up data after destructive test cases.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Run stable smoke in parallel only after proving tests are independent.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use worker count carefully; more workers do not always mean better stability.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Separate environment issues from test issues using health-check stages.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use agent labels for Linux, browser-ready, or high-resource execution nodes.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep test data names clear, e.g., qa-buyer-01 or uat-admin-readonly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Track flaky tests and do not hide real instability behind excessive retries.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Prefer deterministic seed data over random uncontrolled values for CI runs.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. Why is test data important in CI? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Because a pipeline is only useful when tests have predictable and valid input data each time they run.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. What is data collision? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: It is a problem where multiple tests use the same shared record and interfere with each other.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. When should we use parallel execution? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Use it when tests are independent, environment is stable, and faster feedback is needed.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. What is the role of an agent label in Jenkins? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: It sends the job to a machine that has the correct tools and capacity for the run.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Why can more workers increase flakiness? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Because shared state, environment bottlenecks, and unsafe test data may break under heavy parallel load.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s4">
+  <div class="obanner">
+    <h2>REPORTING + DEBUGGING — HTML Reports, Screenshots, Videos, Traces, and Notifications</h2>
+    <p>Learn how to make failures easy to understand from Jenkins outputs</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>When tests fail in Jenkins, reporting and debugging artifacts help the team know exactly what happened.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Without artifacts, remote failure analysis becomes slow and full of guesswork.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Use these settings from the first real CI job onward, especially for flaky UI failures or environment issues.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Artifacts are generated in Playwright output folders and then archived by Jenkins.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Configure Playwright to save screenshots/videos/traces and Jenkins to archive and publish reports after every build.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">HTML Report</div><div class="gdef">Readable Playwright report summarizing pass/fail status and test details.</div></div>
+      <div class="gitem"><div class="gkw">Screenshot</div><div class="gdef">Captured image of browser state, mostly useful on failure.</div></div>
+      <div class="gitem"><div class="gkw">Video</div><div class="gdef">Recorded browser session, useful for UI transition debugging.</div></div>
+      <div class="gitem"><div class="gkw">Trace</div><div class="gdef">Detailed replay artifact containing actions, network, DOM snapshots.</div></div>
+      <div class="gitem"><div class="gkw">Artifact Archiving</div><div class="gdef">Saving files from Jenkins workspace after build finishes.</div></div>
+      <div class="gitem"><div class="gkw">post always</div><div class="gdef">Jenkins step that runs whether build passes or fails.</div></div>
+      <div class="gitem"><div class="gkw">Notification</div><div class="gdef">Message to email/Slack/Teams about pipeline result.</div></div>
+      <div class="gitem"><div class="gkw">Retention</div><div class="gdef">How long reports and artifacts should be kept.</div></div>
+      <div class="gitem"><div class="gkw">Root Cause</div><div class="gdef">Actual source of failure such as locator issue, app bug, auth issue, or data issue.</div></div>
+      <div class="gitem"><div class="gkw">Observability</div><div class="gdef">Ability to understand what happened from logs, reports, metrics, and artifacts.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">A failed test without artifacts is a weak failure signal.</div>
+      <div class="qp">I always keep screenshot, video, and trace on failure for faster debugging.</div>
+      <div class="qp">Reports should be generated even when the test stage fails.</div>
+      <div class="qp">Good CI pipelines show both result summary and debugging detail in one place.</div>
+      <div class="qp">Notifications are useful, but the report link and artifact link are what really help the team act.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Failure Analysis Path</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Test Fails</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Open HTML Report</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Check Screenshot/Video</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Open Trace</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Find Root Cause</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This is the standard remote debugging path for UI failures.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Artifact Publishing</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Playwright Creates Outputs</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Jenkins Archives</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Report Link Available</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Team Reviews</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Action Taken</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Archiving is the bridge between execution and team visibility.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Notification Loop</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Pipeline Ends</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Pass/Fail Status</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Send Message</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Share Build URL</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Team Response</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Teams should receive just enough notification detail to jump into the right report quickly.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 5</span>
+      </div>
+      <div class="ctbar" id="ctbar-4">
+        <button class="ct active" onclick="sc(4,0)"><span class="lang-pill lang-ts">.ts</span> playwright.config.ts</button>
+        <button class="ct" onclick="sc(4,1)"><span class="lang-pill lang-post">.post</span> Jenkinsfile.post</button>
+        <button class="ct" onclick="sc(4,2)"><span class="lang-pill lang-ts">.ts</span> tests/debug/login-failure.spec.ts</button>
+        <button class="ct" onclick="sc(4,3)"><span class="lang-pill lang-txt">.txt</span> summary.txt</button>
+        <button class="ct" onclick="sc(4,4)"><span class="lang-pill lang-txt">.txt</span> notification-message.txt</button>
+        <button class="ct" onclick="sc(4,5)"><span class="lang-pill lang-sh">.sh</span> trace-commands.sh</button>
+      </div>
+      <div class="cp active" id="c4-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">playwright.config.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  reporter: [['html', { outputFolder: 'playwright-report', open: 'never' }]],
+  use: {
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    trace: 'retain-on-failure'
+  }
+});</code></pre>
+      </div>
+      <div class="cp" id="c4-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-post">●</span>
+          <span class="file-name">Jenkinsfile.post</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">post {
+  always {
+    archiveArtifacts artifacts: 'playwright-report/**, test-results/**', allowEmptyArchive: true
+    junit testResults: 'test-results/**/*.xml', allowEmptyResults: true
+  }
+  failure {
+    echo 'Build failed. Open archived report, screenshot, video, and trace for debugging.'
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c4-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">tests/debug/login-failure.spec.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('intentional failure demo @smoke', async ({ page }) =&gt; {
+  await page.goto('https://playwright.dev/');
+
+  // Intentional wrong expectation to generate failure artifacts
+  await expect(page.getByText('ThisTextDoesNotExist')).toBeVisible();
+});</code></pre>
+      </div>
+      <div class="cp" id="c4-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">summary.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">Build #58
+Environment: QA
+Browser: Chromium
+Pack: Smoke
+Result: FAILED
+Next step: Open archived trace and screenshot to inspect locator issue</code></pre>
+      </div>
+      <div class="cp" id="c4-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">notification-message.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">Subject: Jenkins Build FAILED - PW-TS-Smoke-QA #58
+
+Result: FAILED
+ENV: QA
+Browser: Chromium
+Report: &lt;jenkins-build-url&gt;/artifact/playwright-report/index.html
+Action: Please check failed login smoke and attached artifacts.</code></pre>
+      </div>
+      <div class="cp" id="c4-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-sh">●</span>
+          <span class="file-name">trace-commands.sh</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-bash"># Local command to inspect generated trace if downloaded
+npx playwright show-trace test-results/smoke-login/trace.zip
+
+# Expected:
+# Trace viewer opens with step-by-step debugging timeline</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Archive artifacts in every run, not just successful runs.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use screenshot/video/trace retain-on-failure to balance detail and storage cost.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Publish HTML reports with clear folder structure and easy navigation.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep a short retention policy for heavy artifacts if storage is limited.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Capture console logs or API logs for flows that involve backend validation.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use notification messages that include build number, environment, browser, and result.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Classify failures by app issue, data issue, environment issue, and test issue.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Review trace viewer before changing selectors blindly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep report names standard so anyone can find the correct run quickly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Do not suppress failures; surface them with enough context for action.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. Why are Playwright traces useful? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: They provide step-by-step replay with DOM, actions, and network details which are very helpful for debugging UI failures.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. What should Jenkins archive after test execution? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: HTML report, screenshots, videos, traces, raw results, and useful logs should be archived.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. Why should post actions use always block? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Because reports and artifacts must still be collected even if tests fail in the main stage.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. What is the benefit of notifications? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: They quickly inform the team that a pipeline passed or failed and point to the build/report links.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. How do you debug a failed UI test remotely? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: I start from the Jenkins report, open screenshot/video/trace, check console logs, and identify whether the issue is app, test, data, or environment related.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s5">
+  <div class="obanner">
+    <h2>REAL-TIME CI/CD PATTERNS — Triggers, Scheduling, Security, Cleanup, and Interview Readiness</h2>
+    <p>Final session for production-style thinking and fresher-to-SDET interview confidence</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>This session combines real-world CI/CD practices that make a Jenkins + Playwright pipeline healthy over time.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>A working pipeline is not enough; it must also be secure, maintainable, and useful for daily team work.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Apply these patterns when your base pipeline is already running and you want readiness for real project support.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Across PR checks, nightly jobs, release validation runs, environment sanity checks, and post-deployment smoke runs.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Use triggers, schedules, cleanup, credentials, shared standards, and simple interview-ready explanations of the setup.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">SCM Trigger</div><div class="gdef">Git-based automatic trigger when code is pushed or merged.</div></div>
+      <div class="gitem"><div class="gkw">Cron</div><div class="gdef">Time-based schedule expression used for nightly or periodic runs.</div></div>
+      <div class="gitem"><div class="gkw">Credential Binding</div><div class="gdef">Injecting secrets safely into pipeline steps.</div></div>
+      <div class="gitem"><div class="gkw">Cleanup</div><div class="gdef">Removing workspace or old artifacts to keep servers healthy.</div></div>
+      <div class="gitem"><div class="gkw">Retry</div><div class="gdef">Running a stage/test again in permitted cases to reduce noise from temporary issues.</div></div>
+      <div class="gitem"><div class="gkw">Timeout</div><div class="gdef">Stopping a stage that hangs too long.</div></div>
+      <div class="gitem"><div class="gkw">Shared Library</div><div class="gdef">Reusable Jenkins pipeline code shared across projects.</div></div>
+      <div class="gitem"><div class="gkw">PR Validation</div><div class="gdef">Fast checks before allowing branch merge.</div></div>
+      <div class="gitem"><div class="gkw">Nightly Regression</div><div class="gdef">Scheduled larger suite for broad coverage when team load is lower.</div></div>
+      <div class="gitem"><div class="gkw">Governance</div><div class="gdef">Rules and standards for secure, clean, and reliable CI/CD operation.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">A healthy CI/CD pipeline is secure, readable, and easy for the whole team to trust.</div>
+      <div class="qp">PR validation should stay fast, while nightly jobs can carry broader regression coverage.</div>
+      <div class="qp">Credentials must come from Jenkins securely, never from hardcoded code files.</div>
+      <div class="qp">Cleanup and retention policies are part of pipeline maintenance, not optional extras.</div>
+      <div class="qp">In interviews, I explain CI/CD by connecting code changes, automated validation, artifacts, and release confidence.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Daily Team Usage</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Developer Pushes Code</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">PR Validation Smoke</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Merge</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Deploy to QA/UAT</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Post-Deploy Sanity</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This is the daily pattern many QA teams follow around feature delivery.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Nightly Regression</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Cron Trigger</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Pull Latest Code</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Full Regression</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Publish Results</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Defect Review Next Day</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Nightly pipelines give broad coverage without blocking daytime delivery speed.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Secure and Clean Pipeline</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Read Credentials</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Run Tests</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Archive Needed Artifacts</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Cleanup Workspace</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep">
+        <div class="fn">Keep Server Healthy</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Security and cleanup make CI/CD sustainable, not just functional.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 6</span>
+      </div>
+      <div class="ctbar" id="ctbar-5">
+        <button class="ct active" onclick="sc(5,0)"><span class="lang-pill lang-triggers">.triggers</span> Jenkinsfile.triggers</button>
+        <button class="ct" onclick="sc(5,1)"><span class="lang-pill lang-credentials">.credentials</span> Jenkinsfile.credentials</button>
+        <button class="ct" onclick="sc(5,2)"><span class="lang-pill lang-ts">.ts</span> tests/login/secure-login.spec.ts</button>
+        <button class="ct" onclick="sc(5,3)"><span class="lang-pill lang-cleanup">.cleanup</span> Jenkinsfile.cleanup</button>
+        <button class="ct" onclick="sc(5,4)"><span class="lang-pill lang-txt">.txt</span> interview-ready-notes.txt</button>
+        <button class="ct" onclick="sc(5,5)"><span class="lang-pill lang-txt">.txt</span> run-strategy.txt</button>
+      </div>
+      <div class="cp active" id="c5-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-triggers">●</span>
+          <span class="file-name">Jenkinsfile.triggers</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">pipeline {
+  agent any
+  triggers {
+    // Nightly regression at 1 AM Jenkins time
+    cron('H 1 * * *')
+  }
+  stages {
+    stage('Nightly Regression') {
+      steps {
+        sh 'npm ci'
+        sh 'npx playwright test --grep @regression'
+      }
+    }
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c5-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-credentials">●</span>
+          <span class="file-name">Jenkinsfile.credentials</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">pipeline {
+  agent any
+  stages {
+    stage('Use Secure Credentials') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'qa-login', usernameVariable: 'APP_USER', passwordVariable: 'APP_PASS')]) {
+          sh 'echo Running tests with secure variables'
+          sh 'APP_USER=$APP_USER APP_PASS=$APP_PASS npx playwright test --grep @smoke'
+        }
+      }
+    }
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c5-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">tests/login/secure-login.spec.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { test, expect } from '@playwright/test';
+
+test('login with pipeline-injected credentials @smoke', async ({ page }) =&gt; {
+  await page.goto(process.env.BASE_URL || 'https://qa.example.com/login');
+  await page.getByLabel('Username').fill(process.env.APP_USER || '');
+  await page.getByLabel('Password').fill(process.env.APP_PASS || '');
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  await expect(page.getByText('Dashboard')).toBeVisible();
+});</code></pre>
+      </div>
+      <div class="cp" id="c5-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-cleanup">●</span>
+          <span class="file-name">Jenkinsfile.cleanup</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">post {
+  always {
+    cleanWs(deleteDirs: true, notFailBuild: true)
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c5-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">interview-ready-notes.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">Interview answer in simple words:
+Jenkins triggers our Playwright-TS pipeline on code push, schedule, or manual run.
+The pipeline checks out code, installs dependencies, runs selected browser test packs
+on target environments, then archives reports, screenshots, videos, and traces.
+This gives fast quality feedback and supports release decisions.</code></pre>
+      </div>
+      <div class="cp" id="c5-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">run-strategy.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">PR Validation  -&gt; chromium smoke, fast, blocker for merge
+Post Deploy    -&gt; sanity pack on target environment
+Nightly        -&gt; full regression on selected browsers and modules
+Weekly         -&gt; longer cross-browser or non-critical packs</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep PR smoke pack fast so feedback reaches developers quickly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Schedule broad regression for off-hours or nightly windows.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use Jenkins credentials binding for tokens, usernames, and passwords.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Set timeouts on long-running stages to stop resource waste.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use workspace cleanup to avoid leftover files affecting later runs.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep cron schedules documented and meaningful, not random hidden settings.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Review flaky tests regularly instead of masking them with many retries.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Separate business-critical smoke tests from unstable experimental tests.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Standardize pipeline naming, stage naming, and artifact naming across teams.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Prepare interview answers in simple words: trigger, stages, environment, artifacts, and result usage.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. What is PR validation in CI/CD? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: It is a fast automatic check that runs before or during merge review to stop broken code from entering the main branch.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. Why do teams run nightly regression? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Because large suites take more time, so running them on schedule gives broad coverage without slowing every code change.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. Why should credentials never be hardcoded? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Because it creates security risk and makes secret rotation difficult.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. What is the purpose of cleanup in Jenkins? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Cleanup removes old files and workspaces so later builds stay clean and disk usage is controlled.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. How would you explain Jenkins + Playwright CI/CD in an interview? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A: Code changes trigger Jenkins, Jenkins runs Playwright tests in stages against selected environments and browsers, then publishes reports and artifacts for quick release decisions.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+    </div>
+  </div>
+
+  <!-- Script Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    // Bind local accordion Q&A toggle click handler immediately to prevent portal-enhance.js double-toggle
+    document.querySelectorAll('.qq').forEach(q => {
+      q.dataset.vrQaToggleDone = '1';
+      q.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const item = q.closest('.qi');
+        if (item) {
+          item.classList.toggle('open');
+        }
+      });
+    });
+
+    /* =====================================================================
+       LOCAL NAVIGATION ENGINE
+       ===================================================================== */
+    let cur = 0;
+    const cP = {
+      "0": [
+            "c0-0",
+            "c0-1",
+            "c0-2",
+            "c0-3",
+            "c0-4",
+            "c0-5"
+      ],
+      "1": [
+            "c1-0",
+            "c1-1",
+            "c1-2",
+            "c1-3",
+            "c1-4",
+            "c1-5"
+      ],
+      "2": [
+            "c2-0",
+            "c2-1",
+            "c2-2",
+            "c2-3",
+            "c2-4",
+            "c2-5"
+      ],
+      "3": [
+            "c3-0",
+            "c3-1",
+            "c3-2",
+            "c3-3",
+            "c3-4",
+            "c3-5"
+      ],
+      "4": [
+            "c4-0",
+            "c4-1",
+            "c4-2",
+            "c4-3",
+            "c4-4",
+            "c4-5"
+      ],
+      "5": [
+            "c5-0",
+            "c5-1",
+            "c5-2",
+            "c5-3",
+            "c5-4",
+            "c5-5"
+      ]
+};
+    const sNums = Array.from({length: 6}, (_, i) => i + 1);
+
+    function sw(n) {
+      cur = n;
+      // Toggle active classes on sections
+      for (let i = 0; i < 6; i++) {
+        const sec = document.getElementById('s' + i);
+        if (sec) {
+          if (i === n) {
+            sec.classList.add('active');
+          } else {
+            sec.classList.remove('active');
+          }
+        }
+      }
+      // Toggle active classes on tabs
+      const tabs = document.getElementById('sTabs').children;
+      for (let i = 0; i < tabs.length; i++) {
+        if (i === n) {
+          tabs[i].classList.add('active');
+        } else {
+          tabs[i].classList.remove('active');
+        }
+      }
+      upP();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function sc(sec, tab) {
+      const ids = cP[sec];
+      for (let i = 0; i < ids.length; i++) {
+        const panel = document.getElementById(ids[i]);
+        if (panel) {
+          if (i === tab) {
+            panel.classList.add('active');
+          } else {
+            panel.classList.remove('active');
+          }
+        }
+      }
+      const btns = document.getElementById('ctbar-' + sec).children;
+      for (let i = 0; i < btns.length; i++) {
+        if (i === tab) {
+          btns[i].classList.add('active');
+        } else {
+          btns[i].classList.remove('active');
+        }
+      }
+    }
+
+    function upP() {
+      const dots = document.getElementById('pd');
+      let dotHtml = '';
+      for (let i = 0; i < 6; i++) {
+        if (i < cur) {
+          dotHtml += '<span class="dot dn"></span>';
+        } else if (i === cur) {
+          dotHtml += '<span class="dot ac"></span>';
+        } else {
+          dotHtml += '<span class="dot td"></span>';
+        }
+      }
+      dots.innerHTML = dotHtml;
+      document.getElementById('pl').textContent = 'Session ' + (cur + 1) + ' of 6';
+    }
+
+    // Copy code helper
+    function copyPreText(btn) {
+      const pre = btn.closest('.cp').querySelector('pre');
+      const code = pre.querySelector('code');
+      const text = code ? code.innerText : pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.style.background = '#d1fae5';
+        btn.style.color = '#065f46';
+        setTimeout(() => {
+          btn.innerText = original;
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      upP();
+    });
+
+    // Prism MutationObserver for dynamic layouts
+    if (window.Prism) {
+      document.addEventListener('DOMContentLoaded', () => {
+        const observer = new MutationObserver((mutations) => {
+          let needsHighlight = false;
+          mutations.forEach(m => {
+            if (m.addedNodes.length) {
+              m.addedNodes.forEach(n => {
+                if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+              });
+            }
+          });
+          if (needsHighlight) { Prism.highlightAll(); }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      });
+    }
+  </script>
+  <script src="../portal-enhance.js"></script>
+</body>
+</html>

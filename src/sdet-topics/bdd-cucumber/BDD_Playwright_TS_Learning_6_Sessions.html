@@ -1,0 +1,2806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BDD with Cucumber + Playwright-TS — Beginner to Practical Learning in 6 Sessions</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Prism Syntax Highlighting -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../responsive.css">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --color-background-secondary: #f8fafc;
+      --color-border-tertiary: #cbd5e1;
+      --color-text-primary: #1e293b;
+      --color-text-secondary: #475569;
+      --border-radius-md: 6px;
+      --border-radius-lg: 8px;
+      --pc: #6C5CE7;
+      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Courier New', monospace;
+    }
+    body {
+      background: #f1f5f9;
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      padding: 1rem;
+    }
+    .hub {
+      padding: 1rem 0;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .pbar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .pp {
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      border: 1.5px solid;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .ph1 { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+    .ph2 { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+    .ph3 { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+    .ph4 { background: #FAECE7; color: #712B13; border-color: #F0997B; }
+    .ph5 { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
+
+    .stabs {
+      display: flex;
+      border-bottom: 1.5px solid var(--color-border-tertiary);
+      overflow-x: auto;
+      margin-bottom: 10px;
+    }
+    .stab {
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      border-bottom: 2.5px solid transparent;
+      margin-bottom: -1.5px;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+    .stab.active {
+      color: #ffffff;
+      border-bottom-color: #7F77DD;
+      background: #7F77DD;
+      border-radius: 6px 6px 0 0;
+    }
+    .stab:hover:not(.active) {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+
+    .prow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      background: #EEEDFE;
+      border: 1.5px solid #AFA9EC;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.dn { background: #1D9E75; }
+    .dot.ac { background: #7F77DD; }
+    .dot.td { background: #D3D1C7; }
+    .plbl {
+      font-size: 11px;
+      color: #3C3489;
+      font-weight: 500;
+    }
+
+    /* Section wrapper styling with thick 4-sided borders to prevent stacking bugs */
+    html body div.section {
+      display: none !important;
+      border: 2.5px solid var(--pc, #6C5CE7) !important;
+      border-radius: 10px;
+      background: #ffffff;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    html body div.section.active, html body div.section.visible {
+      display: block !important;
+    }
+
+    .obanner {
+      background: #faf5ff;
+      padding: 16px;
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+    .obanner h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #3730a3;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      border: none !important;
+      border-left: 4px solid var(--pc, #6C5CE7) !important;
+      padding-left: 12px !important;
+    }
+    .obanner p {
+      font-size: 13px;
+      color: #312e81;
+      line-height: 1.6;
+    }
+
+    .sec {
+      padding: 16px;
+      border: 2.5px solid var(--pc, #6C5CE7) !important;
+      border-radius: var(--border-radius-md);
+      margin: 14px;
+      background: #ffffff;
+    }
+    .sec h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      border: none !important;
+      border-left: 4px solid var(--pc, #6C5CE7) !important;
+      padding-left: 12px !important;
+    }
+
+    /* What/Why Table style */
+    .abox {
+      background: #faf5ff;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-lg);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .dr {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      padding: 8px 0;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .dr:last-child {
+      border-bottom: none;
+    }
+
+    /* Glossary grid style */
+    .glosgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media(max-width: 640px) {
+      .glosgrid, .igrid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    .gitem {
+      background: #faf5ff;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .gitem:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .gkw {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3730a3;
+      font-family: var(--font-mono);
+      margin-bottom: 4px;
+    }
+    .gdef {
+      font-size: 11.5px;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* One-Liners */
+    .igrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .qp {
+      background: #f8fafc;
+      border: 2px solid #534AB7 !important;
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--color-text-primary);
+      line-height: 1.5;
+      position: relative;
+      padding-left: 28px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .qp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .qp:before {
+      content: "❝";
+      position: absolute;
+      left: 10px;
+      top: 6px;
+      font-size: 20px;
+      color: #7F77DD;
+      font-family: serif;
+      line-height: 1;
+    }
+
+    /* Code Tabs Frame */
+    .cs {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1 !important;
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .csh {
+      display: flex;
+      align-items: center !important;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .csh span {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      color: #475569;
+      letter-spacing: .08em !important;
+      text-transform: uppercase;
+      font-family: var(--font-sans) !important;
+    }
+    .dr2 {
+      display: flex;
+      gap: 5px;
+    }
+    .md {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .mr { background: #ef4444; }
+    .my { background: #f59e0b; }
+    .mg { background: #10b981; }
+
+    .ctbar {
+      display: flex;
+      background: #f1f5f9;
+      border-bottom: 1px solid #cbd5e1;
+      overflow-x: auto;
+    }
+    .ct {
+      padding: 9px 14px;
+      font-size: 11.5px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #475569;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      border-bottom: 2.5px solid transparent;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .ct.active {
+      color: #0969da;
+      border-bottom-color: #0969da;
+      background: #ffffff;
+    }
+    .ct:hover:not(.active) {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .cp {
+      display: none;
+      background: #ffffff;
+      border: none !important;
+    }
+    .cp.active {
+      display: block;
+    }
+    .cp-sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .file-dot {
+      color: #6C5CE7;
+      margin-right: 6px;
+      font-size: 10px;
+    }
+    .file-name {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #475569;
+      font-weight: 500;
+    }
+    .cpbtn {
+      padding: 4px 10px;
+      font-size: 11px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      color: #475569;
+      transition: all 0.2s ease;
+    }
+    .cpbtn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+    
+    .cs pre {
+      border: none !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      background: #fafafa !important;
+    }
+    
+    .cs pre code {
+      font-family: var(--font-mono) !important;
+      font-size: 12px !important;
+    }
+
+    /* Flow step visual diagrams */
+    .flowrow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 12px 0;
+      border-radius: var(--border-radius-md);
+      overflow: hidden;
+      border: 1.5px solid #cbd5e1 !important;
+    }
+    @media(max-width: 640px) {
+      .flowrow {
+        flex-direction: column;
+        gap: 8px;
+        border: none !important;
+      }
+            .fstep {
+        border-right: none !important;
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: var(--border-radius-md);
+      }
+    }
+    .fstep {
+      flex: 1;
+      padding: 12px 10px;
+      font-size: 11.5px;
+      text-align: center;
+      border-right: 1px solid #cbd5e1;
+      background: #faf5ff;
+    }
+    .fstep:last-child {
+      border-right: none;
+    }
+    .fstep .fn {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 12.5px;
+      color: #3730a3;
+    }
+    .fstep .fd {
+      color: var(--color-text-secondary);
+      font-size: 11px;
+      font-style: italic;
+    }
+
+    /* Best Practices list style */
+    .bpl {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+    .bpl li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12.5px;
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      padding: 8px 12px;
+      background: #faf5ff;
+      border: 2px solid #16a34a !important;
+      border-radius: var(--border-radius-md);
+    }
+    .bpc {
+      background: #d1fae5;
+      color: #065f46;
+      border: 0.5px solid #a7f3d0;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Q&A Accordion blocks */
+    .ql {
+      display: grid;
+      gap: 10px;
+    }
+    .qi {
+      background: #ffffff;
+      border: 2px solid #0d9488 !important;
+      border-radius: var(--border-radius-md);
+      padding: 12px 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .qi:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    .qq {
+      font-size: 13px;
+      font-weight: 700;
+      color: #b91c1c;
+      margin-bottom: 0px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-sans);
+    }
+    .qi.open .qq {
+      margin-bottom: 6px;
+    }
+    .qq i {
+      transition: transform 0.2s ease;
+    }
+    .qi.open .qq i {
+      transform: rotate(180deg) !important;
+    }
+    .qa {
+      font-size: 12.5px;
+      color: #1e3a8a;
+      line-height: 1.6;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 8px;
+      margin-top: 6px;
+      font-family: var(--font-sans);
+    }
+    .qi.open > .qa {
+      display: block !important;
+    }
+
+    /* Technical keyword highlighting */
+    .hl-kw {
+      font-family: var(--font-mono) !important;
+      font-weight: 700 !important;
+      color: #9f1239 !important;
+      background: #ffe4e6 !important;
+      border: 0.5px solid #f8bbd0 !important;
+      border-radius: 3px !important;
+      padding: 1px 4px !important;
+      font-size: 0.9em !important;
+      display: inline-block !important;
+    }
+
+    /* Reset left borders for nested headings inside cards, accordions, glossary or code panels */
+    .qi h1, .qi h2, .qi h3, .qi h4, .qi h5, .qi h6, .qi .qq,
+    .cp h1, .cp h2, .cp h3, .cp h4, .cp h5, .cp h6,
+    .gitem h1, .gitem h2, .gitem h3, .gitem h4, .gitem h5, .gitem h6,
+    .qp h1, .qp h2, .qp h3, .qp h4, .qp h5, .qp h6,
+    .abox h1, .abox h2, .abox h3, .abox h4, .abox h5, .abox h6 {
+      border: none !important;
+      border-left: none !important;
+      padding-left: 0 !important;
+    }
+
+    /* Concepts - Flow Visuals Colorful & Responsive Styles */
+    .fstep.ns1 { background: #EEEDFE !important; color: #3C3489 !important; border-color: #AFA9EC !important; }
+    .fstep.ns2 { background: #E1F5EE !important; color: #085041 !important; border-color: #5DCAA5 !important; }
+    .fstep.ns3 { background: #E6F1FB !important; color: #0C447C !important; border-color: #85B7EB !important; }
+    .fstep.ns4 { background: #FAECE7 !important; color: #712B13 !important; border-color: #F0997B !important; }
+    .fstep.ns5 { background: #FAEEDA !important; color: #633806 !important; border-color: #EF9F27 !important; }
+    
+    .fstep.ns1 .fn, .fstep.ns1 .fd { color: #3C3489 !important; }
+    .fstep.ns2 .fn, .fstep.ns2 .fd { color: #085041 !important; }
+    .fstep.ns3 .fn, .fstep.ns3 .fd { color: #0C447C !important; }
+    .fstep.ns4 .fn, .fstep.ns4 .fd { color: #712B13 !important; }
+    .fstep.ns5 .fn, .fstep.ns5 .fd { color: #633806 !important; }
+
+    .fstep {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .fstep:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    }
+    
+    @media(max-width: 640px) {
+      .fstep.ns1, .fstep.ns2, .fstep.ns3, .fstep.ns4, .fstep.ns5 {
+        border: 1.5px solid !important;
+        margin-bottom: 4px;
+        border-radius: var(--border-radius-md) !important;
+      }
+    }
+
+    /* Responsive & Colorful Images */
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+      border-radius: var(--border-radius-md) !important;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
+      border: 2.5px solid var(--pc, #6C5CE7) !important;
+      display: block !important;
+      margin: 12px auto !important;
+    }
+  </style>
+</head>
+<body class="line-numbers">
+  <div class="hub">
+  <div class="pbar">
+    <span class="pp ph1">S1 · FOUNDATION</span>
+    <span class="pp ph2">S2 · GHERKIN + STEP DEF</span>
+    <span class="pp ph3">S3 · ADVANCED FEATURES</span>
+    <span class="pp ph4">S4 · TEST RUNNER, TAGS,</span>
+    <span class="pp ph5">S5 · REPORTING + LIVING</span>
+    <span class="pp ph1">S6 · CI/CD INTEGRATION </span>
+  </div>
+
+  <div class="stabs" id="sTabs">
+    <button class="stab active" onclick="sw(0)">S1 · FOUNDATION</button>
+    <button class="stab" onclick="sw(1)">S2 · GHERKIN + STEP DEF</button>
+    <button class="stab" onclick="sw(2)">S3 · ADVANCED FEATURES</button>
+    <button class="stab" onclick="sw(3)">S4 · TEST RUNNER, TAGS,</button>
+    <button class="stab" onclick="sw(4)">S5 · REPORTING + LIVING</button>
+    <button class="stab" onclick="sw(5)">S6 · CI/CD INTEGRATION </button>
+  </div>
+
+  <div class="prow">
+    <span id="pd"></span>
+    <span class="plbl" id="pl">Session 1 of 6</span>
+  </div>
+
+
+    <div id="allS">
+<div class="section active" id="s0">
+  <div class="obanner">
+    <h2>FOUNDATION — BDD with Cucumber + Playwright-TS</h2>
+    <p>Understand BDD philosophy and how the playwright-bdd library connects Gherkin features to the Playwright Test runner</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>BDD describes what the app should do in plain English; Cucumber-style Gherkin is then executed as <span class="hl-kw">Playwright</span>-TS tests using the playwright-bdd library.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>It connects business language to fast, modern, cross-browser automation — <span class="hl-kw">Playwright</span> is faster and more reliable than <span class="hl-kw">Selenium</span> for most UI flows.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Use it for any user-facing flow where the business cares about behavior — login, search, checkout, dashboards, multi-step wizards.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>In a <span class="hl-kw">TypeScript</span> Node.js project: feature files in features/, step definitions in <span class="hl-kw">steps</span>/, generated tests in .features-gen/.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Write Gherkin -&gt; playwright-bdd generates <span class="hl-kw">Playwright</span> spec files at build time -&gt; <span class="hl-kw">Playwright</span> Test runs them and produces reports.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">BDD</div><div class="gdef">Behavior-Driven Development — describing software using examples of behavior.</div></div>
+      <div class="gitem"><div class="gkw">Cucumber</div><div class="gdef">Original tool that reads Gherkin and runs step definitions; here we use a <span class="hl-kw">Playwright</span>-native equivalent.</div></div>
+      <div class="gitem"><div class="gkw">playwright-bdd</div><div class="gdef">Library that turns Gherkin feature files into <span class="hl-kw">Playwright</span> tests at generation time.</div></div>
+      <div class="gitem"><div class="gkw">Gherkin</div><div class="gdef">Plain-English language used inside .feature files.</div></div>
+      <div class="gitem"><div class="gkw">Playwright</div><div class="gdef">Modern browser automation library for Chromium, Firefox, and WebKit.</div></div>
+      <div class="gitem"><div class="gkw">TypeScript</div><div class="gdef">Typed JavaScript used to write <span class="hl-kw">Playwright</span> tests and step definitions.</div></div>
+      <div class="gitem"><div class="gkw">Feature File</div><div class="gdef">File ending in .feature containing a Feature and Scenarios.</div></div>
+      <div class="gitem"><div class="gkw">Step Definition</div><div class="gdef"><span class="hl-kw">TypeScript</span> function mapped to a Gherkin step via createBdd().</div></div>
+      <div class="gitem"><div class="gkw">.features-gen</div><div class="gdef">Folder where playwright-bdd writes generated <span class="hl-kw">Playwright</span> spec files.</div></div>
+      <div class="gitem"><div class="gkw">Living Documentation</div><div class="gdef">Up-to-date docs that come from passing feature files.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Cucumber gives the language; <span class="hl-kw">Playwright</span> does the clicking — fast and reliable.</div>
+      <div class="qp">playwright-bdd is the modern way to run Gherkin with <span class="hl-kw">Playwright</span> Test.</div>
+      <div class="qp">Feature files describe behavior; <span class="hl-kw">TypeScript</span> step defs perform <span class="hl-kw">Playwright</span> actions.</div>
+      <div class="qp"><span class="hl-kw">Playwright</span> handles browsers, waits, and tracing better than older <span class="hl-kw">Selenium</span> stacks.</div>
+      <div class="qp">Living documentation is the long-term payoff of using BDD.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — BDD + Playwright Loop</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Discuss Examples</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Write Feature</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Write Step Defs</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Playwright Runs</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Report + Trace</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This is the daily BDD + Playwright development loop.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Tooling Stack</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Gherkin (.feature)</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">playwright-bdd</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Step Definitions</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Playwright Test</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Browser</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Each layer has one clear job.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Project Layout</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">features/</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">steps/</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">pages/</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">.features-gen/</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">playwright.config.ts</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Generated tests are kept out of source by Git ignore.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 1</span>
+      </div>
+      <div class="ctbar" id="ctbar-0">
+        <button class="ct active" onclick="sc(0,0)"><span class="lang-pill lang-md">.md</span> bdd-pw-intro.md</button>
+        <button class="ct" onclick="sc(0,1)"><span class="lang-pill lang-json">.json</span> package.json</button>
+        <button class="ct" onclick="sc(0,2)"><span class="lang-pill lang-ts">.ts</span> playwright.config.ts</button>
+        <button class="ct" onclick="sc(0,3)"><span class="lang-pill lang-feature">.feature</span> features/login.feature</button>
+        <button class="ct" onclick="sc(0,4)"><span class="lang-pill lang-txt">.txt</span> project-structure.txt</button>
+        <button class="ct" onclick="sc(0,5)"><span class="lang-pill lang-json">.json</span> tsconfig.json</button>
+      </div>
+      <div class="cp active" id="c0-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">bdd-pw-intro.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># BDD with Cucumber + Playwright-TS
+
+## What we get
+- **Business-readable tests** in Gherkin
+- **Fast, reliable browser validation** via Playwright
+- **Living documentation** from passing scenarios
+
+## Stack
+- Playwright Test (`@playwright/test`)
+- **playwright-bdd** (Gherkin -&gt; Playwright generator)
+- TypeScript (typed step definitions)
+- Node.js (runtime)
+
+## Mindset
+- Feature files describe **what**, not **how**.
+- Step definitions are thin — they call Page Objects.
+- Page Objects know **how** to click and read.</code></pre>
+      </div>
+      <div class="cp" id="c0-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-json">●</span>
+          <span class="file-name">package.json</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-json">{
+  "name": "bdd-playwright-learning",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "bddgen": "bddgen",
+    "test": "bddgen &amp;&amp; playwright test",
+    "test:smoke": "bddgen &amp;&amp; playwright test --grep @smoke",
+    "report": "playwright show-report",
+    "codegen": "playwright codegen https://qa.example.com"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.46.0",
+    "playwright-bdd": "^7.3.0",
+    "typescript": "^5.5.0"
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c0-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">playwright.config.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { defineConfig, devices } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
+
+// 1) Tell playwright-bdd where features and step defs live
+const testDir = defineBddConfig({
+  features: 'features/**/*.feature',
+  steps:    'steps/**/*.ts',
+});
+
+// 2) Playwright config uses the generated testDir
+export default defineConfig({
+  testDir,
+  reporter: [['html', { open: 'never' }]],
+  use: {
+    baseURL: process.env.BASE_URL || 'https://qa.example.com',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+  ],
+});</code></pre>
+      </div>
+      <div class="cp" id="c0-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">features/login.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: User Login
+
+  Scenario: Successful login with valid credentials
+    Given the user is on the login page
+    When the user logs in with "vikrant" and "Pass@123"
+    Then the dashboard page should be displayed</code></pre>
+      </div>
+      <div class="cp" id="c0-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">project-structure.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">bdd-playwright-learning/
+├── package.json
+├── playwright.config.ts
+├── tsconfig.json
+├── features/
+│   └── login.feature
+├── steps/
+│   └── login.steps.ts
+├── pages/
+│   └── login.page.ts
+└── .features-gen/      (generated — gitignored)
+    └── login.feature.spec.js</code></pre>
+      </div>
+      <div class="cp" id="c0-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-json">●</span>
+          <span class="file-name">tsconfig.json</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-json">{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": ["node"]
+  },
+  "include": ["features", "steps", "pages", "playwright.config.ts"]
+}</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Start with one stable feature file and one step definitions module.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use playwright-bdd codegen helper to scaffold <span class="hl-kw">steps</span> faster.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">Playwright</span> role/text/label locators instead of brittle CSS or XPath.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">expect</span> from @playwright/test for assertions, not chai or jest.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">storageState</span> for logged-in sessions instead of logging in every test.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Externalize URLs into <span class="hl-kw">playwright.config.ts</span> use.<span class="hl-kw">baseURL</span> or env files.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Enable <span class="hl-kw">trace</span>: &#x27;on-first-retry&#x27; to debug failures quickly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Add .features-gen to .gitignore — it is build output, not source.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Group features by domain (auth/, checkout/, search/), not by tech.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Document the team&#x27;s tag vocabulary (e.g. @smoke, @regression) in TAGS.md.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. What is BDD in one line? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A way to build software using examples of behavior that everyone understands.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. Why use Cucumber with Playwright-TS? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Because Gherkin gives business-readable specs and <span class="hl-kw">Playwright</span> runs them fast and reliably across browsers.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. What is playwright-bdd? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A library that generates <span class="hl-kw">Playwright</span> spec files from .feature files so the <span class="hl-kw">Playwright</span> Test <span class="hl-kw">runner</span> can execute them.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. Where do feature files live? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Under a features/ folder in the project root by convention.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Should .features-gen be in Git? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">No — it is generated each run, so add it to .gitignore.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s1">
+  <div class="obanner">
+    <h2>GHERKIN + STEP DEFINITIONS FOR PLAYWRIGHT-TS</h2>
+    <p>Map Gherkin scenarios to async TypeScript step definitions using playwright-bdd and Playwright locators</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Step definitions are async <span class="hl-kw">TypeScript</span> functions that turn each Gherkin step into a <span class="hl-kw">Playwright</span> action or assertion.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Without step definitions, Cucumber cannot run any browser action — the Gherkin is just text.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Write them right after a feature file is reviewed and agreed by the Three Amigos.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>In a <span class="hl-kw">steps</span>/ folder using <span class="hl-kw">TypeScript</span> modules; one file per business area is a good rule.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Call createBdd() to get Given/When/Then bindings, pass them async arrow functions that use page and <span class="hl-kw">expect</span>.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">createBdd()</div><div class="gdef">playwright-bdd helper that returns typed Given/When/Then functions.</div></div>
+      <div class="gitem"><div class="gkw">Given</div><div class="gdef">Step definition for context/preconditions.</div></div>
+      <div class="gitem"><div class="gkw">When</div><div class="gdef">Step definition for the user action.</div></div>
+      <div class="gitem"><div class="gkw">Then</div><div class="gdef">Step definition for the expected outcome.</div></div>
+      <div class="gitem"><div class="gkw">Cucumber Expression</div><div class="gdef">Parameter syntax like {string}, {int}, {word}.</div></div>
+      <div class="gitem"><div class="gkw">page</div><div class="gdef"><span class="hl-kw">Playwright</span> Page fixture passed automatically into <span class="hl-kw">steps</span>.</div></div>
+      <div class="gitem"><div class="gkw">expect</div><div class="gdef"><span class="hl-kw">Playwright</span> assertion library from @playwright/test.</div></div>
+      <div class="gitem"><div class="gkw">getByRole</div><div class="gdef"><span class="hl-kw">Playwright</span> <span class="hl-kw">locator</span> using ARIA role + accessible name.</div></div>
+      <div class="gitem"><div class="gkw">getByLabel</div><div class="gdef"><span class="hl-kw">Playwright</span> <span class="hl-kw">locator</span> using form label text.</div></div>
+      <div class="gitem"><div class="gkw">Scenario Outline</div><div class="gdef">Gherkin template that runs once per Examples row.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Step definitions should read like one short sentence in <span class="hl-kw">TypeScript</span>.</div>
+      <div class="qp">Cucumber Expressions are easier and safer than raw regex.</div>
+      <div class="qp"><span class="hl-kw">Playwright</span> auto-waits, so I almost never need explicit waits.</div>
+      <div class="qp">I prefer getByRole and getByText over CSS selectors.</div>
+      <div class="qp">Keep assertions in @Then <span class="hl-kw">steps</span>, not in @Given or @When.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Gherkin to TS Mapping</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Gherkin Step</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">createBdd Pattern</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Matching TS Function</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Playwright Action</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Result</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>playwright-bdd matches steps to functions using the pattern.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Cucumber Expression Parameters</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">{string} -&gt; string</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">{int} -&gt; number</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">{word} -&gt; string</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">{float} -&gt; number</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Custom Parameter Type</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This removes most regex complexity.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Stable Playwright Step</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Locate by Role/Text</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Auto-wait</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Perform Action</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Assert with expect</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Move On</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Every reliable Playwright step follows this shape.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 2</span>
+      </div>
+      <div class="ctbar" id="ctbar-1">
+        <button class="ct active" onclick="sc(1,0)"><span class="lang-pill lang-feature">.feature</span> features/search.feature</button>
+        <button class="ct" onclick="sc(1,1)"><span class="lang-pill lang-feature">.feature</span> features/outline-search.feature</button>
+        <button class="ct" onclick="sc(1,2)"><span class="lang-pill lang-ts">.ts</span> steps/login.steps.ts</button>
+        <button class="ct" onclick="sc(1,3)"><span class="lang-pill lang-ts">.ts</span> steps/search.steps.ts</button>
+        <button class="ct" onclick="sc(1,4)"><span class="lang-pill lang-ts">.ts</span> steps/assertions.steps.ts</button>
+        <button class="ct" onclick="sc(1,5)"><span class="lang-pill lang-md">.md</span> cucumber-expressions-cheatsheet.md</button>
+      </div>
+      <div class="cp active" id="c1-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">features/search.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: Product Search
+
+  Scenario: Search returns matching products
+    Given the user is on the home page
+    When the user searches for "Laptop"
+    And applies the filter "In Stock"
+    Then matching results should be shown
+    But out-of-stock items should not be visible</code></pre>
+      </div>
+      <div class="cp" id="c1-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">features/outline-search.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: Search across categories
+
+  Scenario Outline: Search returns results in &lt;category&gt;
+    Given the user is on the home page
+    When the user searches for "&lt;term&gt;" in "&lt;category&gt;"
+    Then at least &lt;minCount&gt; results should be shown
+
+    Examples:
+      | term     | category    | minCount |
+      | Laptop   | Electronics | 5        |
+      | T-Shirt  | Fashion     | 10       |
+      | Novel    | Books       | 3        |</code></pre>
+      </div>
+      <div class="cp" id="c1-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">steps/login.steps.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { createBdd } from 'playwright-bdd';
+import { expect } from '@playwright/test';
+
+// createBdd() gives us typed Given/When/Then bindings
+const { Given, When, Then } = createBdd();
+
+Given('the user is on the login page', async ({ page }) =&gt; {
+  await page.goto('/login');
+});
+
+// {string} captures any quoted text — no regex needed
+When('the user logs in with {string} and {string}', async ({ page }, user: string, password: string) =&gt; {
+  await page.getByLabel('Username').fill(user);
+  await page.getByLabel('Password').fill(password);
+  await page.getByRole('button', { name: /login/i }).click();
+});
+
+Then('the dashboard page should be displayed', async ({ page }) =&gt; {
+  // Playwright auto-waits for visibility — no manual wait needed
+  await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
+});</code></pre>
+      </div>
+      <div class="cp" id="c1-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">steps/search.steps.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { createBdd } from 'playwright-bdd';
+import { expect } from '@playwright/test';
+
+const { Given, When, Then } = createBdd();
+
+Given('the user is on the home page', async ({ page }) =&gt; {
+  await page.goto('/');
+});
+
+// Two {string} parameters from Scenario Outline columns
+When('the user searches for {string} in {string}', async ({ page }, term: string, category: string) =&gt; {
+  await page.getByLabel('Category').selectOption(category);
+  await page.getByPlaceholder('Search').fill(term);
+  await page.getByRole('button', { name: 'Search' }).click();
+});
+
+Then('at least {int} results should be shown', async ({ page }, minCount: number) =&gt; {
+  // expect().toHaveCount retries until the assertion passes or times out
+  await expect(page.locator('.result-item')).toHaveCount(minCount);
+});</code></pre>
+      </div>
+      <div class="cp" id="c1-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">steps/assertions.steps.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { createBdd } from 'playwright-bdd';
+import { expect } from '@playwright/test';
+
+const { Then } = createBdd();
+
+Then('matching results should be shown', async ({ page }) =&gt; {
+  // Web-first assertion: auto-retries up to the configured timeout
+  await expect(page.locator('.result-item').first()).toBeVisible();
+});
+
+Then('out-of-stock items should not be visible', async ({ page }) =&gt; {
+  await expect(page.locator('.result-item.out-of-stock')).toHaveCount(0);
+});
+
+Then('the URL should contain {string}', async ({ page }, slug: string) =&gt; {
+  await expect(page).toHaveURL(new RegExp(slug));
+});</code></pre>
+      </div>
+      <div class="cp" id="c1-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">cucumber-expressions-cheatsheet.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># Cucumber Expressions Cheatsheet (playwright-bdd)
+
+| Expression | Captures           | TypeScript Type |
+|------------|--------------------|-----------------|
+| {string}   | "quoted text"      | string          |
+| {int}      | 42                 | number          |
+| {float}    | 3.14               | number          |
+| {word}     | single word        | string          |
+
+## Rules of thumb
+- Use {string} for any quoted business value.
+- Use {int} for counts and amounts.
+- Use {word} when no spaces or quotes are expected.
+- Use Custom Parameter Types for domain words like {currency}.
+
+## Tip
+If your step starts with `^` and ends with `$`, you are using regex.
+Otherwise you are using a Cucumber Expression — keep them readable.</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use one step definitions file per business area.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Prefer Cucumber Expressions over raw regex.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">Playwright</span> auto-waiting — avoid manual sleeps and timeouts.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use getByRole/getByLabel/getByText before CSS selectors.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep step functions short — push UI logic into Page Objects.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">expect</span>(<span class="hl-kw">locator</span>) assertions; they retry automatically.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Avoid hardcoded URLs — read them from <span class="hl-kw">baseURL</span> or env vars.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">TypeScript</span> types so step parameters are checked at build time.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Run `bddgen` before `playwright test` (or use the combined npm script).</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep .feature and .<span class="hl-kw">steps</span> file names aligned for readability.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. Cucumber Expression vs Regex? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Cucumber Expression is simpler (uses {string}, {int}); regex is more powerful but harder to read.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. Why no waits in most Playwright steps? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Because <span class="hl-kw">Playwright</span> auto-waits for elements to be visible and actionable.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. Where should assertions live? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Inside @Then <span class="hl-kw">steps</span> so they describe the expected outcome.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. How does the page fixture reach my step function? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">playwright-bdd injects it automatically via <span class="hl-kw">Playwright</span> Test fixtures.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Can one step definition match many feature lines? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Yes — parameters let one function handle many similar Gherkin <span class="hl-kw">steps</span>.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s2">
+  <div class="obanner">
+    <h2>ADVANCED FEATURES — Background, Hooks, Data Tables, Page Object Model</h2>
+    <p>Reuse setup, capture screenshots on failure, pass tabular data, and integrate playwright-bdd with POM</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Background reuses setup <span class="hl-kw">steps</span>, Before/After hooks run setup/teardown, Data Tables pass tabular data, and <span class="hl-kw">Page Object Model</span> keeps step defs clean.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Without these, feature files repeat, step defs grow huge, and a UI change breaks many places at once.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Add Background and <span class="hl-kw">POM</span> as soon as you have more than one or two scenarios; add screenshots-on-failure from day one.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Background in .feature files; hooks and Page Objects in <span class="hl-kw">TypeScript</span> modules under <span class="hl-kw">steps</span>/ and pages/.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Write Background once, use createBdd().Before/After in a hooks.ts, type DataTable parameters, and call Page Object methods from <span class="hl-kw">steps</span>.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Background</div><div class="gdef">Gherkin <span class="hl-kw">steps</span> that run before each scenario in the feature.</div></div>
+      <div class="gitem"><div class="gkw">Before</div><div class="gdef">playwright-bdd hook running before each scenario.</div></div>
+      <div class="gitem"><div class="gkw">After</div><div class="gdef">playwright-bdd hook running after each scenario.</div></div>
+      <div class="gitem"><div class="gkw">Tagged Hook</div><div class="gdef">Hook that runs only for scenarios with a matching tag.</div></div>
+      <div class="gitem"><div class="gkw">Data Table</div><div class="gdef">Tabular data passed inside a step.</div></div>
+      <div class="gitem"><div class="gkw">DataTable.hashes()</div><div class="gdef">Method returning rows as objects keyed by header.</div></div>
+      <div class="gitem"><div class="gkw">Page Object Model</div><div class="gdef">Pattern where each page is a TS class with locators and actions.</div></div>
+      <div class="gitem"><div class="gkw">Locator</div><div class="gdef"><span class="hl-kw">Playwright</span> handle like page.getByRole(...) used inside Page Objects.</div></div>
+      <div class="gitem"><div class="gkw">testInfo</div><div class="gdef"><span class="hl-kw">Playwright</span> object with test status, retry, attachments.</div></div>
+      <div class="gitem"><div class="gkw">attach</div><div class="gdef">testInfo.attach to add evidence into the <span class="hl-kw">HTML report</span>.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Background is for setup, not for behavior.</div>
+      <div class="qp">Hooks are perfect for storage state, screenshots on failure, and cleanup.</div>
+      <div class="qp">Tagged hooks let me reset DB only for @db scenarios.</div>
+      <div class="qp">Data Tables shine when a step needs many fields, not just one or two.</div>
+      <div class="qp"><span class="hl-kw">POM</span> keeps step defs short and stable when the UI changes.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Background Reuse</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Common Setup</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Background Block</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Each Scenario Inherits</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">No Copy-Paste</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Cleaner Feature</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Background runs automatically before each Scenario.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Hook + Screenshot</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Scenario Fails</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">After Hook Runs</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">page.screenshot()</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">testInfo.attach()</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Report Shows Image</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This pattern makes every failure debuggable from the HTML report.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — POM Integration</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Step Definition</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Calls Page Object</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Page Uses Playwright</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Action Performed</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Step Verifies</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Steps stay business-focused; pages handle UI mechanics.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 3</span>
+      </div>
+      <div class="ctbar" id="ctbar-2">
+        <button class="ct active" onclick="sc(2,0)"><span class="lang-pill lang-feature">.feature</span> features/background-login.feature</button>
+        <button class="ct" onclick="sc(2,1)"><span class="lang-pill lang-feature">.feature</span> features/data-table-users.feature</button>
+        <button class="ct" onclick="sc(2,2)"><span class="lang-pill lang-ts">.ts</span> steps/hooks.ts</button>
+        <button class="ct" onclick="sc(2,3)"><span class="lang-pill lang-ts">.ts</span> pages/login.page.ts</button>
+        <button class="ct" onclick="sc(2,4)"><span class="lang-pill lang-ts">.ts</span> pages/home.page.ts</button>
+        <button class="ct" onclick="sc(2,5)"><span class="lang-pill lang-ts">.ts</span> steps/login.steps.ts</button>
+      </div>
+      <div class="cp active" id="c2-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">features/background-login.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: Login with Background
+
+  Background:
+    Given the user is on the login page
+
+  Scenario: Successful login
+    When the user logs in with "vikrant" and "Pass@123"
+    Then the dashboard page should be displayed
+
+  Scenario: Wrong password shows error
+    When the user logs in with "vikrant" and "Wrong"
+    Then an error message "Invalid credentials" should be shown</code></pre>
+      </div>
+      <div class="cp" id="c2-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">features/data-table-users.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">Feature: Add multiple users
+
+  Scenario: Bulk user creation
+    Given the admin is on the users page
+    When the following users are created:
+      | username | email                  | role  |
+      | vikrant  | vikrant@example.com    | admin |
+      | rajat    | rajat@example.com      | qa    |
+      | aman     | aman@example.com       | dev   |
+    Then the user count should be 3</code></pre>
+      </div>
+      <div class="cp" id="c2-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">steps/hooks.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { createBdd } from 'playwright-bdd';
+
+const { Before, After } = createBdd();
+
+// Runs before every scenario
+Before(async ({ page }) =&gt; {
+  // Example: set viewport, clear cookies, etc.
+  await page.context().clearCookies();
+});
+
+// Runs after every scenario — attach screenshot on failure
+After(async ({ page }, { testInfo }) =&gt; {
+  if (testInfo.status === 'failed') {
+    const png = await page.screenshot();
+    await testInfo.attach('failure-screenshot', { body: png, contentType: 'image/png' });
+  }
+});
+
+// Tagged hook — runs ONLY for scenarios tagged @db
+Before({ tags: '@db' }, async () =&gt; {
+  // Reset database / seed required data
+});</code></pre>
+      </div>
+      <div class="cp" id="c2-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">pages/login.page.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { Page, Locator, expect } from '@playwright/test';
+
+export class LoginPage {
+  readonly page: Page;
+  readonly username: Locator;
+  readonly password: Locator;
+  readonly loginBtn: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.username = page.getByLabel('Username');
+    this.password = page.getByLabel('Password');
+    this.loginBtn = page.getByRole('button', { name: /login/i });
+  }
+
+  async open() {
+    await this.page.goto('/login');
+    await expect(this.username).toBeVisible();
+  }
+
+  // Business-friendly method used by step definitions
+  async loginAs(user: string, pwd: string) {
+    await this.username.fill(user);
+    await this.password.fill(pwd);
+    await this.loginBtn.click();
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c2-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">pages/home.page.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { Page, Locator, expect } from '@playwright/test';
+
+export class HomePage {
+  readonly page: Page;
+  readonly dashboardTitle: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.dashboardTitle = page.getByRole('heading', { name: /dashboard/i });
+  }
+
+  async isDashboardVisible(): Promise&lt;boolean&gt; {
+    await expect(this.dashboardTitle).toBeVisible();
+    return this.dashboardTitle.isVisible();
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c2-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">steps/login.steps.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { createBdd } from 'playwright-bdd';
+import { expect } from '@playwright/test';
+import { LoginPage } from '../pages/login.page';
+import { HomePage } from '../pages/home.page';
+
+const { Given, When, Then } = createBdd();
+
+Given('the user is on the login page', async ({ page }) =&gt; {
+  const loginPage = new LoginPage(page);
+  await loginPage.open();
+});
+
+When('the user logs in with {string} and {string}', async ({ page }, user: string, pwd: string) =&gt; {
+  const loginPage = new LoginPage(page);
+  await loginPage.loginAs(user, pwd);
+});
+
+Then('the dashboard page should be displayed', async ({ page }) =&gt; {
+  const homePage = new HomePage(page);
+  expect(await homePage.isDashboardVisible()).toBeTruthy();
+});</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep Background under 4 <span class="hl-kw">steps</span> and use it only when EVERY scenario needs that setup.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use Before for setup, After for screenshot + cleanup.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Attach screenshots only on failure (check testInfo.status).</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use tagged Before(&#x27;@db&#x27;) for special-case setup.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use dataTable.hashes() for headered tables — returns objects.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Move all UI actions into Page Objects — step defs should call methods.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Name page methods with business verbs (loginAs, addToCart).</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Trust <span class="hl-kw">Playwright</span> auto-waiting inside Page Objects — avoid manual waits.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Pass page via constructor — keep Page Objects stateless and reusable.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep assertions in <span class="hl-kw">steps</span>, not in Page Objects.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. Why use Background? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">To remove repetition when every scenario starts with the same setup <span class="hl-kw">steps</span>.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. How is a Data Table different from a Scenario Outline? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Data Table passes a table into one step; Scenario Outline runs a whole scenario per row.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. Why use Page Object Model with playwright-bdd? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Because step defs should describe behavior, not click buttons — Page Objects handle the clicking.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. How do you capture a screenshot on failure? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">In After hook, check testInfo.status, then page.screenshot() and testInfo.attach().</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. What is a tagged hook? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A hook that runs only for scenarios with a matching tag, like Before(&#x27;@db&#x27;).</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s3">
+  <div class="obanner">
+    <h2>TEST RUNNER, TAGS, PARALLEL EXECUTION</h2>
+    <p>Run only what matters with tags and scale the suite with Playwright projects and workers</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span><span class="hl-kw">Playwright</span> Test is the <span class="hl-kw">runner</span>; playwright-bdd configures it to read features; tags decide what runs; <span class="hl-kw">projects</span> + <span class="hl-kw">workers</span> handle parallel.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Without tags, everything runs; without parallel, big suites are slow; without <span class="hl-kw">projects</span>, you cannot cover multiple browsers cleanly.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Set up the basic config on day one, add tags when you have ~10 scenarios, add multi-project and <span class="hl-kw">workers</span> when CI time matters.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>All in <span class="hl-kw">playwright.config.ts</span> and via --grep on the command line.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Add <span class="hl-kw">projects</span> + <span class="hl-kw">workers</span> + <span class="hl-kw">retries</span> in defineConfig; tag scenarios; use --grep &#x27;@smoke&#x27; to filter at run time.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">Playwright Test</div><div class="gdef">The built-in <span class="hl-kw">runner</span> that executes generated specs.</div></div>
+      <div class="gitem"><div class="gkw">defineBddConfig</div><div class="gdef">Helper from playwright-bdd to register features and <span class="hl-kw">steps</span>.</div></div>
+      <div class="gitem"><div class="gkw">Tag</div><div class="gdef">Label like @smoke on Feature or Scenario.</div></div>
+      <div class="gitem"><div class="gkw">--grep</div><div class="gdef"><span class="hl-kw">Playwright</span> CLI flag to run only matching titles/tags.</div></div>
+      <div class="gitem"><div class="gkw">Project</div><div class="gdef">Browser/device configuration in <span class="hl-kw">playwright.config.ts</span>.</div></div>
+      <div class="gitem"><div class="gkw">Worker</div><div class="gdef">Parallel process running <span class="hl-kw">Playwright</span> tests.</div></div>
+      <div class="gitem"><div class="gkw">fullyParallel</div><div class="gdef">Config flag that runs files and tests in parallel.</div></div>
+      <div class="gitem"><div class="gkw">Retries</div><div class="gdef">Number of times a flaky test will be re-run automatically.</div></div>
+      <div class="gitem"><div class="gkw">Reporter</div><div class="gdef">Output format like html, list, dot.</div></div>
+      <div class="gitem"><div class="gkw">storageState</div><div class="gdef">Saved login state reused across tests for speed.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">Tags + --grep is the cleanest way to choose what runs in CI.</div>
+      <div class="qp"><span class="hl-kw">Playwright</span> runs files in parallel by default — fullyParallel makes tests inside files parallel too.</div>
+      <div class="qp">Projects are how I cover Chromium, Firefox, and WebKit cleanly.</div>
+      <div class="qp">Workers control resource usage on CI machines.</div>
+      <div class="qp">Retries are useful but should not hide real flakiness.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Runner Wiring</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">defineBddConfig</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">features=</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">steps=</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">defineConfig testDir</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Playwright Test runs</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Two helpers, one cohesive config.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Tag Filtering</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Tag @smoke</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">npm test:smoke</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">--grep &#x27;@smoke&#x27;</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Other Scenarios Skip</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Faster Feedback</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Standard way to keep CI fast.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Parallel Strategy</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">fullyParallel:true</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Multiple Projects</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Workers</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Independent Tests</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Faster Suite</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Parallel via Playwright workers and projects.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 4</span>
+      </div>
+      <div class="ctbar" id="ctbar-3">
+        <button class="ct active" onclick="sc(3,0)"><span class="lang-pill lang-ts">.ts</span> playwright.config.ts</button>
+        <button class="ct" onclick="sc(3,1)"><span class="lang-pill lang-md">.md</span> tag-expressions.md</button>
+        <button class="ct" onclick="sc(3,2)"><span class="lang-pill lang-feature">.feature</span> features/tagged.feature</button>
+        <button class="ct" onclick="sc(3,3)"><span class="lang-pill lang-sh">.sh</span> run-commands.sh</button>
+        <button class="ct" onclick="sc(3,4)"><span class="lang-pill lang-txt">.txt</span> ci-config.txt</button>
+        <button class="ct" onclick="sc(3,5)"><span class="lang-pill lang-ts">.ts</span> playwright.bdd.advanced.ts</button>
+      </div>
+      <div class="cp active" id="c3-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">playwright.config.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { defineConfig, devices } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
+
+const testDir = defineBddConfig({
+  features: 'features/**/*.feature',
+  steps:    'steps/**/*.ts',
+});
+
+export default defineConfig({
+  testDir,
+  fullyParallel: true,
+  workers: process.env.CI ? 4 : 2,
+  retries: process.env.CI ? 1 : 0,
+  reporter: [['html', { open: 'never' }], ['list']],
+  use: {
+    baseURL: process.env.BASE_URL || 'https://qa.example.com',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit',   use: { ...devices['Desktop Safari'] } },
+  ],
+});</code></pre>
+      </div>
+      <div class="cp" id="c3-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">tag-expressions.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># Filtering with tags in playwright-bdd
+
+| Command                                        | Meaning                              |
+|------------------------------------------------|--------------------------------------|
+| `npx playwright test --grep @smoke`            | Only @smoke scenarios                |
+| `npx playwright test --grep-invert @wip`       | Skip work-in-progress                |
+| `npx playwright test --grep "@smoke|@sanity"`  | Either one (regex)                   |
+| `npx playwright test --project=chromium`       | Only the Chromium project            |
+| `npx playwright test --workers=4`              | Use 4 parallel workers               |
+
+## Tips
+- Keep tags lowercase and short.
+- One tag per intent: pack (@smoke), area (@login), state (@wip).
+- Use npm scripts to standardize the common combinations.</code></pre>
+      </div>
+      <div class="cp" id="c3-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-feature">●</span>
+          <span class="file-name">features/tagged.feature</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-gherkin">@checkout
+Feature: Checkout
+
+  @smoke
+  Scenario: Smoke - guest checkout
+    Given a guest with a cart
+    When the guest checks out
+    Then the order should be placed
+
+  @regression @payment
+  Scenario: Checkout with saved card
+    Given a saved card is on file
+    When the user pays with the saved card
+    Then the payment should be successful</code></pre>
+      </div>
+      <div class="cp" id="c3-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-sh">●</span>
+          <span class="file-name">run-commands.sh</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-bash"># Daily run commands
+
+# Generate specs and run all
+npm test
+
+# Smoke pack only
+npx playwright test --grep @smoke
+
+# Skip work-in-progress
+npx playwright test --grep-invert @wip
+
+# Single browser
+npx playwright test --project=chromium
+
+# Custom worker count for CI
+npx playwright test --workers=4
+
+# Open HTML report
+npx playwright show-report</code></pre>
+      </div>
+      <div class="cp" id="c3-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">ci-config.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">Playwright parallel basics for CI:
+
+1) Files run in parallel by default.
+2) fullyParallel: true also runs tests inside a file in parallel.
+3) workers controls how many parallel processes run.
+4) Each project runs its own copy of the tests in parallel.
+
+Recommended CI defaults:
+  workers: 4
+  retries: 1
+  fullyParallel: true
+  reporter: [html, list]
+
+Tip:
+  Use one Playwright project per browser you officially support.</code></pre>
+      </div>
+      <div class="cp" id="c3-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">playwright.bdd.advanced.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { defineBddConfig } from 'playwright-bdd';
+
+// Advanced playwright-bdd config — supports tags and import locations
+export const testDir = defineBddConfig({
+  features: 'features/**/*.feature',
+  steps:    'steps/**/*.ts',
+  // Limit the run to certain tag expressions at generation time:
+  tags:     '@smoke and not @wip',
+  // Output folder for generated specs (gitignored):
+  outputDir: '.features-gen',
+});</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep one <span class="hl-kw">playwright.config.ts</span> as the single source of truth.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use defineBddConfig() in the same file to register features and <span class="hl-kw">steps</span>.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Add a project per browser you care about (chromium, firefox, webkit).</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use fullyParallel: true once tests are isolated.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Set <span class="hl-kw">retries</span>: 1 or 2 only after investigating flakiness.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use --grep &#x27;@smoke&#x27; for CI smoke runs; full suite for nightly.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use --grep-invert &#x27;@wip&#x27; to skip work-in-progress.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">storageState</span> to skip repeated logins.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Set <span class="hl-kw">workers</span> based on CI machine, not local laptop.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Document the team&#x27;s tag vocabulary in TAGS.md.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. How do tags help in CI? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">They let CI run only what is needed, like @smoke on every PR and full suite at night.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. How does Playwright run in parallel? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">By default it runs spec files in parallel; with fullyParallel: true it also runs tests inside a file in parallel.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. What is a project in Playwright? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">A named configuration in <span class="hl-kw">playwright.config.ts</span>, usually one per browser or device.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. How do you skip work-in-progress scenarios? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Tag them @wip and use --grep-invert &#x27;@wip&#x27; or filter via npm scripts.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Why set retries carefully? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Because <span class="hl-kw">retries</span> can mask real bugs if used to hide instability instead of fixing it.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s4">
+  <div class="obanner">
+    <h2>REPORTING + LIVING DOCUMENTATION — HTML, Allure, Trace Viewer</h2>
+    <p>Make every failure debuggable and turn passing scenarios into living documentation</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span><span class="hl-kw">Playwright</span> gives a built-in <span class="hl-kw">HTML report</span> and <span class="hl-kw">trace</span> viewer; Allure adds richer stakeholder-friendly views; together they turn runs into living documentation.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Reports give the team confidence; the <span class="hl-kw">trace</span> viewer makes failures obvious without re-running anything.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Configure <span class="hl-kw">HTML report</span> from day one; add Allure when stakeholders start reading reports; enable traces always for CI.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Reports land under playwright-report/ and allure-report/; traces under test-results/.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Set reporters in <span class="hl-kw">playwright.config.ts</span>, install allure-playwright, attach extra evidence in hooks, and open <span class="hl-kw">trace</span>.zip with show-trace.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">HTML Report</div><div class="gdef">Built-in <span class="hl-kw">Playwright</span> report with timeline, attachments, and traces.</div></div>
+      <div class="gitem"><div class="gkw">Allure</div><div class="gdef">Modern reporter with history, trends, and severity tagging.</div></div>
+      <div class="gitem"><div class="gkw">Trace Viewer</div><div class="gdef"><span class="hl-kw">Playwright</span> tool to step through DOM, network, and actions of a run.</div></div>
+      <div class="gitem"><div class="gkw">Trace</div><div class="gdef">Zip file capturing every step, screenshot, and network call.</div></div>
+      <div class="gitem"><div class="gkw">Screenshot</div><div class="gdef">PNG captured on failure via screenshot: &#x27;only-on-failure&#x27;.</div></div>
+      <div class="gitem"><div class="gkw">Video</div><div class="gdef">Recording of the browser session via video: &#x27;retain-on-failure&#x27;.</div></div>
+      <div class="gitem"><div class="gkw">testInfo.attach</div><div class="gdef">Method to attach extra evidence into the <span class="hl-kw">HTML report</span>.</div></div>
+      <div class="gitem"><div class="gkw">Living Documentation</div><div class="gdef">Up-to-date docs from passing feature files.</div></div>
+      <div class="gitem"><div class="gkw">Reporter</div><div class="gdef">Plugin output like html, list, json, allure-playwright.</div></div>
+      <div class="gitem"><div class="gkw">show-trace</div><div class="gdef">CLI to open a saved <span class="hl-kw">trace</span>.zip for debugging.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">A failed test without a <span class="hl-kw">trace</span> is a weak failure signal.</div>
+      <div class="qp">Trace Viewer often removes the need to reproduce a bug locally.</div>
+      <div class="qp">I keep screenshots, video, and <span class="hl-kw">trace</span> on retain-on-failure for CI.</div>
+      <div class="qp">Allure shines for stakeholder reports with history and severity.</div>
+      <div class="qp">Living documentation is the long-term payoff of using BDD.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — Failure Analysis</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Test Fails</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Hook Captures Screenshot</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Trace Saved</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Open in Viewer</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Find Root Cause</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Standard remote debugging path for Playwright failures.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Report Generation</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Reporters Configured</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Run Tests</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">HTML + Allure Generated</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Archived in CI</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Team Reviews</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Use multiple reporters for different audiences.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Living Docs</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Write Feature</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Run via Playwright</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Pass = Truth</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Share HTML/Allure</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Always Up-to-date</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Each successful run is a fresh snapshot of behavior.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 5</span>
+      </div>
+      <div class="ctbar" id="ctbar-4">
+        <button class="ct active" onclick="sc(4,0)"><span class="lang-pill lang-ts">.ts</span> playwright.config.ts</button>
+        <button class="ct" onclick="sc(4,1)"><span class="lang-pill lang-md">.md</span> allure-setup.md</button>
+        <button class="ct" onclick="sc(4,2)"><span class="lang-pill lang-ts">.ts</span> steps/screenshot-attach.ts</button>
+        <button class="ct" onclick="sc(4,3)"><span class="lang-pill lang-txt">.txt</span> trace-viewer.txt</button>
+        <button class="ct" onclick="sc(4,4)"><span class="lang-pill lang-txt">.txt</span> report-output.txt</button>
+        <button class="ct" onclick="sc(4,5)"><span class="lang-pill lang-md">.md</span> living-doc.md</button>
+      </div>
+      <div class="cp active" id="c4-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">playwright.config.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { defineConfig } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
+
+const testDir = defineBddConfig({
+  features: 'features/**/*.feature',
+  steps:    'steps/**/*.ts',
+});
+
+export default defineConfig({
+  testDir,
+  reporter: [
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['list'],
+    ['json', { outputFile: 'test-results/results.json' }],
+    ['allure-playwright', { outputFolder: 'allure-results' }],
+  ],
+  use: {
+    baseURL: process.env.BASE_URL || 'https://qa.example.com',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+  },
+});</code></pre>
+      </div>
+      <div class="cp" id="c4-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">allure-setup.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># Allure with playwright-bdd
+
+## Install
+```
+npm install -D allure-playwright allure-commandline
+```
+
+## Add to config
+```ts
+reporter: [
+  ['html', { open: 'never' }],
+  ['allure-playwright', { outputFolder: 'allure-results' }],
+]
+```
+
+## Generate the human-readable report
+```
+npx allure generate ./allure-results -o allure-report --clean
+npx allure open ./allure-report
+```
+
+## Tip
+- Use `allure.severity('critical')` inside steps for stakeholder dashboards.
+- Archive `allure-results/` in CI; generate the static `allure-report/` on the build agent.</code></pre>
+      </div>
+      <div class="cp" id="c4-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">steps/screenshot-attach.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { createBdd } from 'playwright-bdd';
+
+const { After } = createBdd();
+
+// Attach extra evidence on failure
+After(async ({ page }, { testInfo }) =&gt; {
+  if (testInfo.status === 'failed') {
+    // Screenshot
+    const png = await page.screenshot({ fullPage: true });
+    await testInfo.attach('failure-screenshot', { body: png, contentType: 'image/png' });
+
+    // Page HTML snapshot
+    const html = await page.content();
+    await testInfo.attach('page-source.html', { body: Buffer.from(html), contentType: 'text/html' });
+
+    // Console + URL for context
+    await testInfo.attach('final-url.txt', { body: Buffer.from(page.url()), contentType: 'text/plain' });
+  }
+});</code></pre>
+      </div>
+      <div class="cp" id="c4-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">trace-viewer.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">Playwright Trace Viewer
+
+When a test fails (and trace is enabled), a trace.zip is saved under:
+  test-results/&lt;test-folder&gt;/trace.zip
+
+Open it with:
+  npx playwright show-trace test-results/&lt;test-folder&gt;/trace.zip
+
+What you get inside the trace:
+  - Action timeline (click, fill, expect, etc.)
+  - DOM snapshot before/after each action
+  - Network requests + responses
+  - Console messages
+  - Screenshots at every action
+
+Why this matters:
+  You usually do NOT need to reproduce a failure locally.
+  The trace already contains the full story of what happened.</code></pre>
+      </div>
+      <div class="cp" id="c4-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">report-output.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">After running `npm test` you will find:
+
+  playwright-report/index.html  -&gt; Built-in HTML report (open with show-report)
+  test-results/                 -&gt; Per-test folders with trace.zip, screenshots, videos
+  allure-results/               -&gt; Raw Allure data (generate the static report)
+  allure-report/                -&gt; Generated Allure HTML (after allure generate)
+
+In CI:
+  - Archive playwright-report/, test-results/, allure-results/.
+  - Optionally publish allure-report/ as a stakeholder dashboard.</code></pre>
+      </div>
+      <div class="cp" id="c4-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">living-doc.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># Living Documentation with BDD + Playwright
+
+## What it is
+Documentation that comes from your passing feature files,
+so it never goes stale and always matches the real system.
+
+## How to keep it healthy
+1. Write **business-readable** Gherkin — no CSS, no JSON, no XPath.
+2. Keep scenarios focused on **one behavior**.
+3. Run the full suite in CI on every push.
+4. **Publish the HTML or Allure report** from CI.
+5. Link the report URL into your team Wiki or Confluence page.
+
+## Why teams love it
+- New joiners can read what the app does without spelunking through code.
+- Product owners can validate behavior without asking devs.
+- QAs spend less time writing manual test docs that drift out of date.</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Always set reporters: html + list as a minimum.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Enable <span class="hl-kw">trace</span>: &#x27;on-first-retry&#x27; or &#x27;retain-on-failure&#x27; for CI.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use screenshot: &#x27;only-on-failure&#x27; to control disk usage.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use video: &#x27;retain-on-failure&#x27; for hard-to-reproduce flows.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Add Allure when reports go to non-developer stakeholders.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Attach extra evidence (page source, console logs) in hooks.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Archive playwright-report/ and allure-results/ in CI.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Open <span class="hl-kw">trace</span>.zip locally with `npx playwright show-trace` to debug.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Treat <span class="hl-kw">HTML report</span> as living documentation for the team.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Never hide failures behind unlimited <span class="hl-kw">retries</span>.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. Why use the Trace Viewer? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">It lets us step through every action, network call, and DOM snapshot of a failed run without rerunning anything.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. Difference between HTML report and Allure? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">HTML is built-in and focused on debugging; Allure is third-party and focused on richer stakeholder-friendly reporting.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. How do you attach extra evidence? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Use testInfo.attach() inside a hook or step to add screenshots, page source, or logs.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. Where do test artifacts land? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Under playwright-report/, test-results/, and allure-results/ depending on configured reporters.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. How do you open a saved trace? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Run `npx playwright show-trace <span class="hl-kw">trace</span>.zip` from the terminal.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+<div class="section" id="s5">
+  <div class="obanner">
+    <h2>CI/CD INTEGRATION + FRAMEWORK BEST PRACTICES</h2>
+    <p>Wire BDD + Playwright-TS into Jenkins or GitHub Actions and lock in 10 maintainability rules</p>
+  </div>
+  <div class="sec">
+    <h3>What / Why / When / Where / How</h3>
+    <div class="abox">
+      <div class="dr"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Production <span class="hl-kw">CI/CD</span> integration plus a set of opinionated rules that keep the BDD + <span class="hl-kw">Playwright</span> framework clean as it grows.</span></div>
+      <div class="dr"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>A working framework on a laptop is not enough — it must run reliably in CI and stay maintainable for years.</span></div>
+      <div class="dr"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Apply once your local runs are green and the team wants to use the suite for real release decisions.</span></div>
+      <div class="dr"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>CI <span class="hl-kw">workflow</span> files (<span class="hl-kw"><span class="hl-kw">GitHub</span> Actions</span> <span class="hl-kw">YAML</span> or <span class="hl-kw">Jenkinsfile</span>), and conventions baked into the repo structure.</span></div>
+      <div class="dr" style="border:none"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Install <span class="hl-kw">Playwright</span> on the <span class="hl-kw">agent</span>, run npm test, archive reports, publish HTML, and follow the 10-rule checklist.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Keyword Glossary</h3>
+    <div class="glosgrid">
+      <div class="gitem"><div class="gkw">GitHub Actions</div><div class="gdef">CI platform that runs workflows from .github/workflows/*.yml.</div></div>
+      <div class="gitem"><div class="gkw">Jenkins</div><div class="gdef">CI server with <span class="hl-kw">pipeline</span>-as-code via <span class="hl-kw">Jenkinsfile</span>.</div></div>
+      <div class="gitem"><div class="gkw">playwright install</div><div class="gdef">CLI step that downloads browsers on the <span class="hl-kw">agent</span>.</div></div>
+      <div class="gitem"><div class="gkw">--with-deps</div><div class="gdef">Installs OS-level dependencies needed by <span class="hl-kw">Playwright</span> browsers.</div></div>
+      <div class="gitem"><div class="gkw">storageState</div><div class="gdef">Saved login state reused across tests for speed.</div></div>
+      <div class="gitem"><div class="gkw">Global Setup</div><div class="gdef">One-time setup file run before all tests.</div></div>
+      <div class="gitem"><div class="gkw">Environment Variable</div><div class="gdef">Key/value like BASE_URL used by config and tests.</div></div>
+      <div class="gitem"><div class="gkw">dotenv</div><div class="gdef">Library to load .env files locally.</div></div>
+      <div class="gitem"><div class="gkw">archiveArtifacts</div><div class="gdef"><span class="hl-kw">Jenkins</span> step that saves files as build artifacts.</div></div>
+      <div class="gitem"><div class="gkw">publishHTML</div><div class="gdef"><span class="hl-kw">Jenkins</span> plugin step to display HTML on the build page.</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Interview One-Liners</h3>
+    <div class="igrid">
+      <div class="qp">A healthy <span class="hl-kw">CI/CD</span> <span class="hl-kw">pipeline</span> is fast, secure, and trusted by the whole team.</div>
+      <div class="qp">Always run `npx playwright install --with-deps` on a clean CI <span class="hl-kw">agent</span>.</div>
+      <div class="qp">Use <span class="hl-kw">storageState</span> for logged-in flows — it saves minutes per run.</div>
+      <div class="qp">Credentials must come from CI secrets, never from code files.</div>
+      <div class="qp">In interviews, explain BDD + <span class="hl-kw">Playwright</span> as Gherkin → generated specs → fast browser validation → archived reports.</div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Concepts - Flow Visuals</h3>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 1 — GitHub Actions Run</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">Push Code</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Workflow Trigger</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">npm ci + playwright install</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">npm test</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Upload Reports</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>This is the standard CI loop for Playwright projects.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 2 — Jenkins Run</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">SCM Trigger</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">npm ci</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">playwright install</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">npm test</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">archive + publishHTML</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Same loop, Jenkins flavor.</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#374151;margin:14px 0 8px;text-transform:uppercase">Flow 3 — Daily Team Usage</div>
+    <div class="flowrow">
+      <div class="fstep ns1">
+        <div class="fn">PR Smoke</div>
+        <div class="fd">Step 1</div>
+      </div>
+      <div class="fstep ns2">
+        <div class="fn">Merge</div>
+        <div class="fd">Step 2</div>
+      </div>
+      <div class="fstep ns3">
+        <div class="fn">Deploy QA</div>
+        <div class="fd">Step 3</div>
+      </div>
+      <div class="fstep ns4">
+        <div class="fn">Post-Deploy Sanity</div>
+        <div class="fd">Step 4</div>
+      </div>
+      <div class="fstep ns5">
+        <div class="fn">Nightly Full Suite</div>
+        <div class="fd">Step 5</div>
+      </div>
+    </div>
+    <div class="abox" style="margin-top:10px">
+      <div class="dr" style="border:none"><span style="color:#534AB7;font-weight:700;width:140px;flex-shrink:0;font-family:var(--font-mono);font-size:11px">Note</span><span>Common BDD + Playwright delivery pattern.</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Code Examples</h3>
+    <div class="cs">
+      <div class="csh">
+        <div class="dr2">
+          <span class="md mr"></span>
+          <span class="md my"></span>
+          <span class="md mg"></span>
+        </div>
+        <span>CODE EXAMPLES - Session 6</span>
+      </div>
+      <div class="ctbar" id="ctbar-5">
+        <button class="ct active" onclick="sc(5,0)"><span class="lang-pill lang-yml">.yml</span> .github/workflows/playwright.yml</button>
+        <button class="ct" onclick="sc(5,1)"><span class="lang-pill lang-txt">.txt</span> Jenkinsfile</button>
+        <button class="ct" onclick="sc(5,2)"><span class="lang-pill lang-ts">.ts</span> global-setup.ts</button>
+        <button class="ct" onclick="sc(5,3)"><span class="lang-pill lang-ts">.ts</span> utils/env-config.ts</button>
+        <button class="ct" onclick="sc(5,4)"><span class="lang-pill lang-txt">.txt</span> folder-structure-final.txt</button>
+        <button class="ct" onclick="sc(5,5)"><span class="lang-pill lang-md">.md</span> framework-best-practices.md</button>
+      </div>
+      <div class="cp active" id="c5-0">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-yml">●</span>
+          <span class="file-name">.github/workflows/playwright.yml</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-yaml">name: Playwright BDD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npx playwright install --with-deps
+
+      - name: Run BDD + Playwright tests
+        env:
+          BASE_URL: https://qa.example.com
+        run: npm test
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results/</code></pre>
+      </div>
+      <div class="cp" id="c5-1">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">Jenkinsfile</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">pipeline {
+  agent any
+  tools { nodejs 'Node20' }
+
+  environment {
+    BASE_URL = 'https://qa.example.com'
+  }
+
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+
+    stage('Install') {
+      steps {
+        sh 'npm ci'
+        sh 'npx playwright install --with-deps'
+      }
+    }
+
+    stage('Run BDD + Playwright') {
+      steps {
+        sh 'npm test'
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'playwright-report/**, test-results/**, allure-results/**', allowEmptyArchive: true
+      publishHTML(target: [
+        reportDir: 'playwright-report',
+        reportFiles: 'index.html',
+        reportName: 'Playwright Report'
+      ])
+    }
+  }
+}</code></pre>
+      </div>
+      <div class="cp" id="c5-2">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">global-setup.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import { chromium, FullConfig } from '@playwright/test';
+
+// Log in once and save the storage state to a file
+export default async function globalSetup(_config: FullConfig) {
+  const browser = await chromium.launch();
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  await page.goto(process.env.BASE_URL + '/login');
+  await page.getByLabel('Username').fill(process.env.QA_USER!);
+  await page.getByLabel('Password').fill(process.env.QA_PASS!);
+  await page.getByRole('button', { name: /login/i }).click();
+  await page.waitForURL('**/dashboard');
+
+  await context.storageState({ path: 'storage/qa.json' });
+  await browser.close();
+}
+
+// In playwright.config.ts:
+// export default defineConfig({
+//   globalSetup: require.resolve('./global-setup'),
+//   use: { storageState: 'storage/qa.json' },
+// });</code></pre>
+      </div>
+      <div class="cp" id="c5-3">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-ts">●</span>
+          <span class="file-name">utils/env-config.ts</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-typescript">import * as dotenv from 'dotenv';
+dotenv.config(); // loads .env locally; CI uses real env vars
+
+export const env = {
+  baseUrl: process.env.BASE_URL ?? 'https://qa.example.com',
+  qaUser:  process.env.QA_USER  ?? 'qa_buyer_01',
+  qaPass:  process.env.QA_PASS  ?? 'Pass@123',
+  ci:      Boolean(process.env.CI),
+};
+
+// Usage:
+//   import { env } from '../utils/env-config';
+//   await page.goto(env.baseUrl + '/login');</code></pre>
+      </div>
+      <div class="cp" id="c5-4">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-txt">●</span>
+          <span class="file-name">folder-structure-final.txt</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none">Final maintainable BDD + Playwright-TS layout:
+
+bdd-playwright-learning/
+├── package.json
+├── playwright.config.ts
+├── tsconfig.json
+├── global-setup.ts
+├── .env                 (local only — not in Git)
+├── features/
+│   ├── auth/login.feature
+│   ├── checkout/checkout.feature
+│   └── search/search.feature
+├── steps/
+│   ├── login.steps.ts
+│   ├── checkout.steps.ts
+│   └── hooks.ts
+├── pages/
+│   ├── login.page.ts
+│   ├── home.page.ts
+│   └── checkout.page.ts
+├── fixtures/            (custom Playwright fixtures)
+├── utils/
+│   └── env-config.ts
+├── data/                (json/csv test data)
+├── storage/             (storageState files)
+├── .features-gen/       (generated — gitignored)
+├── playwright-report/   (generated — gitignored)
+├── test-results/        (generated — gitignored)
+└── allure-results/      (generated — gitignored)</code></pre>
+      </div>
+      <div class="cp" id="c5-5">
+        <div class="cp-sub-header">
+          <span class="file-dot file-dot-md">●</span>
+          <span class="file-name">framework-best-practices.md</span>
+          <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+        </div>
+        <pre class="line-numbers"><code class="language-none"># BDD + Playwright-TS Framework — 10 Maintainable Rules
+
+1. **playwright-bdd** for Gherkin -&gt; Playwright generation.
+2. **TypeScript strict mode** so step parameters are type-checked.
+3. **Page Object Model** — all UI clicks live in page classes.
+4. **Thin step definitions** — call page methods, do not click.
+5. **Playwright auto-waiting** — no Thread.sleep, no manual waits.
+6. **getByRole / getByLabel / getByText** first; CSS only when needed.
+7. **storageState + global setup** for fast authenticated flows.
+8. **Reporters**: html (debug) + allure (stakeholders) + json (dashboards).
+9. **CI archives**: playwright-report/, test-results/, allure-results/.
+10. **Living documentation** — every passing run is the spec.</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <h3>Best Practices Checklist</h3>
+    <ul class="bpl">
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep one source of truth in <span class="hl-kw">playwright.config.ts</span>.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use <span class="hl-kw">storageState</span> for authenticated journeys — log in once, reuse everywhere.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Load BASE_URL and secrets from env vars / CI secrets, not from code.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use .env files locally with dotenv; never commit real secrets.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Cache node_modules and <span class="hl-kw">Playwright</span> browsers in CI for speed.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Archive playwright-report/, test-results/, and allure-results/ in CI.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Use publishHTML in <span class="hl-kw">Jenkins</span> so reports surface on the build page.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Keep .features-gen/ out of Git — it is build output.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Document tag vocabulary (@smoke, @regression, @wip) in TAGS.md.</li>
+      <li><span class="bpc"><i class="ti ti-check"></i></span>Run smoke pack on every PR and full regression nightly.</li>
+    </ul>
+  </div>
+  <div class="sec" style="border:none">
+    <h3>Interview Prep Q&A</h3>
+    <div class="ql">
+      <div class="qi">
+        <div class="qq">Q1. Why use storageState? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">To skip the login flow in most tests, which saves time and reduces flakiness.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q2. How do you install Playwright on a CI agent? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Run `npx playwright install --with-deps` to fetch browsers and OS-level dependencies.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q3. Why not hardcode BASE_URL? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Because the same suite runs against QA, UAT, and other environments — env vars switch them cleanly.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q4. Why archive playwright-report/ in CI? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">So failures can be debugged from the build page without rerunning anything.</div>
+      </div>
+      <div class="qi">
+        <div class="qq">Q5. Explain BDD + Playwright-TS CI/CD in interview? <i class="ti ti-chevron-down"></i></div>
+        <div class="qa" style="display:none">Code <span class="hl-kw">triggers</span> CI, playwright-bdd generates specs from Gherkin, <span class="hl-kw">Playwright</span> Test runs them across browsers, and reports + traces are archived for release decisions.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- session end -->
+
+    </div>
+  </div>
+
+  <!-- Script Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    // Bind local accordion Q&A toggle click handler immediately to prevent portal-enhance.js double-toggle
+    document.querySelectorAll('.qq').forEach(q => {
+      q.dataset.vrQaToggleDone = '1';
+      q.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const item = q.closest('.qi');
+        if (item) {
+          item.classList.toggle('open');
+        }
+      });
+    });
+
+    /* =====================================================================
+       LOCAL NAVIGATION ENGINE
+       ===================================================================== */
+    let cur = 0;
+    const cP = {
+      "0": [
+            "c0-0",
+            "c0-1",
+            "c0-2",
+            "c0-3",
+            "c0-4",
+            "c0-5"
+      ],
+      "1": [
+            "c1-0",
+            "c1-1",
+            "c1-2",
+            "c1-3",
+            "c1-4",
+            "c1-5"
+      ],
+      "2": [
+            "c2-0",
+            "c2-1",
+            "c2-2",
+            "c2-3",
+            "c2-4",
+            "c2-5"
+      ],
+      "3": [
+            "c3-0",
+            "c3-1",
+            "c3-2",
+            "c3-3",
+            "c3-4",
+            "c3-5"
+      ],
+      "4": [
+            "c4-0",
+            "c4-1",
+            "c4-2",
+            "c4-3",
+            "c4-4",
+            "c4-5"
+      ],
+      "5": [
+            "c5-0",
+            "c5-1",
+            "c5-2",
+            "c5-3",
+            "c5-4",
+            "c5-5"
+      ]
+};
+    const sNums = Array.from({length: 6}, (_, i) => i + 1);
+
+    function sw(n) {
+      cur = n;
+      // Toggle active classes on sections
+      for (let i = 0; i < 6; i++) {
+        const sec = document.getElementById('s' + i);
+        if (sec) {
+          if (i === n) {
+            sec.classList.add('active');
+          } else {
+            sec.classList.remove('active');
+          }
+        }
+      }
+      // Toggle active classes on tabs
+      const tabs = document.getElementById('sTabs').children;
+      for (let i = 0; i < tabs.length; i++) {
+        if (i === n) {
+          tabs[i].classList.add('active');
+        } else {
+          tabs[i].classList.remove('active');
+        }
+      }
+      upP();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function sc(sec, tab) {
+      const ids = cP[sec];
+      for (let i = 0; i < ids.length; i++) {
+        const panel = document.getElementById(ids[i]);
+        if (panel) {
+          if (i === tab) {
+            panel.classList.add('active');
+          } else {
+            panel.classList.remove('active');
+          }
+        }
+      }
+      const btns = document.getElementById('ctbar-' + sec).children;
+      for (let i = 0; i < btns.length; i++) {
+        if (i === tab) {
+          btns[i].classList.add('active');
+        } else {
+          btns[i].classList.remove('active');
+        }
+      }
+    }
+
+    function upP() {
+      const dots = document.getElementById('pd');
+      let dotHtml = '';
+      for (let i = 0; i < 6; i++) {
+        if (i < cur) {
+          dotHtml += '<span class="dot dn"></span>';
+        } else if (i === cur) {
+          dotHtml += '<span class="dot ac"></span>';
+        } else {
+          dotHtml += '<span class="dot td"></span>';
+        }
+      }
+      dots.innerHTML = dotHtml;
+      document.getElementById('pl').textContent = 'Session ' + (cur + 1) + ' of 6';
+    }
+
+    // Copy code helper
+    function copyPreText(btn) {
+      const pre = btn.closest('.cp').querySelector('pre');
+      const code = pre.querySelector('code');
+      const text = code ? code.innerText : pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.style.background = '#d1fae5';
+        btn.style.color = '#065f46';
+        setTimeout(() => {
+          btn.innerText = original;
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      upP();
+    });
+
+    // Prism MutationObserver for dynamic layouts
+    if (window.Prism) {
+      document.addEventListener('DOMContentLoaded', () => {
+        const observer = new MutationObserver((mutations) => {
+          let needsHighlight = false;
+          mutations.forEach(m => {
+            if (m.addedNodes.length) {
+              m.addedNodes.forEach(n => {
+                if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+              });
+            }
+          });
+          if (needsHighlight) { Prism.highlightAll(); }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      });
+    }
+  </script>
+  <script src="../portal-enhance.js"></script>
+</body>
+</html>

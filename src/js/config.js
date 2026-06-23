@@ -24,11 +24,23 @@ const courseData = [
         title: "Selenium BDD Cucumber: 8 Sessions Course",
         url: "src/sdet-topics/bdd-cucumber/selenium_bdd_cucumber_8_sessions.html",
       },
+      {
+        title: "BDD with Cucumber + Gherkin — 6 Session Learning",
+        url: "src/sdet-topics/bdd-cucumber/BDD_Cucumber_Learning_6_Sessions.html",
+      },
+      {
+        title: "BDD with Playwright TS + Cucumber — 6 Session Learning",
+        url: "src/sdet-topics/bdd-cucumber/BDD_Playwright_TS_Learning_6_Sessions.html",
+      },
+      {
+        title: "BDD with Selenium Java + Cucumber — 5 Session Learning",
+        url: "src/sdet-topics/bdd-cucumber/BDD_Selenium_Java_Learning_5_Sessions.html",
+      },
     ],
   },
 
   // ──────────────────────────────────────────────
-  // 2. CI/CD LEARNING (1 HTML file)
+  // 2. CI/CD LEARNING (6 HTML files)
   // ──────────────────────────────────────────────
   {
     category: "CI/CD Learning",
@@ -37,6 +49,26 @@ const courseData = [
       {
         title: "Playwright CI/CD: Complete Course V2",
         url: "src/sdet-topics/ci-cd-learning/playwright_cicd_complete_course_v2.html",
+      },
+      {
+        title: "GitHub Actions + Selenium Mastery (Sessions 1 to 10)",
+        url: "src/sdet-topics/ci-cd-learning/GitHub_Actions_Selenium_Mastery.html",
+      },
+      {
+        title: "GitHub Actions + Playwright TS Mastery (Sessions 1 to 10)",
+        url: "src/sdet-topics/ci-cd-learning/GitHub_Actions_Playwright_TS_Mastery.html",
+      },
+      {
+        title: "Jenkins + Playwright TS Mastery (Sessions 1 to 6)",
+        url: "src/sdet-topics/ci-cd-learning/Jenkins_Playwright_TS_CICD_6_Sessions.html",
+      },
+      {
+        title: "Jenkins + Selenium Java CI/CD Mastery (Sessions 1 to 6)",
+        url: "src/sdet-topics/ci-cd-learning/Jenkins_Selenium_Java_CICD_6_Sessions.html",
+      },
+      {
+        title: "Jenkins + RestAssured CI/CD Mastery (Sessions 1 to 4)",
+        url: "src/sdet-topics/ci-cd-learning/Jenkins_RestAssured_CICD_4_Sessions.html",
       },
     ],
   },
@@ -95,6 +127,10 @@ const courseData = [
       {
         title: "SOLID Selenium Java: Sessions 11 to 20",
         url: "src/sdet-topics/java-learning/solid_selenium_java_sessions_11_20.html",
+      },
+      {
+        title: "Selenium Java: ThreadLocal Mastery (Sessions 1 to 5)",
+        url: "src/sdet-topics/java-learning/threadlocal_selenium.html",
       },
     ],
   },
@@ -243,6 +279,10 @@ const courseData = [
       {
         title: "Postman: Technical Interview Questions & Notes",
         url: "src/sdet-topics/postman-learning/postman_interview_notes.html",
+      },
+      {
+        title: "Postman API Testing Mastery (Sessions 1 to 10)",
+        url: "src/sdet-topics/postman-learning/Postman_API_Testing_Mastery.html",
       },
     ],
   },
@@ -403,6 +443,10 @@ const courseData = [
       {
         title: "TestNG: Standard Learning Hub",
         url: "src/sdet-topics/testng-learning/testng_learning_hub.html",
+      },
+      {
+        title: "TestNG + Selenium Java Mastery (Sessions 1 to 15)",
+        url: "src/sdet-topics/testng-learning/TestNG_Selenium_Mastery.html",
       },
     ],
   },

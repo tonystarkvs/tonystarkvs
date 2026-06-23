@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jenkins for Rest Assured (API) — 4 Session CI/CD Learning</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    .hub { padding: 1.5rem; max-width: 960px; margin: 0 auto; font-family: 'Outfit', sans-serif; }
+    
+    .pbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .pp { padding: 4px 13px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1.5px solid; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ph1 { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+    .ph2 { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+    .ph3 { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+    .ph4 { background: #FAECE7; color: #712B13; border-color: #F0997B; }
+
+    .stabs { display: flex; border-bottom: 1.5px solid #cbd5e1; overflow-x: auto; margin-bottom: 15px; }
+    .stab { padding: 10px 16px; font-size: 12.5px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: #475569; white-space: nowrap; border-bottom: 2.5px solid transparent; margin-bottom: -1.5px; font-family: 'Outfit', sans-serif; transition: all 0.2s ease; }
+    .stab.active { color: #ffffff !important; border-bottom-color: #6C5CE7; background: #6C5CE7 !important; border-radius: 6px 6px 0 0; }
+    .stab:hover:not(.active) { background: #f1f5f9; transform: translateY(-1px); }
+
+    .prow { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #EEEDFE; border: 2.5px solid #6C5CE7 !important; border-radius: 8px 8px 0 0; border-bottom: none !important; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot.dn { background: #16a34a; } /* Completed is green */
+    .dot.ac { background: #6C5CE7; } /* Active is purple/blue */
+    .dot.td { background: #cbd5e1; } /* Future is light-gray */
+    .plbl { font-size: 12px; color: #3730a3; font-weight: 700; }
+
+    html body div.section { display: none !important; border: 2.5px solid #6C5CE7 !important; background: #faf5ff !important; border-radius: 0 0 8px 8px; margin-bottom: 25px; overflow: hidden; }
+    html body div.section.active, html body div.section.visible { display: block !important; }
+
+    .obanner { background: #EEEDFE; padding: 18px; border-bottom: 1.5px solid #6C5CE7; }
+    .obanner h2 { font-size: 12px; font-weight: 800; color: #534AB7; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; border: none !important; border-left: none !important; padding-left: 0 !important; }
+    .obanner p { font-size: 14px; color: #1f2937; line-height: 1.6; }
+
+    .sec { padding: 18px; border-bottom: 1.5px solid #cbd5e1; }
+    .sec:last-child { border-bottom: none; }
+    .sec h3 { font-size: 12px; font-weight: 800; color: #3730a3; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; border-left: 4px solid #6C5CE7 !important; padding-left: 12px !important; }
+
+    .abox { background: #fff; border: 2px solid #534AB7 !important; border-radius: 8px; padding: 14px; margin-bottom: 8px; }
+    .dr { font-size: 13px; color: #1e293b; padding: 8px 0; border-bottom: 0.5px solid #e2e8f0; display: flex; align-items: flex-start; gap: 10px; }
+    .dr:last-child { border-bottom: none; }
+
+    .glosgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .gitem { background: #fff; border: 2px solid #534AB7 !important; border-radius: 8px; padding: 12px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .gitem:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .gkw { font-size: 12px; font-weight: 700; color: #3C3489; font-family: monospace; margin-bottom: 4px; }
+    .gdef { font-size: 12px; color: #475569; line-height: 1.5; }
+
+    .igrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .qp { background: #fff; border: 2px solid #534AB7 !important; border-radius: 8px; padding: 12px; font-size: 12.5px; color: #1e293b; line-height: 1.55; border-left: 5px solid #6C5CE7 !important; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .qp:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+    .flow-wrap { margin-bottom: 16px; }
+    .flow-title { font-weight: 800; font-size: 13px; color: #312e81; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .flow-note { margin-top: 6px; color: #475569; font-weight: 600; font-size: 12px; }
+    .flowrow { display: flex; align-items: stretch; gap: 0; margin: 10px 0; border-radius: 8px; overflow: hidden; border: 2px solid #534AB7 !important; }
+    .fstep { flex: 1; padding: 12px 10px; font-size: 11px; text-align: center; border-right: 1px solid #cbd5e1; background: #fff; display: flex; flex-direction: column; justify-content: center; }
+    .fstep:last-child { border-right: none; }
+    .fstep.n1 { background: #EEEDFE; color: #3C3489; }
+    .fstep.n2 { background: #E1F5EE; color: #085041; }
+    .fstep.n3 { background: #FAECE7; color: #712B13; }
+    .fstep.n4 { background: #FAEEDA; color: #633806; }
+    .fstep.n5 { background: #E6F1FB; color: #0C447C; }
+    .fstep .fn { font-weight: 700; margin-bottom: 3px; font-size: 12.5px; }
+
+    .cs { background: #fff; border: 1.5px solid #cbd5e1 !important; border-radius: 8px; overflow: hidden; margin: 10px 0; }
+    .csh { display: flex; align-items: center !important; gap: 8px; padding: 10px 14px; background: #f6f8fa; border-bottom: 1px solid #cbd5e1; flex-wrap: nowrap !important; }
+    .csh span { font-size: 13px !important; font-weight: 700 !important; color: #24292f; letter-spacing: .03em !important; text-transform: uppercase; font-family: 'Outfit', sans-serif !important; line-height: 1.4 !important; }
+    .dr2 { display: flex; gap: 5px; margin-top: 2px !important; flex-shrink: 0 !important; }
+    .md { width: 11px; height: 11px; border-radius: 50%; }
+    .mr { background: #ff5f57; } .my { background: #febc2e; } .mg { background: #28c840; }
+    .ctbar { display: flex; background: #f0f2f5; border-bottom: 1px solid #cbd5e1; overflow-x: auto; }
+    .ct { padding: 10px 16px; font-size: 11.5px; cursor: pointer; border: none; background: transparent; color: #57606a; white-space: nowrap; font-family: monospace; border-bottom: 2px solid transparent; font-weight: 700; transition: all 0.2s ease; }
+    .ct.active { color: #0969da; border-bottom-color: #0969da; background: #fff; }
+    .ct:hover:not(.active) { background: #e8eaed; color: #24292f; transform: translateY(-1px); }
+    
+    .cp { display: none; padding: 0 !important; background: #fff; position: relative; }
+    .cp.active { display: block; }
+    .cp pre { margin: 0 !important; border: none !important; border-radius: 0 !important; overflow-x: auto !important; }
+    .cp pre code { font-family: monospace !important; font-size: 13px !important; }
+    
+    .cp-sub-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #f8fafc; border-bottom: 1px dashed #cbd5e1; }
+    .file-name { font-size: 12px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 6px; }
+    .file-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .file-dot-xml { background: #e06c75; }
+    .file-dot-java { background: #b1b116; }
+    .file-dot-groovy { background: #61afef; }
+    .file-dot-txt { background: #abb2bf; }
+    .file-dot-json { background: #d19a66; }
+    
+    .cpbtn { padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; font-weight: 700; font-size: 11px; transition: background 0.2s; }
+    .cpbtn:hover { background: #f1f5f9; }
+
+    .bpl { list-style: none; display: grid; gap: 8px; }
+    .bpl li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #1e293b; line-height: 1.5; padding: 12px; background: #fff; border: 2px solid #16a34a !important; border-radius: 8px; }
+    .bpc { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 2px; }
+
+    .ql { display: grid; gap: 10px; }
+    .qi { background: #fff; border: 2px solid #0d9488 !important; border-radius: 8px; padding: 0 !important; overflow: hidden; }
+    .qq { font-size: 13px; font-weight: 700; color: #b91c1c !important; background: #fff1f2; padding: 12px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+    .qq::after { content: '\eab2'; font-family: 'tabler-icons'; font-size: 14px; color: #b91c1c; transition: transform 0.2s ease; }
+    .qi.open .qq::after { transform: rotate(180deg); }
+    .qa { font-size: 13px; color: #1e3a8a !important; line-height: 1.65; padding: 14px; background: #eff6ff; display: none; border-top: 1px solid #cbd5e1; }
+    .qi.open .qa { display: block !important; }
+
+    .footer-note { margin-top: 25px; background: #fff; border: 2px solid #6C5CE7 !important; border-radius: 8px; padding: 16px; color: #334155; font-size: 13px; font-weight: 700; line-height: 1.55; }
+    .hl-kw { font-family: monospace; font-weight: 700; color: #c2185b; background: #fce4ec; border: 0.5px solid #f8bbd0; border-radius: 3px; padding: 1px 4px; font-size: 0.9em; display: inline-block; }
+    
+    .hidden-copy { position: absolute; left: -9999px; top: -9999px; }
+
+    /* High-Contrast Syntax Highlighting Token Overrides (PAGE_STRUCTURE.md) */
+    .token.comment { color: #334155 !important; font-style: italic !important; }
+    .token.keyword { color: #0969da !important; font-weight: bold !important; }
+    .token.string { color: #1a7f37 !important; }
+    .token.class-name, .token.class { color: #953800 !important; font-weight: bold !important; }
+    .token.function { color: #cf222e !important; }
+    .token.property { color: #cf222e !important; } /* Config keys in JSON */
+    .token.attr-name { color: #0969da !important; } /* Config keys in XML/HTML attributes */
+    .token.attr-value { color: #1a7f37 !important; } /* XML/HTML attribute values */
+    .token.tag { color: #22863a !important; } /* XML tags */
+
+    @media (max-width: 768px) {
+      .igrid, .glosgrid { grid-template-columns: 1fr !important; }
+      .stabs { flex-wrap: nowrap; }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../responsive.css">
+
+  <!-- Prism Syntax Highlighting -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+</head>
+<body class="line-numbers">
+  <div class="hub">
+    <div class="pbar">
+      <span class="pp ph1">S1 · Foundation Basics</span>
+      <span class="pp ph2">S2 · Pipeline Design &amp; Parameters</span>
+      <span class="pp ph3">S3 · Data &amp; Execution Strategy</span>
+      <span class="pp ph4">S4 · Reporting &amp; Real-Time CI/CD</span>
+    </div>
+
+    <div class="stabs" id="sTabs">
+      <button class="stab active" onclick="sw(0)">S1 · Foundation</button>
+      <button class="stab" onclick="sw(1)">S2 · Pipeline Design</button>
+      <button class="stab" onclick="sw(2)">S3 · Data &amp; Execution</button>
+      <button class="stab" onclick="sw(3)">S4 · Reporting &amp; Patterns</button>
+    </div>
+
+    <div class="prow">
+      <span id="pd"></span>
+      <span class="plbl" id="pl">Session 1 of 4</span>
+    </div>
+
+    <div id="allS">
+
+      <!-- ══════════════════════ SESSION 1 — FOUNDATION ══════════════════════ -->
+      <div class="section active" id="s0">
+        <div class="obanner">
+          <h2>FOUNDATION — Jenkins + CI/CD + Rest Assured Basics</h2>
+          <p>Understand <span class="hl-kw">Jenkins</span>, <span class="hl-kw">CI/CD</span>, and how <span class="hl-kw">Rest Assured</span> + <span class="hl-kw">TestNG</span> + <span class="hl-kw">Maven</span> API tests run inside a pipeline. (Beginner • Session 1 of 4)</p>
+        </div>
+
+        <div class="sec">
+          <h3>Overview — What / Why / When / Where / How</h3>
+          <div class="abox">
+            <div class="dr">
+              <span style="color:#3C3489;font-weight:700;width:55px;flex-shrink:0">What</span>
+              <span><span class="hl-kw">Jenkins</span> is an automation server. <span class="hl-kw">Rest Assured</span> is a Java library that lets us call <span class="hl-kw">REST APIs</span> using a clean <span class="hl-kw">given-when-then</span> style.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#085041;font-weight:700;width:55px;flex-shrink:0">Why</span>
+              <span>API tests are fast, stable, and catch backend issues early — perfect for <span class="hl-kw">CI/CD</span> where speed matters.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#712B13;font-weight:700;width:55px;flex-shrink:0">When</span>
+              <span>Run them on every code push, before UI tests, and as part of nightly regression.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#633806;font-weight:700;width:55px;flex-shrink:0">Where</span>
+              <span>On a <span class="hl-kw">Jenkins</span> server/agent with Java, Maven, Git, and network access to API endpoints.</span>
+            </div>
+            <div class="dr" style="border:none">
+              <span style="color:#0C447C;font-weight:700;width:55px;flex-shrink:0">How</span>
+              <span>Developer pushes code ➜ <span class="hl-kw">Jenkins</span> triggers job ➜ <span class="hl-kw">Maven</span> compiles ➜ <span class="hl-kw">TestNG</span> runs <span class="hl-kw">Rest Assured</span> tests ➜ reports archived.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Keyword Glossary</h3>
+          <div class="glosgrid">
+            <div class="gitem"><div class="gkw">CI</div><div class="gdef">Continuous Integration with frequent merges and automated checks.</div></div>
+            <div class="gitem"><div class="gkw">CD</div><div class="gdef">Continuous Delivery or Deployment of builds to environments.</div></div>
+            <div class="gitem"><div class="gkw">Rest Assured</div><div class="gdef">Java library for clean API testing using given/when/then.</div></div>
+            <div class="gitem"><div class="gkw">TestNG</div><div class="gdef">Java test framework used to run, group, and parallelize tests.</div></div>
+            <div class="gitem"><div class="gkw">Maven</div><div class="gdef">Java build tool that manages dependencies and runs Surefire.</div></div>
+            <div class="gitem"><div class="gkw">baseURI</div><div class="gdef">Common base URL like https://qa.api.example.com used by all tests.</div></div>
+            <div class="gitem"><div class="gkw">Endpoint</div><div class="gdef">Path like /users or /orders appended to baseURI.</div></div>
+            <div class="gitem"><div class="gkw">Status Code</div><div class="gdef">HTTP response code such as 200, 201, 400, 500.</div></div>
+            <div class="gitem"><div class="gkw">JSON Path</div><div class="gdef">Expression to read values from a JSON response body.</div></div>
+            <div class="gitem"><div class="gkw">Smoke API Test</div><div class="gdef">Quick critical check like GET /health or GET /users.</div></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Interview One-Liners</h3>
+          <div class="igrid">
+            <div class="qp"><span class="hl-kw">Rest Assured</span> lets us write API tests in plain English style: given, when, then.</div>
+            <div class="qp">API tests are the fastest feedback layer in any CI pipeline.</div>
+            <div class="qp">Selenium tests UI; <span class="hl-kw">Rest Assured</span> tests the backend behind that UI.</div>
+            <div class="qp">I always assert status code and at least one body field, never just status.</div>
+            <div class="qp">Failed API tests usually point to a real backend bug, not flakiness.</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Architecture / Concept Diagrams — 3 Flows</h3>
+          <div class="flows">
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 1 — Basic API CI Run</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">Code Push</div></div>
+                <div class="fstep n2"><div class="fn">Jenkins Trigger</div></div>
+                <div class="fstep n3"><div class="fn">mvn clean test</div></div>
+                <div class="fstep n4"><div class="fn">TestNG Suite</div></div>
+                <div class="fstep n5"><div class="fn">Report + Status</div></div>
+              </div>
+              <div class="flow-note">Simplest path to wire Rest Assured tests into Jenkins.</div>
+            </div>
+            
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 2 — Request/Response Path</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">Build Request</div></div>
+                <div class="fstep n2"><div class="fn">Send to API</div></div>
+                <div class="fstep n3"><div class="fn">Receive Response</div></div>
+                <div class="fstep n4"><div class="fn">Assert Status + Body</div></div>
+                <div class="fstep n5"><div class="fn">Log Evidence</div></div>
+              </div>
+              <div class="flow-note">Every API test follows this clean shape using given/when/then.</div>
+            </div>
+            
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 3 — Test Pack Strategy</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">Smoke API</div></div>
+                <div class="fstep n2"><div class="fn">Sanity API</div></div>
+                <div class="fstep n3"><div class="fn">Regression API</div></div>
+                <div class="fstep n4"><div class="fn">Nightly Run</div></div>
+                <div class="fstep n5"><div class="fn">Release Decision</div></div>
+              </div>
+              <div class="flow-note">Split API tests into packs so feedback stays fast on every commit.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Code Examples</h3>
+          <div class="cs">
+            <div class="csh">
+              <div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+              <span>CODE EXAMPLES — S1 · Foundation</span>
+            </div>
+            <div class="ctbar">
+              <button class="ct active" onclick="sc(0,0)"><span class="lang-pill lang-xml">.xml</span> pom.xml</button>
+              <button class="ct" onclick="sc(0,1)"><span class="lang-pill lang-xml">.xml</span> testng-smoke.xml</button>
+              <button class="ct" onclick="sc(0,2)"><span class="lang-pill lang-java">.java</span> BaseApiTest.java</button>
+              <button class="ct" onclick="sc(0,3)"><span class="lang-pill lang-java">.java</span> UserApiTest.java</button>
+              <button class="ct" onclick="sc(0,4)"><span class="lang-pill lang-groovy">.groovy</span> Jenkinsfile</button>
+              <button class="ct" onclick="sc(0,5)"><span class="lang-pill lang-txt">.txt</span> Folder View</button>
+            </div>
+            
+            <div class="cp active" id="c0-0">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-xml">●</span> pom.xml</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.learn&lt;/groupId&gt;
+  &lt;artifactId&gt;restassured-jenkins-learning&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+
+  &lt;properties&gt;
+    &lt;maven.compiler.source&gt;17&lt;/maven.compiler.source&gt;
+    &lt;maven.compiler.target&gt;17&lt;/maven.compiler.target&gt;
+  &lt;/properties&gt;
+
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+      &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+      &lt;version&gt;5.4.0&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.testng&lt;/groupId&gt;
+      &lt;artifactId&gt;testng&lt;/artifactId&gt;
+      &lt;version&gt;7.10.2&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+      &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+      &lt;version&gt;2.17.0&lt;/version&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+
+  &lt;build&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+        &lt;version&gt;3.2.5&lt;/version&gt;
+        &lt;configuration&gt;
+          &lt;suiteXmlFiles&gt;
+            &lt;suiteXmlFile&gt;testng-smoke.xml&lt;/suiteXmlFile&gt;
+          &lt;/suiteXmlFiles&gt;
+        &lt;/configuration&gt;
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+&lt;/project&gt;</code></pre>
+            </div>
+
+            <div class="cp" id="c0-1">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-xml">●</span> testng-smoke.xml</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-xml">&lt;!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd"&gt;
+&lt;suite name="ApiSmoke" verbose="1"&gt;
+  &lt;test name="UsersSmoke"&gt;
+    &lt;classes&gt;
+      &lt;class name="com.learn.api.UserApiTest"/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+&lt;/suite&gt;</code></pre>
+            </div>
+
+            <div class="cp" id="c0-2">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-java">●</span> src/test/java/com/learn/base/BaseApiTest.java</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-java">package com.learn.base;
+
+import io.restassured.RestAssured;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
+import org.testng.annotations.BeforeClass;
+
+public class BaseApiTest {
+
+    @BeforeClass
+    public void apiSetUp() {
+        // Base URL for all tests — overridden by Jenkins env BASE_URI
+        RestAssured.baseURI = System.getenv().getOrDefault(
+                "BASE_URI", "https://qa.api.example.com");
+
+        // Log request and response
+        RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
+    }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c0-3">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-java">●</span> src/test/java/com/learn/api/UserApiTest.java</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-java">package com.learn.api;
+
+import com.learn.base.BaseApiTest;
+import io.restassured.response.Response;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import static io.restassured.RestAssured.given;
+
+public class UserApiTest extends BaseApiTest {
+
+    @Test(description = "Smoke - GET /users returns 200")
+    public void getUsersSmoke() {
+        Response res = given()
+                .header("Accept", "application/json")
+          .when()
+                .get("/users")
+          .then()
+                .statusCode(200)
+                .extract().response();
+
+        // Assert at least one user exists in the response
+        Assert.assertTrue(res.jsonPath().getList("data").size() > 0);
+    }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c0-4">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-groovy">●</span> Jenkinsfile</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-groovy">pipeline {
+  agent any
+  tools {
+    jdk 'JDK17'
+    maven 'Maven3'
+  }
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+
+    stage('API Smoke') {
+      steps {
+        // Run TestNG smoke suite via Maven Surefire
+        sh 'mvn -B clean test -DsuiteXmlFile=testng-smoke.xml'
+      }
+    }
+  }
+  post {
+    always {
+      archiveArtifacts artifacts: 'target/surefire-reports/**', allowEmptyArchive: true
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c0-5">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-txt">●</span> project-structure.txt</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-none">restassured-jenkins-learning/
+├── Jenkinsfile
+├── pom.xml
+├── testng-smoke.xml
+├── src/test/java/com/learn/
+│   ├── base/BaseApiTest.java
+│   └── api/UserApiTest.java
+└── target/
+    └── surefire-reports/</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Best Practices</h3>
+          <ul class="bpl">
+            <li><span class="bpc">✓</span>Start with a small stable smoke API pack before adding regression.</li>
+            <li><span class="bpc">✓</span>Use <span class="hl-kw">Maven Surefire</span> to run <span class="hl-kw">TestNG</span> — keep it standard.</li>
+            <li><span class="bpc">✓</span>Use <span class="hl-kw">RestAssured.baseURI</span> once in BaseApiTest instead of repeating URLs.</li>
+            <li><span class="bpc">✓</span>Always assert status code AND at least one important body field.</li>
+            <li><span class="bpc">✓</span>Log request/response for fast remote debugging.</li>
+            <li><span class="bpc">✓</span>Externalize URLs, tokens, and users into config files or <span class="hl-kw">Jenkins</span> credentials.</li>
+            <li><span class="bpc">✓</span>Keep the smoke API pack under a minute for quick CI feedback.</li>
+            <li><span class="bpc">✓</span>Tag tests with <span class="hl-kw">TestNG</span> groups like smoke/regression for clean filtering.</li>
+            <li><span class="bpc">✓</span>Never commit real tokens or secrets to <span class="hl-kw">Git</span>.</li>
+            <li><span class="bpc">✓</span>Document ownership of API failures: app team, integration team, or data team.</li>
+          </ul>
+        </div>
+
+        <div class="sec" style="border:none">
+          <h3>Interview Prep — Q&amp;A</h3>
+          <div class="ql">
+            <div class="qi">
+              <div class="qq">Q1. What is Jenkins in simple words?</div>
+              <div class="qa">A: <span class="hl-kw">Jenkins</span> is a tool that automatically runs build and test steps without manual effort.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q2. Why use Rest Assured with Jenkins?</div>
+              <div class="qa">A: Because <span class="hl-kw">Jenkins</span> can run our API tests automatically and share results across the team.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q3. UI tests vs API tests?</div>
+              <div class="qa">A: UI tests validate the browser flow; API tests validate the backend directly — API tests are faster and more stable.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q4. What is a TestNG suite?</div>
+              <div class="qa">A: An XML file that decides which tests run, with which parameters and groups.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q5. Smoke vs regression in one line?</div>
+              <div class="qa">A: Smoke is quick critical checks; regression is broad coverage that runs less often.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ SESSION 2 — PIPELINE DESIGN ══════════════════════ -->
+      <div class="section" id="s1">
+        <div class="obanner">
+          <h2>PIPELINE DESIGN — Jenkinsfile, Parameters, TestNG Suites</h2>
+          <p>Build a real-world, parameterized Jenkins pipeline file using environments, suites, and BASE_URI parameters. (Core • Session 2 of 4)</p>
+        </div>
+
+        <div class="sec">
+          <h3>Overview — What / Why / When / Where / How</h3>
+          <div class="abox">
+            <div class="dr">
+              <span style="color:#3C3489;font-weight:700;width:55px;flex-shrink:0">What</span>
+              <span>A <span class="hl-kw">Jenkinsfile</span> defines exactly what <span class="hl-kw">Jenkins</span> runs — checkout, build, suite, archive — all as code.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#085041;font-weight:700;width:55px;flex-shrink:0">Why</span>
+              <span>It removes manual UI drift and keeps the pipeline reviewable in Git like normal source code.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#712B13;font-weight:700;width:55px;flex-shrink:0">When</span>
+              <span>When many people share the pipeline and the same job must run across environments.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#633806;font-weight:700;width:55px;flex-shrink:0">Where</span>
+              <span>In the project repo root so the pipeline travels with the API framework.</span>
+            </div>
+            <div class="dr" style="border:none">
+              <span style="color:#0C447C;font-weight:700;width:55px;flex-shrink:0">How</span>
+              <span>Add stages, parameters, environment variables, and post actions in a declarative pipeline.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Keyword Glossary</h3>
+          <div class="glosgrid">
+            <div class="gitem"><div class="gkw">Jenkinsfile</div><div class="gdef">Text file describing pipeline stages as code.</div></div>
+            <div class="gitem"><div class="gkw">Declarative</div><div class="gdef">Structured syntax using pipeline/agent/stages/post.</div></div>
+            <div class="gitem"><div class="gkw">Parameter</div><div class="gdef">Run-time input like ENV, SUITE, BASE_URI.</div></div>
+            <div class="gitem"><div class="gkw">Environment</div><div class="gdef">Block to set env variables shared by all stages.</div></div>
+            <div class="gitem"><div class="gkw">Target Env</div><div class="gdef">QA, UAT, staging where APIs run.</div></div>
+            <div class="gitem"><div class="gkw">Suite XML</div><div class="gdef">TestNG XML listing which API tests run.</div></div>
+            <div class="gitem"><div class="gkw">Group</div><div class="gdef">TestNG label like smoke/regression for filtering.</div></div>
+            <div class="gitem"><div class="gkw">Surefire</div><div class="gdef">Maven plugin that runs TestNG and writes reports.</div></div>
+            <div class="gitem"><div class="gkw">post</div><div class="gdef">Pipeline block for actions after stages.</div></div>
+            <div class="gitem"><div class="gkw">config.properties</div><div class="gdef">Default config file overridden by Jenkins env variables.</div></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Interview One-Liners</h3>
+          <div class="igrid">
+            <div class="qp">A <span class="hl-kw">Jenkinsfile</span> makes the API pipeline transparent and reviewable.</div>
+            <div class="qp">Parameters let one pipeline run smoke, sanity, or regression with no code change.</div>
+            <div class="qp">I always read BASE_URI from environment, never hardcode it.</div>
+            <div class="qp">A good pipeline separates environment and suite selection cleanly.</div>
+            <div class="qp">Post actions matter because reports must be archived even on failure.</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Architecture / Concept Diagrams — 3 Flows</h3>
+          <div class="flows">
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 1 — Parameterized API Run</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">Choose ENV</div></div>
+                <div class="fstep n2"><div class="fn">Choose Suite</div></div>
+                <div class="fstep n3"><div class="fn">Read Params</div></div>
+                <div class="fstep n4"><div class="fn">Set BASE_URI</div></div>
+                <div class="fstep n5"><div class="fn">Surefire Executes</div></div>
+              </div>
+              <div class="flow-note">One pipeline can serve many run types via parameters.</div>
+            </div>
+            
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 2 — Environment Mapping</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">ENV=QA</div></div>
+                <div class="fstep n2"><div class="fn">BASE_URI=qa.api</div></div>
+                <div class="fstep n3"><div class="fn">Config Loaded</div></div>
+                <div class="fstep n4"><div class="fn">Run Smoke</div></div>
+                <div class="fstep n5"><div class="fn">Share Result</div></div>
+              </div>
+              <div class="flow-note">Environment-specific API runs are controlled this way.</div>
+            </div>
+            
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 3 — Suite Decision</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">Critical Changes</div></div>
+                <div class="fstep n2"><div class="fn">Smoke Suite</div></div>
+                <div class="fstep n3"><div class="fn">Stable?</div></div>
+                <div class="fstep n4"><div class="fn">Regression Suite</div></div>
+                <div class="fstep n5"><div class="fn">Release Confidence</div></div>
+              </div>
+              <div class="flow-note">Run small and fast first, broaden coverage only if green.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Code Examples</h3>
+          <div class="cs">
+            <div class="csh">
+              <div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+              <span>CODE EXAMPLES — S2 · Pipeline Design</span>
+            </div>
+            <div class="ctbar">
+              <button class="ct active" onclick="sc(1,0)"><span class="lang-pill lang-groovy">.groovy</span> Parameterized Jenkinsfile</button>
+              <button class="ct" onclick="sc(1,1)"><span class="lang-pill lang-properties">.properties</span> config.properties</button>
+              <button class="ct" onclick="sc(1,2)"><span class="lang-pill lang-java">.java</span> ConfigReader.java</button>
+              <button class="ct" onclick="sc(1,3)"><span class="lang-pill lang-xml">.xml</span> testng-regression.xml</button>
+              <button class="ct" onclick="sc(1,4)"><span class="lang-pill lang-java">.java</span> Tagged Test</button>
+              <button class="ct" onclick="sc(1,5)"><span class="lang-pill lang-bash">.sh</span> Run Command</button>
+            </div>
+            
+            <div class="cp active" id="c1-0">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-groovy">●</span> Jenkinsfile</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-groovy">pipeline {
+  agent any
+  tools { jdk 'JDK17'; maven 'Maven3' }
+
+  parameters {
+    choice(name: 'ENV', choices: ['qa', 'uat'], description: 'Target environment')
+    choice(name: 'SUITE', choices: ['testng-smoke.xml', 'testng-regression.xml'], description: 'TestNG suite file')
+  }
+
+  environment {
+    QA_URI  = 'https://qa.api.example.com'
+    UAT_URI = 'https://uat.api.example.com'
+  }
+
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+
+    stage('Run Selected Suite') {
+      steps {
+        script {
+          def uri = params.ENV == 'qa' ? env.QA_URI : env.UAT_URI
+          sh "BASE_URI=${uri} mvn -B clean test -DsuiteXmlFile=${params.SUITE}"
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'target/surefire-reports/**, reports/**', allowEmptyArchive: true
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c1-1">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-xml">●</span> src/test/resources/config.properties</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-properties"># Default config — Jenkins env variables override these
+base.uri=https://qa.api.example.com
+timeout=10
+env=qa
+auth.token.endpoint=/oauth/token</code></pre>
+            </div>
+
+            <div class="cp" id="c1-2">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-java">●</span> src/test/java/com/learn/utils/ConfigReader.java</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-java">package com.learn.utils;
+
+import java.io.FileInputStream;
+import java.util.Properties;
+
+public class ConfigReader {
+    private static final Properties props = new Properties();
+
+    static {
+        try (FileInputStream fis = new FileInputStream("src/test/resources/config.properties")) {
+            props.load(fis);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load config", e);
+        }
+    }
+
+    public static String get(String key) {
+        // Jenkins env overrides config file
+        String envKey = key.toUpperCase().replace('.', '_');
+        return System.getenv().getOrDefault(envKey, props.getProperty(key));
+    }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c1-3">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-xml">●</span> testng-regression.xml</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-xml">&lt;!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd"&gt;
+&lt;suite name="ApiRegression" verbose="1"&gt;
+  &lt;test name="Regression"&gt;
+    &lt;groups&gt;
+      &lt;run&gt;
+        &lt;include name="regression"/&gt;
+      &lt;/run&gt;
+    &lt;/groups&gt;
+    &lt;packages&gt;
+      &lt;package name="com.learn.api"/&gt;
+    &lt;/packages&gt;
+  &lt;/test&gt;
+&lt;/suite&gt;</code></pre>
+            </div>
+
+            <div class="cp" id="c1-4">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-java">●</span> src/test/java/com/learn/api/OrdersApiTest.java</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-java">package com.learn.api;
+
+import com.learn.base.BaseApiTest;
+import org.testng.annotations.Test;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+
+public class OrdersApiTest extends BaseApiTest {
+
+    @Test(groups = {"smoke"})
+    public void getOrdersSmoke() {
+        given()
+                .header("Accept", "application/json")
+          .when()
+                .get("/orders")
+          .then()
+                .statusCode(200)
+                .body("status", equalTo("ok"));
+    }
+
+    @Test(groups = {"regression"})
+    public void fullOrderFlow() {
+        // Long business validation for nightly pipeline
+    }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c1-5">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-xml">●</span> run-selected-pack.sh</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-bash"># Example command Jenkins generates from parameters
+BASE_URI=https://qa.api.example.com \
+mvn -B clean test -DsuiteXmlFile=testng-smoke.xml
+
+# Expected:
+# Only smoke suite runs against QA API</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Best Practices</h3>
+          <ul class="bpl">
+            <li><span class="bpc">✓</span>Keep <span class="hl-kw">Jenkinsfile</span> in repo root and review changes through pull requests.</li>
+            <li><span class="bpc">✓</span>Expose ENV, SUITE, and BASE_URI as parameters instead of duplicating jobs.</li>
+            <li><span class="bpc">✓</span>Keep environment URL mapping in one config file.</li>
+            <li><span class="bpc">✓</span>Use <span class="hl-kw">TestNG</span> groups like smoke, sanity, regression for filtering.</li>
+            <li><span class="bpc">✓</span>Set sensible timeouts to stop stuck stages.</li>
+            <li><span class="bpc">✓</span>Publish reports in post always so failures still expose artifacts.</li>
+            <li><span class="bpc">✓</span>Add comments in <span class="hl-kw">Jenkinsfile</span> for fresher onboarding.</li>
+            <li><span class="bpc">✓</span>Do not mix deploy logic with long regression in one stage.</li>
+            <li><span class="bpc">✓</span>Name stages by business outcome, not step1 or task2.</li>
+            <li><span class="bpc">✓</span>Prefer pipeline code over manual UI tweaks for auditability.</li>
+          </ul>
+        </div>
+
+        <div class="sec" style="border:none">
+          <h3>Interview Prep — Q&amp;A</h3>
+          <div class="ql">
+            <div class="qi">
+              <div class="qq">Q1. Why use Jenkinsfile?</div>
+              <div class="qa">A: Because pipeline-as-code is reviewable, versioned, and consistent across branches.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q2. How do parameters help?</div>
+              <div class="qa">A: Same pipeline runs with different environments, suites, or base URIs without code changes.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q3. Good env variable example?</div>
+              <div class="qa">A: BASE_URI changes from QA to UAT while test scripts stay unchanged.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q4. Why TestNG groups?</div>
+              <div class="qa">A: Clean filtering without rewriting suite XMLs.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q5. What should happen after API test failure?</div>
+              <div class="qa">A: Pipeline must still archive Surefire reports, request/response logs, and notification details.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ SESSION 3 — DATA & EXECUTION ══════════════════════ -->
+      <div class="section" id="s2">
+        <div class="obanner">
+          <h2>DATA + EXECUTION STRATEGY — Test Data, DataProvider, Auth, Parallel API Runs</h2>
+          <p>Manage JSON/Excel test data, configure TestNG DataProviders, fetch runtime OAuth2 tokens, and execute parallel suites. (Practical • Session 3 of 4)</p>
+        </div>
+
+        <div class="sec">
+          <h3>Overview — What / Why / When / Where / How</h3>
+          <div class="abox">
+            <div class="dr">
+              <span style="color:#3C3489;font-weight:700;width:55px;flex-shrink:0">What</span>
+              <span>A real CI pipeline needs predictable test data, secure authentication, and fast execution for API tests.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#085041;font-weight:700;width:55px;flex-shrink:0">Why</span>
+              <span>Even a perfect API test fails when data is stale, tokens expire, or runs are too slow for the team.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#712B13;font-weight:700;width:55px;flex-shrink:0">When</span>
+              <span>Apply once your smoke API pack is stable and you want broader, real-time runs.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#633806;font-weight:700;width:55px;flex-shrink:0">Where</span>
+              <span>Across QA/UAT, multiple regions, OAuth-protected APIs, and parallel TestNG suites.</span>
+            </div>
+            <div class="dr" style="border:none">
+              <span style="color:#0C447C;font-weight:700;width:55px;flex-shrink:0">How</span>
+              <span>Externalize data, fetch tokens at runtime, use TestNG DataProvider, and configure parallel suites.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Keyword Glossary</h3>
+          <div class="glosgrid">
+            <div class="gitem"><div class="gkw">Test Data</div><div class="gdef">Inputs like usernames, products, account IDs.</div></div>
+            <div class="gitem"><div class="gkw">DataProvider</div><div class="gdef">TestNG feature feeding multiple rows to a test.</div></div>
+            <div class="gitem"><div class="gkw">Apache POI</div><div class="gdef">Java library to read Excel .xlsx files.</div></div>
+            <div class="gitem"><div class="gkw">Jackson</div><div class="gdef">Java library to read/write JSON files.</div></div>
+            <div class="gitem"><div class="gkw">Parallel Execution</div><div class="gdef">Running API tests at the same time to reduce duration.</div></div>
+            <div class="gitem"><div class="gkw">Thread Count</div><div class="gdef">Number of TestNG threads running in parallel.</div></div>
+            <div class="gitem"><div class="gkw">OAuth2</div><div class="gdef">Token-based authentication with client credentials or password grant.</div></div>
+            <div class="gitem"><div class="gkw">Bearer Token</div><div class="gdef">Token sent in Authorization header for authenticated calls.</div></div>
+            <div class="gitem"><div class="gkw">Data Isolation</div><div class="gdef">Keeping each test independent.</div></div>
+            <div class="gitem"><div class="gkw">Idempotent</div><div class="gdef">Operation that gives same result if repeated — safer for parallel runs.</div></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Interview One-Liners</h3>
+          <div class="igrid">
+            <div class="qp">Stable API automation is as much about data and tokens as it is about endpoints.</div>
+            <div class="qp">Parallel execution saves time only when tests are isolated.</div>
+            <div class="qp">I refresh tokens once per suite, not for every test.</div>
+            <div class="qp">I avoid reusing mutable accounts across parallel data rows.</div>
+            <div class="qp">A flaky API pipeline is often a token or data issue, not a real bug.</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Architecture / Concept Diagrams — 3 Flows</h3>
+          <div class="flows">
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 1 — Data-Driven Run</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">Read ENV</div></div>
+                <div class="fstep n2"><div class="fn">Load JSON/Excel</div></div>
+                <div class="fstep n3"><div class="fn">Pick Row</div></div>
+                <div class="fstep n4"><div class="fn">Execute API Call</div></div>
+                <div class="fstep n5"><div class="fn">Assert Response</div></div>
+              </div>
+              <div class="flow-note">This pattern stops random data usage and improves repeatability.</div>
+            </div>
+            
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 2 — Auth Token Flow</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">BeforeSuite</div></div>
+                <div class="fstep n2"><div class="fn">POST /oauth/token</div></div>
+                <div class="fstep n3"><div class="fn">Cache Token</div></div>
+                <div class="fstep n4"><div class="fn">Inject Bearer Header</div></div>
+                <div class="fstep n5"><div class="fn">Run API Tests</div></div>
+              </div>
+              <div class="flow-note">Centralized token handling keeps tests clean and secure.</div>
+            </div>
+            
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 3 — Parallel API Strategy</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">parallel=methods</div></div>
+                <div class="fstep n2"><div class="fn">Split Threads</div></div>
+                <div class="fstep n3"><div class="fn">Run Parallel</div></div>
+                <div class="fstep n4"><div class="fn">Collect Results</div></div>
+                <div class="fstep n5"><div class="fn">Merge Status</div></div>
+              </div>
+              <div class="flow-note">Parallelism helps speed; shared mutable data ruins reliability.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Code Examples</h3>
+          <div class="cs">
+            <div class="csh">
+              <div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+              <span>CODE EXAMPLES — S3 · Data &amp; Execution</span>
+            </div>
+            <div class="ctbar">
+              <button class="ct active" onclick="sc(2,0)"><span class="lang-pill lang-java">.java</span> DataProvider</button>
+              <button class="ct" onclick="sc(2,1)"><span class="lang-pill lang-java">.java</span> JsonDataReader.java</button>
+              <button class="ct" onclick="sc(2,2)"><span class="lang-pill lang-json">.json</span> users.json</button>
+              <button class="ct" onclick="sc(2,3)"><span class="lang-pill lang-java">.java</span> AuthHelper.java</button>
+              <button class="ct" onclick="sc(2,4)"><span class="lang-pill lang-java">.java</span> CreateUserTest.java</button>
+              <button class="ct" onclick="sc(2,5)"><span class="lang-pill lang-xml">.xml</span> Parallel testng.xml</button>
+            </div>
+            
+            <div class="cp active" id="c2-0">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-java">●</span> src/test/java/com/learn/data/UserDataProvider.java</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-java">package com.learn.data;
+
+import org.testng.annotations.DataProvider;
+
+public class UserDataProvider {
+
+    @DataProvider(name = "validUsers", parallel = true)
+    public static Object[][] validUsers() {
+        return new Object[][] {
+            {"qa_buyer_01", "buyer@example.com"},
+            {"qa_buyer_02", "buyer2@example.com"}
+        };
+    }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c2-1">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-java">●</span> src/test/java/com/learn/utils/JsonDataReader.java</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-java">package com.learn.utils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+
+public class JsonDataReader {
+    private static final ObjectMapper M = new ObjectMapper();
+
+    public static JsonNode read(String path) throws Exception {
+        // Load JSON test data file from resources folder
+        return M.readTree(new File(path));
+    }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c2-2">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-json">●</span> src/test/resources/users.json</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-json">{
+  "buyers": [
+    { "username": "qa_buyer_01", "email": "buyer@example.com" },
+    { "username": "qa_buyer_02", "email": "buyer2@example.com" }
+  ],
+  "products": ["Laptop", "Phone", "Headphones"]
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c2-3">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-java">●</span> src/test/java/com/learn/utils/AuthHelper.java</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-java">package com.learn.utils;
+
+import io.restassured.http.ContentType;
+import static io.restassured.RestAssured.given;
+
+public class AuthHelper {
+    private static String cachedToken;
+
+    public static synchronized String getToken() {
+        if (cachedToken != null) return cachedToken;
+
+        // OAuth2 client credentials grant — fetched once per suite
+        cachedToken = given()
+                .contentType(ContentType.URLENC)
+                .formParam("grant_type", "client_credentials")
+                .formParam("client_id", System.getenv("CLIENT_ID"))
+                .formParam("client_secret", System.getenv("CLIENT_SECRET"))
+          .when()
+                .post("/oauth/token")
+          .then()
+                .statusCode(200)
+                .extract().path("access_token");
+
+        return cachedToken;
+    }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c2-4">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-java">●</span> src/test/java/com/learn/api/CreateUserTest.java</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-java">package com.learn.api;
+
+import com.learn.base.BaseApiTest;
+import com.learn.utils.AuthHelper;
+import io.restassured.http.ContentType;
+import org.testng.annotations.Test;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.notNullValue;
+
+public class CreateUserTest extends BaseApiTest {
+
+    @Test(groups = {"regression"})
+    public void createUserHappyPath() {
+        String body = "{\"name\":\"Vikrant\",\"role\":\"qa\"}";
+
+        given()
+                .header("Authorization", "Bearer " + AuthHelper.getToken())
+                .contentType(ContentType.JSON)
+                .body(body)
+          .when()
+                .post("/users")
+          .then()
+                .statusCode(201)
+                .body("id", notNullValue());
+    }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c2-5">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-xml">●</span> testng-parallel.xml</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-xml">&lt;!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd"&gt;
+&lt;suite name="ApiParallel" parallel="methods" thread-count="4"&gt;
+  &lt;test name="SmokeParallel"&gt;
+    &lt;classes&gt;
+      &lt;class name="com.learn.api.UserApiTest"/&gt;
+      &lt;class name="com.learn.api.OrdersApiTest"/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+&lt;/suite&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Best Practices</h3>
+          <ul class="bpl">
+            <li><span class="bpc">✓</span>Externalize API test data into JSON, Excel, or properties.</li>
+            <li><span class="bpc">✓</span>Use unique users/records for any flow that modifies state.</li>
+            <li><span class="bpc">✓</span>Refresh tokens with a thread-safe helper to avoid duplicate calls.</li>
+            <li><span class="bpc">✓</span>Start parallel=methods with small thread-count and scale up carefully.</li>
+            <li><span class="bpc">✓</span>Use Hamcrest matchers for body assertions — more readable than custom code.</li>
+            <li><span class="bpc">✓</span>Never log full Bearer tokens in console output.</li>
+            <li><span class="bpc">✓</span>Keep test data names clear like qa-buyer-01 or uat-admin-readonly.</li>
+            <li><span class="bpc">✓</span>Mark idempotent tests as safe-for-parallel, others as serial.</li>
+            <li><span class="bpc">✓</span>Investigate flaky tests; do not just retry forever.</li>
+            <li><span class="bpc">✓</span>Prefer deterministic seed data over random uncontrolled values.</li>
+          </ul>
+        </div>
+
+        <div class="sec" style="border:none">
+          <h3>Interview Prep — Q&amp;A</h3>
+          <div class="ql">
+            <div class="qi">
+              <div class="qq">Q1. Why is test data important in API CI?</div>
+              <div class="qa">A: Pipelines are only useful with predictable, valid input every run.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q2. How do you handle auth tokens?</div>
+              <div class="qa">A: Fetch once per suite via OAuth2, cache it, and inject as Bearer header in every request.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q3. When to use parallel API execution?</div>
+              <div class="qa">A: When tests are independent, env is stable, and feedback must be fast.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q4. Why externalize test data?</div>
+              <div class="qa">A: So we can update data without touching test code and reuse it across environments.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q5. What is idempotent in API testing?</div>
+              <div class="qa">A: An action that returns the same result if repeated — safer for parallel and retry runs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════ SESSION 4 — REPORTING & PATTERNS ══════════════════════ -->
+      <div class="section" id="s3">
+        <div class="obanner">
+          <h2>REPORTING + REAL-TIME CI/CD PATTERNS — Reports, Triggers, Credentials, Cleanup</h2>
+          <p>Integrate Allure/Extent reporting, configure nightly cron triggers, secure credentials, and clean workspace workspaces. (Final • Session 4 of 4)</p>
+        </div>
+
+        <div class="sec">
+          <h3>Overview — What / Why / When / Where / How</h3>
+          <div class="abox">
+            <div class="dr">
+              <span style="color:#3C3489;font-weight:700;width:55px;flex-shrink:0">What</span>
+              <span>Real-world CI patterns: reports, logging, scheduled runs, secure credentials, and cleanup.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#085041;font-weight:700;width:55px;flex-shrink:0">Why</span>
+              <span>A working pipeline is not enough; it must be secure, debuggable, and trusted by the team.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#712B13;font-weight:700;width:55px;flex-shrink:0">When</span>
+              <span>Apply once your base API pipeline is stable and you are ready to support real projects.</span>
+            </div>
+            <div class="dr">
+              <span style="color:#633806;font-weight:700;width:55px;flex-shrink:0">Where</span>
+              <span>PR checks, nightly regression, post-deployment sanity, and weekly broader runs.</span>
+            </div>
+            <div class="dr" style="border:none">
+              <span style="color:#0C447C;font-weight:700;width:55px;flex-shrink:0">How</span>
+              <span>Use <span class="hl-kw">Extent</span>/<span class="hl-kw">Allure</span> reports, <span class="hl-kw">RestAssured Filter</span>, cron triggers, <span class="hl-kw">withCredentials</span>, and <span class="hl-kw">cleanWs</span>.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Keyword Glossary</h3>
+          <div class="glosgrid">
+            <div class="gitem"><div class="gkw">Extent Reports</div><div class="gdef">Pretty HTML report with steps, statuses, request/response logs.</div></div>
+            <div class="gitem"><div class="gkw">Allure</div><div class="gdef">Modern test report with timelines, attachments, and history.</div></div>
+            <div class="gitem"><div class="gkw">Surefire</div><div class="gdef">Maven plugin output as XML — used by Jenkins JUnit publisher.</div></div>
+            <div class="gitem"><div class="gkw">JUnit Publisher</div><div class="gdef">Jenkins plugin that reads Surefire XML for trends.</div></div>
+            <div class="gitem"><div class="gkw">RestAssured Filter</div><div class="gdef">Hook to log request/response or attach to reports.</div></div>
+            <div class="gitem"><div class="gkw">post always</div><div class="gdef">Pipeline block that runs whether build passes or fails.</div></div>
+            <div class="gitem"><div class="gkw">Cron</div><div class="gdef">Time-based schedule for nightly runs.</div></div>
+            <div class="gitem"><div class="gkw">Credential Binding</div><div class="gdef">Inject secrets safely into pipeline steps.</div></div>
+            <div class="gitem"><div class="gkw">cleanWs</div><div class="gdef">Jenkins step to clean the workspace after build.</div></div>
+            <div class="gitem"><div class="gkw">Notification</div><div class="gdef">Slack/Email about pipeline result with build link.</div></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Interview One-Liners</h3>
+          <div class="igrid">
+            <div class="qp">A failed API test without request/response logs is a weak failure signal.</div>
+            <div class="qp"><span class="hl-kw">Extent</span> or <span class="hl-kw">Allure</span> makes API runs easy to read for non-technical team members.</div>
+            <div class="qp">Reports must be generated even when the test stage fails.</div>
+            <div class="qp">Credentials must come from <span class="hl-kw">Jenkins</span>, never from code files.</div>
+            <div class="qp">In interviews, I explain CI/CD as code ➜ validation ➜ artifacts ➜ release confidence.</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Architecture / Concept Diagrams — 3 Flows</h3>
+          <div class="flows">
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 1 — Failure Analysis</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">Test Fails</div></div>
+                <div class="fstep n2"><div class="fn">Filter Captures Req/Res</div></div>
+                <div class="fstep n3"><div class="fn">Attach to Report</div></div>
+                <div class="fstep n4"><div class="fn">Open in Jenkins</div></div>
+                <div class="fstep n5"><div class="fn">Find Root Cause</div></div>
+              </div>
+              <div class="flow-note">Standard remote debugging path for API failures.</div>
+            </div>
+            
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 2 — Nightly + Notification</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">Cron Trigger</div></div>
+                <div class="fstep n2"><div class="fn">Pull Latest</div></div>
+                <div class="fstep n3"><div class="fn">Full Regression</div></div>
+                <div class="fstep n4"><div class="fn">Publish Results</div></div>
+                <div class="fstep n5"><div class="fn">Send Notification</div></div>
+              </div>
+              <div class="flow-note">Broad coverage without slowing daytime delivery.</div>
+            </div>
+            
+            <div class="flow-wrap">
+              <div class="flow-title">Flow 3 — Secure &amp; Clean Pipeline</div>
+              <div class="flowrow">
+                <div class="fstep n1"><div class="fn">Read Credentials</div></div>
+                <div class="fstep n2"><div class="fn">Run Tests</div></div>
+                <div class="fstep n3"><div class="fn">Archive Reports</div></div>
+                <div class="fstep n4"><div class="fn">Cleanup Workspace</div></div>
+                <div class="fstep n5"><div class="fn">Healthy Server</div></div>
+              </div>
+              <div class="flow-note">Security and cleanup make CI/CD sustainable.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Code Examples</h3>
+          <div class="cs">
+            <div class="csh">
+              <div class="dr2"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+              <span>CODE EXAMPLES — S4 · Reporting &amp; Patterns</span>
+            </div>
+            <div class="ctbar">
+              <button class="ct active" onclick="sc(3,0)"><span class="lang-pill lang-java">.java</span> Allure Filter</button>
+              <button class="ct" onclick="sc(3,1)"><span class="lang-pill lang-groovy">.groovy</span> Cron Trigger</button>
+              <button class="ct" onclick="sc(3,2)"><span class="lang-pill lang-groovy">.groovy</span> Credentials</button>
+              <button class="ct" onclick="sc(3,3)"><span class="lang-pill lang-groovy">.groovy</span> Post + Cleanup</button>
+              <button class="ct" onclick="sc(3,4)"><span class="lang-pill lang-txt">.txt</span> Notification</button>
+              <button class="ct" onclick="sc(3,5)"><span class="lang-pill lang-txt">.txt</span> Interview Summary</button>
+            </div>
+            
+            <div class="cp active" id="c3-0">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-java">●</span> src/test/java/com/learn/base/BaseApiTest.java</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-java">package com.learn.base;
+
+import io.qameta.allure.restassured.AllureRestAssured;
+import io.restassured.RestAssured;
+import org.testng.annotations.BeforeClass;
+
+public class BaseApiTest {
+
+    @BeforeClass
+    public void apiSetUp() {
+        RestAssured.baseURI = System.getenv().getOrDefault(
+                "BASE_URI", "https://qa.api.example.com");
+
+        // Attach request/response to Allure report automatically
+        RestAssured.filters(new AllureRestAssured());
+    }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c3-1">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-groovy">●</span> Jenkinsfile.triggers</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-groovy">pipeline {
+  agent any
+  triggers {
+    // Nightly API regression at 1 AM Jenkins time
+    cron('H 1 * * *')
+  }
+  stages {
+    stage('Nightly API Regression') {
+      steps {
+        sh 'mvn -B clean test -DsuiteXmlFile=testng-regression.xml'
+      }
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c3-2">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-groovy">●</span> Jenkinsfile.credentials</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-groovy">pipeline {
+  agent any
+  stages {
+    stage('Secure API Run') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'api-client', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET')]) {
+          sh 'CLIENT_ID=$CLIENT_ID CLIENT_SECRET=$CLIENT_SECRET mvn -B clean test -DsuiteXmlFile=testng-smoke.xml'
+        }
+      }
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c3-3">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-groovy">●</span> Jenkinsfile.post</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-groovy">post {
+  always {
+    junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
+    archiveArtifacts artifacts: 'target/surefire-reports/**, allure-results/**, reports/**', allowEmptyArchive: true
+    cleanWs(deleteDirs: true, notFailBuild: true)
+  }
+  failure {
+    echo 'Build FAILED - open Allure/Extent report and request-response logs.'
+  }
+}</code></pre>
+            </div>
+
+            <div class="cp" id="c3-4">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-txt">●</span> notification-message.txt</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-none">Subject: Jenkins Build FAILED - API-Smoke-QA #58
+
+Result: FAILED
+ENV: QA
+Suite: testng-smoke.xml
+Allure: &lt;jenkins-build-url&gt;/artifact/allure-report/index.html
+Surefire Trend: &lt;jenkins-build-url&gt;/testReport/
+Action: Review failed user smoke and attached request/response logs.</code></pre>
+            </div>
+
+            <div class="cp" id="c3-5">
+              <div class="cp-sub-header">
+                <span class="file-name"><span class="file-dot file-dot-txt">●</span> interview-ready-notes.txt</span>
+                <button class="cpbtn" onclick="copyPreText(this)">Copy</button>
+              </div>
+              <pre class="line-numbers"><code class="language-none">Interview answer in simple words:
+Jenkins triggers our Rest Assured pipeline on push, schedule, or manual run.
+Maven compiles the project, TestNG runs Rest Assured tests against the chosen environment,
+then Surefire, Allure, and request/response logs are archived.
+This gives the team fast quality feedback and supports release decisions.</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>Best Practices</h3>
+          <ul class="bpl">
+            <li><span class="bpc">✓</span>Archive artifacts on every run, not just successful ones.</li>
+            <li><span class="bpc">✓</span>Attach request and response details on failure in your report.</li>
+            <li><span class="bpc">✓</span>Use Allure or Extent for human readability and Surefire for Jenkins trends.</li>
+            <li><span class="bpc">✓</span>Use cron sensibly — nightly regression at off-hours.</li>
+            <li><span class="bpc">✓</span>Use withCredentials for API keys, client secrets, and tokens.</li>
+            <li><span class="bpc">✓</span>Set timeouts on long-running stages.</li>
+            <li><span class="bpc">✓</span>Run cleanWs in post to avoid leftover files.</li>
+            <li><span class="bpc">✓</span>Investigate flaky tests; do not hide them with retries.</li>
+            <li><span class="bpc">✓</span>Notifications must include build, env, suite, and report link.</li>
+            <li><span class="bpc">✓</span>Prepare simple interview answers — trigger, stages, env, artifacts, results.</li>
+          </ul>
+        </div>
+
+        <div class="sec" style="border:none">
+          <h3>Interview Prep — Q&amp;A</h3>
+          <div class="ql">
+            <div class="qi">
+              <div class="qq">Q1. Why log request and response on failure?</div>
+              <div class="qa">A: So we can debug API failures without re-running anything.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q2. Why use cron for regression?</div>
+              <div class="qa">A: Large suites take time, so we schedule them at off-hours for broad coverage.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q3. Why not hardcode API keys?</div>
+              <div class="qa">A: Security risk and impossible to rotate cleanly.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q4. Purpose of cleanup in Jenkins?</div>
+              <div class="qa">A: Keeps workspaces clean and disk usage under control.</div>
+            </div>
+            <div class="qi">
+              <div class="qq">Q5. Explain Jenkins + Rest Assured CI/CD in interview?</div>
+              <div class="qa">A: Code triggers Jenkins, Maven runs TestNG with Rest Assured against the chosen environment, reports and request/response logs are archived, and the team uses them for release decisions.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-note">
+      <strong>How to use this file:</strong> Start from <mark>Session 1</mark>, use the top tab bar to navigate, explore all 6 code tabs in each session, and use interview + best-practice sections for revision. Designed for SDET interview prep + Jenkins + Rest Assured beginner learning.
+    </div>
+  </div>
+
+  <script>
+    var cur = 0;
+    var cP = [
+      ['c0-0','c0-1','c0-2','c0-3','c0-4','c0-5'],
+      ['c1-0','c1-1','c1-2','c1-3','c1-4','c1-5'],
+      ['c2-0','c2-1','c2-2','c2-3','c2-4','c2-5'],
+      ['c3-0','c3-1','c3-2','c3-3','c3-4','c3-5']
+    ];
+    var sNums = [1,2,3,4];
+
+    function sw(n) {
+      cur = n;
+      for (var i = 0; i < 4; i++) {
+        var sec = document.getElementById('s' + i);
+        if (sec) {
+          sec.classList.toggle('active', i === n);
+        }
+      }
+      var tabs = document.getElementById('sTabs').children;
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.toggle('active', i === n);
+      }
+      upP();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function sc(s, t) {
+      var panels = cP[s];
+      var ctabs = document.getElementById('s' + s).querySelectorAll('.ct');
+      panels.forEach(function (id, i) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.className = 'cp' + (i === t ? ' active' : '');
+        }
+      });
+      ctabs.forEach(function (tb, i) {
+        tb.classList.toggle('active', i === t);
+      });
+    }
+
+    function upP() {
+      var d = '';
+      for (var i = 0; i < 4; i++) {
+        var c = i < cur ? 'dn' : (i === cur ? 'ac' : 'td');
+        d += '<span class="dot ' + c + '"></span> ';
+      }
+      document.getElementById('pd').innerHTML = d;
+      document.getElementById('pl').textContent = 'Session ' + sNums[cur] + ' of 4';
+    }
+
+    upP();
+
+    function copyPreText(btn) {
+      const cp = btn.closest('.cp');
+      if (!cp) return;
+      const codeEl = cp.querySelector('pre code');
+      if (!codeEl) return;
+      const code = codeEl.innerText;
+      
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      }).catch(() => {
+        const temp = document.createElement('textarea');
+        temp.value = code;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      });
+    }
+  </script>
+
+  <!-- Prism Syntax Highlighting JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-groovy.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-properties.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+
+  <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+  <script>
+  if (window.Prism) {
+      document.addEventListener('DOMContentLoaded', () => {
+          const observer = new MutationObserver((mutations) => {
+              let needsHighlight = false;
+              mutations.forEach(m => {
+                  if (m.addedNodes.length) {
+                      m.addedNodes.forEach(n => {
+                          if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                          if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                      });
+                  }
+              });
+              if (needsHighlight) {
+                  Prism.highlightAll();
+              }
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
+      });
+  }
+  </script>
+  <script src="../portal-enhance.js"></script>
+</body>
+</html>
