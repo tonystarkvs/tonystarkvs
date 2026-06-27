@@ -18,13 +18,18 @@ This document contains the developer-specific guidelines, class tags, and HTML/C
   html body div.section.active { display: block !important; }
   html body div.section.visible { display: block !important; }
   ```
-- **Active Tab Styling**: The active tab button (`.stab.active`) must be colored in the active theme color (`#6C5CE7` or `#7F77DD` / purple-blue) with `#ffffff` text, while inactive buttons (`.stab`) remain light gray/white with dark text.
+- **Active Tab Styling**: The active tab buttons (`.stab.active` and `.ct.active`) must be styled as a fully rounded, uppercase pill with a thick orange outline border (`2px solid #d97706`), soft matching cream background (`#fffbeb`), and dark brown-orange text (`#78350f`). Inactive tab buttons (`.stab` and `.ct`) must be styled as rounded, uppercase pills with a pure white background (`#ffffff`), thick blue outline border (`2px solid #0969da`), and blue text (`#0969da`).
 - **Visual Progress Dots**:
   * Indicator Area: A progress block (`.prow`) containing `#pd` (dots container) and `#pl` (text label e.g., "Session 15 of 16").
   * Dot classes (`.dot`):
     * Previous/completed sessions (`.dot.dn` class): green background (`#1D9E75` or `#16a34a`).
     * Active/current session (`.dot.ac` class): purple/blue background (`#7F77DD` or active theme color).
     * Future/remaining sessions (`.dot.td` class): light gray background (`#D3D1C7` or `#e2e8f0`).
+- **Mobile/Tablet Viewport Responsiveness (under `768px` width)**:
+  * **Double-Border Nesting**: Sub-section cards (`.sec`) must have no 4-sided borders (`border: none !important`) and no margins (`margin: 0 !important`). They use a bottom separator line (`border-bottom: 1.5px solid var(--color-border-tertiary, #cbd5e1) !important`) for card separation, maximizing horizontal space.
+  * **Heading Wrapping & Spacing**: Headings inside `.sec` (`h3`) and flow sub-titles must use `line-height: 1.4 !important` to prevent text collision when wrapping. Flow/sub-section titles get `margin-top: 16px` and a generous `28px` top margin when preceded by a previous flow diagram or Note card (`.flowrow` / `.abox` + title) to separate flow blocks visually.
+  * **Vertical Stacking of Two-Column Layouts (`.dr`)**: For What/Why/When/Where/How tables and Note cards, rows (`.dr`) must stack vertically on mobile/tablet viewports (`flex-direction: column !important`, `align-items: flex-start !important`, `gap: 6px !important`, `padding: 10px 0 !important`). The left label span gets `width: auto !important`, `flex-shrink: 1 !important`, `margin-bottom: 4px !important`, and `font-weight: 700` so that descriptions have full width and visibility.
+
 
 ---
 

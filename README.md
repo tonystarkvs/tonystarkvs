@@ -55,3 +55,6 @@ All learning pages inside `src/sdet-topics/` must strictly follow the visual, fu
 ## 🌐 Deployed on GitHub Pages
 
 Visit: `https://vikrantps.github.io/my-learning-portal/`
+
+npx cross-env TEST_ENV=qa npx playwright test --project=chromium --reporter=html
+npx cross-env TEST_ENV=prod playwright test --project=chromium --reporter=html

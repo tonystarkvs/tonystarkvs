@@ -3,261 +3,610 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jarvis Sessions 22 to 25: Advanced Concepts</title>
+  <title>Playwright TypeScript — Sessions 22 to 25</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../responsive.css">
+
+  <!-- Prism Syntax Highlighting -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
   <style>
-/* ===== VIKRANT VISUAL ENHANCEMENT LAYER v2.0 ===== */
-h1,h2{font-weight:700 !important;border-left:4px solid #6C5CE7 !important;padding-left:12px !important;background:rgba(108,92,231,0.07) !important;border-radius:0 8px 8px 0 !important;margin-top:1.2em !important;margin-bottom:0.6em !important;padding-top:6px !important;padding-bottom:6px !important}
-h3,h4{font-weight:700 !important;border-left:3px solid #00b894 !important;padding-left:10px !important;background:rgba(0,184,148,0.06) !important;border-radius:0 6px 6px 0 !important;margin-top:1em !important;margin-bottom:0.5em !important;padding-top:4px !important;padding-bottom:4px !important}
-h5,h6{font-weight:600 !important;border-left:2px solid #fdcb6e !important;padding-left:8px !important;background:rgba(253,203,110,0.08) !important;border-radius:0 4px 4px 0 !important}
-.section-title,.card-title,.topic-title,[class*="title"],[class*="heading"],.card h3,.card h4,summary,.panel-title,.accordion-header{font-weight:700 !important}
-pre,.code-block,.code-example,.code-container,[class*="code-block"],[class*="codeblock"]{background:#1e1e2e !important;color:#cdd6f4 !important;border-radius:10px !important;padding:16px 18px !important;overflow-x:auto !important;font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace !important;font-size:0.82rem !important;border-left:4px solid #6C5CE7 !important;line-height:1.7 !important;white-space:pre-wrap !important;word-wrap:break-word !important;margin:12px 0 !important;box-shadow:0 2px 12px rgba(0,0,0,0.15) !important;position:relative !important}
-pre code,.code-block code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border:none !important;font-size:inherit !important;border-left:none !important}
-code{background:rgba(108,92,231,0.12) !important;color:#6C5CE7 !important;padding:2px 6px !important;border-radius:4px !important;font-family:'JetBrains Mono','Fira Code',monospace !important;font-size:0.85em !important}
-pre code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border-left:none !important}
-.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{display:flex !important;flex-wrap:wrap !important;gap:8px !important;padding:8px !important}
-.tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"],.tab-button{padding:8px 18px !important;border-radius:20px !important;border:1.5px solid #ddd !important;background:#f8f9fa !important;color:#2d3436 !important;font-weight:600 !important;font-size:0.85rem !important;cursor:pointer !important;transition:all 0.25s ease !important;min-width:fit-content !important;text-align:center !important}
-.tab-btn:hover,.session-tab:hover,[class*="tab-btn"]:hover,button[class*="tab"]:hover{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;transform:translateY(-1px) !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
-.tab-btn.active,.session-tab.active,[class*="tab-btn"].active,button[class*="tab"].active{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
-.card,.section,.panel,[class*="card"]{border-radius:12px !important;box-shadow:0 2px 8px rgba(0,0,0,0.06) !important;border-top:3px solid #6C5CE7 !important;margin-bottom:16px !important;padding:16px !important}
-details{border-left:3px solid #00b894 !important;border-radius:8px !important;margin-bottom:12px !important;padding:8px 12px !important;box-shadow:0 1px 4px rgba(0,0,0,0.05) !important}
-details summary{font-weight:700 !important;cursor:pointer !important;padding:10px 12px !important;background:rgba(0,184,148,0.06) !important;border-radius:8px !important;transition:background 0.2s !important}
-details summary:hover{background:rgba(0,184,148,0.12) !important}
-table{width:100% !important;border-collapse:collapse !important;margin:12px 0 !important;border-radius:8px !important;overflow:hidden !important;box-shadow:0 1px 6px rgba(0,0,0,0.08) !important}
-thead th,table thead td{background:#6C5CE7 !important;color:#fff !important;font-weight:700 !important;padding:10px 14px !important;text-align:left !important}
-tbody td{padding:10px 14px !important;border-bottom:1px solid #eee !important}
-tbody tr:hover{background:rgba(108,92,231,0.04) !important}
-.toggle-btn,.accordion-btn,[class*="toggle"],[class*="collapsible"]{cursor:pointer !important;transition:all 0.3s ease !important}
-.toggle-content,.accordion-content,.collapsible-content{overflow:hidden !important;transition:max-height 0.4s ease,opacity 0.3s ease !important}
-@media(max-width:768px){
-  .tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{flex-wrap:wrap !important;justify-content:center !important}
-  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{font-size:0.78rem !important;padding:6px 14px !important;flex:1 1 auto !important;min-width:80px !important}
-  pre,.code-block,[class*="code-block"]{font-size:0.75rem !important;padding:12px !important}
-  h1{font-size:1.4rem !important}h2{font-size:1.2rem !important}h3{font-size:1.05rem !important}
-  .card,.section,.panel,[class*="card"]{padding:12px !important}
-  body{padding:8px !important}
-}
-@media(max-width:480px){
-  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{flex:1 1 100% !important;font-size:0.75rem !important;padding:8px 10px !important;border-radius:8px !important}
-  pre,.code-block{font-size:0.7rem !important;padding:10px !important;overflow-x:scroll !important}
-  h1{font-size:1.2rem !important}h2{font-size:1.05rem !important}h3{font-size:0.95rem !important}
-  table{font-size:0.8rem !important;display:block !important;overflow-x:auto !important}
-  body{padding:4px !important}
-}
-pre::-webkit-scrollbar{height:6px}pre::-webkit-scrollbar-track{background:#2a2a3e;border-radius:3px}pre::-webkit-scrollbar-thumb{background:#6C5CE7;border-radius:3px}
-/* ===== END ENHANCEMENT LAYER v2.0 ===== */
-
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,sans-serif;font-size:13px;background:#f6f8fa;color:#1f2328;min-height:100vh}
-.topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#fff;border-bottom:1px solid #d0d7de;flex-wrap:wrap}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#1a7f37;background:#dafbe1;border:1px solid #56d364;border-radius:20px;padding:3px 10px}
-.dot{width:6px;height:6px;border-radius:50%;background:#1a7f37;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.ttl{font-size:14px;font-weight:700}
-/* session nav */
-.snav{display:flex;background:#fff;border-bottom:2px solid #d0d7de;overflow-x:auto}
-.snav::-webkit-scrollbar{display:none}
-.sbtn{padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:#656d76;border:none;border-bottom:3px solid transparent;background:none;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.sbtn:hover{color:#1f2328;background:#f6f8fa}
-.sbtn.active{color:#0969da;border-bottom-color:#0969da;background:#ddf4ff}
-.bdg{font-size:10px;padding:1px 6px;border-radius:8px;font-weight:700}
-/* session content */
-.sc{display:none}.sc.active{display:block}
-/* section tabs */
-.stabs{display:flex;background:#f6f8fa;border-bottom:1px solid #d0d7de;overflow-x:auto;padding:0 12px;gap:2px}
-.stabs::-webkit-scrollbar{display:none}
-.stab{padding:8px 12px;font-size:11px;font-weight:600;cursor:pointer;color:#656d76;border:none;border-bottom:2px solid transparent;background:none;white-space:nowrap;border-radius:5px 5px 0 0}
-.stab:hover{color:#1f2328;background:#e9ecef}
-.stab.active{color:#1a7f37;border-bottom-color:#1a7f37;background:#dafbe1}
-.pan{display:none;padding:14px 16px}.pan.active{display:block}
-/* cards */
-.dcard{border-left:4px solid #0969da;background:#ddf4ff;border-radius:0 8px 8px 0;padding:11px 14px;margin-bottom:12px}
-.dcard .dlbl{font-size:10px;font-weight:700;color:#0969da;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
-.dcard p{font-size:13px;line-height:1.7}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.gc{background:#fff;border:1px solid #d0d7de;border-radius:7px;padding:10px}
-.gc h4{font-size:10px;font-weight:700;color:#656d76;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;display:flex;align-items:center;gap:5px}
-.gc h4::before{content:'';width:3px;height:9px;background:#0969da;border-radius:2px;display:inline-block}
-.gc p{font-size:12px;line-height:1.6}
-.fc{grid-column:1/-1}
-/* glossary */
-.gi{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #d0d7de}
-.gi:last-child{border-bottom:none}
-.gk{font-family:monospace;font-size:11px;color:#bc4c00;background:#fff1e5;border:1px solid #f69d50;padding:2px 7px;border-radius:4px;white-space:nowrap;font-weight:700;flex-shrink:0;height:fit-content;margin-top:1px}
-.gd{font-size:12px;color:#656d76;line-height:1.5}
-/* oneliners */
-.oli{background:#fff;border:1px solid #56d364;border-left:4px solid #1a7f37;border-radius:0 7px 7px 0;padding:8px 12px;margin-bottom:7px;font-size:12px;font-style:italic;line-height:1.55}
-.oli .lb{color:#1a7f37;font-weight:700;font-style:normal;font-size:10px;display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
-/* flow */
-.fb{background:#f6f8fa;border:1px solid #d0d7de;border-radius:7px;padding:10px;margin-top:7px;font-family:monospace;font-size:11px}
-.fr{display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap}
-.fr:last-child{margin-bottom:0}
-.t{border-radius:4px;padding:3px 7px;font-size:10px;white-space:nowrap;font-weight:700}
-.tbl{background:#ddf4ff;color:#0969da;border:1px solid #54aeff}
-.tgr{background:#dafbe1;color:#1a7f37;border:1px solid #56d364}
-.tor{background:#fff1e5;color:#bc4c00;border:1px solid #f69d50}
-.trd{background:#ffebe9;color:#cf222e;border:1px solid #ff8182}
-.tpu{background:#fbefff;color:#8250df;border:1px solid #d2a8ff}
-.tnn{background:#e9ecef;color:#656d76;border:1px solid #c9d1d9}
-.ar{color:#9198a1;font-size:13px}
-.cb{background:#fff;border:1px solid #d0d7de;border-radius:7px;margin-bottom:10px;overflow:hidden}
-.cb .cbh{background:#f6f8fa;padding:8px 12px;font-size:12px;font-weight:700;color:#0969da;border-bottom:1px solid #d0d7de}
-.cb .cbb{padding:11px 12px}
-.cb .cbb p{font-size:12px;color:#656d76;line-height:1.6;margin-bottom:6px}
-/* bp */
-.bpi{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #d0d7de;font-size:12px}
-.bpi:last-child{border-bottom:none}
-.bpic{min-width:17px;height:17px;border-radius:50%;background:#dafbe1;border:1px solid #56d364;color:#1a7f37;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-/* qa */
-.qa{border:1px solid #d0d7de;border-radius:7px;margin-bottom:7px;overflow:hidden}
-.qaq{background:#f6f8fa;padding:9px 12px;font-size:12px;font-weight:600;color:#0969da;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
-.qaq:hover{background:#ddf4ff}
-.qaa{background:#fff;padding:10px 12px;font-size:12px;color:#656d76;line-height:1.65;display:none;border-top:1px solid #d0d7de}
-.qaa.open{display:block}
-.qtg{color:#9198a1;font-size:14px;transition:transform .15s}
-.open .qtg{transform:rotate(90deg)}
-/* code */
-.ctabs2{display:flex;background:#f6f8fa;border-bottom:1px solid #d0d7de;overflow-x:auto;padding:0 12px}
-.ctabs2::-webkit-scrollbar{display:none}
-.ctb{padding:7px 10px;font-size:11px;font-family:monospace;cursor:pointer;color:#656d76;border:none;border-bottom:2.5px solid transparent;background:none;white-space:nowrap;font-weight:600}
-.ctb:hover{color:#1f2328}
-.ctb.active{color:#bc4c00;border-bottom-color:#bc4c00;background:#fff1e5}
-.fxt{font-size:9px;padding:1px 4px;border-radius:3px;background:#fff1e5;color:#bc4c00;border:1px solid #f69d50;font-weight:700}
-.cpan2{display:none}.cpan2.active{display:block}
-.ch{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:#fff;border-bottom:1px solid #d0d7de}
-.cfn{font-family:monospace;font-size:11px;color:#656d76;font-weight:600;display:flex;align-items:center;gap:6px}
-.cfdot{width:8px;height:8px;border-radius:50%;background:#bc4c00;display:inline-block}
-.cpbtn{font-size:11px;padding:3px 9px;border-radius:5px;border:1px solid #c9d1d9;background:#fff;color:#656d76;cursor:pointer;font-weight:600}
-.cpbtn:hover{background:#f6f8fa;color:#1f2328}
-pre{margin:0;padding:13px;overflow-x:auto;font-size:11.5px;line-height:1.8;font-family:'JetBrains Mono',Consolas,monospace;background:#fff;color:#1f2328}
-.kw{color:#cf222e;font-weight:700}.fn{color:#8250df;font-weight:700}.str{color:#0a3069}
-.cm{color:#9198a1;font-style:italic}.num{color:#0550ae}.cls{color:#953800;font-weight:700}
-.prop{color:#116329}.val{color:#1a7f37;font-weight:700}
-.tsec{font-size:10px;font-weight:700;color:#656d76;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;margin-top:12px;display:flex;align-items:center;gap:7px}
-.tsec::after{content:'';flex:1;height:1px;background:#d0d7de}
-code{font-family:monospace;font-size:11px;background:#e9ecef;padding:1px 5px;border-radius:3px;color:#bc4c00;font-weight:700}
-</style>
-    <link rel="stylesheet" href="../responsive.css">
-
-    <!-- Prism Syntax Highlighting -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
-
+    .kwd { color: #c0392b !important; font-weight: 700 !important; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     
+    body {
+      font-family: var(--font-sans, system-ui, sans-serif) !important;
+      font-size: 13px;
+      background: #f6f8fa;
+      color: #1f2328;
+      min-height: 100vh;
+      padding: 0;
+    }
+    
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: #fff;
+      border-bottom: 1px solid #d0d7de;
+      flex-wrap: wrap;
+    }
+    
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #1a7f37;
+      background: #dafbe1;
+      border: 1px solid #56d364;
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+    
+    .dot-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #1a7f37;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .3; }
+    }
+    
+    .ttl {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    
+    /* Active Session Tab Styling */
+    .stabs {
+      display: flex;
+      background: #f6f8fa;
+      border-bottom: 1px solid #d0d7de;
+      overflow-x: auto;
+      padding: 6px 12px;
+      gap: 6px;
+    }
+    
+    .stabs::-webkit-scrollbar { display: none; }
+    
+    .stab, .ct {
+      display: inline-block;
+      padding: 6px 14px !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      border-radius: 20px !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      margin: 4px 2px !important;
+      background: #ffffff !important;
+      border: 2px solid #0969da !important;
+      color: #0969da !important;
+      white-space: nowrap;
+    }
+    
+    .stab:hover, .ct:hover {
+      background: #f0f7ff !important;
+    }
+    
+    .stab.active, .ct.active {
+      background: #fffbeb !important;
+      border: 2px solid #d97706 !important;
+      color: #78350f !important;
+    }
+    
+    .bdg {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
 
+    /* Progress block */
+    .prow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #eff6ff;
+      border-bottom: 1.5px solid #3b82f6;
+      margin-bottom: 15px;
+    }
+    
+    .dot {
+      width: 10px !important;
+      height: 10px !important;
+      border-radius: 50% !important;
+      display: inline-block !important;
+      margin-right: 4px !important;
+    }
+    
+    .dot.dn { background: #16a34a !important; }
+    .dot.ac { background: #7F77DD !important; }
+    .dot.td { background: #e2e8f0 !important; }
+    
+    .plbl {
+      font-size: 11px;
+      color: #1e3a8a;
+      font-weight: 600;
+    }
 
+    /* Layout Components */
+    .obanner {
+      background: #EEEDFE;
+      padding: 16px;
+      border-bottom: 0.5px solid #AFA9EC;
+      margin-bottom: 15px;
+    }
+    
+    .obanner h2 {
+      font-size: 11px;
+      font-weight: 600;
+      color: #534AB7;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    
+    .obanner p {
+      font-size: 13px;
+      color: #26215C;
+      line-height: 1.6;
+    }
+    
+    .sec {
+      padding: 14px 16px;
+      border-bottom: 0.5px solid #cbd5e1;
+    }
+    
+    .sec h3 {
+      font-size: 11px;
+      font-weight: 600;
+      color: #57606a;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--pc, #6C5CE7) !important;
+      padding-left: 12px !important;
+    }
+    
+    .abox {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    
+    .dr {
+      font-size: 12px;
+      color: #57606a;
+      padding: 8px 0;
+      border-bottom: 1px solid #f6f8fa;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    
+    .dr:last-child {
+      border-bottom: none;
+    }
+    
+    .glosgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .gitem {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    
+    .gkw {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #3c3489;
+      font-family: var(--font-mono, monospace);
+      margin-bottom: 4px;
+    }
+    
+    .gdef {
+      font-size: 11.5px;
+      color: #57606a;
+      line-height: 1.5;
+    }
+    
+    .igrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .qp {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      color: #1f2328;
+      line-height: 1.55;
+      border-left: 4px solid #7F77DD !important;
+    }
+    
+    .flowrow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 10px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+    }
+    
+    .fstep {
+      flex: 1;
+      padding: 10px 8px;
+      font-size: 11px;
+      text-align: center;
+      border-right: 1px solid #cbd5e1;
+    }
+    
+    .fstep:last-child {
+      border-right: none;
+    }
+    
+    .fstep .fn {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+    
+    .fstep .fd {
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .fstep.n1 { background: #EEEDFE !important; color: #3C3489 !important; border-color: #AFA9EC !important; }
+    .fstep.n2 { background: #E1F5EE !important; color: #085041 !important; border-color: #5DCAA5 !important; }
+    .fstep.n3 { background: #FAECE7 !important; color: #712B13 !important; border-color: #F0997B !important; }
+    .fstep.n4 { background: #FAEEDA !important; color: #633806 !important; border-color: #EF9F27 !important; }
+    .fstep.n5 { background: #E6F1FB !important; color: #0C447C !important; border-color: #85B7EB !important; }
+
+    /* Best Practices list */
+    .bpl {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      padding: 0;
+    }
+    
+    .bpl li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12.5px;
+      color: #1f2328;
+      line-height: 1.5;
+    }
+    
+    .bpc {
+      background: #E1F5EE;
+      color: #085041;
+      border: 0.5px solid #5DCAA5;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-weight: bold;
+    }
+    
+    /* Accordion Q&A list */
+    .ql {
+      display: grid;
+      gap: 10px;
+    }
+    
+    .qi {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    
+    .qq {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #b91c1c !important;
+      margin-bottom: 4px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    
+    .qa {
+      font-size: 12px;
+      color: #1e3a8a !important;
+      line-height: 1.65;
+      display: none;
+      border-top: 1px solid #f6f8fa;
+      padding-top: 6px;
+      margin-top: 4px;
+    }
+    
+    .qi.open .qa {
+      display: block !important;
+    }
+
+    /* Mock Code Editor Container */
+    .cs {
+      background: #fff;
+      border: 1.5px solid #cbd5e1 !important;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    
+    .csh {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: #f6f8fa;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    
+    .csh span {
+      font-size: 12px;
+      font-weight: 700;
+      color: #24292f;
+      text-transform: uppercase;
+      font-family: var(--font-sans);
+    }
+    
+    .dr2 {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .md {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    
+    .mr { background: #ff5f57; }
+    .my { background: #febc2e; }
+    .mg { background: #28c840; }
+    
+    .ctbar {
+      display: flex;
+      background: #f0f2f5;
+      border-bottom: 1px solid #cbd5e1;
+      overflow-x: auto;
+      padding: 4px 8px;
+      gap: 4px;
+    }
+    
+    .ctbar::-webkit-scrollbar { display: none; }
+    
+    .cp {
+      display: none;
+      padding: 14px 18px;
+      background: #fff;
+    }
+    
+    .cp.active {
+      display: block !important;
+    }
+    
+    .cp-sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      background: #fafbfc;
+      border: 1px solid #cbd5e1;
+      border-bottom: none;
+      border-radius: 6px 6px 0 0;
+    }
+    
+    .file-name {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #57606a;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .file-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    
+    .file-dot-typescript { background: #3178c6; }
+    
+    .cpbtn {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 5px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #57606a;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .cpbtn:hover {
+      background: #f6f8fa;
+      color: #24292f;
+    }
+    
+    .cs pre {
+      border: none !important;
+      margin: 0 !important;
+      padding: 12px !important;
+      border-radius: 0 0 8px 8px !important;
+      overflow-x: auto !important;
+    }
+
+    .hl-kw {
+      font-family: var(--font-mono) !important;
+      font-weight: 700 !important;
+      color: #c2185b !important;
+      background: #fce4ec !important;
+      border: 0.5px solid #f8bbd0 !important;
+      border-radius: 3px !important;
+      display: inline-block !important;
+      font-size: 0.9em !important;
+      padding: 1px 4px !important;
+    }
+
+    /* High-Contrast Syntax Highlighting Token Overrides (PAGE_STRUCTURE.md) */
+    .token.comment { color: #334155 !important; font-style: italic !important; }
+    .token.keyword { color: #0969da !important; font-weight: bold !important; }
+    .token.string { color: #1a7f37 !important; }
+    .token.class-name, .token.class { color: #953800 !important; font-weight: bold !important; }
+    .token.function { color: #cf222e !important; }
+    .token.property { color: #cf222e !important; }
+    .token.attr-name { color: #0969da !important; }
+    .token.attr-value { color: #1a7f37 !important; }
+    .token.tag { color: #22863a !important; }
+
+    html body div.section { display: none !important; border: 2.5px solid var(--pc, #6C5CE7) !important; background: #faf5ff !important; border-radius: 0 0 8px 8px; margin-bottom: 25px; overflow: hidden; }
+    html body div.section.active { display: block !important; }
+    html body div.section.visible { display: block !important; }
+    
+    @media (max-width: 640px) {
+      .glosgrid, .igrid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
 </head>
 <body class="line-numbers">
-  <div class="topbar">
-  <div class="pill"><div class="dot"></div>JARVIS</div>
-  <span class="ttl">Playwright-TS — Sessions 22 · 23 · 24 · 25</span>
-</div>
-
-<!-- SESSION NAV -->
-<div class="snav" id="SN">
-  <button class="sbtn active" onclick="showS('s22')">S22 <span class="bdg" style="background:#dafbe1;color:#1a7f37;border:1px solid #56d364">Advanced</span> File Upload</button>
-  <button class="sbtn" onclick="showS('s23')">S23 <span class="bdg" style="background:#fbefff;color:#8250df;border:1px solid #d2a8ff">Advanced</span> File Download</button>
-  <button class="sbtn" onclick="showS('s24')">S24 <span class="bdg" style="background:#fff1e5;color:#bc4c00;border:1px solid #f69d50">Advanced</span> Viewport &amp; Emulation</button>
-  <button class="sbtn" onclick="showS('s25')">S25 <span class="bdg" style="background:#cae8ff;color:#0a3069;border:1px solid #79c0ff">Advanced</span> Page Info Methods</button>
-</div>
-
-<!-- ===================== S22 ===================== -->
-<div class="sc active" id="s22">
-  <div class="stabs" id="ST22">
-    <button class="stab active" onclick="showP('s22','ov')">Overview</button>
-    <button class="stab" onclick="showP('s22','gl')">Glossary</button>
-    <button class="stab" onclick="showP('s22','ol')">1-Liners</button>
-    <button class="stab" onclick="showP('s22','con')">Concepts</button>
-    <button class="stab" onclick="showP('s22','bp')">Best Practices</button>
-    <button class="stab" onclick="showP('s22','qa')">Interview</button>
-    <button class="stab" onclick="showP('s22','cd')">Code ×5</button>
+  <div class="topbar" data-testid="div-topbar-1">
+    <div class="pill" data-testid="div-pill-2"><div class="dot-pulse" data-testid="div-dot-pulse-3"></div>JARVIS</div>
+    <span class="ttl">Playwright-TS — Sessions 22 · 23 · 24 · 25</span>
   </div>
 
-  <div class="pan active" id="s22-ov">
-    <div class="dcard"><div class="dlbl">Session 22 · File Upload</div><p><code>locator.setInputFiles()</code> sets files directly on <code>&lt;input type="file"&gt;</code> bypassing the OS file picker dialog entirely. For custom upload buttons that trigger a hidden input, use <code>page.waitForEvent('filechooser')</code> inside a <code>Promise.all()</code>. Both patterns avoid the OS dialog which cannot be automated by any browser tool.</p></div>
-    <div class="g2">
-      <div class="gc"><h4>WHAT</h4><p>Automating file selection in browser UIs. Playwright sets file data directly at DOM level — no OS dialog involvement. Works on visible and hidden inputs.</p></div>
-      <div class="gc"><h4>WHY bypass OS dialog?</h4><p>Native OS file pickers (Windows Explorer, macOS Finder) live outside the browser. No automation tool can interact with them. Playwright's APIs bypass this limitation entirely.</p></div>
-      <div class="gc"><h4>setInputFiles vs FileChooser</h4><p><code>setInputFiles()</code> — direct input element. <code>waitForEvent('filechooser')</code> — when a custom button triggers a hidden input via JavaScript. Both achieve the same result.</p></div>
-      <div class="gc"><h4>Verification</h4><p>After upload: assert filename in preview, progress bar visible then hidden, success message shown, API responded correctly, uploaded file accessible in the list.</p></div>
-    </div>
+  <!-- SESSION NAV -->
+  <div class="stabs" id="sTabs" data-testid="div-sTabs">
+    <button class="stab active" onclick="sw(0)" data-testid="button-stab-1">S22 <span class="bdg" style="background:#dafbe1;color:#1a7f37;border:1px solid #56d364">Advanced</span> File Upload</button>
+    <button class="stab" onclick="sw(1)" data-testid="button-stab-2">S23 <span class="bdg" style="background:#fbefff;color:#8250df;border:1px solid #d2a8ff">Advanced</span> File Download</button>
+    <button class="stab" onclick="sw(2)" data-testid="button-stab-3">S24 <span class="bdg" style="background:#fff1e5;color:#bc4c00;border:1px solid #f69d50">Advanced</span> Viewport &amp; Emulation</button>
+    <button class="stab" onclick="sw(3)" data-testid="button-stab-4">S25 <span class="bdg" style="background:#cae8ff;color:#0a3069;border:1px solid #79c0ff">Advanced</span> Page Info Methods</button>
+  </div>
+  
+  <div class="prow" data-testid="div-prow-5">
+    <span id="pd"></span>
+    <span class="plbl" id="pl">Session 22 of 4</span>
   </div>
 
-  <div class="pan" id="s22-gl">
-    <div class="tsec">Keyword Glossary</div>
-    <div class="gi"><span class="gk">setInputFiles()</span><span class="gd">Playwright method on Locator. Sets files on &lt;input type="file"&gt; at DOM level. Accepts: path string, path array, or {name, mimeType, buffer} object. Triggers input/change events. Works on hidden inputs.</span></div>
-    <div class="gi"><span class="gk">waitForEvent('filechooser')</span><span class="gd">Waits for the FileChooser event that fires when browser would open OS file picker. Must be registered BEFORE the triggering click. Always used inside Promise.all().</span></div>
-    <div class="gi"><span class="gk">FileChooser</span><span class="gd">Object returned by waitForEvent('filechooser'). Methods: setFiles(paths), isMultiple() → boolean, acceptMimeTypes() → string[].</span></div>
-    <div class="gi"><span class="gk">buffer upload</span><span class="gd">Upload a file created in memory: { name:'test.csv', mimeType:'text/csv', buffer:Buffer.from('content') }. No disk file needed. Perfect for edge cases — empty files, wrong types, malformed content.</span></div>
-    <div class="gi"><span class="gk">multiple files</span><span class="gd">setInputFiles(['f1.pdf','f2.jpg']) uploads an array. Works on &lt;input type="file" multiple&gt;. setInputFiles([]) clears all selections.</span></div>
-    <div class="gi"><span class="gk">input[type="file"]</span><span class="gd">The HTML element that holds the file selection. Often hidden when custom upload buttons are used. setInputFiles() works regardless of display:none or visibility:hidden.</span></div>
-    <div class="gi"><span class="gk">drag-and-drop upload</span><span class="gd">For drop-zones: use page.evaluate() with DataTransfer API or dispatchEvent('drop'). Different from setInputFiles() which targets the file input directly.</span></div>
-    <div class="gi"><span class="gk">Promise.all pattern</span><span class="gd">Critical pattern: Promise.all([page.waitForEvent('filechooser'), page.click('#btn')]). Both start simultaneously — prevents the race condition of missing the filechooser event.</span></div>
-  </div>
+  <div id="allS" data-testid="div-allS">
 
-  <div class="pan" id="s22-ol">
-    <div class="tsec">Interview One-Liners</div>
-    <div class="oli"><span class="lb">OS Dialog bypass</span>"Native OS file pickers are operating system windows — no browser automation tool can interact with them. Playwright's setInputFiles() circumvents this entirely by setting the file at the DOM level, triggering the same input and change events as if the user had selected the file through the dialog."</div>
-    <div class="oli"><span class="lb">Promise.all rule</span>"The critical rule for waitForEvent('filechooser') is that the listener must be registered BEFORE the click — I use Promise.all so both start simultaneously. If I await the click first, the chooser event fires before the listener is ready and the test hangs forever."</div>
-    <div class="oli"><span class="lb">Buffer uploads</span>"For testing edge cases like wrong file type, empty file, or malformed content, I use buffer-based uploads: setInputFiles({name:'virus.exe', mimeType:'application/x-msdownload', buffer:Buffer.from('fake')}) — no disk files needed, any content I want."</div>
-    <div class="oli"><span class="lb">Hidden input</span>"Many modern upload UIs hide the actual file input and style a custom button — setInputFiles() works on hidden inputs because it operates at the DOM level, not by simulating a click on the visible element."</div>
-    <div class="oli"><span class="lb">Clear selection</span>"setInputFiles([]) with an empty array removes all previously selected files — this tests the clear-selection behavior and verifies the app correctly resets to its empty upload state before letting the user re-submit."</div>
-  </div>
-
-  <div class="pan" id="s22-con">
-    <div class="tsec">Core Concepts</div>
-    <div class="cb"><div class="cbh">⬡ Two Upload Patterns</div><div class="cbb">
-      <div class="fb">
-        <div class="fr"><span class="t tgr">Pattern 1: Direct Input</span></div>
-        <div class="fr" style="margin-left:10px"><span class="t tnn">HTML has visible &lt;input type="file"&gt;</span></div>
-        <div class="fr" style="margin-left:10px"><span class="t tgr">page.locator('input[type="file"]').setInputFiles('file.pdf')</span></div>
-        <div class="fr" style="margin-top:6px"><span class="t tbl">Pattern 2: Custom Button</span></div>
-        <div class="fr" style="margin-left:10px"><span class="t tnn">Button click → JS triggers hidden input</span></div>
-        <div class="fr" style="margin-left:10px"><span class="t tbl">Promise.all([waitForEvent('filechooser'), click('#btn')])</span></div>
-        <div class="fr" style="margin-top:5px"><span class="t trd">Anti-pattern: try to click OS dialog</span><span class="t trd">IMPOSSIBLE — never works</span></div>
+    <!-- ===================== S22 ===================== -->
+    <div class="section sc active" id="s22" data-testid="div-s22">
+      <div class="obanner" data-testid="div-obanner-8">
+        <h2 data-testid="h2-1">Session 22 · File Upload</h2>
+        <p data-testid="p-1"><code data-testid="code-1">locator.setInputFiles()</code> sets files directly on <code data-testid="code-2">&lt;input type="file"&gt;</code> bypassing the OS file picker dialog entirely. For custom upload buttons that trigger a hidden input, use <code data-testid="code-3">page.waitForEvent('filechooser')</code> inside a <code data-testid="code-4">Promise.all()</code>. Both patterns avoid the OS dialog which cannot be automated by any browser tool.</p>
       </div>
-    </div></div>
-    <div class="cb"><div class="cbh">⬡ Upload Verification Steps</div><div class="cbb">
-      <div class="fb">
-        <div class="fr"><span class="t tgr">1.</span><span class="t tnn">Filename shown in UI preview</span></div>
-        <div class="fr"><span class="t tgr">2.</span><span class="t tnn">Upload progress visible during transfer</span></div>
-        <div class="fr"><span class="t tgr">3.</span><span class="t tnn">Success message shown after complete</span></div>
-        <div class="fr"><span class="t tgr">4.</span><span class="t tnn">waitForResponse('**/api/upload') → status 201</span></div>
-        <div class="fr"><span class="t tgr">5.</span><span class="t tnn">File appears in uploaded-files list</span></div>
+
+      <div class="sec" data-testid="div-sec-9">
+        <h3 data-testid="h3-1">What / Why / When / Where / How</h3>
+        <div class="abox" data-testid="div-abox-10">
+          <div class="dr" data-testid="div-dr-11"><span style="color:#3C3489;font-weight:600;width:120px;flex-shrink:0">What</span><span>Automating file selection in browser UIs. Playwright sets file data directly at DOM level — no OS dialog involvement. Works on visible and hidden inputs.</span></div>
+          <div class="dr" data-testid="div-dr-12"><span style="color:#085041;font-weight:600;width:120px;flex-shrink:0">Why</span><span>Native OS file pickers (Windows Explorer, macOS Finder) live outside the browser. No automation tool can interact with them. Playwright's APIs bypass this limitation entirely.</span></div>
+          <div class="dr" data-testid="div-dr-13"><span style="color:#712B13;font-weight:600;width:120px;flex-shrink:0">Direct vs Custom</span><span><code data-testid="code-5">setInputFiles()</code> targets direct input elements. <code data-testid="code-6">waitForEvent('filechooser')</code> handles custom buttons triggering hidden inputs.</span></div>
+          <div class="dr" style="border:none" data-testid="div-dr-14"><span style="color:#0C447C;font-weight:600;width:120px;flex-shrink:0">Verification</span><span>Assert filename preview, monitor upload progress, verify API 201 status, and check final upload lists.</span></div>
+        </div>
       </div>
-    </div></div>
-  </div>
 
-  <div class="pan" id="s22-bp">
-    <div class="tsec">Best Practices</div>
-    <div class="bpi"><div class="bpic">✓</div><div>Store fixture files in <code>tests/fixtures/</code> committed to git. Use <code>path.join(__dirname, '../fixtures/test.pdf')</code> for cross-platform paths.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Always <code>Promise.all([waitForEvent('filechooser'), click()])</code> — never await click first. The race condition will cause the test to hang.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Use buffer-based uploads for edge case testing — wrong file type, empty file, oversized content — without creating multiple fixture files on disk.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Use <code>page.route('**/api/upload', route => route.fulfill({status:413}))</code> to test server rejection of oversized files — mock the server response rather than creating gigabyte test files.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Use <code>page.waitForResponse('**/api/upload')</code> before asserting upload success UI — the UI updates only after the server responds.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Always assert AFTER upload — verify filename in preview AND success state. Don't assume setInputFiles() not throwing means the upload worked.</div></div>
-  </div>
+      <div class="sec" data-testid="div-sec-15">
+        <h3 data-testid="h3-2">Keyword Glossary</h3>
+        <div class="glosgrid" data-testid="div-glosgrid-16">
+          <div class="gitem" data-testid="div-gitem-17"><div class="gkw" data-testid="div-gkw-18">setInputFiles()</div><div class="gdef" data-testid="div-gdef-19">Playwright method on Locator. Sets files on &lt;input type="file"&gt; at DOM level. Accepts: path string, path array, or {name, mimeType, buffer} object. Triggers input/change events. Works on hidden inputs.</div></div>
+          <div class="gitem" data-testid="div-gitem-20"><div class="gkw" data-testid="div-gkw-21">waitForEvent('filechooser')</div><div class="gdef" data-testid="div-gdef-22">Waits for the FileChooser event that fires when browser would open OS file picker. Must be registered BEFORE the triggering click. Always used inside Promise.all().</div></div>
+          <div class="gitem" data-testid="div-gitem-23"><div class="gkw" data-testid="div-gkw-24">FileChooser</div><div class="gdef" data-testid="div-gdef-25">Object returned by waitForEvent('filechooser'). Methods: setFiles(paths), isMultiple() → boolean, acceptMimeTypes() → string[].</div></div>
+          <div class="gitem" data-testid="div-gitem-26"><div class="gkw" data-testid="div-gkw-27">buffer upload</div><div class="gdef" data-testid="div-gdef-28">Upload a file created in memory: { name:'test.csv', mimeType:'text/csv', buffer:Buffer.from('content') }. No disk file needed. Perfect for edge cases — empty files, wrong types, malformed content.</div></div>
+          <div class="gitem" data-testid="div-gitem-29"><div class="gkw" data-testid="div-gkw-30">multiple files</div><div class="gdef" data-testid="div-gdef-31">setInputFiles(['f1.pdf','f2.jpg']) uploads an array. Works on &lt;input type="file" multiple&gt;. setInputFiles([]) clears all selections.</div></div>
+          <div class="gitem" data-testid="div-gitem-32"><div class="gkw" data-testid="div-gkw-33">input[type="file"]</div><div class="gdef" data-testid="div-gdef-34">The HTML element that holds the file selection. Often hidden when custom upload buttons are used. setInputFiles() works regardless of display:none or visibility:hidden.</div></div>
+          <div class="gitem" data-testid="div-gitem-35"><div class="gkw" data-testid="div-gkw-36">drag-and-drop upload</div><div class="gdef" data-testid="div-gdef-37">For drop-zones: use page.evaluate() with DataTransfer API or dispatchEvent('drop'). Different from setInputFiles() which targets the file input directly.</div></div>
+          <div class="gitem" data-testid="div-gitem-38"><div class="gkw" data-testid="div-gkw-39">Promise.all pattern</div><div class="gdef" data-testid="div-gdef-40">Critical pattern: Promise.all([page.waitForEvent('filechooser'), page.click('#btn')]). Both start simultaneously — prevents the race condition of missing the filechooser event.</div></div>
+        </div>
+      </div>
 
-  <div class="pan" id="s22-qa">
-    <div class="tsec">Interview Prep</div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q1: Why can't Playwright automate the native OS file picker? <span class="qtg">▶</span></div><div class="qaa">The native OS file picker is a window managed by the operating system, not the browser. Browser automation tools only control the browser process — they cannot interact with OS-level windows like Windows Explorer or macOS Finder. Playwright solves this with two approaches: setInputFiles() sets file data directly on the DOM element at the JavaScript level (triggering the same input/change events), and the FileChooser API intercepts the browser's intent to open the OS picker and replaces it programmatically. Both approaches bypass the OS dialog entirely.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q2: How do you upload a file to a drag-and-drop upload zone? <span class="qtg">▶</span></div><div class="qaa">First check if the drop zone has a hidden input — if so, use setInputFiles() directly. If it's a pure JS drag-drop zone: await page.evaluate(async () => { const dt = new DataTransfer(); const file = new File(['content'], 'test.txt', {type:'text/plain'}); dt.items.add(file); const zone = document.querySelector('.drop-zone'); zone.dispatchEvent(new DragEvent('dragover', {dataTransfer:dt, bubbles:true})); zone.dispatchEvent(new DragEvent('drop', {dataTransfer:dt, bubbles:true})); }). Always verify the drop zone's framework implementation first since different frameworks handle drop events differently.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q3: How do you test file type validation? <span class="qtg">▶</span></div><div class="qaa">Client-side: await page.locator('input[type="file"]').setInputFiles({name:'virus.exe', mimeType:'application/x-msdownload', buffer:Buffer.from('fake content')}). Then assert: await expect(page.locator('.file-error')).toContainText('Only PDF files allowed'). Server-side: combine with waitForResponse — const resp = await page.waitForResponse('**/api/upload'); expect(resp.status()).toBe(415) for Unsupported Media Type. Buffer-based uploads let you create files with any name and MIME type without real disk files, making them ideal for all validation edge cases.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q4: How do you test upload progress bar? <span class="qtg">▶</span></div><div class="qaa">Use page.route() to add artificial delay: await page.route('**/api/upload', async route => { await new Promise(r => setTimeout(r, 2000)); await route.fulfill({status:201, json:{fileId:'abc'}}); }). Then trigger upload and assert: await expect(page.locator('.upload-progress')).toBeVisible() — visible during 2s delay. await expect(page.locator('.upload-success')).toBeVisible() — appears after delay. await expect(page.locator('.upload-progress')).toBeHidden() — gone after success. This tests the loading state which is impossible to test reliably without controlling the API timing.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q5: How do you upload multiple files and test max file limit? <span class="qtg">▶</span></div><div class="qaa">For multiple files: await page.locator('input[type="file"][multiple]').setInputFiles(['img1.jpg','img2.png','img3.webp']). Verify all appear: await expect(page.locator('.file-preview-item')).toHaveCount(3). Test clear: await fileInput.setInputFiles([]); await expect(page.locator('.empty-state')).toBeVisible(). Test limit exceeded: setInputFiles with 6 files when max is 5 — await expect(page.locator('.max-warning')).toContainText('Maximum 5 files'). await expect(page.locator('button[type="submit"]')).toBeDisabled(). FileChooser: const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.click('#btn')]); fc.isMultiple() returns true for multiple inputs.</div></div>
-  </div>
+      <div class="sec" data-testid="div-sec-41">
+        <h3 data-testid="h3-3">Interview One-Liners</h3>
+        <div class="igrid" data-testid="div-igrid-42">
+          <div class="qp" data-testid="div-qp-43"><strong>OS Dialog bypass:</strong> Native OS file pickers are operating system windows — no browser automation tool can interact with them. Playwright's setInputFiles() circumvents this entirely by setting the file at the DOM level, triggering the same input and change events as if the user had selected the file through the dialog.</div>
+          <div class="qp" data-testid="div-qp-44"><strong>Promise.all rule:</strong> The critical rule for waitForEvent('filechooser') is that the listener must be registered BEFORE the click — I use Promise.all so both start simultaneously. If I await the click first, the chooser event fires before the listener is ready and the test hangs forever.</div>
+          <div class="qp" data-testid="div-qp-45"><strong>Buffer uploads:</strong> For testing edge cases like wrong file type, empty file, or malformed content, I use buffer-based uploads: setInputFiles({name:'virus.exe', mimeType:'application/x-msdownload', buffer:Buffer.from('fake')}) — no disk files needed, any content I want.</div>
+          <div class="qp" data-testid="div-qp-46"><strong>Hidden input:</strong> Many modern upload UIs hide the actual file input and style a custom button — setInputFiles() works on hidden inputs because it operates at the DOM level, not by simulating a click on the visible element.</div>
+          <div class="qp" data-testid="div-qp-47"><strong>Clear selection:</strong> setInputFiles([]) with an empty array removes all previously selected files — this tests the clear-selection behavior and verifies the app correctly resets to its empty upload state before letting the user re-submit.</div>
+        </div>
+      </div>
 
-  <div class="pan" id="s22-cd">
-    <div class="ctabs2" id="CT22">
-      <button class="ctb active" onclick="showC('s22',1)"><span class="fxt">.ts</span> basic-upload.ts</button>
-      <button class="ctb" onclick="showC('s22',2)"><span class="fxt">.ts</span> custom-btn-upload.ts</button>
-      <button class="ctb" onclick="showC('s22',3)"><span class="fxt">.ts</span> buffer-upload.ts</button>
-      <button class="ctb" onclick="showC('s22',4)"><span class="fxt">.ts</span> multiple-files.ts</button>
-      <button class="ctb" onclick="showC('s22',5)"><span class="fxt">.ts</span> upload-errors.ts</button>
-    </div>
-    <div class="cpan2 active" id="s22c1"><div class="ch"><span class="cfn"><span class="cfdot"></span>basic-upload.ts</span><button class="cpbtn" onclick="copyCode('s22c1')">Copy</button></div>
-<pre><code class="language-typescript">// basic-upload.ts — direct input element upload + full verification
+      <div class="sec" data-testid="div-sec-48">
+        <h3 data-testid="h3-4">Upload Flow &amp; Lifecycle</h3>
+        <div class="flowrow" data-testid="div-flowrow-49">
+          <div class="fstep n1" data-testid="div-fstep-50"><div class="fn" data-testid="div-fn-51">1. Locate Element</div><div class="fd" data-testid="div-fd-52">Identify input[type="file"] (direct or hidden/custom).</div></div>
+          <div class="fstep n2" data-testid="div-fstep-53"><div class="fn" data-testid="div-fn-54">2. Trigger Action</div><div class="fd" data-testid="div-fd-55">Call setInputFiles() directly or listen for filechooser and click.</div></div>
+          <div class="fstep n3" data-testid="div-fstep-56"><div class="fn" data-testid="div-fn-57">3. Handle API</div><div class="fd" data-testid="div-fd-58">Intercept file uploads (e.g. page.waitForResponse).</div></div>
+          <div class="fstep n4" data-testid="div-fstep-59"><div class="fn" data-testid="div-fn-60">4. Verify Success</div><div class="fd" data-testid="div-fd-61">Verify file exists, preview renders, and no error message.</div></div>
+        </div>
+        <div class="abox" style="margin-top:10px" data-testid="div-abox-62">
+          <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:6px" data-testid="div-63">Two Upload Patterns &amp; Verification</div>
+          <div class="dr" data-testid="div-dr-64"><span style="color:#3C3489;font-weight:600;width:150px;flex-shrink:0">Pattern 1: Direct Input</span><span>HTML has visible/hidden <code data-testid="code-7">&lt;input type="file"&gt;</code>. Call <code data-testid="code-8">page.locator('input[type="file"]').setInputFiles('file.pdf')</code>.</span></div>
+          <div class="dr" data-testid="div-dr-65"><span style="color:#085041;font-weight:600;width:150px;flex-shrink:0">Pattern 2: Custom Button</span><span>Button click triggers hidden input via JS. Call <code data-testid="code-9">Promise.all([page.waitForEvent('filechooser'), page.click('#btn')])</code>.</span></div>
+          <div class="dr" style="border:none" data-testid="div-dr-66"><span style="color:#712B13;font-weight:600;width:150px;flex-shrink:0">Verification Steps</span><span>1. Filename shown in UI preview. 2. Upload progress visible. 3. Success message. 4. API responses. 5. File list.</span></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-67">
+        <h3 data-testid="h3-5">Code Examples</h3>
+        <div class="cs" data-testid="div-cs-68">
+          <div class="csh" data-testid="div-csh-69"><div class="dr2" data-testid="div-dr2-70"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S22 · Advanced File Upload</span></div>
+          <div class="ctbar" data-testid="div-ctbar-71">
+            <button class="ct active" onclick="sc(0,0)" data-testid="button-ct-5">1. Basic Upload</button>
+            <button class="ct" onclick="sc(0,1)" data-testid="button-ct-6">2. Custom Button</button>
+            <button class="ct" onclick="sc(0,2)" data-testid="button-ct-7">3. Buffer Upload</button>
+            <button class="ct" onclick="sc(0,3)" data-testid="button-ct-8">4. Multiple Files</button>
+            <button class="ct" onclick="sc(0,4)" data-testid="button-ct-9">5. Upload Errors</button>
+          </div>
+
+          <div class="cp active" id="c0-0" data-testid="div-c0-0">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-73">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">basic-upload.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-10">Copy</button>
+            </div>
+            <pre data-testid="pre-1"><code class="language-typescript" data-testid="code-language-typescript-10">// basic-upload.ts — direct input element upload + full verification
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
@@ -286,9 +635,16 @@ test('upload PDF to standard file input', async ({ page }) => {
   // Assert success state
   await expect(page.locator('.upload-success')).toBeVisible();
   await expect(page.locator('.files-list')).toContainText('sample.pdf');
-});</code></pre></div>
-    <div class="cpan2" id="s22c2"><div class="ch"><span class="cfn"><span class="cfdot"></span>custom-btn-upload.ts</span><button class="cpbtn" onclick="copyCode('s22c2')">Copy</button></div>
-<pre><code class="language-typescript">// custom-btn-upload.ts — custom button triggers hidden file input
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c0-1" data-testid="div-c0-1">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-75">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">custom-btn-upload.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-11">Copy</button>
+            </div>
+            <pre data-testid="pre-2"><code class="language-typescript" data-testid="code-language-typescript-11">// custom-btn-upload.ts — custom button triggers hidden file input
 import { test, expect } from '@playwright/test';
 
 test('upload via custom styled button (FileChooser)', async ({ page }) => {
@@ -312,17 +668,18 @@ test('upload via custom styled button (FileChooser)', async ({ page }) => {
   await expect(page.locator('.preview-filename'))
     .toHaveText('product-image.jpg');
 
-  // Alternative — using getByRole to find the button
-  // const [fc] = await Promise.all([
-  //   page.waitForEvent('filechooser'),
-  //   page.getByRole('button', { name: 'Choose File' }).click(),
-  // ]);
-
   await page.click('#submit-btn');
   await expect(page.locator('.upload-success')).toBeVisible();
-});</code></pre></div>
-    <div class="cpan2" id="s22c3"><div class="ch"><span class="cfn"><span class="cfdot"></span>buffer-upload.ts</span><button class="cpbtn" onclick="copyCode('s22c3')">Copy</button></div>
-<pre><code class="language-typescript">// buffer-upload.ts — in-memory file creation for edge case testing
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c0-2" data-testid="div-c0-2">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-77">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">buffer-upload.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-12">Copy</button>
+            </div>
+            <pre data-testid="pre-3"><code class="language-typescript" data-testid="code-language-typescript-12">// buffer-upload.ts — in-memory file creation for edge case testing
 import { test, expect } from '@playwright/test';
 
 test('upload dynamically generated CSV from buffer', async ({ page }) => {
@@ -360,9 +717,16 @@ test('empty file — graceful error handling', async ({ page }) => {
   });
   await page.click('#import-btn');
   await expect(page.locator('.file-error')).toContainText('File cannot be empty');
-});</code></pre></div>
-    <div class="cpan2" id="s22c4"><div class="ch"><span class="cfn"><span class="cfdot"></span>multiple-files.ts</span><button class="cpbtn" onclick="copyCode('s22c4')">Copy</button></div>
-<pre><code class="language-typescript">// multiple-files.ts — upload array, clear, max-count validation
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c0-3" data-testid="div-c0-3">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-79">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">multiple-files.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-13">Copy</button>
+            </div>
+            <pre data-testid="pre-4"><code class="language-typescript" data-testid="code-language-typescript-13">// multiple-files.ts — upload array, clear, max-count validation
 import { test, expect } from '@playwright/test';
 
 test('upload 3 images + clear + test max limit', async ({ page }) => {
@@ -394,9 +758,16 @@ test('upload 3 images + clear + test max limit', async ({ page }) => {
   await expect(page.locator('.max-files-warning'))
     .toContainText('Maximum 5 files allowed');
   await expect(page.locator('button[type="submit"]')).toBeDisabled();
-});</code></pre></div>
-    <div class="cpan2" id="s22c5"><div class="ch"><span class="cfn"><span class="cfdot"></span>upload-errors.ts</span><button class="cpbtn" onclick="copyCode('s22c5')">Copy</button></div>
-<pre><code class="language-typescript">// upload-errors.ts — mock server errors, test progress + failure UIs
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c0-4" data-testid="div-c0-4">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-81">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">upload-errors.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-14">Copy</button>
+            </div>
+            <pre data-testid="pre-5"><code class="language-typescript" data-testid="code-language-typescript-14">// upload-errors.ts — mock server errors, test progress + failure UIs
 import { test, expect } from '@playwright/test';
 
 test('upload progress visible during slow upload', async ({ page }) => {
@@ -427,102 +798,130 @@ test('413 Payload Too Large — error shown', async ({ page }) => {
   await page.click('button[type="submit"]');
   await expect(page.locator('.upload-error')).toContainText('File too large');
   await expect(page.locator('#retry-btn')).toBeVisible();
-});</code></pre></div>
-  </div>
-</div><!-- end s22 -->
+});</code></pre>
+          </div>
+        </div>
+      </div>
 
-<!-- ===================== S23 ===================== -->
-<div class="sc" id="s23">
-  <div class="stabs" id="ST23">
-    <button class="stab active" onclick="showP('s23','ov')">Overview</button>
-    <button class="stab" onclick="showP('s23','gl')">Glossary</button>
-    <button class="stab" onclick="showP('s23','ol')">1-Liners</button>
-    <button class="stab" onclick="showP('s23','con')">Concepts</button>
-    <button class="stab" onclick="showP('s23','bp')">Best Practices</button>
-    <button class="stab" onclick="showP('s23','qa')">Interview</button>
-    <button class="stab" onclick="showP('s23','cd')">Code ×5</button>
-  </div>
-  <div class="pan active" id="s23-ov">
-    <div class="dcard"><div class="dlbl">Session 23 · File Download</div><p>File downloads are intercepted using <code>page.waitForEvent('download')</code> inside <code>Promise.all()</code> with the triggering action. The <code>Download</code> object provides: <code>suggestedFilename()</code>, <code>saveAs(path)</code>, <code>failure()</code>, <code>path()</code>, and <code>createReadStream()</code>. Always verify the download didn't fail and validate the file content — not just that the download started.</p></div>
-    <div class="g2">
-      <div class="gc"><h4>WHAT</h4><p>Playwright intercepts browser download events before the OS download manager handles them. The Download object gives full access to filename, content, and failure state.</p></div>
-      <div class="gc"><h4>WHY test downloads?</h4><p>Verify: correct filename pattern, file isn't empty, content matches (CSV headers, JSON structure, PDF validity), download triggered on correct action, failure handled gracefully.</p></div>
-      <div class="gc"><h4>WHEN does event fire?</h4><p>Any download trigger: &lt;a download href&gt;, Content-Disposition:attachment response, window.open() with blob URL, or programmatic Blob API generation.</p></div>
-      <div class="gc"><h4>HOW to use</h4><p>Promise.all([waitForEvent('download'), click()]). Then: saveAs() for persistence, failure() to check success, read with fs.readFileSync() for content verification.</p></div>
-    </div>
-  </div>
-  <div class="pan" id="s23-gl">
-    <div class="tsec">Keyword Glossary</div>
-    <div class="gi"><span class="gk">waitForEvent('download')</span><span class="gd">Listens for the download event which fires when browser starts receiving a file. Must be registered BEFORE the triggering action. Always inside Promise.all() to avoid race conditions.</span></div>
-    <div class="gi"><span class="gk">Download object</span><span class="gd">Returned by waitForEvent('download'). Represents one file download. Provides all methods to inspect and save the file.</span></div>
-    <div class="gi"><span class="gk">suggestedFilename()</span><span class="gd">Returns the filename from Content-Disposition header or URL path segment. e.g. 'report-2024-01.csv'. Use regex assertions for dynamic dates.</span></div>
-    <div class="gi"><span class="gk">saveAs(path)</span><span class="gd">Async: copies downloaded file to specified path. Creates parent directories. Use testInfo.outputPath() for parallel-safe paths.</span></div>
-    <div class="gi"><span class="gk">failure()</span><span class="gd">Async: returns null if download succeeded, error string if failed. Always check — downloads can fail silently without throwing exceptions.</span></div>
-    <div class="gi"><span class="gk">path()</span><span class="gd">Returns temp path where Playwright saved the download. Deleted when context closes. Use saveAs() for persistent storage beyond the test.</span></div>
-    <div class="gi"><span class="gk">createReadStream()</span><span class="gd">Returns a Node.js Readable stream of file content. Use for streaming large file verification without loading entire file into memory.</span></div>
-    <div class="gi"><span class="gk">Content-Disposition</span><span class="gd">HTTP header that triggers downloads: Content-Disposition: attachment; filename="report.csv". Playwright detects this and fires the download event automatically.</span></div>
-  </div>
-  <div class="pan" id="s23-ol">
-    <div class="tsec">Interview One-Liners</div>
-    <div class="oli"><span class="lb">Promise.all mandatory</span>"The download event fires the moment the browser starts receiving the file — if I await the click first then call waitForEvent, the event has already fired and I've missed it. Promise.all ensures listener and click start atomically, preventing this race condition."</div>
-    <div class="oli"><span class="lb">failure() check</span>"I always assert download.failure() === null — a download can silently fail due to a network interruption or auth error without throwing an exception. Without this check, my test proceeds happily even if the file was never received."</div>
-    <div class="oli"><span class="lb">Content verification</span>"Asserting the download happened is not enough — I read the saved file and verify: CSV headers are correct, JSON has expected structure, PDF starts with '%PDF-' magic bytes. A corrupted file that downloads successfully is still a bug."</div>
-    <div class="oli"><span class="lb">temp path lifecycle</span>"The download.path() temp file is only valid during the browser context's lifetime. When context.close() is called, temp files are deleted. I call saveAs() before teardown if I need to read content after the context closes."</div>
-    <div class="oli"><span class="lb">filename regex</span>"I always use regex for download.suggestedFilename() — the filename usually includes a dynamic date, so: expect(download.suggestedFilename()).toMatch(/^report-\\d{4}-\\d{2}-\\d{2}\\.csv$/) — this verifies the naming convention without hardcoding a specific date."</div>
-  </div>
-  <div class="pan" id="s23-con">
-    <div class="tsec">Core Concepts</div>
-    <div class="cb"><div class="cbh">⬡ Download Event Flow</div><div class="cbb">
-      <div class="fb">
-        <div class="fr"><span class="t tbl">1. Promise.all starts</span><span class="ar">→</span><span class="t tnn">listener registered + click fires simultaneously</span></div>
-        <div class="fr"><span class="t tbl">2. Click triggers</span><span class="ar">→</span><span class="t tnn">browser requests download URL</span></div>
-        <div class="fr"><span class="t tbl">3. Server responds</span><span class="ar">→</span><span class="t tnn">Content-Disposition: attachment; filename="file.csv"</span></div>
-        <div class="fr"><span class="t tbl">4. 'download' event fires</span><span class="ar">→</span><span class="t tnn">Promise.all resolves with Download object</span></div>
-        <div class="fr"><span class="t tgr">5. download.saveAs(path)</span><span class="ar">→</span><span class="t tnn">file written to test output folder</span></div>
-        <div class="fr"><span class="t tgr">6. download.failure() === null</span><span class="ar">→</span><span class="t tnn">confirm success</span></div>
-        <div class="fr"><span class="t tgr">7. fs.readFileSync(path)</span><span class="ar">→</span><span class="t tnn">verify content</span></div>
+      <div class="sec" data-testid="div-sec-82">
+        <h3 data-testid="h3-6">Best Practices</h3>
+        <ul class="bpl">
+          <li data-testid="li-1"><span class="bpc">✓</span>Store fixture files in <code data-testid="code-15">tests/fixtures/</code> committed to git. Use <code data-testid="code-16">path.join(__dirname, '../fixtures/test.pdf')</code> for cross-platform paths.</li>
+          <li data-testid="li-2"><span class="bpc">✓</span>Always <code data-testid="code-17">Promise.all([page.waitForEvent('filechooser'), click()])</code> — never await click first. The race condition will cause the test to hang.</li>
+          <li data-testid="li-3"><span class="bpc">✓</span>Use buffer-based uploads for edge case testing — wrong file type, empty file, oversized content — without creating multiple fixture files on disk.</li>
+          <li data-testid="li-4"><span class="bpc">✓</span>Use <code data-testid="code-18">page.route('**/api/upload', route => route.fulfill({status:413}))</code> to test server rejection of oversized files — mock the server response rather than creating gigabyte test files.</li>
+          <li data-testid="li-5"><span class="bpc">✓</span>Use <code data-testid="code-19">page.waitForResponse('**/api/upload')</code> before asserting upload success UI — the UI updates only after the server responds.</li>
+          <li data-testid="li-6"><span class="bpc">✓</span>Always assert AFTER upload — verify filename in preview AND success state. Don't assume setInputFiles() not throwing means the upload worked.</li>
+        </ul>
       </div>
-    </div></div>
-    <div class="cb"><div class="cbh">⬡ All Download Object Methods</div><div class="cbb">
-      <div class="fb">
-        <div class="fr"><span class="t tgr">suggestedFilename()</span><span class="ar">→</span><span class="t tnn">string — from Content-Disposition or URL</span></div>
-        <div class="fr"><span class="t tgr">saveAs(path)</span><span class="ar">→</span><span class="t tnn">Promise&lt;void&gt; — persist to disk</span></div>
-        <div class="fr"><span class="t tgr">path()</span><span class="ar">→</span><span class="t tnn">Promise&lt;string|null&gt; — temp path (context-scoped)</span></div>
-        <div class="fr"><span class="t tgr">createReadStream()</span><span class="ar">→</span><span class="t tnn">Promise&lt;Readable&gt; — stream content</span></div>
-        <div class="fr"><span class="t tgr">failure()</span><span class="ar">→</span><span class="t tnn">Promise&lt;null|string&gt; — null=success, string=error</span></div>
-        <div class="fr"><span class="t tor">cancel()</span><span class="ar">→</span><span class="t tnn">Promise&lt;void&gt; — cancel in-progress download</span></div>
-        <div class="fr"><span class="t tor">url()</span><span class="ar">→</span><span class="t tnn">string — the download URL (blob: or https:)</span></div>
-        <div class="fr"><span class="t tor">page()</span><span class="ar">→</span><span class="t tnn">Page — page that initiated the download</span></div>
+
+      <div class="sec" style="border:none" data-testid="div-sec-83">
+        <h3 data-testid="h3-7">Interview Prep — Q&amp;A</h3>
+        <div class="ql" data-testid="div-ql-84">
+          <div class="qi" data-testid="div-qi-85">
+            <div class="qq" data-testid="div-qq-86">Q1. Why can't Playwright automate the native OS file picker?</div>
+            <div class="qa" data-testid="div-qa-87">A: The native OS file picker is a window managed by the operating system, not the browser. Browser automation tools only control the browser process — they cannot interact with OS-level windows like Windows Explorer or macOS Finder. Playwright solves this with two approaches: setInputFiles() sets file data directly on the DOM element at the JavaScript level (triggering the same input/change events), and the FileChooser API intercepts the browser's intent to open the OS picker and replaces it programmatically. Both approaches bypass the OS dialog entirely.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-88">
+            <div class="qq" data-testid="div-qq-89">Q2. How do you upload a file to a drag-and-drop upload zone?</div>
+            <div class="qa" data-testid="div-qa-90">A: First check if the drop zone has a hidden input — if so, use setInputFiles() directly. If it's a pure JS drag-drop zone: await page.evaluate(async () => { const dt = new DataTransfer(); const file = new File(['content'], 'test.txt', {type:'text/plain'}); dt.items.add(file); const zone = document.querySelector('.drop-zone'); zone.dispatchEvent(new DragEvent('dragover', {dataTransfer:dt, bubbles:true})); zone.dispatchEvent(new DragEvent('drop', {dataTransfer:dt, bubbles:true})); }). Always verify the drop zone's framework implementation first since different frameworks handle drop events differently.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-91">
+            <div class="qq" data-testid="div-qq-92">Q3. How do you test file type validation?</div>
+            <div class="qa" data-testid="div-qa-93">A: Client-side: await page.locator('input[type="file"]').setInputFiles({name:'virus.exe', mimeType:'application/x-msdownload', buffer:Buffer.from('fake content')}). Then assert: await expect(page.locator('.file-error')).toContainText('Only PDF files allowed'). Server-side: combine with waitForResponse — const resp = await page.waitForResponse('**/api/upload'); expect(resp.status()).toBe(415) for Unsupported Media Type. Buffer-based uploads let you create files with any name and MIME type without real disk files, making them ideal for all validation edge cases.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-94">
+            <div class="qq" data-testid="div-qq-95">Q4. How do you test upload progress bar?</div>
+            <div class="qa" data-testid="div-qa-96">A: Use page.route() to add artificial delay: await page.route('**/api/upload', async route => { await new Promise(r => setTimeout(r, 2000)); await route.fulfill({status:201, json:{fileId:'abc'}}); }). Then trigger upload and assert: await expect(page.locator('.upload-progress')).toBeVisible() — visible during 2s delay. await expect(page.locator('.upload-success')).toBeVisible() — appears after delay. await expect(page.locator('.upload-progress')).toBeHidden() — gone after success. This tests the loading state which is impossible to test reliably without controlling the API timing.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-97">
+            <div class="qq" data-testid="div-qq-98">Q5. How do you upload multiple files and test max file limit?</div>
+            <div class="qa" data-testid="div-qa-99">A: For multiple files: await page.locator('input[type="file"][multiple]').setInputFiles(['img1.jpg','img2.png','img3.webp']). Verify all appear: await expect(page.locator('.file-preview-item')).toHaveCount(3). Test clear: await fileInput.setInputFiles([]); await expect(page.locator('.empty-state')).toBeVisible(). Test limit exceeded: setInputFiles with 6 files when max is 5 — await expect(page.locator('.max-warning')).toContainText('Maximum 5 files'). await expect(page.locator('button[type="submit"]')).toBeDisabled(). FileChooser: const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.click('#btn')]); fc.isMultiple() returns true for multiple inputs.</div>
+          </div>
+        </div>
       </div>
-    </div></div>
-  </div>
-  <div class="pan" id="s23-bp">
-    <div class="tsec">Best Practices</div>
-    <div class="bpi"><div class="bpic">✓</div><div>Always <code>Promise.all([page.waitForEvent('download'), triggerAction()])</code> — never await the click first. Race condition will cause test to hang.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Always call <code>await download.failure()</code> and assert it is <code>null</code> — downloads can fail silently (network error, auth error) without throwing.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Use <code>testInfo.outputPath('filename.csv')</code> as save path — unique per test, prevents parallel tests from overwriting each other's downloaded files.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Assert <code>suggestedFilename()</code> with a regex pattern — filename often contains a dynamic date or timestamp that varies between runs.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Read and validate file content after <code>saveAs()</code> — check CSV headers, JSON structure, PDF magic bytes. A successful download of a corrupt file is still a bug.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Test download cancellation — call <code>download.cancel()</code> and verify the app handles it gracefully: shows appropriate message, allows retry.</div></div>
-  </div>
-  <div class="pan" id="s23-qa">
-    <div class="tsec">Interview Prep</div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q1: How do you verify the content of a downloaded CSV file? <span class="qtg">▶</span></div><div class="qaa">After download and saveAs(): const content = fs.readFileSync(filePath, 'utf-8'); const lines = content.trim().split('\n'); expect(lines[0]).toBe('Name,Email,Date,Amount') — exact header check. expect(lines.length).toBeGreaterThan(1) — has data rows. expect(content).toMatch(/\d{4}-\d{2}-\d{2}/) — date format present. expect(content).not.toContain('\x00') — not binary garbage. expect(fs.statSync(filePath).size).toBeGreaterThan(0) — not empty file. This verifies the download contains correctly structured, valid data — not just that a file arrived.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q2: How do you assert the downloaded filename when it contains a dynamic date? <span class="qtg">▶</span></div><div class="qaa">Use regex with download.suggestedFilename(): expect(download.suggestedFilename()).toMatch(/^report-\d{4}-\d{2}-\d{2}\.csv$/) — matches 'report-2024-01-15.csv' regardless of the specific date. Other patterns: extension only: .toMatch(/\.csv$/). Prefix only: .toStartWith('export-'). Includes today's date: const today = new Date().toISOString().split('T')[0]; expect(download.suggestedFilename()).toContain(today). Exact assertion only when the filename is truly static and never contains dates or IDs.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q3: How do you test a failed download? <span class="qtg">▶</span></div><div class="qaa">Mock the download endpoint: await page.route('**/api/export', r => r.fulfill({status:403, json:{error:'Not authorized'}})); const [download] = await Promise.all([page.waitForEvent('download'), page.click('#export-btn')]); const failure = await download.failure(); expect(failure).not.toBeNull(). Also assert UI error: await expect(page.locator('.download-error')).toContainText('Not authorized'). Note: if the server returns a non-download response (no Content-Disposition header), the download event may not fire — instead assert the error toast appears after the click without a Promise.all.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q4: How do you handle downloads triggered from a popup window? <span class="qtg">▶</span></div><div class="qaa">Listen on the popup Page object, not the parent page: const [popup] = await Promise.all([page.waitForEvent('popup'), page.click('#open-export-dialog')]); await popup.waitForLoadState(); const [download] = await Promise.all([popup.waitForEvent('download'), popup.click('#confirm-download')]); await download.saveAs(testInfo.outputPath('export.xlsx')). The download event is scoped to the page that initiated it — always listen on the page that contains the download trigger, not the parent page that opened the popup.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q5: What is the difference between download.path() and download.saveAs()? <span class="qtg">▶</span></div><div class="qaa">download.path() returns the path to the temp file Playwright auto-saved during download. This temp file is deleted when the browser context closes (context.close()). Use path() only for quick reads within the same test. download.saveAs(path) copies the file to a location you control — it persists after the context closes. Use saveAs() when: you need to read content after teardown, in fixtures where context closes in teardown, or when you want to attach the file to the test report. Best practice: always use saveAs(testInfo.outputPath(filename)) so the file has a unique per-test path safe for parallel execution.</div></div>
-  </div>
-  <div class="pan" id="s23-cd">
-    <div class="ctabs2" id="CT23">
-      <button class="ctb active" onclick="showC('s23',1)"><span class="fxt">.ts</span> basic-download.ts</button>
-      <button class="ctb" onclick="showC('s23',2)"><span class="fxt">.ts</span> verify-content.ts</button>
-      <button class="ctb" onclick="showC('s23',3)"><span class="fxt">.ts</span> download-errors.ts</button>
-      <button class="ctb" onclick="showC('s23',4)"><span class="fxt">.ts</span> multi-download.ts</button>
-      <button class="ctb" onclick="showC('s23',5)"><span class="fxt">.ts</span> download-fixture.ts</button>
-    </div>
-    <div class="cpan2 active" id="s23c1"><div class="ch"><span class="cfn"><span class="cfdot"></span>basic-download.ts</span><button class="cpbtn" onclick="copyCode('s23c1')">Copy</button></div>
-<pre><code class="language-typescript">// basic-download.ts — trigger, capture, save, verify
+    </div><!-- end s22 -->
+
+    <!-- ===================== S23 ===================== -->
+    <div class="section sc" id="s23" data-testid="div-s23">
+      <div class="obanner" data-testid="div-obanner-101">
+        <h2 data-testid="h2-2">Session 23 · File Download</h2>
+        <p data-testid="p-2">File downloads are intercepted using <code data-testid="code-20">page.waitForEvent('download')</code> inside <code data-testid="code-21">Promise.all()</code> with the triggering action. The <code data-testid="code-22">Download</code> object provides: <code data-testid="code-23">suggestedFilename()</code>, <code data-testid="code-24">saveAs(path)</code>, <code data-testid="code-25">failure()</code>, <code data-testid="code-26">path()</code>, and <code data-testid="code-27">createReadStream()</code>. Always verify the download didn't fail and validate the file content — not just that the download started.</p>
+      </div>
+
+      <div class="sec" data-testid="div-sec-102">
+        <h3 data-testid="h3-8">What / Why / When / Where / How</h3>
+        <div class="abox" data-testid="div-abox-103">
+          <div class="dr" data-testid="div-dr-104"><span style="color:#3C3489;font-weight:600;width:120px;flex-shrink:0">What</span><span>Playwright intercepts browser download events before the OS download manager handles them. The Download object gives full access to filename, content, and failure state.</span></div>
+          <div class="dr" data-testid="div-dr-105"><span style="color:#085041;font-weight:600;width:120px;flex-shrink:0">Why</span><span>Verify: correct filename pattern, file isn't empty, content matches (CSV headers, JSON structure, PDF validity), download triggered on correct action, failure handled gracefully.</span></div>
+          <div class="dr" data-testid="div-dr-106"><span style="color:#712B13;font-weight:600;width:120px;flex-shrink:0">When</span><span>Any download trigger: &lt;a download href&gt;, Content-Disposition:attachment response, window.open() with blob URL, or programmatic Blob API generation.</span></div>
+          <div class="dr" style="border:none" data-testid="div-dr-107"><span style="color:#0C447C;font-weight:600;width:120px;flex-shrink:0">How</span><span>Promise.all([waitForEvent('download'), click()]). Then: saveAs() for persistence, failure() to check success, read with fs.readFileSync() for content verification.</span></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-108">
+        <h3 data-testid="h3-9">Keyword Glossary</h3>
+        <div class="glosgrid" data-testid="div-glosgrid-109">
+          <div class="gitem" data-testid="div-gitem-110"><div class="gkw" data-testid="div-gkw-111">waitForEvent('download')</div><div class="gdef" data-testid="div-gdef-112">Listens for the download event which fires when browser starts receiving a file. Must be registered BEFORE the triggering action. Always inside Promise.all() to avoid race conditions.</div></div>
+          <div class="gitem" data-testid="div-gitem-113"><div class="gkw" data-testid="div-gkw-114">Download object</div><div class="gdef" data-testid="div-gdef-115">Returned by waitForEvent('download'). Represents one file download. Provides all methods to inspect and save the file.</div></div>
+          <div class="gitem" data-testid="div-gitem-116"><div class="gkw" data-testid="div-gkw-117">suggestedFilename()</div><div class="gdef" data-testid="div-gdef-118">Returns the filename from Content-Disposition header or URL path segment. e.g. 'report-2024-01.csv'. Use regex assertions for dynamic dates.</div></div>
+          <div class="gitem" data-testid="div-gitem-119"><div class="gkw" data-testid="div-gkw-120">saveAs(path)</div><div class="gdef" data-testid="div-gdef-121">Async: copies downloaded file to specified path. Creates parent directories. Use testInfo.outputPath() for parallel-safe paths.</div></div>
+          <div class="gitem" data-testid="div-gitem-122"><div class="gkw" data-testid="div-gkw-123">failure()</div><div class="gdef" data-testid="div-gdef-124">Async: returns null if download succeeded, error string if failed. Always check — downloads can fail silently without throwing exceptions.</div></div>
+          <div class="gitem" data-testid="div-gitem-125"><div class="gkw" data-testid="div-gkw-126">path()</div><div class="gdef" data-testid="div-gdef-127">Returns temp path where Playwright saved the download. Deleted when context closes. Use saveAs() for persistent storage beyond the test.</div></div>
+          <div class="gitem" data-testid="div-gitem-128"><div class="gkw" data-testid="div-gkw-129">createReadStream()</div><div class="gdef" data-testid="div-gdef-130">Returns a Node.js Readable stream of file content. Use for streaming large file verification without loading entire file into memory.</div></div>
+          <div class="gitem" data-testid="div-gitem-131"><div class="gkw" data-testid="div-gkw-132">Content-Disposition</div><div class="gdef" data-testid="div-gdef-133">HTTP header that triggers downloads: Content-Disposition: attachment; filename="report.csv". Playwright detects this and fires the download event automatically.</div></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-134">
+        <h3 data-testid="h3-10">Interview One-Liners</h3>
+        <div class="igrid" data-testid="div-igrid-135">
+          <div class="qp" data-testid="div-qp-136"><strong>Promise.all mandatory:</strong> The download event fires the moment the browser starts receiving the file — if I await the click first then call waitForEvent, the event has already fired and I've missed it. Promise.all ensures listener and click start atomically, preventing this race condition.</div>
+          <div class="qp" data-testid="div-qp-137"><strong>failure() check:</strong> I always assert download.failure() === null — a download can silently fail due to a network interruption or auth error without throwing an exception. Without this check, my test proceeds happily even if the file was never received.</div>
+          <div class="qp" data-testid="div-qp-138"><strong>Content verification:</strong> Asserting the download happened is not enough — I read the saved file and verify: CSV headers are correct, JSON has expected structure, PDF starts with '%PDF-' magic bytes. A corrupted file that downloads successfully is still a bug.</div>
+          <div class="qp" data-testid="div-qp-139"><strong>temp path lifecycle:</strong> The download.path() temp file is only valid during the browser context's lifetime. When context.close() is called, temp files are deleted. I call saveAs() before teardown if I need to read content after the context closes.</div>
+          <div class="qp" data-testid="div-qp-140"><strong>filename regex:</strong> I always use regex for download.suggestedFilename() — the filename usually includes a dynamic date, so: expect(download.suggestedFilename()).toMatch(/^report-\\d{4}-\\d{2}-\\d{2}\\.csv$/) — this verifies the naming convention without hardcoding a specific date.</div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-141">
+        <h3 data-testid="h3-11">Download Flow &amp; Lifecycle</h3>
+        <div class="flowrow" data-testid="div-flowrow-142">
+          <div class="fstep n1" data-testid="div-fstep-143"><div class="fn" data-testid="div-fn-144">1. Promise.all</div><div class="fd" data-testid="div-fd-145">Start click &amp; download listener together</div></div>
+          <div class="fstep n2" data-testid="div-fstep-146"><div class="fn" data-testid="div-fn-147">2. Click fires</div><div class="fd" data-testid="div-fd-148">Request download URL from server</div></div>
+          <div class="fstep n3" data-testid="div-fstep-149"><div class="fn" data-testid="div-fn-150">3. Response</div><div class="fd" data-testid="div-fd-151">Triggers download event detection</div></div>
+          <div class="fstep n4" data-testid="div-fstep-152"><div class="fn" data-testid="div-fn-153">4. Save File</div><div class="fd" data-testid="div-fd-154">Call download.saveAs(path)</div></div>
+          <div class="fstep n5" data-testid="div-fstep-155"><div class="fn" data-testid="div-fn-156">5. Assertions</div><div class="fd" data-testid="div-fd-157">Assert failure() is null &amp; verify text content</div></div>
+        </div>
+        <div class="abox" style="margin-top:10px" data-testid="div-abox-158">
+          <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:6px" data-testid="div-159">All Download Object Methods</div>
+          <div class="dr" data-testid="div-dr-160"><span style="color:#3C3489;font-weight:600;width:180px;flex-shrink:0">suggestedFilename()</span><span>Returns filename from Content-Disposition header.</span></div>
+          <div class="dr" data-testid="div-dr-161"><span style="color:#085041;font-weight:600;width:180px;flex-shrink:0">saveAs(path)</span><span>Async: save download to custom folder.</span></div>
+          <div class="dr" data-testid="div-dr-162"><span style="color:#712B13;font-weight:600;width:180px;flex-shrink:0">path()</span><span>Returns temporary local context file path.</span></div>
+          <div class="dr" data-testid="div-dr-163"><span style="color:#633806;font-weight:600;width:180px;flex-shrink:0">createReadStream()</span><span>Reads content as Node.js Readable stream.</span></div>
+          <div class="dr" style="border:none" data-testid="div-dr-164"><span style="color:#0C447C;font-weight:600;width:180px;flex-shrink:0">failure() / cancel()</span><span>Checks for failures, or cancels dynamic download mid-stream.</span></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-165">
+        <h3 data-testid="h3-12">Code Examples</h3>
+        <div class="cs" data-testid="div-cs-166">
+          <div class="csh" data-testid="div-csh-167"><div class="dr2" data-testid="div-dr2-168"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S23 · Advanced File Download</span></div>
+          <div class="ctbar" data-testid="div-ctbar-169">
+            <button class="ct active" onclick="sc(1,0)" data-testid="button-ct-15">1. Basic Download</button>
+            <button class="ct" onclick="sc(1,1)" data-testid="button-ct-16">2. Verify Content</button>
+            <button class="ct" onclick="sc(1,2)" data-testid="button-ct-17">3. Download Errors</button>
+            <button class="ct" onclick="sc(1,3)" data-testid="button-ct-18">4. Multi Download</button>
+            <button class="ct" onclick="sc(1,4)" data-testid="button-ct-19">5. Download Fixture</button>
+          </div>
+
+          <div class="cp active" id="c1-0" data-testid="div-c1-0">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-171">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">basic-download.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-20">Copy</button>
+            </div>
+            <pre data-testid="pre-6"><code class="language-typescript" data-testid="code-language-typescript-28">// basic-download.ts — trigger, capture, save, verify
 import { test, expect } from '@playwright/test';
 
 test('download CSV report and verify filename + failure', async ({ page }, testInfo) => {
@@ -555,9 +954,16 @@ test('download CSV report and verify filename + failure', async ({ page }, testI
   // Assert post-download UI state
   await expect(page.locator('.download-success-toast'))
     .toContainText('Downloaded successfully');
-});</code></pre></div>
-    <div class="cpan2" id="s23c2"><div class="ch"><span class="cfn"><span class="cfdot"></span>verify-content.ts</span><button class="cpbtn" onclick="copyCode('s23c2')">Copy</button></div>
-<pre><code class="language-typescript">// verify-content.ts — read and validate CSV, JSON, PDF content
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c1-1" data-testid="div-c1-1">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-173">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">verify-content.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-21">Copy</button>
+            </div>
+            <pre data-testid="pre-7"><code class="language-typescript" data-testid="code-language-typescript-29">// verify-content.ts — read and validate CSV, JSON, PDF content
 import { test, expect } from '@playwright/test';
 import fs from 'fs';
 
@@ -595,9 +1001,16 @@ test('verify PDF magic bytes — real PDF not garbage', async ({ page }, testInf
   // PDF files begin with %PDF- magic bytes
   const header = fs.readFileSync(fp).slice(0, 5).toString();
   expect(header).toBe('%PDF-');
-});</code></pre></div>
-    <div class="cpan2" id="s23c3"><div class="ch"><span class="cfn"><span class="cfdot"></span>download-errors.ts</span><button class="cpbtn" onclick="copyCode('s23c3')">Copy</button></div>
-<pre><code class="language-typescript">// download-errors.ts — test failed downloads and cancel behavior
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c1-2" data-testid="div-c1-2">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-175">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">download-errors.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-22">Copy</button>
+            </div>
+            <pre data-testid="pre-8"><code class="language-typescript" data-testid="code-language-typescript-30">// download-errors.ts — test failed downloads and cancel behavior
 import { test, expect } from '@playwright/test';
 
 test('403 auth error — download fails + error UI shown', async ({ page }) => {
@@ -624,9 +1037,16 @@ test('cancel download — UI shows cancelled state', async ({ page }) => {
   await dl.cancel();
   const failure = await dl.failure();
   expect(failure).toBe('canceled');
-});</code></pre></div>
-    <div class="cpan2" id="s23c4"><div class="ch"><span class="cfn"><span class="cfdot"></span>multi-download.ts</span><button class="cpbtn" onclick="copyCode('s23c4')">Copy</button></div>
-<pre><code class="language-typescript">// multi-download.ts — sequential downloads + popup window download
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c1-3" data-testid="div-c1-3">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-177">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">multi-download.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-23">Copy</button>
+            </div>
+            <pre data-testid="pre-9"><code class="language-typescript" data-testid="code-language-typescript-31">// multi-download.ts — sequential downloads + popup window download
 import { test, expect } from '@playwright/test';
 import fs from 'fs';
 
@@ -664,15 +1084,22 @@ test('download from popup window', async ({ page }, testInfo) => {
   ]);
   expect(dl.suggestedFilename()).toMatch(/\.xlsx$/);
   await dl.saveAs(testInfo.outputPath('export.xlsx'));
-});</code></pre></div>
-    <div class="cpan2" id="s23c5"><div class="ch"><span class="cfn"><span class="cfdot"></span>download-fixture.ts</span><button class="cpbtn" onclick="copyCode('s23c5')">Copy</button></div>
-<pre><code class="language-typescript">// download-fixture.ts — reusable download fixture + auto-attach to report
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c1-4" data-testid="div-c1-4">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-179">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">download-fixture.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-24">Copy</button>
+            </div>
+            <pre data-testid="pre-10"><code class="language-typescript" data-testid="code-language-typescript-32">// download-fixture.ts — reusable download fixture + auto-attach to report
 import { test as base, expect, Download } from '@playwright/test';
 import fs from 'fs';
 
-type DlFixtures = { downloadHelper: { saveAndVerify: (dl: Download, name: string) => Promise&lt;string&gt; } };
+type DlFixtures = { downloadHelper: { saveAndVerify: (dl: Download, name: string) => Promise<string> } };
 
-const test = base.extend&lt;DlFixtures&gt;({
+const test = base.extend<DlFixtures>({
   downloadHelper: async ({}, use, testInfo) => {
     const helper = {
       saveAndVerify: async (dl: Download, name: string) => {
@@ -682,7 +1109,7 @@ const test = base.extend&lt;DlFixtures&gt;({
         expect(err, 'Download failed').toBeNull();
         expect(fs.statSync(fp).size).toBeGreaterThan(0);
         const ext = name.split('.').pop();
-        const types: Record&lt;string,string&gt; = { csv:'text/csv', json:'application/json', pdf:'application/pdf' };
+        const types: Record<string,string> = { csv:'text/csv', json:'application/json', pdf:'application/pdf' };
         await testInfo.attach(name, { path: fp, contentType: types[ext!] ?? 'application/octet-stream' });
         return fp;
       },
@@ -696,98 +1123,129 @@ test('use download helper fixture', async ({ page, downloadHelper }) => {
   const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#export')]);
   const fp = await downloadHelper.saveAndVerify(dl, 'report.csv');
   console.log(`Saved to: ${fp}`);
-});</code></pre></div>
-  </div>
-</div><!-- end s23 -->
+});</code></pre>
+          </div>
+        </div>
+      </div>
 
-<!-- ===================== S24 ===================== -->
-<div class="sc" id="s24">
-  <div class="stabs" id="ST24">
-    <button class="stab active" onclick="showP('s24','ov')">Overview</button>
-    <button class="stab" onclick="showP('s24','gl')">Glossary</button>
-    <button class="stab" onclick="showP('s24','ol')">1-Liners</button>
-    <button class="stab" onclick="showP('s24','con')">Concepts</button>
-    <button class="stab" onclick="showP('s24','bp')">Best Practices</button>
-    <button class="stab" onclick="showP('s24','qa')">Interview</button>
-    <button class="stab" onclick="showP('s24','cd')">Code ×5</button>
-  </div>
-  <div class="pan active" id="s24-ov">
-    <div class="dcard"><div class="dlbl">Session 24 · Viewport &amp; Device Emulation</div><p>Playwright can emulate any device — mobile, tablet, desktop — by setting viewport size, deviceScaleFactor, touch support, user agent, and orientation. The built-in <code>devices</code> dictionary contains 50+ pre-configured device profiles. Set in <code>playwright.config.ts</code>, per project, per file via <code>test.use()</code>, or per test inline. Combine with network throttling for realistic mobile testing.</p></div>
-    <div class="g2">
-      <div class="gc"><h4>WHAT is viewport emulation?</h4><p>Setting the browser window size and device characteristics (pixel ratio, touch, user agent) to simulate a specific device or screen size without physical hardware.</p></div>
-      <div class="gc"><h4>WHY test with emulation?</h4><p>Responsive layouts break at different breakpoints. Mobile-specific features (touch, hamburger menu, bottom nav) only appear on small viewports. Pixel ratio affects image sharpness. Test all breakpoints without real devices.</p></div>
-      <div class="gc"><h4>devices dictionary</h4><p>Playwright ships with 50+ device profiles: iPhone 14, Pixel 7, iPad, Galaxy S22 etc. Spread into test.use(): <code>...devices['iPhone 14 Pro']</code>. Each profile sets viewport, userAgent, deviceScaleFactor, isMobile, hasTouch together.</p></div>
-      <div class="gc"><h4>What does emulation change?</h4><p>viewport (width×height), deviceScaleFactor (pixel density), isMobile (navigator.userAgentData.mobile), hasTouch (touch events enabled), userAgent (browser identifier string), orientation (portrait/landscape).</p></div>
-    </div>
-  </div>
-  <div class="pan" id="s24-gl">
-    <div class="tsec">Keyword Glossary</div>
-    <div class="gi"><span class="gk">viewport</span><span class="gd">Object {width, height} in CSS pixels. Sets the visible browser area. Affects CSS media queries, responsive breakpoints, and element layouts. Default: 1280×720.</span></div>
-    <div class="gi"><span class="gk">devices</span><span class="gd">Playwright's built-in dictionary of 50+ device profiles. Import from '@playwright/test'. Spread into test.use() or project config: {...devices['iPhone 14 Pro']}.</span></div>
-    <div class="gi"><span class="gk">isMobile</span><span class="gd">Boolean in context options. When true, sets navigator.userAgentData.mobile=true, scales viewport to device size, and applies touch emulation. Required for mobile-specific JavaScript behavior.</span></div>
-    <div class="gi"><span class="gk">hasTouch</span><span class="gd">Boolean — enables touch events (touchstart, touchmove, touchend). When true, the browser fires touch events instead of mouse events. Required for testing swipe, pinch-zoom, and tap behaviors.</span></div>
-    <div class="gi"><span class="gk">deviceScaleFactor</span><span class="gd">CSS pixel ratio (DPR). iPhone 14 = 3, most Android = 2.75. Affects visual rendering resolution. At DPR=2, a 375px viewport renders at 750 physical pixels — reveals blurry images and small tap targets.</span></div>
-    <div class="gi"><span class="gk">userAgent</span><span class="gd">The browser identifier string sent in HTTP headers and exposed via navigator.userAgent. Set to match the target device. Some apps serve different content based on user agent detection.</span></div>
-    <div class="gi"><span class="gk">page.setViewportSize()</span><span class="gd">Changes viewport during test execution. Use to test viewport resize behavior, responsive layout transitions, and orientation changes mid-test.</span></div>
-    <div class="gi"><span class="gk">emulateMedia()</span><span class="gd">Emulates CSS media features: page.emulateMedia({colorScheme:'dark'}) triggers prefers-color-scheme:dark. Also: reducedMotion, forcedColors, media:'print' for print preview.</span></div>
-  </div>
-  <div class="pan" id="s24-ol">
-    <div class="tsec">Interview One-Liners</div>
-    <div class="oli"><span class="lb">devices spread</span>"I use Playwright's built-in devices dictionary with ...devices['iPhone 14 Pro'] in test.use() — it sets viewport, userAgent, deviceScaleFactor, isMobile, and hasTouch all at once correctly, rather than trying to configure each property individually which is error-prone."</div>
-    <div class="oli"><span class="lb">isMobile vs viewport</span>"Setting only the viewport size is not enough for true mobile emulation — you also need isMobile:true for mobile JavaScript APIs and hasTouch:true for touch events. Many apps check navigator.userAgentData.mobile, not just the viewport width, to decide which experience to show."</div>
-    <div class="oli"><span class="lb">mid-test resize</span>"page.setViewportSize() lets me test viewport resize behavior within a single test — I can verify the hamburger menu appears when the viewport narrows below 768px and the full nav appears when it expands, all in one test."</div>
-    <div class="oli"><span class="lb">emulateMedia</span>"page.emulateMedia({colorScheme:'dark'}) triggers the prefers-color-scheme CSS media query — I can test dark mode without localStorage or clicking the theme toggle, which is perfect for visual regression tests against dark theme baselines."</div>
-    <div class="oli"><span class="lb">per project</span>"I define mobile emulation at the project level in playwright.config.ts using the devices dictionary — this way all tests run against both desktop (1280×720) and mobile (iPhone 14) without any test file changes, purely through the project configuration."</div>
-  </div>
-  <div class="pan" id="s24-con">
-    <div class="tsec">Core Concepts</div>
-    <div class="cb"><div class="cbh">⬡ Where to Configure Emulation</div><div class="cbb">
-      <div class="fb">
-        <div class="fr"><span class="t tbl">playwright.config.ts use:{}</span><span class="ar">→</span><span class="t tnn">global — all tests, all projects</span></div>
-        <div class="fr"><span class="t tbl">projects[n].use:{}</span><span class="ar">→</span><span class="t tnn">per-browser/device project</span></div>
-        <div class="fr"><span class="t tgr">test.use({}) in file</span><span class="ar">→</span><span class="t tnn">all tests in that spec file</span></div>
-        <div class="fr"><span class="t tgr">test('...', {viewport:...})</span><span class="ar">→</span><span class="t tnn">single test inline</span></div>
-        <div class="fr"><span class="t tor">page.setViewportSize()</span><span class="ar">→</span><span class="t tnn">mid-test runtime change</span></div>
+      <div class="sec" data-testid="div-sec-180">
+        <h3 data-testid="h3-13">Best Practices</h3>
+        <ul class="bpl">
+          <li data-testid="li-7"><span class="bpc">✓</span>Always <code data-testid="code-33">Promise.all([page.waitForEvent('download'), triggerAction()])</code> — never await the click first. Race condition will cause test to hang.</li>
+          <li data-testid="li-8"><span class="bpc">✓</span>Always call <code data-testid="code-34">await download.failure()</code> and assert it is <code data-testid="code-35">null</code> — downloads can fail silently (network error, auth error) without throwing.</li>
+          <li data-testid="li-9"><span class="bpc">✓</span>Use <code data-testid="code-36">testInfo.outputPath('filename.csv')</code> as save path — unique per test, prevents parallel tests from overwriting each other's downloaded files.</li>
+          <li data-testid="li-10"><span class="bpc">✓</span>Assert <code data-testid="code-37">suggestedFilename()</code> with a regex pattern — filename often contains a dynamic date or timestamp that varies between runs.</li>
+          <li data-testid="li-11"><span class="bpc">✓</span>Read and validate file content after <code data-testid="code-38">saveAs()</code> — check CSV headers, JSON structure, PDF magic bytes. A successful download of a corrupt file is still a bug.</li>
+          <li data-testid="li-12"><span class="bpc">✓</span>Test download cancellation — call <code data-testid="code-39">download.cancel()</code> and verify the app handles it gracefully: shows appropriate message, allows retry.</li>
+        </ul>
       </div>
-    </div></div>
-    <div class="cb"><div class="cbh">⬡ Device Profile — What It Sets</div><div class="cbb">
-      <div class="fb">
-        <div class="fr"><span class="t tgr">viewport</span><span class="ar">→</span><span class="t tnn">iPhone 14 Pro: { width:393, height:852 }</span></div>
-        <div class="fr"><span class="t tgr">deviceScaleFactor</span><span class="ar">→</span><span class="t tnn">3 (high density — 3 physical px per CSS px)</span></div>
-        <div class="fr"><span class="t tgr">isMobile</span><span class="ar">→</span><span class="t tnn">true (navigator.userAgentData.mobile)</span></div>
-        <div class="fr"><span class="t tgr">hasTouch</span><span class="ar">→</span><span class="t tnn">true (touch events enabled)</span></div>
-        <div class="fr"><span class="t tgr">userAgent</span><span class="ar">→</span><span class="t tnn">iPhone Safari UA string</span></div>
-        <div class="fr" style="margin-top:5px"><span class="t tor">CSS media query</span><span class="ar">@media (max-width:393px)</span><span class="t tnn">→ triggers mobile layout</span></div>
+
+      <div class="sec" style="border:none" data-testid="div-sec-181">
+        <h3 data-testid="h3-14">Interview Prep — Q&amp;A</h3>
+        <div class="ql" data-testid="div-ql-182">
+          <div class="qi" data-testid="div-qi-183">
+            <div class="qq" data-testid="div-qq-184">Q1. How do you verify the content of a downloaded CSV file?</div>
+            <div class="qa" data-testid="div-qa-185">A: After download and saveAs(): const content = fs.readFileSync(filePath, 'utf-8'); const lines = content.trim().split('\n'); expect(lines[0]).toBe('Name,Email,Date,Amount') — exact header check. expect(lines.length).toBeGreaterThan(1) — has data rows. expect(content).toMatch(/\d{4}-\d{2}-\d{2}/) — date format present. expect(content).not.toContain('\x00') — not binary garbage. expect(fs.statSync(filePath).size).toBeGreaterThan(0) — not empty file. This verifies the download contains correctly structured, valid data — not just that a file arrived.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-186">
+            <div class="qq" data-testid="div-qq-187">Q2. How do you assert the downloaded filename when it contains a dynamic date?</div>
+            <div class="qa" data-testid="div-qa-188">A: Use regex with download.suggestedFilename(): expect(download.suggestedFilename()).toMatch(/^report-\d{4}-\d{2}-\d{2}\.csv$/) — matches 'report-2024-01-15.csv' regardless of the specific date. Other patterns: extension only: .toMatch(/\.csv$/). Prefix only: .toStartWith('export-'). Includes today's date: const today = new Date().toISOString().split('T')[0]; expect(download.suggestedFilename()).toContain(today). Exact assertion only when the filename is truly static and never contains dates or IDs.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-189">
+            <div class="qq" data-testid="div-qq-190">Q3. How do you test a failed download?</div>
+            <div class="qa" data-testid="div-qa-191">A: Mock the download endpoint: await page.route('**/api/export', r => r.fulfill({status:403, json:{error:'Not authorized'}})); const [download] = await Promise.all([page.waitForEvent('download'), page.click('#export-btn')]); const failure = await download.failure(); expect(failure).not.toBeNull(). Also assert UI error: await expect(page.locator('.download-error')).toContainText('Not authorized'). Note: if the server returns a non-download response (no Content-Disposition header), the download event may not fire — instead assert the error toast appears after the click without a Promise.all.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-192">
+            <div class="qq" data-testid="div-qq-193">Q4. How do you handle downloads triggered from a popup window?</div>
+            <div class="qa" data-testid="div-qa-194">A: Listen on the popup Page object, not the parent page: const [popup] = await Promise.all([page.waitForEvent('popup'), page.click('#open-export-dialog')]); await popup.waitForLoadState(); const [download] = await Promise.all([popup.waitForEvent('download'), popup.click('#confirm-download')]); await download.saveAs(testInfo.outputPath('export.xlsx')). The download event is scoped to the page that initiated it — always listen on the page that contains the download trigger, not the parent page that opened the popup.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-195">
+            <div class="qq" data-testid="div-qq-196">Q5. What is the difference between download.path() and download.saveAs()?</div>
+            <div class="qa" data-testid="div-qa-197">A: download.path() returns the path to the temp file Playwright auto-saved during download. This temp file is deleted when the browser context closes (context.close()). Use path() only for quick reads within the same test. download.saveAs(path) copies the file to a location you control — it persists after the context closes. Use saveAs() when: you need to read content after teardown, in fixtures where context closes in teardown, or when you want to attach the file to the test report. Best practice: always use saveAs(testInfo.outputPath(filename)) so the file has a unique per-test path safe for parallel execution.</div>
+          </div>
+        </div>
       </div>
-    </div></div>
-  </div>
-  <div class="pan" id="s24-bp">
-    <div class="tsec">Best Practices</div>
-    <div class="bpi"><div class="bpic">✓</div><div>Always use <code>...devices['iPhone 14 Pro']</code> spread — never configure viewport alone. isMobile, hasTouch, and userAgent must all match for realistic emulation.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Define a mobile project in <code>playwright.config.ts</code> using devices — run the full suite against mobile automatically without any test code changes.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Test all breakpoints: mobile (&lt;768px), tablet (768-1024px), desktop (&gt;1024px). Use separate test.use() per file or per describe block for each breakpoint group.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Use <code>page.emulateMedia({colorScheme:'dark'})</code> for dark mode testing — more reliable than clicking theme toggles which require the app's dark mode UI to be working first.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Test orientation changes with <code>page.setViewportSize({width:852, height:393})</code> (landscape) to verify landscape-specific layouts and that they revert correctly on portrait.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Verify tap targets are accessible — on mobile, minimum tap target size is 44×44px. Assert that interactive elements are large enough and not overlapping with others.</div></div>
-  </div>
-  <div class="pan" id="s24-qa">
-    <div class="tsec">Interview Prep</div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q1: What is the difference between viewport and isMobile? <span class="qtg">▶</span></div><div class="qaa">viewport sets the CSS pixel dimensions of the browser window — it affects CSS media queries and responsive breakpoints. isMobile:true changes JavaScript APIs: navigator.userAgentData.mobile becomes true, touch events are enabled, and mobile-specific browser behaviors activate. Many React/Vue/Angular apps check both the viewport width AND isMobile to decide which UI to render. Setting only the viewport might make the CSS layout show mobile styles but the JavaScript still renders desktop components because isMobile is false. Use ...devices['iPhone 14'] to set both correctly at once — it's the only way to reliably emulate mobile behavior.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q2: How do you test responsive breakpoint behavior? <span class="qtg">▶</span></div><div class="qaa">Three approaches: (1) Separate test files with test.use({viewport:{width:375,height:812}}) at the top. (2) Separate describe blocks within one file, each with test.use() for different viewpoints. (3) Mid-test resize: test('responsive nav', async ({page}) => { await page.goto('/'); await page.setViewportSize({width:1280,height:720}); await expect(page.locator('.desktop-nav')).toBeVisible(); await expect(page.locator('.hamburger-menu')).toBeHidden(); await page.setViewportSize({width:375,height:812}); await expect(page.locator('.hamburger-menu')).toBeVisible(); await expect(page.locator('.desktop-nav')).toBeHidden(); }). Option 3 is the most efficient — one test covers both breakpoints and verifies the transition.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q3: How do you test dark mode with Playwright? <span class="qtg">▶</span></div><div class="qaa">await page.emulateMedia({colorScheme:'dark'}) — this tells the browser to report prefers-color-scheme:dark in CSS media queries and the matchMedia JavaScript API. Your app's CSS with @media (prefers-color-scheme: dark) rules will activate. Then: await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(18, 18, 18)'). For visual regression: await expect(page).toHaveScreenshot('homepage-dark.png', {fullPage:true}). For light: await page.emulateMedia({colorScheme:'light'}). Also available: reducedMotion:'reduce' (disables animations), forcedColors:'active' (high-contrast mode), media:'print' (print preview CSS).</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q4: How do you create a mobile project in playwright.config.ts? <span class="qtg">▶</span></div><div class="qaa">import {defineConfig, devices} from '@playwright/test'; export default defineConfig({ projects: [ {name:'desktop-chrome', use:{...devices['Desktop Chrome']}}, {name:'iphone-14', use:{...devices['iPhone 14 Pro']}}, {name:'pixel-7', use:{...devices['Pixel 7']}}, {name:'ipad', use:{...devices['iPad (gen 7)']}}, ] }). Run: npx playwright test --project=iphone-14. Or all: npx playwright test. The devices spread sets viewport, isMobile, hasTouch, deviceScaleFactor, and userAgent all at once. View all available devices: console.log(Object.keys(devices)) — shows 50+ entries from 'Blackberry PlayBook' to 'Nexus 10' to modern iPhones and Android phones.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q5: How do you test touch gestures like swipe? <span class="qtg">▶</span></div><div class="qaa">With hasTouch:true enabled (via device profile or explicit setting), Playwright fires touch events. For swipe: await page.locator('.carousel').evaluate(el => { const touch = (x,y) => new Touch({identifier:1, target:el, clientX:x, clientY:y, pageX:x, pageY:y, radiusX:1, radiusY:1, rotationAngle:0, force:1}); el.dispatchEvent(new TouchEvent('touchstart', {touches:[touch(300,200)], changedTouches:[touch(300,200)]})); el.dispatchEvent(new TouchEvent('touchend', {touches:[], changedTouches:[touch(50,200)]})); }). Then assert: await expect(page.locator('.carousel-slide.active')).toHaveAttribute('data-index','1'). For simpler tap: page.tap('.button') works when hasTouch:true is set.</div></div>
-  </div>
-  <div class="pan" id="s24-cd">
-    <div class="ctabs2" id="CT24">
-      <button class="ctb active" onclick="showC('s24',1)"><span class="fxt">.ts</span> device-emulation.ts</button>
-      <button class="ctb" onclick="showC('s24',2)"><span class="fxt">.ts</span> responsive-test.ts</button>
-      <button class="ctb" onclick="showC('s24',3)"><span class="fxt">.ts</span> dark-mode.ts</button>
-      <button class="ctb" onclick="showC('s24',4)"><span class="fxt">.ts</span> mobile-project-config.ts</button>
-      <button class="ctb" onclick="showC('s24',5)"><span class="fxt">.ts</span> orientation-touch.ts</button>
-    </div>
-    <div class="cpan2 active" id="s24c1"><div class="ch"><span class="cfn"><span class="cfdot"></span>device-emulation.ts</span><button class="cpbtn" onclick="copyCode('s24c1')">Copy</button></div>
-<pre><code class="language-typescript">// device-emulation.ts — emulate iPhone 14 Pro using devices dictionary
+    </div><!-- end s23 -->
+
+    <!-- ===================== S24 ===================== -->
+    <div class="section sc" id="s24" data-testid="div-s24">
+      <div class="obanner" data-testid="div-obanner-199">
+        <h2 data-testid="h2-3">Session 24 · Viewport &amp; Device Emulation</h2>
+        <p data-testid="p-3">Playwright can emulate any device — mobile, tablet, desktop — by setting viewport size, deviceScaleFactor, touch support, user agent, and orientation. The built-in <code data-testid="code-40">devices</code> dictionary contains 50+ pre-configured device profiles. Set in <code data-testid="code-41">playwright.config.ts</code>, per project, per file via <code data-testid="code-42">test.use()</code>, or per test inline. Combine with network throttling for realistic mobile testing.</p>
+      </div>
+
+      <div class="sec" data-testid="div-sec-200">
+        <h3 data-testid="h3-15">What / Why / When / Where / How</h3>
+        <div class="abox" data-testid="div-abox-201">
+          <div class="dr" data-testid="div-dr-202"><span style="color:#3C3489;font-weight:600;width:120px;flex-shrink:0">What</span><span>Setting the browser window size and device characteristics (pixel ratio, touch, user agent) to simulate a specific device or screen size without physical hardware.</span></div>
+          <div class="dr" data-testid="div-dr-203"><span style="color:#085041;font-weight:600;width:120px;flex-shrink:0">Why</span><span>Responsive layouts break at different breakpoints. Mobile-specific features (touch, hamburger menu, bottom nav) only appear on small viewports. Pixel ratio affects image sharpness. Test all breakpoints without real devices.</span></div>
+          <div class="dr" data-testid="div-dr-204"><span style="color:#712B13;font-weight:600;width:120px;flex-shrink:0">devices dict</span><span>Playwright ships with 50+ device profiles: iPhone 14, Pixel 7, iPad, Galaxy S22 etc. Spread into test.use(): <code data-testid="code-43">...devices['iPhone 14 Pro']</code>. Each profile sets viewport, userAgent, deviceScaleFactor, isMobile, hasTouch together.</span></div>
+          <div class="dr" style="border:none" data-testid="div-dr-205"><span style="color:#0C447C;font-weight:600;width:120px;flex-shrink:0">Target Fields</span><span>viewport (width×height), deviceScaleFactor (pixel density), isMobile (navigator.userAgentData.mobile), hasTouch (touch emulation), userAgent (browser string), orientation.</span></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-206">
+        <h3 data-testid="h3-16">Keyword Glossary</h3>
+        <div class="glosgrid" data-testid="div-glosgrid-207">
+          <div class="gitem" data-testid="div-gitem-208"><div class="gkw" data-testid="div-gkw-209">viewport</div><div class="gdef" data-testid="div-gdef-210">Object {width, height} in CSS pixels. Sets the visible browser area. Affects CSS media queries, responsive breakpoints, and element layouts. Default: 1280×720.</div></div>
+          <div class="gitem" data-testid="div-gitem-211"><div class="gkw" data-testid="div-gkw-212">devices</div><div class="gdef" data-testid="div-gdef-213">Playwright's built-in dictionary of 50+ device profiles. Import from '@playwright/test'. Spread into test.use() or project config: {...devices['iPhone 14 Pro']}.</div></div>
+          <div class="gitem" data-testid="div-gitem-214"><div class="gkw" data-testid="div-gkw-215">isMobile</div><div class="gdef" data-testid="div-gdef-216">Boolean in context options. When true, sets navigator.userAgentData.mobile=true, scales viewport to device size, and applies touch emulation. Required for mobile-specific JavaScript behavior.</div></div>
+          <div class="gitem" data-testid="div-gitem-217"><div class="gkw" data-testid="div-gkw-218">hasTouch</div><div class="gdef" data-testid="div-gdef-219">Boolean — enables touch events (touchstart, touchmove, touchend). When true, the browser fires touch events instead of mouse events. Required for testing swipe, pinch-zoom, and tap behaviors.</div></div>
+          <div class="gitem" data-testid="div-gitem-220"><div class="gkw" data-testid="div-gkw-221">deviceScaleFactor</div><div class="gdef" data-testid="div-gdef-222">CSS pixel ratio (DPR). iPhone 14 = 3, most Android = 2.75. Affects visual rendering resolution. At DPR=2, a 375px viewport renders at 750 physical pixels — reveals blurry images and small tap targets.</div></div>
+          <div class="gitem" data-testid="div-gitem-223"><div class="gkw" data-testid="div-gkw-224">userAgent</div><div class="gdef" data-testid="div-gdef-225">The browser identifier string sent in HTTP headers and exposed via navigator.userAgent. Set to match the target device. Some apps serve different content based on user agent detection.</div></div>
+          <div class="gitem" data-testid="div-gitem-226"><div class="gkw" data-testid="div-gkw-227">page.setViewportSize()</div><div class="gdef" data-testid="div-gdef-228">Changes viewport during test execution. Use to test viewport resize behavior, responsive layout transitions, and orientation changes mid-test.</div></div>
+          <div class="gitem" data-testid="div-gitem-229"><div class="gkw" data-testid="div-gkw-230">emulateMedia()</div><div class="gdef" data-testid="div-gdef-231">Emulates CSS media features: page.emulateMedia({colorScheme:'dark'}) triggers prefers-color-scheme:dark. Also: reducedMotion, forcedColors, media:'print' for print preview.</div></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-232">
+        <h3 data-testid="h3-17">Interview One-Liners</h3>
+        <div class="igrid" data-testid="div-igrid-233">
+          <div class="qp" data-testid="div-qp-234"><strong>devices spread:</strong> I use Playwright's built-in devices dictionary with ...devices['iPhone 14 Pro'] in test.use() — it sets viewport, userAgent, deviceScaleFactor, isMobile, and hasTouch all at once correctly, rather than trying to configure each property individually which is error-prone.</div>
+          <div class="qp" data-testid="div-qp-235"><strong>isMobile vs viewport:</strong> Setting only the viewport size is not enough for true mobile emulation — you also need isMobile:true for mobile JavaScript APIs and hasTouch:true for touch events. Many apps check navigator.userAgentData.mobile, not just the viewport width, to decide which experience to show.</div>
+          <div class="qp" data-testid="div-qp-236"><strong>mid-test resize:</strong> page.setViewportSize() lets me test viewport resize behavior within a single test — I can verify the hamburger menu appears when the viewport narrows below 768px and the full nav appears when it expands, all in one test.</div>
+          <div class="qp" data-testid="div-qp-237"><strong>emulateMedia:</strong> page.emulateMedia({colorScheme:'dark'}) triggers the prefers-color-scheme CSS media query — I can test dark mode without localStorage or clicking the theme toggle, which is perfect for visual regression tests against dark theme baselines.</div>
+          <div class="qp" data-testid="div-qp-238"><strong>per project:</strong> I define mobile emulation at the project level in playwright.config.ts using the devices dictionary — this way all tests run against both desktop (1280×720) and mobile (iPhone 14) without any test file changes, purely through the project configuration.</div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-239">
+        <h3 data-testid="h3-18">Emulation Configuration Flow</h3>
+        <div class="flowrow" data-testid="div-flowrow-240">
+          <div class="fstep n1" data-testid="div-fstep-241"><div class="fn" data-testid="div-fn-242">1. config level</div><div class="fd" data-testid="div-fd-243">playwright.config.ts projects (all tests run in parallel specs)</div></div>
+          <div class="fstep n2" data-testid="div-fstep-244"><div class="fn" data-testid="div-fn-245">2. file level</div><div class="fd" data-testid="div-fd-246">test.use() overrides viewport inside spec file</div></div>
+          <div class="fstep n3" data-testid="div-fstep-247"><div class="fn" data-testid="div-fn-248">3. test level</div><div class="fd" data-testid="div-fd-249">test('..', {viewport}) overrides single test inline</div></div>
+          <div class="fstep n4" data-testid="div-fstep-250"><div class="fn" data-testid="div-fn-251">4. runtime level</div><div class="fd" data-testid="div-fd-252">page.setViewportSize() dynamically updates layout</div></div>
+        </div>
+        <div class="abox" style="margin-top:10px" data-testid="div-abox-253">
+          <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:6px" data-testid="div-254">Device Profile Attributes</div>
+          <div class="dr" data-testid="div-dr-255"><span style="color:#3C3489;font-weight:600;width:150px;flex-shrink:0">viewport</span><span>iPhone 14 Pro: { width:393, height:852 } (CSS pixels)</span></div>
+          <div class="dr" data-testid="div-dr-256"><span style="color:#085041;font-weight:600;width:150px;flex-shrink:0">deviceScaleFactor</span><span>DPR (e.g. 3) for high physical pixel density</span></div>
+          <div class="dr" data-testid="div-dr-257"><span style="color:#712B13;font-weight:600;width:150px;flex-shrink:0">isMobile</span><span>Boolean: true sets navigator.userAgentData.mobile</span></div>
+          <div class="dr" data-testid="div-dr-258"><span style="color:#633806;font-weight:600;width:150px;flex-shrink:0">hasTouch</span><span>Boolean: true enables mobile touch events (tap, swipe)</span></div>
+          <div class="dr" style="border:none" data-testid="div-dr-259"><span style="color:#0C447C;font-weight:600;width:150px;flex-shrink:0">userAgent</span><span>Device-specific user agent string (Safari mobile, Chrome Android)</span></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-260">
+        <h3 data-testid="h3-19">Code Examples</h3>
+        <div class="cs" data-testid="div-cs-261">
+          <div class="csh" data-testid="div-csh-262"><div class="dr2" data-testid="div-dr2-263"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S24 · Viewport &amp; Device Emulation</span></div>
+          <div class="ctbar" data-testid="div-ctbar-264">
+            <button class="ct active" onclick="sc(2,0)" data-testid="button-ct-25">1. Emulation</button>
+            <button class="ct" onclick="sc(2,1)" data-testid="button-ct-26">2. Responsive Test</button>
+            <button class="ct" onclick="sc(2,2)" data-testid="button-ct-27">3. Dark Mode</button>
+            <button class="ct" onclick="sc(2,3)" data-testid="button-ct-28">4. Config File</button>
+            <button class="ct" onclick="sc(2,4)" data-testid="button-ct-29">5. Touch/Orientation</button>
+          </div>
+
+          <div class="cp active" id="c2-0" data-testid="div-c2-0">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-266">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">device-emulation.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-30">Copy</button>
+            </div>
+            <pre data-testid="pre-11"><code class="language-typescript" data-testid="code-language-typescript-44">// device-emulation.ts — emulate iPhone 14 Pro using devices dictionary
 import { test, expect, devices } from '@playwright/test';
 
 // Apply iPhone 14 Pro emulation to ALL tests in this file
@@ -819,9 +1277,16 @@ test('viewport size matches iPhone 14 Pro', async ({ page }) => {
   // Verify isMobile is active in the browser
   const isMobile = await page.evaluate(() => navigator.userAgentData?.mobile);
   expect(isMobile).toBe(true);
-});</code></pre></div>
-    <div class="cpan2" id="s24c2"><div class="ch"><span class="cfn"><span class="cfdot"></span>responsive-test.ts</span><button class="cpbtn" onclick="copyCode('s24c2')">Copy</button></div>
-<pre><code class="language-typescript">// responsive-test.ts — test breakpoints with mid-test resize
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c2-1" data-testid="div-c2-1">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-268">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">responsive-test.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-31">Copy</button>
+            </div>
+            <pre data-testid="pre-12"><code class="language-typescript" data-testid="code-language-typescript-45">// responsive-test.ts — test breakpoints with mid-test resize
 import { test, expect } from '@playwright/test';
 
 test('responsive nav — transitions at 768px breakpoint', async ({ page }) => {
@@ -857,9 +1322,16 @@ test('product grid columns: 1/2/3/4 at breakpoints', async ({ page }) => {
     await expect(page.locator('.product-grid'))
       .toHaveAttribute('data-columns', cols);
   }
-});</code></pre></div>
-    <div class="cpan2" id="s24c3"><div class="ch"><span class="cfn"><span class="cfdot"></span>dark-mode.ts</span><button class="cpbtn" onclick="copyCode('s24c3')">Copy</button></div>
-<pre><code class="language-typescript">// dark-mode.ts — emulateMedia for dark mode and other CSS features
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c2-2" data-testid="div-c2-2">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-270">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">dark-mode.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-32">Copy</button>
+            </div>
+            <pre data-testid="pre-13"><code class="language-typescript" data-testid="code-language-typescript-46">// dark-mode.ts — emulateMedia for dark mode and other CSS features
 import { test, expect } from '@playwright/test';
 
 test('dark mode — CSS and visual regression', async ({ page }) => {
@@ -889,9 +1361,16 @@ test('print preview CSS active', async ({ page }) => {
   // Print-only elements visible, screen-only elements hidden
   await expect(page.locator('.print-header')).toBeVisible();
   await expect(page.locator('.no-print-nav')).toBeHidden();
-});</code></pre></div>
-    <div class="cpan2" id="s24c4"><div class="ch"><span class="cfn"><span class="cfdot"></span>mobile-project-config.ts</span><button class="cpbtn" onclick="copyCode('s24c4')">Copy</button></div>
-<pre><code class="language-typescript">// mobile-project-config.ts — playwright.config.ts with device projects
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c2-3" data-testid="div-c2-3">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-272">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">mobile-project-config.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-33">Copy</button>
+            </div>
+            <pre data-testid="pre-14"><code class="language-typescript" data-testid="code-language-typescript-47">// mobile-project-config.ts — playwright.config.ts with device projects
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
@@ -921,12 +1400,16 @@ export default defineConfig({
       },
     },
   ],
-});
+});</code></pre>
+          </div>
 
-// Run: npx playwright test --project=iphone-14-pro
-// Run: npx playwright test --project=pixel-7 --headed</code></pre></div>
-    <div class="cpan2" id="s24c5"><div class="ch"><span class="cfn"><span class="cfdot"></span>orientation-touch.ts</span><button class="cpbtn" onclick="copyCode('s24c5')">Copy</button></div>
-<pre><code class="language-typescript">// orientation-touch.ts — landscape, geolocation, touch emulation
+          <div class="cp" id="c2-4" data-testid="div-c2-4">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-274">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">orientation-touch.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-34">Copy</button>
+            </div>
+            <pre data-testid="pre-15"><code class="language-typescript" data-testid="code-language-typescript-48">// orientation-touch.ts — landscape, geolocation, touch emulation
 import { test, expect, devices } from '@playwright/test';
 
 test('landscape orientation — layout changes', async ({ page }) => {
@@ -954,102 +1437,128 @@ test('geolocation — location-based content', async ({ page, context }) => {
   // App uses geolocation API to show nearby stores
   await expect(page.locator('.nearby-stores')).toBeVisible();
   await expect(page.locator('.location-label')).toContainText('Delhi');
-});</code></pre></div>
-  </div>
-</div><!-- end s24 -->
+});</code></pre>
+          </div>
+        </div>
+      </div>
 
-<!-- ===================== S25 ===================== -->
-<div class="sc" id="s25">
-  <div class="stabs" id="ST25">
-    <button class="stab active" onclick="showP('s25','ov')">Overview</button>
-    <button class="stab" onclick="showP('s25','gl')">Glossary</button>
-    <button class="stab" onclick="showP('s25','ol')">1-Liners</button>
-    <button class="stab" onclick="showP('s25','con')">Concepts</button>
-    <button class="stab" onclick="showP('s25','bp')">Best Practices</button>
-    <button class="stab" onclick="showP('s25','qa')">Interview</button>
-    <button class="stab" onclick="showP('s25','cd')">Code ×5</button>
-  </div>
-  <div class="pan active" id="s25-ov">
-    <div class="dcard"><div class="dlbl">Session 25 · Page Information Methods</div><p>Playwright provides rich methods to inspect the current page's state: <code>page.url()</code> (current URL), <code>page.title()</code> (document title), <code>page.content()</code> (full HTML source), <code>page.evaluate()</code> (run JS), and assertions like <code>toHaveURL()</code> and <code>toHaveTitle()</code>. These verify navigation worked, SEO metadata is correct, and page state matches expectations.</p></div>
-    <div class="g2">
-      <div class="gc"><h4>WHAT are page info methods?</h4><p>APIs that read information about the current page state: URL, title, full HTML content, viewport size, cookies visible to JS, and arbitrary JS evaluation. Essential for navigation verification and SEO testing.</p></div>
-      <div class="gc"><h4>WHY use them?</h4><p>Verify navigation landed on the correct page. Assert SEO meta tags are present and correct. Check canonical URLs. Read HTML structure for accessibility audits. Get JS values from the page runtime.</p></div>
-      <div class="gc"><h4>WHEN to use?</h4><p>After every navigation to confirm correct URL. After login to verify redirect. After form submit to check new URL. After dynamic content loads to verify title updates. In SEO test suites to verify all meta tags.</p></div>
-      <div class="gc"><h4>HOW they work</h4><p>page.url() and page.title() are synchronous reads from Playwright's internal state. page.content() is async — it asks the browser for current DOM. page.evaluate() runs JS in the browser context and returns the result.</p></div>
-    </div>
-  </div>
-  <div class="pan" id="s25-gl">
-    <div class="tsec">Keyword Glossary</div>
-    <div class="gi"><span class="gk">page.url()</span><span class="gd">Synchronous method — returns the current page URL as a string. Reflects the final URL after any redirects. Use for navigation verification and after form submissions.</span></div>
-    <div class="gi"><span class="gk">page.title()</span><span class="gd">Async method — returns document.title as a string. Use for SEO testing and verifying dynamic title updates (SPA route changes, product names in title).</span></div>
-    <div class="gi"><span class="gk">page.content()</span><span class="gd">Async method — returns the full outer HTML of the page as a string. Includes everything: head, body, scripts. Use for accessibility audits, meta tag verification, HTML structure testing.</span></div>
-    <div class="gi"><span class="gk">page.evaluate()</span><span class="gd">Runs a JavaScript function in the browser context, returns the result to Node.js. Use to read any JavaScript value: window.location, document.cookie, localStorage, custom app state, computed styles.</span></div>
-    <div class="gi"><span class="gk">toHaveURL()</span><span class="gd">Playwright auto-retrying assertion. Accepts string (exact match), regex (pattern), or predicate function. Retries until the URL matches, useful for async navigation.</span></div>
-    <div class="gi"><span class="gk">toHaveTitle()</span><span class="gd">Auto-retrying assertion on page title. Accepts string (exact) or regex. Retries — good for SPAs where the title updates asynchronously after data loads.</span></div>
-    <div class="gi"><span class="gk">page.waitForURL()</span><span class="gd">Waits (not an assertion) for the URL to match a pattern. Accepts string, regex, or predicate. Use after clicks that trigger navigation to wait before proceeding.</span></div>
-    <div class="gi"><span class="gk">page.evaluate() vs page.locator()</span><span class="gd">locator() finds DOM elements and interacts with them (Playwright-side). evaluate() runs arbitrary JS in the browser context — use when you need values that aren't accessible through the DOM (window variables, computed state).</span></div>
-  </div>
-  <div class="pan" id="s25-ol">
-    <div class="tsec">Interview One-Liners</div>
-    <div class="oli"><span class="lb">page.url()</span>"page.url() is synchronous and reflects the final URL after all redirects — it's what I assert after every login, form submit, or navigation action to confirm the browser ended up on the correct page and didn't get stuck on an error or redirect loop."</div>
-    <div class="oli"><span class="lb">toHaveURL regex</span>"I use expect(page).toHaveURL(/dashboard/) with a regex instead of an exact string for post-login URL assertions — the exact URL might include query parameters or hash fragments that vary between test runs, and the regex matches the important /dashboard/ part regardless."</div>
-    <div class="oli"><span class="lb">page.content()</span>"page.content() returns the full outer HTML including the head section — I use it for SEO audits to verify that every page has a canonical tag, correct og:title, og:description, and structured data markup, without needing to navigate each element individually."</div>
-    <div class="oli"><span class="lb">page.title() SPA</span>"For SPAs where the page title updates dynamically after data loads, I use await expect(page).toHaveTitle(/Product: Laptop Pro/) instead of await page.title() — the assertion auto-retries until the title updates, while page.title() reads the current value immediately which might be the loading state."</div>
-    <div class="oli"><span class="lb">evaluate vs locator</span>"I use page.evaluate() when I need values from the JavaScript runtime that aren't in the DOM — like window.APP_VERSION, document.referrer, navigator.language, or a custom app state object. For DOM elements, page.locator() is always preferred because it has auto-waiting and retry built in."</div>
-  </div>
-  <div class="pan" id="s25-con">
-    <div class="tsec">Core Concepts</div>
-    <div class="cb"><div class="cbh">⬡ Page Info Methods — Complete Reference</div><div class="cbb">
-      <div class="fb">
-        <div class="fr"><span class="t tgr">page.url()</span><span class="ar">→</span><span class="t tnn">string — current URL (sync, immediate)</span></div>
-        <div class="fr"><span class="t tgr">page.title()</span><span class="ar">→</span><span class="t tnn">Promise&lt;string&gt; — document.title</span></div>
-        <div class="fr"><span class="t tgr">page.content()</span><span class="ar">→</span><span class="t tnn">Promise&lt;string&gt; — full outer HTML</span></div>
-        <div class="fr"><span class="t tgr">page.evaluate(fn)</span><span class="ar">→</span><span class="t tnn">Promise&lt;T&gt; — run JS, return result</span></div>
-        <div class="fr"><span class="t tbl">page.waitForURL(pattern)</span><span class="ar">→</span><span class="t tnn">wait for URL match</span></div>
-        <div class="fr"><span class="t tbl">page.reload()</span><span class="ar">→</span><span class="t tnn">reload current page</span></div>
-        <div class="fr"><span class="t tbl">page.goBack()</span><span class="ar">→</span><span class="t tnn">browser back button</span></div>
-        <div class="fr"><span class="t tbl">page.goForward()</span><span class="ar">→</span><span class="t tnn">browser forward button</span></div>
-        <div class="fr"><span class="t tor">expect(page).toHaveURL()</span><span class="ar">→</span><span class="t tnn">auto-retrying URL assertion</span></div>
-        <div class="fr"><span class="t tor">expect(page).toHaveTitle()</span><span class="ar">→</span><span class="t tnn">auto-retrying title assertion</span></div>
+      <div class="sec" data-testid="div-sec-275">
+        <h3 data-testid="h3-20">Best Practices</h3>
+        <ul class="bpl">
+          <li data-testid="li-13"><span class="bpc">✓</span>Always use <code data-testid="code-49">...devices['iPhone 14 Pro']</code> spread — never configure viewport alone. isMobile, hasTouch, and userAgent must all match for realistic emulation.</li>
+          <li data-testid="li-14"><span class="bpc">✓</span>Define a mobile project in <code data-testid="code-50">playwright.config.ts</code> using devices — run the full suite against mobile automatically without any test code changes.</li>
+          <li data-testid="li-15"><span class="bpc">✓</span>Test all breakpoints: mobile (&lt;768px), tablet (768-1024px), desktop (&gt;1024px). Use separate test.use() per file or per describe block for each breakpoint group.</li>
+          <li data-testid="li-16"><span class="bpc">✓</span>Use <code data-testid="code-51">page.emulateMedia({colorScheme:'dark'})</code> for dark mode testing — more reliable than clicking theme toggles which require the app's dark mode UI to be working first.</li>
+          <li data-testid="li-17"><span class="bpc">✓</span>Test orientation changes with <code data-testid="code-52">page.setViewportSize({width:852, height:393})</code> (landscape) to verify landscape-specific layouts and that they revert correctly on portrait.</li>
+          <li data-testid="li-18"><span class="bpc">✓</span>Verify tap targets are accessible — on mobile, minimum tap target size is 44×44px. Assert that interactive elements are large enough and not overlapping with others.</li>
+        </ul>
       </div>
-    </div></div>
-    <div class="cb"><div class="cbh">⬡ toHaveURL Patterns</div><div class="cbb">
-      <div class="fb">
-        <div class="fr"><span class="t tgr">Exact string</span><span class="t tnn">toHaveURL('https://myapp.com/dashboard')</span></div>
-        <div class="fr"><span class="t tgr">Regex</span><span class="t tnn">toHaveURL(/dashboard/) — partial match</span></div>
-        <div class="fr"><span class="t tgr">Regex with ID</span><span class="t tnn">toHaveURL(/\/products\/\d+/) — dynamic ID</span></div>
-        <div class="fr"><span class="t tgr">Predicate</span><span class="t tnn">toHaveURL(url => url.searchParams.get('tab') === 'orders')</span></div>
-        <div class="fr"><span class="t tbl">waitForURL</span><span class="t tnn">same patterns, but waits without asserting</span></div>
+
+      <div class="sec" style="border:none" data-testid="div-sec-276">
+        <h3 data-testid="h3-21">Interview Prep — Q&amp;A</h3>
+        <div class="ql" data-testid="div-ql-277">
+          <div class="qi" data-testid="div-qi-278">
+            <div class="qq" data-testid="div-qq-279">Q1. What is the difference between viewport and isMobile?</div>
+            <div class="qa" data-testid="div-qa-280">A: viewport sets the CSS pixel dimensions of the browser window — it affects CSS media queries and responsive breakpoints. isMobile:true changes JavaScript APIs: navigator.userAgentData.mobile becomes true, touch events are enabled, and mobile-specific browser behaviors activate. Many React/Vue/Angular apps check both the viewport width AND isMobile to decide which UI to render. Setting only the viewport might make the CSS layout show mobile styles but the JavaScript still renders desktop components because isMobile is false. Use ...devices['iPhone 14'] to set both correctly at once — it's the only way to reliably emulate mobile behavior.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-281">
+            <div class="qq" data-testid="div-qq-282">Q2. How do you test responsive breakpoint behavior?</div>
+            <div class="qa" data-testid="div-qa-283">A: Three approaches: (1) Separate test files with test.use({viewport:{width:375,height:812}}) at the top. (2) Separate describe blocks within one file, each with test.use() for different viewpoints. (3) Mid-test resize: test('responsive nav', async ({page}) => { await page.goto('/'); await page.setViewportSize({width:1280,height:720}); await expect(page.locator('.desktop-nav')).toBeVisible(); await expect(page.locator('.hamburger-menu')).toBeHidden(); await page.setViewportSize({width:375,height:812}); await expect(page.locator('.hamburger-menu')).toBeVisible(); await expect(page.locator('.desktop-nav')).toBeHidden(); }). Option 3 is the most efficient — one test covers both breakpoints and verifies the transition.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-284">
+            <div class="qq" data-testid="div-qq-285">Q3. How do you test dark mode with Playwright?</div>
+            <div class="qa" data-testid="div-qa-286">A: await page.emulateMedia({colorScheme:'dark'}) — this tells the browser to report prefers-color-scheme:dark in CSS media queries and the matchMedia JavaScript API. Your app's CSS with @media (prefers-color-scheme: dark) rules will activate. Then: await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(18, 18, 18)'). For visual regression: await expect(page).toHaveScreenshot('homepage-dark.png', {fullPage:true}). For light: await page.emulateMedia({colorScheme:'light'}). Also available: reducedMotion:'reduce' (disables animations), forcedColors:'active' (high-contrast mode), media:'print' (print preview CSS).</div>
+          </div>
+          <div class="qi" data-testid="div-qi-287">
+            <div class="qq" data-testid="div-qq-288">Q4. How do you create a mobile project in playwright.config.ts?</div>
+            <div class="qa" data-testid="div-qa-289">A: import {defineConfig, devices} from '@playwright/test'; export default defineConfig({ projects: [ {name:'desktop-chrome', use:{...devices['Desktop Chrome']}}, {name:'iphone-14', use:{...devices['iPhone 14 Pro']}}, {name:'pixel-7', use:{...devices['Pixel 7']}}, {name:'ipad', use:{...devices['iPad (gen 7)']}}, ] }). Run: npx playwright test --project=iphone-14. Or all: npx playwright test. The devices spread sets viewport, isMobile, hasTouch, deviceScaleFactor, and userAgent all at once. View all available devices: console.log(Object.keys(devices)) — shows 50+ entries from 'Blackberry PlayBook' to 'Nexus 10' to modern iPhones and Android phones.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-290">
+            <div class="qq" data-testid="div-qq-291">Q5. How do you test touch gestures like swipe?</div>
+            <div class="qa" data-testid="div-qa-292">A: With hasTouch:true enabled (via device profile or explicit setting), Playwright fires touch events. For swipe: await page.locator('.carousel').evaluate(el => { const touch = (x,y) => new Touch({identifier:1, target:el, clientX:x, clientY:y, pageX:x, pageY:y, radiusX:1, radiusY:1, rotationAngle:0, force:1}); el.dispatchEvent(new TouchEvent('touchstart', {touches:[touch(300,200)], changedTouches:[touch(300,200)]})); el.dispatchEvent(new TouchEvent('touchend', {touches:[], changedTouches:[touch(50,200)]})); }). Then assert: await expect(page.locator('.carousel-slide.active')).toHaveAttribute('data-index','1'). For simpler tap: page.tap('.button') works when hasTouch:true is set.</div>
+          </div>
+        </div>
       </div>
-    </div></div>
-  </div>
-  <div class="pan" id="s25-bp">
-    <div class="tsec">Best Practices</div>
-    <div class="bpi"><div class="bpic">✓</div><div>Use <code>expect(page).toHaveURL(/pattern/)</code> with regex for post-navigation assertions — never exact URL strings which break when query params or hash fragments are added.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Use <code>page.waitForURL()</code> after triggering navigation (click, form submit) before asserting content — ensures the new page has loaded before reading elements.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Use <code>expect(page).toHaveTitle()</code> instead of <code>await page.title()</code> for SPAs — the assertion retries until the title updates asynchronously, while page.title() reads the immediate value.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Use <code>page.content()</code> for comprehensive SEO audits — parse the HTML to verify canonical tags, og: meta tags, structured data, and robots meta all in one call.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Prefer <code>page.locator()</code> over <code>page.evaluate()</code> for DOM assertions — locators have auto-waiting and retry. Use evaluate only for non-DOM JavaScript values.</div></div>
-    <div class="bpi"><div class="bpic">✓</div><div>Assert page title includes the site name: <code>toHaveTitle(/MyApp — Dashboard/)</code> — verifies both the page-specific part and the consistent brand suffix.</div></div>
-  </div>
-  <div class="pan" id="s25-qa">
-    <div class="tsec">Interview Prep</div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q1: What is the difference between page.url() and page.waitForURL()? <span class="qtg">▶</span></div><div class="qaa">page.url() is a synchronous read of the current URL — it returns whatever the URL is at that exact moment. If navigation is in progress, it might return the old URL. page.waitForURL(pattern) is an async method that waits until the URL matches the pattern before resolving. Use page.waitForURL() after triggering navigation to wait for it to complete: await page.click('#login-btn'); await page.waitForURL('**/dashboard'). Then assert content. page.url() is for reading the final URL after you know navigation is complete. expect(page).toHaveURL() is the assertion form — it auto-retries with timeout, making it more reliable than page.url() for flaky navigation timing.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q2: How do you verify SEO meta tags using page.content()? <span class="qtg">▶</span></div><div class="qaa">const html = await page.content(); // Verify title tag expect(html).toContain('&lt;title&gt;MyApp — Dashboard&lt;/title&gt;'); // Verify canonical URL expect(html).toMatch(/&lt;link rel="canonical" href="https:\/\/myapp\.com\/dashboard"\/&gt;/); // Verify og:title expect(html).toMatch(/&lt;meta property="og:title" content="Dashboard — MyApp"\/&gt;/); // Verify meta description expect(html).toMatch(/&lt;meta name="description" content=".{50,160}"\/&gt;/) — 50-160 chars. // Verify robots not noindex expect(html).not.toContain('robots" content="noindex'); // Check structured data expect(html).toContain('application/ld+json'). page.content() gets everything including the head section making it ideal for comprehensive SEO testing.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q3: How do you assert a URL that changes dynamically (contains an ID)? <span class="qtg">▶</span></div><div class="qaa">After creating a resource, the URL often contains a dynamic ID: /orders/123456. Use regex: await expect(page).toHaveURL(/\/orders\/\d+/). Or predicate: await expect(page).toHaveURL(url => { const path = new URL(url).pathname; return path.startsWith('/orders/') && path.split('/').pop()?.length > 0; }). For URL parameters: await expect(page).toHaveURL(url => new URL(url).searchParams.get('status') === 'confirmed'). Extract the ID for later use: const orderId = page.url().split('/').pop(); console.log('Created order:', orderId). The regex approach handles dynamic IDs, timestamps, and UUIDs in URLs without hardcoding specific values.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q4: When should you use page.evaluate() vs page.locator()? <span class="qtg">▶</span></div><div class="qaa">page.locator() should be your default for anything in the DOM — it has auto-waiting, retry logic, and Playwright's full assertion support. Use page.evaluate() only when you need values from the JavaScript runtime that aren't accessible through the DOM: window.ENV (app environment config), window.analytics.dataLayer (analytics events), document.cookie (for non-httpOnly cookies), navigator.language, navigator.userAgent, localStorage values, sessionStorage values, performance.timing data, custom app state objects like window.store.getState(). Also use evaluate() when you need to trigger JS that doesn't have a corresponding DOM interaction: simulating events, calling app APIs directly, or reading computed JS values after interactions.</div></div>
-    <div class="qa"><div class="qaq" onclick="tq(this)">Q5: How do you test browser history navigation (back/forward)? <span class="qtg">▶</span></div><div class="qaa">Playwright exposes goBack() and goForward() mirroring browser buttons: await page.goto('/products'); await page.click('.product-card a'); await expect(page).toHaveURL(/\/products\/\d+/); await page.goBack(); await expect(page).toHaveURL('https://myapp.com/products'); await expect(page.locator('.product-card')).toBeVisible() — verify page restored; await page.goForward(); await expect(page).toHaveURL(/\/products\/\d+/) — forward also works. Verify scroll position restoration: const scrollY = await page.evaluate(() => window.scrollY); expect(scrollY).toBeGreaterThan(0). Test that the browser back button from a protected page redirects to login: await page.goto('/dashboard'); await page.goBack(); await expect(page).toHaveURL(/login/).</div></div>
-  </div>
-  <div class="pan" id="s25-cd">
-    <div class="ctabs2" id="CT25">
-      <button class="ctb active" onclick="showC('s25',1)"><span class="fxt">.ts</span> url-title-methods.ts</button>
-      <button class="ctb" onclick="showC('s25',2)"><span class="fxt">.ts</span> page-content-seo.ts</button>
-      <button class="ctb" onclick="showC('s25',3)"><span class="fxt">.ts</span> evaluate-page-info.ts</button>
-      <button class="ctb" onclick="showC('s25',4)"><span class="fxt">.ts</span> navigation-history.ts</button>
-      <button class="ctb" onclick="showC('s25',5)"><span class="fxt">.ts</span> spa-route-assertions.ts</button>
-    </div>
-    <div class="cpan2 active" id="s25c1"><div class="ch"><span class="cfn"><span class="cfdot"></span>url-title-methods.ts</span><button class="cpbtn" onclick="copyCode('s25c1')">Copy</button></div>
-<pre><code class="language-typescript">// url-title-methods.ts — page.url(), page.title(), toHaveURL, toHaveTitle
+    </div><!-- end s24 -->
+
+    <!-- ===================== S25 ===================== -->
+    <div class="section sc" id="s25" data-testid="div-s25">
+      <div class="obanner" data-testid="div-obanner-294">
+        <h2 data-testid="h2-4">Session 25 · Page Information Methods</h2>
+        <p data-testid="p-4">Playwright provides rich methods to inspect the current page's state: <code data-testid="code-53">page.url()</code> (current URL), <code data-testid="code-54">page.title()</code> (document title), <code data-testid="code-55">page.content()</code> (full HTML source), <code data-testid="code-56">page.evaluate()</code> (run JS), and assertions like <code data-testid="code-57">toHaveURL()</code> and <code data-testid="code-58">toHaveTitle()</code>. These verify navigation worked, SEO metadata is correct, and page state matches expectations.</p>
+      </div>
+
+      <div class="sec" data-testid="div-sec-295">
+        <h3 data-testid="h3-22">What / Why / When / Where / How</h3>
+        <div class="abox" data-testid="div-abox-296">
+          <div class="dr" data-testid="div-dr-297"><span style="color:#3C3489;font-weight:600;width:120px;flex-shrink:0">What</span><span>APIs that read information about the current page state: URL, title, full HTML content, viewport size, cookies visible to JS, and arbitrary JS evaluation. Essential for navigation verification and SEO testing.</span></div>
+          <div class="dr" data-testid="div-dr-298"><span style="color:#085041;font-weight:600;width:120px;flex-shrink:0">Why</span><span>Verify navigation landed on the correct page. Assert SEO meta tags are present and correct. Check canonical URLs. Read HTML structure for accessibility audits. Get JS values from the page runtime.</span></div>
+          <div class="dr" data-testid="div-dr-299"><span style="color:#712B13;font-weight:600;width:120px;flex-shrink:0">When</span><span>After every navigation to confirm correct URL. After login to verify redirect. After form submit to check new URL. After dynamic content loads to verify title updates. In SEO test suites to verify all meta tags.</span></div>
+          <div class="dr" style="border:none" data-testid="div-dr-300"><span style="color:#0C447C;font-weight:600;width:120px;flex-shrink:0">How</span><span>page.url() and page.title() are synchronous reads from Playwright's internal state. page.content() is async — it asks the browser for current DOM. page.evaluate() runs JS in the browser context and returns the result.</span></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-301">
+        <h3 data-testid="h3-23">Keyword Glossary</h3>
+        <div class="glosgrid" data-testid="div-glosgrid-302">
+          <div class="gitem" data-testid="div-gitem-303"><div class="gkw" data-testid="div-gkw-304">page.url()</div><div class="gdef" data-testid="div-gdef-305">Synchronous method — returns the current page URL as a string. Reflects the final URL after any redirects. Use for navigation verification and after form submissions.</div></div>
+          <div class="gitem" data-testid="div-gitem-306"><div class="gkw" data-testid="div-gkw-307">page.title()</div><div class="gdef" data-testid="div-gdef-308">Async method — returns document.title as a string. Use for SEO testing and verifying dynamic title updates (SPA route changes, product names in title).</div></div>
+          <div class="gitem" data-testid="div-gitem-309"><div class="gkw" data-testid="div-gkw-310">page.content()</div><div class="gdef" data-testid="div-gdef-311">Async method — returns the full outer HTML of the page as a string. Includes everything: head, body, scripts. Use for accessibility audits, meta tag verification, HTML structure testing.</div></div>
+          <div class="gitem" data-testid="div-gitem-312"><div class="gkw" data-testid="div-gkw-313">page.evaluate()</div><div class="gdef" data-testid="div-gdef-314">Runs a JavaScript function in the browser context, returns the result to Node.js. Use to read any JavaScript value: window.location, document.cookie, localStorage, custom app state, computed styles.</div></div>
+          <div class="gitem" data-testid="div-gitem-315"><div class="gkw" data-testid="div-gkw-316">toHaveURL()</div><div class="gdef" data-testid="div-gdef-317">Playwright auto-retrying assertion. Accepts string (exact match), regex (pattern), or predicate function. Retries until the URL matches, useful for async navigation.</div></div>
+          <div class="gitem" data-testid="div-gitem-318"><div class="gkw" data-testid="div-gkw-319">toHaveTitle()</div><div class="gdef" data-testid="div-gdef-320">Auto-retrying assertion on page title. Accepts string (exact) or regex. Retries — good for SPAs where the title updates asynchronously after data loads.</div></div>
+          <div class="gitem" data-testid="div-gitem-321"><div class="gkw" data-testid="div-gkw-322">page.waitForURL()</div><div class="gdef" data-testid="div-gdef-323">Waits (not an assertion) for the URL to match a pattern. Accepts string, regex, or predicate. Use after clicks that trigger navigation to wait before proceeding.</div></div>
+          <div class="gitem" data-testid="div-gitem-324"><div class="gkw" data-testid="div-gkw-325">page.evaluate() vs page.locator()</div><div class="gdef" data-testid="div-gdef-326">locator() finds DOM elements and interacts with them (Playwright-side). evaluate() runs arbitrary JS in the browser context — use when you need values that aren't accessible through the DOM (window variables, computed state).</div></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-327">
+        <h3 data-testid="h3-24">Interview One-Liners</h3>
+        <div class="igrid" data-testid="div-igrid-328">
+          <div class="qp" data-testid="div-qp-329"><strong>page.url():</strong> page.url() is synchronous and reflects the final URL after all redirects — it's what I assert after every login, form submit, or navigation action to confirm the browser ended up on the correct page and didn't get stuck on an error or redirect loop.</div>
+          <div class="qp" data-testid="div-qp-330"><strong>toHaveURL regex:</strong> I use expect(page).toHaveURL(/dashboard/) with a regex instead of an exact string for post-login URL assertions — the exact URL might include query parameters or hash fragments that vary between test runs, and the regex matches the important /dashboard/ part regardless.</div>
+          <div class="qp" data-testid="div-qp-331"><strong>page.content():</strong> page.content() returns the full outer HTML including the head section — I use it for SEO audits to verify that every page has a canonical tag, correct og:title, og:description, and structured data markup, without needing to navigate each element individually.</div>
+          <div class="qp" data-testid="div-qp-332"><strong>page.title() SPA:</strong> For SPAs where the page title updates dynamically after data loads, I use await expect(page).toHaveTitle(/Product: Laptop Pro/) instead of await page.title() — the assertion auto-retries until the title updates, while page.title() reads the current value immediately which might be the loading state.</div>
+          <div class="qp" data-testid="div-qp-333"><strong>evaluate vs locator:</strong> I use page.evaluate() when I need values from the JavaScript runtime that aren't in the DOM — like window.APP_VERSION, document.referrer, navigator.language, or a custom app state object. For DOM elements, page.locator() is always preferred because it has auto-waiting and retry built in.</div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-334">
+        <h3 data-testid="h3-25">Page Information Methods Reference</h3>
+        <div class="flowrow" data-testid="div-flowrow-335">
+          <div class="fstep n1" data-testid="div-fstep-336"><div class="fn" data-testid="div-fn-337">page.url()</div><div class="fd" data-testid="div-fd-338">Returns current URL string (sync, immediate)</div></div>
+          <div class="fstep n2" data-testid="div-fstep-339"><div class="fn" data-testid="div-fn-340">page.title()</div><div class="fd" data-testid="div-fd-341">Returns document.title (async, Promise)</div></div>
+          <div class="fstep n3" data-testid="div-fstep-342"><div class="fn" data-testid="div-fn-343">page.content()</div><div class="fd" data-testid="div-fd-344">Returns full outer HTML content of page (async)</div></div>
+          <div class="fstep n4" data-testid="div-fstep-345"><div class="fn" data-testid="div-fn-346">page.evaluate(fn)</div><div class="fd" data-testid="div-fd-347">Executes JS function in browser context (async)</div></div>
+        </div>
+        <div class="abox" style="margin-top:10px" data-testid="div-abox-348">
+          <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:6px" data-testid="div-349">Auto-Retrying URL &amp; Title Assertions</div>
+          <div class="dr" data-testid="div-dr-350"><span style="color:#3C3489;font-weight:600;width:150px;flex-shrink:0">toHaveURL(string)</span><span>Matches exact URL, retrying until success or timeout.</span></div>
+          <div class="dr" data-testid="div-dr-351"><span style="color:#085041;font-weight:600;width:150px;flex-shrink:0">toHaveURL(regex)</span><span>Partial or pattern-based URL match (highly recommended).</span></div>
+          <div class="dr" data-testid="div-dr-352"><span style="color:#712B13;font-weight:600;width:150px;flex-shrink:0">toHaveURL(predicate)</span><span>Matches custom logic: e.g. checking query search parameters.</span></div>
+          <div class="dr" style="border:none" data-testid="div-dr-353"><span style="color:#633806;font-weight:600;width:150px;flex-shrink:0">toHaveTitle(string/regex)</span><span>Auto-retrying document title checks for dynamic SPAs.</span></div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-354">
+        <h3 data-testid="h3-26">Code Examples</h3>
+        <div class="cs" data-testid="div-cs-355">
+          <div class="csh" data-testid="div-csh-356"><div class="dr2" data-testid="div-dr2-357"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S25 · Page Information Methods</span></div>
+          <div class="ctbar" data-testid="div-ctbar-358">
+            <button class="ct active" onclick="sc(3,0)" data-testid="button-ct-35">1. URL &amp; Title</button>
+            <button class="ct" onclick="sc(3,1)" data-testid="button-ct-36">2. SEO Content</button>
+            <button class="ct" onclick="sc(3,2)" data-testid="button-ct-37">3. Evaluate JS</button>
+            <button class="ct" onclick="sc(3,3)" data-testid="button-ct-38">4. History Nav</button>
+            <button class="ct" onclick="sc(3,4)" data-testid="button-ct-39">5. SPA Route</button>
+          </div>
+
+          <div class="cp active" id="c3-0" data-testid="div-c3-0">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-360">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">url-title-methods.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-40">Copy</button>
+            </div>
+            <pre data-testid="pre-16"><code class="language-typescript" data-testid="code-language-typescript-59">// url-title-methods.ts — page.url(), page.title(), toHaveURL, toHaveTitle
 import { test, expect } from '@playwright/test';
 
 test('verify URL and title after navigation', async ({ page }) => {
@@ -1083,12 +1592,16 @@ test('post-login URL verification with redirect', async ({ page }) => {
   await page.waitForURL('**/dashboard');
   expect(page.url()).toContain('/dashboard');
   await expect(page).toHaveTitle(/Dashboard/);
+});</code></pre>
+          </div>
 
-  // Dynamic route — regex handles varying IDs
-  // await expect(page).toHaveURL(/\/dashboard\/\d+/); ← if URL has ID
-});</code></pre></div>
-    <div class="cpan2" id="s25c2"><div class="ch"><span class="cfn"><span class="cfdot"></span>page-content-seo.ts</span><button class="cpbtn" onclick="copyCode('s25c2')">Copy</button></div>
-<pre><code class="language-typescript">// page-content-seo.ts — page.content() for SEO and meta tag audits
+          <div class="cp" id="c3-1" data-testid="div-c3-1">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-362">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">page-content-seo.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-41">Copy</button>
+            </div>
+            <pre data-testid="pre-17"><code class="language-typescript" data-testid="code-language-typescript-60">// page-content-seo.ts — page.content() for SEO and meta tag audits
 import { test, expect } from '@playwright/test';
 
 test('SEO audit — all required meta tags present', async ({ page }) => {
@@ -1118,17 +1631,16 @@ test('SEO audit — all required meta tags present', async ({ page }) => {
 
   // Structured data (JSON-LD)
   expect(html).toContain('application/ld+json');
+});</code></pre>
+          </div>
 
-  // Validate JSON-LD is parseable
-  const ldMatch = html.match(/application\/ld\+json"&gt;(.+?)&lt;\/script&gt;/s);
-  if (ldMatch) {
-    const ld = JSON.parse(ldMatch[1]);
-    expect(ld.'@type').toBe('Product');
-    expect(ld.name).toBeTruthy();
-  }
-});</code></pre></div>
-    <div class="cpan2" id="s25c3"><div class="ch"><span class="cfn"><span class="cfdot"></span>evaluate-page-info.ts</span><button class="cpbtn" onclick="copyCode('s25c3')">Copy</button></div>
-<pre><code class="language-typescript">// evaluate-page-info.ts — page.evaluate() to read JS runtime values
+          <div class="cp" id="c3-2" data-testid="div-c3-2">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-364">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">evaluate-page-info.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-42">Copy</button>
+            </div>
+            <pre data-testid="pre-18"><code class="language-typescript" data-testid="code-language-typescript-61">// evaluate-page-info.ts — page.evaluate() to read JS runtime values
 import { test, expect } from '@playwright/test';
 
 test('read JavaScript runtime info via evaluate()', async ({ page }) => {
@@ -1167,9 +1679,16 @@ test('read JavaScript runtime info via evaluate()', async ({ page }) => {
   }));
   console.log(`Page load time: ${timing.loadTime}ms`);
   expect(timing.loadTime).toBeLessThan(3000);
-});</code></pre></div>
-    <div class="cpan2" id="s25c4"><div class="ch"><span class="cfn"><span class="cfdot"></span>navigation-history.ts</span><button class="cpbtn" onclick="copyCode('s25c4')">Copy</button></div>
-<pre><code class="language-typescript">// navigation-history.ts — goBack, goForward, reload, history testing
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c3-3" data-testid="div-c3-3">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-366">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">navigation-history.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-43">Copy</button>
+            </div>
+            <pre data-testid="pre-19"><code class="language-typescript" data-testid="code-language-typescript-62">// navigation-history.ts — goBack, goForward, reload, history testing
 import { test, expect } from '@playwright/test';
 
 test('browser back and forward navigation', async ({ page }) => {
@@ -1208,9 +1727,16 @@ test('protected page → back → login redirect', async ({ page }) => {
   await page.goBack();
   // Back from login still shows login (no protected page in history)
   await expect(page).toHaveURL(/login/);
-});</code></pre></div>
-    <div class="cpan2" id="s25c5"><div class="ch"><span class="cfn"><span class="cfdot"></span>spa-route-assertions.ts</span><button class="cpbtn" onclick="copyCode('s25c5')">Copy</button></div>
-<pre><code class="language-typescript">// spa-route-assertions.ts — URL/title in SPAs (React Router, Next.js)
+});</code></pre>
+          </div>
+
+          <div class="cp" id="c3-4" data-testid="div-c3-4">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-368">
+              <span class="file-dot file-dot-typescript">●</span>
+              <span class="file-name">spa-route-assertions.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-44">Copy</button>
+            </div>
+            <pre data-testid="pre-20"><code class="language-typescript" data-testid="code-language-typescript-63">// spa-route-assertions.ts — URL/title in SPAs (React Router, Next.js)
 import { test, expect } from '@playwright/test';
 
 test('SPA navigation — URL updates without full reload', async ({ page }) => {
@@ -1229,7 +1755,6 @@ test('SPA navigation — URL updates without full reload', async ({ page }) => {
   await expect(page).toHaveURL(/\/products\/\d+/);
 
   // Title includes product name (loaded from API)
-  // toHaveTitle retries until the async title update completes
   await expect(page).toHaveTitle(/Laptop Pro/);
 
   // Extract dynamic ID from URL
@@ -1243,155 +1768,173 @@ test('SPA navigation — URL updates without full reload', async ({ page }) => {
   // Hash from evaluate
   const hash = await page.evaluate(() => window.location.hash);
   expect(hash).toBe('#reviews');
-});</code></pre></div>
+});</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-369">
+        <h3 data-testid="h3-27">Best Practices</h3>
+        <ul class="bpl">
+          <li data-testid="li-19"><span class="bpc">✓</span>Use <code data-testid="code-64">expect(page).toHaveURL(/pattern/)</code> with regex for post-navigation assertions — never exact URL strings which break when query params or hash fragments are added.</li>
+          <li data-testid="li-20"><span class="bpc">✓</span>Use <code data-testid="code-65">page.waitForURL()</code> after triggering navigation (click, form submit) before asserting content — ensures the new page has loaded before reading elements.</li>
+          <li data-testid="li-21"><span class="bpc">✓</span>Use <code data-testid="code-66">expect(page).toHaveTitle()</code> instead of <code data-testid="code-67">await page.title()</code> for SPAs — the assertion retries until the title updates asynchronously, while page.title() reads the immediate value.</li>
+          <li data-testid="li-22"><span class="bpc">✓</span>Use <code data-testid="code-68">page.content()</code> for comprehensive SEO audits — parse the HTML to verify canonical tags, og: meta tags, structured data, and robots meta all in one call.</li>
+          <li data-testid="li-23"><span class="bpc">✓</span>Prefer <code data-testid="code-69">page.locator()</code> over <code data-testid="code-70">page.evaluate()</code> for DOM assertions — locators have auto-waiting and retry. Use evaluate only for non-DOM JavaScript values.</li>
+          <li data-testid="li-24"><span class="bpc">✓</span>Assert page title includes the site name: <code data-testid="code-71">toHaveTitle(/MyApp — Dashboard/)</code> — verifies both the page-specific part and the consistent brand suffix.</li>
+        </ul>
+      </div>
+
+      <div class="sec" style="border:none" data-testid="div-sec-370">
+        <h3 data-testid="h3-28">Interview Prep — Q&amp;A</h3>
+        <div class="ql" data-testid="div-ql-371">
+          <div class="qi" data-testid="div-qi-372">
+            <div class="qq" data-testid="div-qq-373">Q1. What is the difference between page.url() and page.waitForURL()?</div>
+            <div class="qa" data-testid="div-qa-374">A: page.url() is a synchronous read of the current URL — it returns whatever the URL is at that exact moment. If navigation is in progress, it might return the old URL. page.waitForURL(pattern) is an async method that waits until the URL matches the pattern before resolving. Use page.waitForURL() after triggering navigation to wait for it to complete: await page.click('#login-btn'); await page.waitForURL('**/dashboard'). Then assert content. page.url() is for reading the final URL after you know navigation is complete. expect(page).toHaveURL() is the assertion form — it auto-retries with timeout, making it more reliable than page.url() for flaky navigation timing.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-375">
+            <div class="qq" data-testid="div-qq-376">Q2. How do you verify SEO meta tags using page.content()?</div>
+            <div class="qa" data-testid="div-qa-377">A: const html = await page.content(); // Verify title tag expect(html).toContain('&lt;title&gt;MyApp — Dashboard&lt;/title&gt;'); // Verify canonical URL expect(html).toMatch(/&lt;link rel="canonical" href="https:\/\/myapp\.com\/dashboard"\/&gt;/); // Verify og:title expect(html).toMatch(/&lt;meta property="og:title" content="Dashboard — MyApp"\/&gt;/); // Verify meta description expect(html).toMatch(/&lt;meta name="description" content=".{50,160}"\/&gt;/) — 50-160 chars. // Verify robots not noindex expect(html).not.toContain('robots" content="noindex'); // Check structured data expect(html).toContain('application/ld+json'). page.content() gets everything including the head section making it ideal for comprehensive SEO testing.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-378">
+            <div class="qq" data-testid="div-qq-379">Q3. How do you assert a URL that changes dynamically (contains an ID)?</div>
+            <div class="qa" data-testid="div-qa-380">A: After creating a resource, the URL often contains a dynamic ID: /orders/123456. Use regex: await expect(page).toHaveURL(/\/orders\/\d+/). Or predicate: await expect(page).toHaveURL(url => { const path = new URL(url).pathname; return path.startsWith('/orders/') && path.split('/').pop()?.length > 0; }). For URL parameters: await expect(page).toHaveURL(url => new URL(url).searchParams.get('status') === 'confirmed'). Extract the ID for later use: const orderId = page.url().split('/').pop(); console.log('Created order:', orderId). The regex approach handles dynamic IDs, timestamps, and UUIDs in URLs without hardcoding specific values.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-381">
+            <div class="qq" data-testid="div-qq-382">Q4. When should you use page.evaluate() vs page.locator()?</div>
+            <div class="qa" data-testid="div-qa-383">A: page.locator() should be your default for anything in the DOM — it has auto-waiting, retry logic, and Playwright's full assertion support. Use page.evaluate() only when you need values from the JavaScript runtime that aren't accessible through the DOM: window.ENV (app environment config), window.analytics.dataLayer (analytics events), document.cookie (for non-httpOnly cookies), navigator.language, navigator.userAgent, localStorage values, sessionStorage values, performance.timing data, custom app state objects like window.store.getState(). Also use evaluate() when you need to trigger JS that doesn't have a corresponding DOM interaction: simulating events, calling app APIs directly, or reading computed JS values after interactions.</div>
+          </div>
+          <div class="qi" data-testid="div-qi-384">
+            <div class="qq" data-testid="div-qq-385">Q5. How do you test browser history navigation (back/forward)?</div>
+            <div class="qa" data-testid="div-qa-386">A: Playwright exposes goBack() and goForward() mirroring browser buttons: await page.goto('/products'); await page.click('.product-card a'); await expect(page).toHaveURL(/\/products\/\d+/); await page.goBack(); await expect(page).toHaveURL('https://myapp.com/products'); await expect(page.locator('.product-card')).toBeVisible() — verify page restored; await page.goForward(); await expect(page).toHaveURL(/\/products\/\d+/) — forward also works. Verify scroll position restoration: const scrollY = await page.evaluate(() => window.scrollY); expect(scrollY).toBeGreaterThan(0). Test that the browser back button from a protected page redirects to login: await page.goto('/dashboard'); await page.goBack(); await expect(page).toHaveURL(/login/).</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end s25 -->
+
   </div>
-</div><!-- end s25 -->
 
-<script>
-// Active session tracking
-var activeSession = 's22';
+  <script>
+    // Local fallback for Q&A Accordions expansion
+    document.addEventListener('click', function(e) {
+      var header = e.target.closest('.qq');
+      if (header) {
+        var qi = header.closest('.qi');
+        if (qi) {
+          qi.classList.toggle('open');
+        }
+      }
+    });
 
-function showS(sid) {
-  // Hide all sessions
-  document.querySelectorAll('.sc').forEach(function(el) { el.classList.remove('active'); });
-  // Deactivate all session buttons
-  document.querySelectorAll('.sbtn').forEach(function(el) { el.classList.remove('active'); });
-  // Show selected session
-  var sc = document.getElementById(sid);
-  if (sc) sc.classList.add('active');
-  // Find and activate the clicked button
-  var btns = document.querySelectorAll('.sbtn');
-  btns.forEach(function(btn) {
-    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf(sid) !== -1) {
-      btn.classList.add('active');
-    }
-  });
-  activeSession = sid;
-}
-
-function showP(sid, pid) {
-  // Deactivate all section tabs for this session
-  var st = document.getElementById('ST' + sid.slice(1));
-  if (st) st.querySelectorAll('.stab').forEach(function(b) { b.classList.remove('active'); });
-  // Hide all pans for this session
-  var sc = document.getElementById(sid);
-  if (sc) sc.querySelectorAll('.pan').forEach(function(p) { p.classList.remove('active'); });
-  // Activate clicked tab button
-  if (st) {
-    var tabs = st.querySelectorAll('.stab');
-    var names = ['ov','gl','ol','con','bp','qa','cd'];
-    var idx = names.indexOf(pid);
-    if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active');
-  }
-  // Show selected pan
-  var pan = document.getElementById(sid + '-' + pid);
-  if (pan) pan.classList.add('active');
-}
-
-function showC(sid, num) {
-  var snum = sid.slice(1);
-  // Deactivate all code tabs for this session
-  var ct = document.getElementById('CT' + snum);
-  if (ct) ct.querySelectorAll('.ctb').forEach(function(b) { b.classList.remove('active'); });
-  // Hide all code pans for this session
-  for (var i = 1; i <= 5; i++) {
-    var p = document.getElementById(sid + 'c' + i);
-    if (p) p.classList.remove('active');
-  }
-  // Activate selected tab button
-  if (ct) {
-    var tbs = ct.querySelectorAll('.ctb');
-    if (tbs[num-1]) tbs[num-1].classList.add('active');
-  }
-  // Show selected code pan
-  var cp = document.getElementById(sid + 'c' + num);
-  if (cp) cp.classList.add('active');
-}
-
-function tq(el) {
-  var qa = el.closest('.qa');
-  var ans = qa.querySelector('.qaa');
-  qa.classList.toggle('open');
-  ans.classList.toggle('open');
-}
-
-function copyCode(id) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  var pre = el.querySelector('pre');
-  if (!pre) return;
-  navigator.clipboard.writeText(pre.innerText).then(function() {
-    var btn = el.querySelector('.cpbtn');
-    if (btn) { btn.textContent = 'Copied!'; setTimeout(function() { btn.textContent = 'Copy'; }, 2000); }
-  });
-}
-</script>
-
-<script>
-/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
-(function(){try{
-  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
-    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
-      btn.addEventListener('click',function(){
-        var t=this.nextElementSibling;
-        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
+    // Copy to clipboard helper
+    function copyPreText(btn) {
+      const cp = btn.closest('.cp');
+      const code = cp.querySelector('pre code') || cp.querySelector('pre');
+      const text = code.innerText || code.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
       });
     }
-  });
-  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
-    if(!tab.dataset.vTab){tab.dataset.vTab='1';
-      tab.addEventListener('click',function(){
-        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
-        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
-      });
-    }
-  });
-}catch(e){console.log('VE:',e)}})();
-</script>
+  </script>
 
-    <!-- Prism Syntax Highlighting JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <!-- Prism Syntax Highlighting JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+  <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+  <script>
+  if (window.Prism) {
+      document.addEventListener('DOMContentLoaded', () => {
+          const observer = new MutationObserver((mutations) => {
+              let needsHighlight = false;
+              mutations.forEach(m => {
+                  if (m.addedNodes.length) {
+                      m.addedNodes.forEach(n => {
+                          if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                          if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                      });
+                  }
+              });
+              if (needsHighlight) {
+                  Prism.highlightAll();
+              }
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
+      });
+  }
+  </script>
+
+  <script src="../portal-enhance.js"></script>
+
+  <!-- Navigation and Session Control Script -->
+  <script>
+    var cur = 0;
+    var sNums = [22, 23, 24, 25];
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+    // Code panel mapping array matching our layout structure:
+    var cP = [
+      ['c0-0', 'c0-1', 'c0-2', 'c0-3', 'c0-4'], // Session 22
+      ['c1-0', 'c1-1', 'c1-2', 'c1-3', 'c1-4'], // Session 23
+      ['c2-0', 'c2-1', 'c2-2', 'c2-3', 'c2-4'], // Session 24
+      ['c3-0', 'c3-1', 'c3-2', 'c3-3', 'c3-4']  // Session 25
+    ];
 
-
-    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
-    <script>
-    if (window.Prism) {
-        document.addEventListener('DOMContentLoaded', () => {
-            const observer = new MutationObserver((mutations) => {
-                let needsHighlight = false;
-                mutations.forEach(m => {
-                    if (m.addedNodes.length) {
-                        m.addedNodes.forEach(n => {
-                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
-                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
-                        });
-                    }
-                });
-                if (needsHighlight) {
-                    Prism.highlightAll();
-                }
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
-        });
+    function sw(n) {
+      cur = n;
+      var sections = document.querySelectorAll('html body div.section');
+      sections.forEach(function(sec, i) {
+        sec.classList.toggle('active', i === n);
+      });
+      var tabs = document.getElementById('sTabs').children;
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.toggle('active', i === n);
+      }
+      upP();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    </script>
 
+    function sc(s, t) {
+      var panels = cP[s];
+      // Select the code section wrapper containing this tab bar
+      var sectionEl = document.querySelectorAll('html body div.section')[s];
+      if (!sectionEl) return;
+      var ctabs = sectionEl.querySelectorAll('.ct');
+      
+      panels.forEach(function(id, i) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.className = 'cp' + (i === t ? ' active' : '');
+        }
+      });
+      ctabs.forEach(function(tb, i) {
+        tb.classList.toggle('active', i === t);
+      });
+    }
 
-    <script src="../portal-enhance.js"></script>
+    function upP() {
+      var d = '';
+      for (var i = 0; i < 4; i++) {
+        var c = i < cur ? 'dn' : (i === cur ? 'ac' : 'td');
+        d += '<span class="dot ' + c + '"></span> ';
+      }
+      var pd = document.getElementById('pd');
+      if (pd) pd.innerHTML = d;
+      var pl = document.getElementById('pl');
+      if (pl) pl.textContent = 'Session ' + sNums[cur] + ' of 4';
+    }
+    
+    // Initial paint
+    upP();
+  </script>
 </body>
 </html>
-
-    <script src="../portal-enhance.js"></script>
-</body>
-</html>
-

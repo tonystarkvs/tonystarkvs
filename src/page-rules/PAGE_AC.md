@@ -24,7 +24,7 @@ For developer-specific implementation details, see [PAGE_STRUCTURE.md](file:///c
   * Dots representing completed/previous sessions must be colored **green**.
   * The dot representing the active/current session must be colored **purple/blue**.
   * Dots representing remaining/future sessions must be colored **light gray / white**.
-* **Detail 6**: The active session tab button itself must be colored **purple/blue** with white text, and inactive tab buttons must have a light gray/white background with dark text.
+* **Detail 6**: Active tabs must look like a fully rounded, uppercase pill with a thick orange border, a soft cream background, and dark brown-orange text; and inactive tabs must look like a fully rounded, uppercase pill with a pure white background, a blue outline border, and blue text.
 * **Detail 7**: Every lesson topic section inside the page must be mapped to its corresponding session tab button in the navigation bar at the top.
 
 ### **AC 2: Searching the Content (Search Highlights)**
@@ -48,7 +48,7 @@ For developer-specific implementation details, see [PAGE_STRUCTURE.md](file:///c
 * **Detail 5**: Code blocks must be responsive, allowing users to scroll horizontally for long lines of code without stretching or breaking the page layout.
 * **Detail 6**: Code must contain clear, descriptive inline comments explaining the logic step-by-step.
 * **Detail 7**: Line numbers must be displayed on the left of each code block for clean layout references.
-* **Detail 8**: The code file tabs must be fully clickable and functional. Clicking a code tab must instantly switch the active panel to show that file's code.
+* **Detail 8**: Active code tabs must look like a fully rounded, uppercase pill with a thick orange border, a soft cream background, and dark brown-orange text; and inactive code tabs must look like a fully rounded, uppercase pill with a pure white background, a blue outline border, and blue text. Clicking a tab must instantly show the selected file's code.
 * **Detail 9**: All practical code examples must be showcased in separate tabs inside the mock editor, each presenting fully copyable code snippets with a dedicated copy button.
 
 ### **AC 5: Visual Card Separation and Colored Borders**
@@ -80,6 +80,10 @@ For developer-specific implementation details, see [PAGE_STRUCTURE.md](file:///c
 * **Detail 1**: Every page, section, text content, table, block, and diagram must be fully responsive.
 * **Detail 2**: Layouts must dynamically adapt to fit all viewport sizes, including mobile phones, tablets, laptops, desktop monitors, and TV screens.
 * **Detail 3**: Text must never overflow. Any image must be styled in a colorful, premium manner (with a `2.5px solid var(--pc, #6C5CE7)` border, `border-radius: 6px`, subtle box shadow, and centered horizontally) and auto-scale to fit within its block, and horizontal scrolling must only activate on code snippets and wide diagrams to prevent horizontal site scrolling on mobile.
+* **Detail 4**: On mobile and tablet viewports (under `768px`), sub-section cards (`.sec`) must have no 4-sided borders and no margin, using a clean bottom border (`border-bottom: 1.5px solid var(--color-border-tertiary)`) for separation to prevent double-border nesting and squishing.
+* **Detail 5**: Two-column description rows (`.dr`) (e.g. "What/Why" tables and Note cards) must stack vertically on mobile/tablet viewports, placing labels (with bold text, auto width, and `4px` margin-bottom) on top of descriptions so text has full width and visibility.
+* **Detail 6**: Headings (`h3` inside `.sec`) and flow sub-titles must use a clean, spacious layout on mobile/tablet, using `line-height: 1.4` to prevent text collision when wrapping, with generous top spacing (`28px`) before subsequent sub-sections to group each block logically.
+
 
 ### **AC 10: Standard Lesson Page Sections**
 * **Detail 1**: Every lesson topic section must include an **Overview Banner** at the top summarizing the session's concepts.
@@ -99,3 +103,34 @@ For developer-specific implementation details, see [PAGE_STRUCTURE.md](file:///c
 * **Detail 3**: Visual icons (like checkmarks, warning flags, or bullets) must load and display correctly next to lists, tips, and steps.
 * **Detail 4**: Lifecycle flow diagrams must show steps in sequence connected by clear arrow guides to represent the correct execution order.
 * **Detail 5**: There must be no double vertical scrollbars, ensuring the user can scroll down the entire module contents using a single vertical scroll gesture.
+
+
+
+
+
+notes ---
+code blocks Tab Layout & Font:
+
+Tabs are displayed horizontally inside the top bar of the mock editor window.
+Tab labels are written in a monospaced font (e.g., .java src/LoginPage.java).
+Color-Coded File Badges (Pills):
+
+Each tab begins with a tiny pill-shaped badge indicating the file extension (such as .java, .yml, .feature, .txt, .py).
+Badges are color-coded to quickly identify the language at a glance.
+Active Tab Styling:
+
+The selected/active tab turns vibrant blue (#0969da) with a clean white background.
+It features a solid bottom underline (2.5px solid #0969da) showing it is selected.
+Inactive Tab Styling:
+
+Inactive tabs have a light gray background with slate-gray text.
+Hovering over an inactive tab slightly darkens its background (#e2e8f0) and raises the text brightness to indicate it is clickable.
+Clean Interaction States:
+
+When clicked or focused, all standard browser default focus outlines are hidden (outline: none) for a clean interface.
+Sub-Header File Panel Indicators (Below Tabs):
+
+Right below the tabs row, the active file panel displays a header showing:
+A colored circle matching the file type (e.g. purple/indigo dot).
+The full file path/name.
+A dedicated "Copy" button that changes text to "Copied!" when clicked.

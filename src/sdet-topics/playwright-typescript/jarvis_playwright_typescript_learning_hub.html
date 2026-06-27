@@ -1,380 +1,767 @@
-﻿
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Jarvis: Playwright TypeScript Learning Hub</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-/* ===== VIKRANT VISUAL ENHANCEMENT LAYER v2.0 ===== */
-h1,h2{font-weight:700 !important;border-left:4px solid #6C5CE7 !important;padding-left:12px !important;background:rgba(108,92,231,0.07) !important;border-radius:0 8px 8px 0 !important;margin-top:1.2em !important;margin-bottom:0.6em !important;padding-top:6px !important;padding-bottom:6px !important}
-h3,h4{font-weight:700 !important;border-left:3px solid #00b894 !important;padding-left:10px !important;background:rgba(0,184,148,0.06) !important;border-radius:0 6px 6px 0 !important;margin-top:1em !important;margin-bottom:0.5em !important;padding-top:4px !important;padding-bottom:4px !important}
-h5,h6{font-weight:600 !important;border-left:2px solid #fdcb6e !important;padding-left:8px !important;background:rgba(253,203,110,0.08) !important;border-radius:0 4px 4px 0 !important}
-.section-title,.card-title,.topic-title,[class*="title"],[class*="heading"],.card h3,.card h4,summary,.panel-title,.accordion-header{font-weight:700 !important}
-pre,.code-block,.code-example,.code-container,[class*="code-block"],[class*="codeblock"]{background:#1e1e2e !important;color:#cdd6f4 !important;border-radius:10px !important;padding:16px 18px !important;overflow-x:auto !important;font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace !important;font-size:0.82rem !important;border-left:4px solid #6C5CE7 !important;line-height:1.7 !important;white-space:pre-wrap !important;word-wrap:break-word !important;margin:12px 0 !important;box-shadow:0 2px 12px rgba(0,0,0,0.15) !important;position:relative !important}
-pre code,.code-block code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border:none !important;font-size:inherit !important;border-left:none !important}
-code{background:rgba(108,92,231,0.12) !important;color:#6C5CE7 !important;padding:2px 6px !important;border-radius:4px !important;font-family:'JetBrains Mono','Fira Code',monospace !important;font-size:0.85em !important}
-pre code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border-left:none !important}
-.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{display:flex !important;flex-wrap:wrap !important;gap:8px !important;padding:8px !important}
-.tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"],.tab-button{padding:8px 18px !important;border-radius:20px !important;border:1.5px solid #ddd !important;background:#f8f9fa !important;color:#2d3436 !important;font-weight:600 !important;font-size:0.85rem !important;cursor:pointer !important;transition:all 0.25s ease !important;min-width:fit-content !important;text-align:center !important}
-.tab-btn:hover,.session-tab:hover,[class*="tab-btn"]:hover,button[class*="tab"]:hover{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;transform:translateY(-1px) !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
-.tab-btn.active,.session-tab.active,[class*="tab-btn"].active,button[class*="tab"].active{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
-.card,.section,.panel,[class*="card"]{border-radius:12px !important;box-shadow:0 2px 8px rgba(0,0,0,0.06) !important;border-top:3px solid #6C5CE7 !important;margin-bottom:16px !important;padding:16px !important}
-details{border-left:3px solid #00b894 !important;border-radius:8px !important;margin-bottom:12px !important;padding:8px 12px !important;box-shadow:0 1px 4px rgba(0,0,0,0.05) !important}
-details summary{font-weight:700 !important;cursor:pointer !important;padding:10px 12px !important;background:rgba(0,184,148,0.06) !important;border-radius:8px !important;transition:background 0.2s !important}
-details summary:hover{background:rgba(0,184,148,0.12) !important}
-table{width:100% !important;border-collapse:collapse !important;margin:12px 0 !important;border-radius:8px !important;overflow:hidden !important;box-shadow:0 1px 6px rgba(0,0,0,0.08) !important}
-thead th,table thead td{background:#6C5CE7 !important;color:#fff !important;font-weight:700 !important;padding:10px 14px !important;text-align:left !important}
-tbody td{padding:10px 14px !important;border-bottom:1px solid #eee !important}
-tbody tr:hover{background:rgba(108,92,231,0.04) !important}
-.toggle-btn,.accordion-btn,[class*="toggle"],[class*="collapsible"]{cursor:pointer !important;transition:all 0.3s ease !important}
-.toggle-content,.accordion-content,.collapsible-content{overflow:hidden !important;transition:max-height 0.4s ease,opacity 0.3s ease !important}
-@media(max-width:768px){
-  .tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{flex-wrap:wrap !important;justify-content:center !important}
-  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{font-size:0.78rem !important;padding:6px 14px !important;flex:1 1 auto !important;min-width:80px !important}
-  pre,.code-block,[class*="code-block"]{font-size:0.75rem !important;padding:12px !important}
-  h1{font-size:1.4rem !important}h2{font-size:1.2rem !important}h3{font-size:1.05rem !important}
-  .card,.section,.panel,[class*="card"]{padding:12px !important}
-  body{padding:8px !important}
-}
-@media(max-width:480px){
-  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{flex:1 1 100% !important;font-size:0.75rem !important;padding:8px 10px !important;border-radius:8px !important}
-  pre,.code-block{font-size:0.7rem !important;padding:10px !important;overflow-x:scroll !important}
-  h1{font-size:1.2rem !important}h2{font-size:1.05rem !important}h3{font-size:0.95rem !important}
-  table{font-size:0.8rem !important;display:block !important;overflow-x:auto !important}
-  body{padding:4px !important}
-}
-pre::-webkit-scrollbar{height:6px}pre::-webkit-scrollbar-track{background:#2a2a3e;border-radius:3px}pre::-webkit-scrollbar-thumb{background:#6C5CE7;border-radius:3px}
-/* ===== END ENHANCEMENT LAYER v2.0 ===== */
+  <title>Jarvis: Playwright TypeScript Learning Hub</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../responsive.css">
 
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;
-    --border:#30363d;--border2:#484f58;
-    --text:#e6edf3;--muted:#8b949e;--dim:#6e7681;
-    --green:#3fb950;--blue:#79c0ff;--purple:#d2a8ff;--orange:#ffa657;
-    --red:#ff7b72;--yellow:#e3b341;--cyan:#56d364;--pink:#ff9af1;
-    --accent:#238636;--accent2:#1f6feb;
-  }
-  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;padding:0}
-  .hero{background:linear-gradient(135deg,#0d1117 0%,#161b22 50%,#0d1117 100%);border-bottom:1px solid var(--border);padding:20px 24px 16px;position:relative;overflow:hidden}
-  .hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(31,111,235,0.15) 0%,transparent 70%);pointer-events:none}
-  .jarvis-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(35,134,54,0.15);border:1px solid rgba(63,185,80,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--green);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
-  .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
-  .hero h1{font-size:22px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:6px}
-  .hero h1 span{color:var(--blue)}
-  .hero p{font-size:13px;color:var(--muted);line-height:1.5}
-  .phase-strip{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-  .phase-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace}
-  .phase1{background:rgba(210,168,255,0.12);color:var(--purple);border:1px solid rgba(210,168,255,0.25)}
-  .phase2{background:rgba(255,166,87,0.12);color:var(--orange);border:1px solid rgba(255,166,87,0.25)}
+  <!-- Prism Syntax Highlighting -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
 
-  .sessions-nav{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;scrollbar-width:none}
-  .sessions-nav::-webkit-scrollbar{display:none}
-  .stab{display:flex;align-items:center;gap:6px;padding:10px 14px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;color:var(--muted);transition:all 0.2s;letter-spacing:0.5px;border-right:1px solid var(--border)}
-  .stab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
-  .stab.active{color:var(--blue);border-bottom-color:var(--blue);background:rgba(121,192,255,0.05)}
-  .stab .ph{font-size:9px;padding:1px 5px;border-radius:6px}
-  .stab .ph.p1{background:rgba(210,168,255,0.15);color:var(--purple)}
-  .stab .ph.p2{background:rgba(255,166,87,0.15);color:var(--orange)}
-
-  .content{display:none}.content.active{display:block}
-  .content-inner{padding:0}
-
-  .section-tabs{display:flex;gap:0;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;padding:0 16px}
-  .section-tabs::-webkit-scrollbar{display:none}
-  .sectab{padding:10px 14px;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;font-family:'Syne',sans-serif}
-  .sectab:hover{color:var(--text)}
-  .sectab.active{color:var(--green);border-bottom-color:var(--green)}
-
-  .panel{display:none;padding:16px 20px}.panel.active{display:block}
-
-  .overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-  .ov-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px}
-  .ov-card h4{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-  .ov-card h4::before{content:'';width:3px;height:12px;border-radius:2px;background:var(--blue);display:inline-block}
-  .ov-card p{font-size:13px;color:var(--text);line-height:1.6}
-  .ov-full{grid-column:1/-1}
-
-  .def-box{background:var(--bg3);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:16px}
-  .def-box .label{font-size:10px;font-weight:700;color:var(--purple);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
-  .def-box p{font-size:14px;color:var(--text);line-height:1.7}
-
-  .glossary-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
-  .glossary-item:last-child{border-bottom:none}
-  .gkw{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--yellow);background:rgba(227,179,65,0.1);border:1px solid rgba(227,179,65,0.2);padding:2px 8px;border-radius:4px;white-space:nowrap;height:fit-content;margin-top:2px}
-  .gdesc{font-size:13px;color:var(--muted);line-height:1.5}
-
-  .oneliners{display:flex;flex-direction:column;gap:8px}
-  .oneliner{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:var(--text);line-height:1.5;font-style:italic}
-  .oneliner span{color:var(--green);font-weight:700;font-style:normal;font-size:11px;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px}
-
-  .concept-block{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden}
-  .concept-block h4{background:var(--bg3);padding:10px 14px;font-size:12px;font-weight:700;color:var(--cyan);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-  .concept-body{padding:14px}
-  .concept-body p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px}
-  .concept-body p:last-child{margin-bottom:0}
-
-  .flow-diagram{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:12px}
-  .flow-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-  .flow-box{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;color:var(--blue);font-size:11px;white-space:nowrap}
-  .flow-box.green{color:var(--green);border-color:rgba(63,185,80,0.3);background:rgba(63,185,80,0.05)}
-  .flow-box.purple{color:var(--purple);border-color:rgba(210,168,255,0.3);background:rgba(210,168,255,0.05)}
-  .flow-box.orange{color:var(--orange);border-color:rgba(255,166,87,0.3);background:rgba(255,166,87,0.05)}
-  .flow-box.red{color:var(--red);border-color:rgba(255,123,114,0.3);background:rgba(255,123,114,0.05)}
-  .flow-arr{color:var(--dim);font-size:14px}
-
-  .bp-list{list-style:none}
-  .bp-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
-  .bp-item:last-child{border-bottom:none}
-  .bp-icon{width:18px;height:18px;border-radius:50%;background:rgba(63,185,80,0.15);border:1px solid rgba(63,185,80,0.3);color:var(--green);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-
-  .qa-block{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden}
-  .qa-q{background:var(--bg3);padding:10px 14px;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-  .qa-a{background:var(--bg2);padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.6;display:none;border-top:1px solid var(--border)}
-  .qa-a.open{display:block}
-  .qa-toggle{color:var(--dim);font-size:16px;transition:transform 0.2s}
-  .qa-block.open .qa-toggle{transform:rotate(90deg)}
-
-  .code-tabs{display:flex;gap:0;background:var(--bg);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;padding:0 16px}
-  .code-tabs::-webkit-scrollbar{display:none}
-  .ctab{padding:8px 14px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;display:flex;align-items:center;gap:6px}
-  .ctab:hover{color:var(--muted)}
-  .ctab.active{color:var(--orange);border-bottom-color:var(--orange)}
-  .ctab .ficon{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--bg3);color:var(--dim);font-weight:700;letter-spacing:0.5px}
-
-  .code-panel{display:none}.code-panel.active{display:block}
-  .code-wrap{background:#0d1117;margin:0;padding:0}
-  .code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--bg2);border-bottom:1px solid var(--border)}
-  .code-filename{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
-  .code-filename::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--orange);display:inline-block}
-  .copy-btn{font-size:11px;padding:3px 10px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif;transition:all 0.2s}
-  .copy-btn:hover{color:var(--text);border-color:var(--dim)}
-  pre{margin:0;padding:16px;overflow-x:auto;font-size:12.5px;line-height:1.7;font-family:'JetBrains Mono',monospace;background:#0d1117}
-  .kw{color:#ff7b72}
-  .fn{color:#d2a8ff}
-  .str{color:#a5d6ff}
-  .cm{color:#6e7681;font-style:italic}
-  .num{color:#79c0ff}
-  .cls{color:#ffa657}
-  .prop{color:#79c0ff}
-  .val{color:#3fb950}
-  .op{color:#ff7b72}
-  .type{color:#ffa657}
-  .dec{color:#f0883e}
-
-  .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-  .chip{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 10px;border-radius:12px;background:var(--bg3);border:1px solid var(--border2);color:var(--muted)}
-  .chip.blue{background:rgba(121,192,255,0.1);border-color:rgba(121,192,255,0.25);color:var(--blue)}
-  .chip.green{background:rgba(63,185,80,0.1);border-color:rgba(63,185,80,0.25);color:var(--green)}
-  .chip.purple{background:rgba(210,168,255,0.1);border-color:rgba(210,168,255,0.25);color:var(--purple)}
-  .chip.orange{background:rgba(255,166,87,0.1);border-color:rgba(255,166,87,0.25);color:var(--orange)}
-
-  .tag-section{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;margin-top:16px;display:flex;align-items:center;gap:8px}
-  .tag-section::after{content:'';flex:1;height:1px;background:var(--border)}
-
-  .warn-box{background:rgba(227,179,65,0.08);border:1px solid rgba(227,179,65,0.2);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--yellow);margin-bottom:12px}
-  .info-box{background:rgba(121,192,255,0.08);border:1px solid rgba(121,192,255,0.2);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--blue);margin-bottom:12px}
-</style>
-    <link rel="stylesheet" href="../responsive.css">
-
-    <!-- Prism Syntax Highlighting -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
-
+  <style>
+    .kwd { color: #c0392b !important; font-weight: 700 !important; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     
+    body {
+      font-family: var(--font-sans, system-ui, sans-serif) !important;
+      font-size: 13px;
+      background: #f6f8fa;
+      color: #1f2328;
+      min-height: 100vh;
+      padding: 0;
+    }
+    
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: #fff;
+      border-bottom: 1px solid #d0d7de;
+      flex-wrap: wrap;
+    }
+    
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #1a7f37;
+      background: #dafbe1;
+      border: 1px solid #56d364;
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+    
+    .dot-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #1a7f37;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .3; }
+    }
+    
+    .ttl {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    
+    /* Active Session Tab Styling */
+    .stabs {
+      display: flex;
+      background: #f6f8fa;
+      border-bottom: 1px solid #d0d7de;
+      overflow-x: auto;
+      padding: 6px 12px;
+      gap: 6px;
+    }
+    
+    .stabs::-webkit-scrollbar { display: none; }
+    
+    .stab, .ct {
+      display: inline-block;
+      padding: 6px 14px !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      border-radius: 20px !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      margin: 4px 2px !important;
+      background: #ffffff !important;
+      border: 2px solid #0969da !important;
+      color: #0969da !important;
+      white-space: nowrap;
+    }
+    
+    .stab:hover, .ct:hover {
+      background: #f0f7ff !important;
+    }
+    
+    .stab.active, .ct.active {
+      background: #fffbeb !important;
+      border: 2px solid #d97706 !important;
+      color: #78350f !important;
+    }
+    
+    .bdg {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+    
+    /* Progress block */
+    .prow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #eff6ff;
+      border-bottom: 1.5px solid #3b82f6;
+      margin-bottom: 15px;
+    }
+    
+    .dot {
+      width: 10px !important;
+      height: 10px !important;
+      border-radius: 50% !important;
+      display: inline-block !important;
+      margin-right: 4px !important;
+    }
+    
+    .dot.dn { background: #16a34a !important; }
+    .dot.ac { background: #7F77DD !important; }
+    .dot.td { background: #e2e8f0 !important; }
+    
+    .plbl {
+      font-size: 11px;
+      color: #1e3a8a;
+      font-weight: 600;
+    }
 
+    /* Layout Components */
+    .obanner {
+      background: #EEEDFE;
+      padding: 16px;
+      border-bottom: 0.5px solid #AFA9EC;
+      margin-bottom: 15px;
+    }
+    
+    .obanner h2 {
+      font-size: 11px;
+      font-weight: 600;
+      color: #534AB7;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    
+    .obanner p {
+      font-size: 13px;
+      color: #26215C;
+      line-height: 1.6;
+    }
+    
+    .sec {
+      padding: 14px 16px;
+      border-bottom: 0.5px solid #cbd5e1;
+    }
+    
+    .sec h3 {
+      font-size: 11px;
+      font-weight: 600;
+      color: #57606a;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--pc, #6C5CE7) !important;
+      padding-left: 12px !important;
+    }
+    
+    .abox {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    
+    .dr {
+      font-size: 12px;
+      color: #57606a;
+      padding: 8px 0;
+      border-bottom: 1px solid #f6f8fa;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    
+    .dr:last-child {
+      border-bottom: none;
+    }
+    
+    .glosgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .gitem {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    
+    .gkw {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #3c3489;
+      font-family: var(--font-mono, monospace);
+      margin-bottom: 4px;
+    }
+    
+    .gdef {
+      font-size: 11.5px;
+      color: #57606a;
+      line-height: 1.5;
+    }
+    
+    .igrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .qp {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      color: #1f2328;
+      line-height: 1.55;
+      border-left: 4px solid #7F77DD !important;
+    }
+    
+    .flowrow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 10px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+    }
+    
+    .fstep {
+      flex: 1;
+      padding: 10px 8px;
+      font-size: 11px;
+      text-align: center;
+      border-right: 1px solid #cbd5e1;
+    }
+    
+    .fstep:last-child {
+      border-right: none;
+    }
+    
+    .fstep .fn {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+    
+    .fstep .fd {
+      font-size: 11px;
+      line-height: 1.4;
+    }
 
+    .fstep.n1 { background: #EEEDFE !important; color: #3C3489 !important; border-color: #AFA9EC !important; }
+    .fstep.n2 { background: #E1F5EE !important; color: #085041 !important; border-color: #5DCAA5 !important; }
+    .fstep.n3 { background: #E6F1FB !important; color: #0C447C !important; border-color: #85B7EB !important; }
+    .fstep.n4 { background: #FAECE7 !important; color: #712B13 !important; border-color: #F0997B !important; }
+    .fstep.n5 { background: #FAEEDA !important; color: #633806 !important; border-color: #EF9F27 !important; }
+
+    /* Best Practices list */
+    .bpl {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      padding: 0;
+    }
+    
+    .bpl li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12.5px;
+      color: #1f2328;
+      line-height: 1.5;
+    }
+    
+    .bpc {
+      background: #E1F5EE;
+      color: #085041;
+      border: 0.5px solid #5DCAA5;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-weight: bold;
+    }
+    
+    /* Accordion Q&A list */
+    .ql {
+      display: grid;
+      gap: 10px;
+    }
+    
+    .qi {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    
+    .qq {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #b91c1c !important;
+      margin-bottom: 4px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    
+    .qa {
+      font-size: 12px;
+      color: #1e3a8a !important;
+      line-height: 1.65;
+      display: none;
+      border-top: 1px solid #f6f8fa;
+      padding-top: 6px;
+      margin-top: 4px;
+    }
+    
+    .qi.open .qa {
+      display: block !important;
+    }
+
+    /* Mock Code Editor Container */
+    .cs {
+      background: #fff;
+      border: 1.5px solid #cbd5e1 !important;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    
+    .csh {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: #f6f8fa;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    
+    .csh span {
+      font-size: 12px;
+      font-weight: 700;
+      color: #24292f;
+      text-transform: uppercase;
+      font-family: var(--font-sans);
+    }
+    
+    .dr2 {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .md {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    
+    .mr { background: #ff5f57; }
+    .my { background: #febc2e; }
+    .mg { background: #28c840; }
+    
+    .ctbar {
+      display: flex;
+      background: #f0f2f5;
+      border-bottom: 1px solid #cbd5e1;
+      overflow-x: auto;
+      padding: 4px 8px;
+      gap: 4px;
+    }
+    
+    .ctbar::-webkit-scrollbar { display: none; }
+    
+    .cp {
+      display: none;
+      padding: 14px 18px;
+      background: #fff;
+    }
+    
+    .cp.active {
+      display: block !important;
+    }
+    
+    .cp-sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      background: #fafbfc;
+      border: 1px solid #cbd5e1;
+      border-bottom: none;
+      border-radius: 6px 6px 0 0;
+    }
+    
+    .file-name {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #57606a;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .file-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    
+    .file-dot-typescript { background: #3178c6; }
+    
+    .cpbtn {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 5px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #57606a;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .cpbtn:hover {
+      background: #f6f8fa;
+      color: #24292f;
+    }
+    
+    .cs pre {
+      border: none !important;
+      margin: 0 !important;
+      padding: 12px !important;
+      border-radius: 0 0 8px 8px !important;
+      overflow-x: auto !important;
+    }
+
+    .hl-kw {
+      font-family: var(--font-mono) !important;
+      font-weight: 700 !important;
+      color: #c2185b !important;
+      background: #fce4ec !important;
+      border: 0.5px solid #f8bbd0 !important;
+      border-radius: 3px !important;
+      display: inline-block !important;
+      font-size: 0.9em !important;
+      padding: 1px 4px !important;
+    }
+
+    .ols { display: grid; gap: 8px; }
+    .oli {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #16a34a !important;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #1f2328;
+      line-height: 1.55;
+    }
+    .oli .olab {
+      font-weight: 700;
+      font-size: 11px;
+      color: #15803d;
+      display: block;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 12px;
+      text-align: left;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    th {
+      background: #f6f8fa;
+      font-weight: 700;
+      color: #57606a;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .fbox {
+      background: #f6f8fa;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .fr {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 5px;
+      flex-wrap: wrap;
+    }
+    .fb {
+      background: #f6f8fa;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 10.5px;
+      white-space: nowrap;
+    }
+    .fbi { color: #0969da; background: #ddf4ff; border-color: #54aeff; }
+    .fbg { color: #1a7f37; background: #dafbe1; border-color: #56d364; }
+    .fbp { color: #8250df; background: #fbefff; border-color: #d2a8ff; }
+    .fbo { color: #9a6700; background: #fff8c5; border-color: #e3b341; }
+    .fbr { color: #cf222e; background: #ffebe9; border-color: #ff8182; }
+    .fbn { color: #57606a; }
+    .arr { color: #57606a; font-size: 12px; }
+    .cb {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .cb h4 {
+      background: #f6f8fa;
+      padding: 9px 13px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #0969da;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .cbb {
+      padding: 12px 13px;
+    }
+
+    /* High-Contrast Syntax Highlighting Token Overrides */
+    .token.comment { color: #334155 !important; font-style: italic !important; }
+    .token.keyword { color: #0969da !important; font-weight: bold !important; }
+    .token.string { color: #1a7f37 !important; }
+    .token.class-name, .token.class { color: #953800 !important; font-weight: bold !important; }
+    .token.function { color: #cf222e !important; }
+    .token.property { color: #cf222e !important; }
+    .token.attr-name { color: #0969da !important; }
+    .token.attr-value { color: #1a7f37 !important; }
+    .token.tag { color: #22863a !important; }
+
+    html body div.section { display: none !important; border: 2.5px solid var(--pc, #6C5CE7) !important; background: #faf5ff !important; border-radius: 0 0 8px 8px; margin-bottom: 25px; overflow: hidden; }
+    html body div.section.active { display: block !important; }
+    
+    @media (max-width: 640px) {
+      .glosgrid, .igrid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
 </head>
 <body class="line-numbers">
-<div class="hero">
-  <div class="jarvis-badge"><div class="dot"></div>JARVIS · QA LEARNING SYSTEM ONLINE</div>
-  <h1>Jarvis: Playwright TypeScript Learning Hub</h1>
-  <p>Progressive 10-session curriculum from Fundamentals → Intermediate SDET skills</p>
-  <div class="phase-strip">
-    <span class="phase-badge phase1">⬡ Phase 1: Fundamentals — S1 to S5</span>
-    <span class="phase-badge phase2">⬡ Phase 2: Intermediate — S6 to S10</span>
-  </div>
-</div>
+  <h2 class="sr-only" data-testid="h2-sr-only-1">Jarvis: Playwright TypeScript Learning Hub</h2>
 
-<div class="sessions-nav" id="snav">
-  <div class="stab active" data-s="s1">S1 <span class="ph p1">P1</span> Browser Context</div>
-  <div class="stab" data-s="s2">S2 <span class="ph p1">P1</span> Pages & Tabs</div>
-  <div class="stab" data-s="s3">S3 <span class="ph p1">P1</span> Frames</div>
-  <div class="stab" data-s="s4">S4 <span class="ph p1">P1</span> Alerts & Dialogs</div>
-  <div class="stab" data-s="s5">S5 <span class="ph p1">P1</span> Navigations</div>
-  <div class="stab" data-s="s6">S6 <span class="ph p2">P2</span> Locators</div>
-  <div class="stab" data-s="s7">S7 <span class="ph p2">P2</span> Actions</div>
-  <div class="stab" data-s="s8">S8 <span class="ph p2">P2</span> Assertions</div>
-  <div class="stab" data-s="s9">S9 <span class="ph p2">P2</span> Waiting</div>
-  <div class="stab" data-s="s10">S10 <span class="ph p2">P2</span> Full Suite</div>
-</div>
-
-<!-- ===================== S1 ===================== -->
-<div class="content active" id="s1">
-  <div class="section-tabs">
-    <div class="sectab active" data-p="overview">Overview</div>
-    <div class="sectab" data-p="glossary">Glossary</div>
-    <div class="sectab" data-p="oneliners">Interview 1-Liners</div>
-    <div class="sectab" data-p="concepts">Concepts</div>
-    <div class="sectab" data-p="bestpractices">Best Practices</div>
-    <div class="sectab" data-p="interview">Interview Prep</div>
-    <div class="sectab" data-p="code">Code Examples</div>
+  <div class="topbar" data-testid="div-topbar-1">
+    <div class="pill" data-testid="div-pill-2"><div class="dot-pulse" data-testid="div-dot-pulse-3"></div>JARVIS</div>
+    <span class="ttl">Playwright TypeScript Learning Hub</span>
   </div>
 
-  <div class="panel active" id="s1-overview">
-    <div class="def-box">
-      <div class="label">Session 1 · Core Definition</div>
-      <p>A <strong style="color:var(--blue)">BrowserContext</strong> in Playwright is an isolated browser session — like an incognito profile — that has its own cookies, cache, storage, and authentication state, completely separate from other contexts running in the same browser instance.</p>
-    </div>
-    <div class="overview-grid">
-      <div class="ov-card">
-        <h4>WHAT is it?</h4>
-        <p>A lightweight container inside a Browser object. Each context is fully isolated: separate cookies, localStorage, sessionStorage, network intercepts and auth tokens. Multiple contexts can run inside one browser process simultaneously.</p>
-      </div>
-      <div class="ov-card">
-        <h4>WHY use it?</h4>
-        <p>Avoid test pollution between test cases. Run multi-user scenarios simultaneously (e.g. admin + buyer). Test incognito behavior. Reuse saved authentication state across sessions to save time.</p>
-      </div>
-      <div class="ov-card">
-        <h4>WHEN to use it?</h4>
-        <p>Every test should have its own context. Use multiple contexts when testing multi-user flows, role-based access, or when you need parallel isolated sessions in one browser process.</p>
-      </div>
-      <div class="ov-card">
-        <h4>WHERE does it live?</h4>
-        <p>Context lives inside the <code style="color:var(--orange)">Browser</code> object. A Browser can have many Contexts. Each Context can have many Pages (tabs). Structure: <code style="color:var(--green)">Browser → Context → Page</code></p>
-      </div>
-      <div class="ov-card ov-full">
-        <h4>HOW to create one?</h4>
-        <p>Use <code style="color:var(--orange)">browser.newContext(options)</code> to create a standard context, or <code style="color:var(--orange)">browser.newContext({storageState})</code> to restore auth. For incognito-like behavior, each newContext is already isolated. Playwright Test auto-manages context per test when using fixtures. Always call <code style="color:var(--red)">await context.close()</code> in cleanup to prevent resource leaks.</p>
-      </div>
-    </div>
+  <!-- SESSION NAV -->
+  <div class="stabs" id="snav" data-testid="div-snav">
+    <button class="stab active" onclick="sw(0)" data-testid="button-stab-1">S1 <span class="bdg" style="background:#dafbe1;color:#1a7f37;border:1px solid #56d364">P1</span> Context</button>
+    <button class="stab" onclick="sw(1)" data-testid="button-stab-2">S2 <span class="bdg" style="background:#dafbe1;color:#1a7f37;border:1px solid #56d364">P1</span> Pages</button>
+    <button class="stab" onclick="sw(2)" data-testid="button-stab-3">S3 <span class="bdg" style="background:#dafbe1;color:#1a7f37;border:1px solid #56d364">P1</span> Frames</button>
+    <button class="stab" onclick="sw(3)" data-testid="button-stab-4">S4 <span class="bdg" style="background:#dafbe1;color:#1a7f37;border:1px solid #56d364">P1</span> Alerts</button>
+    <button class="stab" onclick="sw(4)" data-testid="button-stab-5">S5 <span class="bdg" style="background:#dafbe1;color:#1a7f37;border:1px solid #56d364">P1</span> Navigate</button>
+    <button class="stab" onclick="sw(5)" data-testid="button-stab-6">S6 <span class="bdg" style="background:#fbefff;color:#8250df;border:1px solid #d2a8ff">P2</span> Locators</button>
+    <button class="stab" onclick="sw(6)" data-testid="button-stab-7">S7 <span class="bdg" style="background:#fbefff;color:#8250df;border:1px solid #d2a8ff">P2</span> Actions</button>
+    <button class="stab" onclick="sw(7)" data-testid="button-stab-8">S8 <span class="bdg" style="background:#fbefff;color:#8250df;border:1px solid #d2a8ff">P2</span> Assertions</button>
+    <button class="stab" onclick="sw(8)" data-testid="button-stab-9">S9 <span class="bdg" style="background:#fbefff;color:#8250df;border:1px solid #d2a8ff">P2</span> Waiting</button>
+    <button class="stab" onclick="sw(9)" data-testid="button-stab-10">S10 <span class="bdg" style="background:#cae8ff;color:#0a3069;border:1px solid #79c0ff">P2</span> Full Suite</button>
+  </div>
+  
+  <div class="prow" data-testid="div-prow-5">
+    <span id="pd"></span>
+    <span class="plbl" id="pl">Session 1 of 10</span>
   </div>
 
-  <div class="panel" id="s1-glossary">
-    <div class="tag-section">Keyword Glossary — Session 1</div>
-    <div class="glossary-item"><span class="gkw">Browser</span><span class="gdesc">The top-level browser instance (Chromium/Firefox/WebKit). Created via chromium.launch(). One Browser → many Contexts.</span></div>
-    <div class="glossary-item"><span class="gkw">BrowserContext</span><span class="gdesc">An isolated session container inside a Browser. Has own cookies, storage, auth state. Equivalent of a private/incognito profile.</span></div>
-    <div class="glossary-item"><span class="gkw">newContext()</span><span class="gdesc">Method on Browser that creates a fresh BrowserContext. Accepts BrowserContextOptions like viewport, locale, permissions, storageState.</span></div>
-    <div class="glossary-item"><span class="gkw">storageState</span><span class="gdesc">A JSON snapshot of cookies + localStorage. Can be saved to a file and restored in a newContext() call to skip login in every test.</span></div>
-    <div class="glossary-item"><span class="gkw">context.close()</span><span class="gdesc">Tears down the context, closes all its pages, clears cookies/storage. Must be awaited in teardown to prevent memory leaks.</span></div>
-    <div class="glossary-item"><span class="gkw">Page</span><span class="gdesc">A single tab/window inside a BrowserContext. Created via context.newPage(). Multiple pages can exist in one context sharing state.</span></div>
-    <div class="glossary-item"><span class="gkw">launch()</span><span class="gdesc">Opens the actual browser binary. Options: headless (true/false), slowMo, args (extra browser flags).</span></div>
-    <div class="glossary-item"><span class="gkw">chromium</span><span class="gdesc">One of Playwright's three browser engines. Others are firefox and webkit. Imported from the playwright package.</span></div>
-    <div class="glossary-item"><span class="gkw">headless</span><span class="gdesc">Browser runs without visible UI. Default true in CI. Set false for local debugging to watch the browser.</span></div>
-    <div class="glossary-item"><span class="gkw">viewport</span><span class="gdesc">Sets browser window size for the context. e.g. {width:1280, height:720}. Affects responsive layout tests.</span></div>
-    <div class="glossary-item"><span class="gkw">permissions</span><span class="gdesc">Array of browser permissions to grant: 'geolocation', 'notifications', 'camera', 'microphone'. Bypasses native browser prompts.</span></div>
-    <div class="glossary-item"><span class="gkw">context.addCookies()</span><span class="gdesc">Programmatically injects cookies into the context. Useful for pre-seeding session cookies without a real login flow.</span></div>
-  </div>
+  <div id="allS" data-testid="div-allS">
 
-  <div class="panel" id="s1-oneliners">
-    <div class="tag-section">Interview One-Liners — Session 1</div>
-    <div class="oneliners">
-      <div class="oneliner"><span>Isolation</span>"A BrowserContext in Playwright is like a private browser profile — it has its own cookies, storage, and auth state completely isolated from every other context running in the same browser process."</div>
-      <div class="oneliner"><span>Hierarchy</span>"Playwright's object hierarchy is Browser → BrowserContext → Page — a single Browser can hold multiple contexts, and each context can hold multiple page tabs, all running simultaneously."</div>
-      <div class="oneliner"><span>Auth Reuse</span>"I use storageState to save a logged-in session to a JSON file during a global setup step, then every test restores that state via newContext({storageState}), avoiding repeated login flows that slow down the suite."</div>
-      <div class="oneliner"><span>Incognito</span>"Every Playwright BrowserContext is essentially incognito by nature — there's no concept of a shared cookie jar across contexts unless you explicitly share storageState between them."</div>
-      <div class="oneliner"><span>Multi-user</span>"For multi-user role testing, I spin up two BrowserContexts in parallel — one for the admin user, one for the customer — and run both in the same test to verify real-time interactions like order notifications."</div>
-      <div class="oneliner"><span>Cleanup</span>"Not calling context.close() is a resource leak — it keeps browser processes alive in memory. In Playwright Test, the context fixture handles teardown automatically, but in raw API usage I always close it in a finally block."</div>
-      <div class="oneliner"><span>Performance</span>"Launching a new Browser per test is expensive. The best practice is to launch one Browser, create a new BrowserContext per test for isolation, then close only the context — keeping the browser process warm for reuse."</div>
-    </div>
-  </div>
+    <!-- ===================== S1 ===================== -->
+    <div class="section sc active" id="s1" style="--pc:#6C5CE7" data-testid="div-s1">
+      <div class="obanner" data-testid="div-obanner-8">
+        <h2 data-testid="h2-2">Session 1 · BrowserContext & Isolation</h2>
+        <p data-testid="p-1">A <span class="hl-kw">BrowserContext</span> in Playwright is an isolated browser session — like an incognito profile — that has its own cookies, cache, storage, and authentication state, completely separate from other contexts running in the same browser instance.</p>
+      </div>
 
-  <div class="panel" id="s1-concepts">
-    <div class="tag-section">Core Concepts — Session 1</div>
-    <div class="concept-block">
-      <h4>⬡ Browser Object Hierarchy</h4>
-      <div class="concept-body">
-        <p>Playwright uses a strict three-level hierarchy. Understanding this is fundamental to everything else.</p>
-        <div class="flow-diagram">
-          <div class="flow-row"><div class="flow-box orange">chromium.launch()</div><span class="flow-arr">→</span><div class="flow-box">Browser</div><span class="flow-arr">1 process</span></div>
-          <div class="flow-row" style="margin-left:30px"><div class="flow-box purple">browser.newContext()</div><span class="flow-arr">→</span><div class="flow-box purple">Context A</div><span class="flow-arr">isolated session</span></div>
-          <div class="flow-row" style="margin-left:60px"><div class="flow-box green">context.newPage()</div><span class="flow-arr">→</span><div class="flow-box green">Page (Tab)</div></div>
-          <div class="flow-row" style="margin-left:30px"><div class="flow-box purple">browser.newContext()</div><span class="flow-arr">→</span><div class="flow-box purple">Context B</div><span class="flow-arr">separate session</span></div>
-          <div class="flow-row" style="margin-left:60px"><div class="flow-box green">context.newPage()</div><span class="flow-arr">→</span><div class="flow-box green">Page (Tab)</div></div>
+      <div class="sec" data-testid="div-sec-9">
+        <h3 data-testid="h3-1">What / Why / When / Where / How</h3>
+        <div class="abox" data-testid="div-abox-10">
+          <div class="dr" data-testid="div-dr-11">
+            <span style="color:#3C3489;font-weight:700;width:55px;flex-shrink:0">What</span>
+            <span>A lightweight container inside a <span class="hl-kw">Browser</span> object. Each context is fully isolated: separate cookies, localStorage, sessionStorage, network intercepts and auth tokens. Multiple contexts can run inside one browser process simultaneously.</span>
+          </div>
+          <div class="dr" data-testid="div-dr-12">
+            <span style="color:#085041;font-weight:700;width:55px;flex-shrink:0">Why</span>
+            <span>Avoid test pollution between test cases. Run multi-user scenarios simultaneously (e.g., admin + buyer). Test incognito behavior. Reuse saved authentication state across sessions to save time.</span>
+          </div>
+          <div class="dr" data-testid="div-dr-13">
+            <span style="color:#712B13;font-weight:700;width:55px;flex-shrink:0">When</span>
+            <span>Every test should have its own context. Use multiple contexts when testing multi-user flows, role-based access, or when you need parallel isolated sessions in one browser process.</span>
+          </div>
+          <div class="dr" data-testid="div-dr-14">
+            <span style="color:#633806;font-weight:700;width:55px;flex-shrink:0">Where</span>
+            <span>Context lives inside the <span class="hl-kw">Browser</span> object. A Browser can have many Contexts. Each Context can have many Pages (tabs). Structure: <strong class="hl-kw">Browser → Context → Page</strong></span>
+          </div>
+          <div class="dr" style="border:none" data-testid="div-dr-15">
+            <span style="color:#0C447C;font-weight:700;width:55px;flex-shrink:0">How</span>
+            <span>Use <span class="hl-kw">browser.newContext(options)</span> to create a standard context, or <span class="hl-kw">browser.newContext({storageState})</span> to restore auth. For incognito-like behavior, each newContext is already isolated. Playwright Test auto-manages context per test when using fixtures. Always call <span class="hl-kw">await context.close()</span> in cleanup to prevent resource leaks.</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="concept-block">
-      <h4>⬡ Context Isolation Model</h4>
-      <div class="concept-body">
-        <p>Each BrowserContext maintains its own: Cookies, LocalStorage, SessionStorage, IndexedDB, Service Workers, HTTP Auth, Network Intercepts, and Geolocation. Nothing leaks between contexts.</p>
-        <p>This is why Playwright tests are independent by default — each test gets a fresh context, meaning no leftover login sessions, no stale cookies, no shared state pollution from previous tests.</p>
-        <div class="flow-diagram">
-          <div class="flow-row"><div class="flow-box purple">Context A (Admin)</div><span class="flow-arr">owns →</span><div class="flow-box">admin cookies + token</div></div>
-          <div class="flow-row"><div class="flow-box orange">Context B (Guest)</div><span class="flow-arr">owns →</span><div class="flow-box">empty cookies</div></div>
-          <div class="flow-row"><div class="flow-box red">❌ No Leakage</div><span class="flow-arr">guaranteed isolation</span></div>
+
+      <div class="sec" data-testid="div-sec-16">
+        <h3 data-testid="h3-2">Keyword Glossary</h3>
+        <div class="glosgrid" data-testid="div-glosgrid-17">
+          <div class="gitem" data-testid="div-gitem-18"><div class="gkw" data-testid="div-gkw-19">Browser</div><div class="gdef" data-testid="div-gdef-20">The top-level browser instance (Chromium/Firefox/WebKit). Created via <span class="hl-kw">chromium.launch()</span>. One Browser → many Contexts.</div></div>
+          <div class="gitem" data-testid="div-gitem-21"><div class="gkw" data-testid="div-gkw-22">BrowserContext</div><div class="gdef" data-testid="div-gdef-23">An isolated session container inside a Browser. Has own cookies, storage, auth state. Equivalent of a private/incognito profile.</div></div>
+          <div class="gitem" data-testid="div-gitem-24"><div class="gkw" data-testid="div-gkw-25">newContext()</div><div class="gdef" data-testid="div-gdef-26">Method on Browser that creates a fresh <span class="hl-kw">BrowserContext</span>. Accepts BrowserContextOptions like viewport, locale, permissions, storageState.</div></div>
+          <div class="gitem" data-testid="div-gitem-27"><div class="gkw" data-testid="div-gkw-28">storageState</div><div class="gdef" data-testid="div-gdef-29">A JSON snapshot of cookies + localStorage. Can be saved to a file and restored in a <span class="hl-kw">newContext()</span> call to skip login in every test.</div></div>
+          <div class="gitem" data-testid="div-gitem-30"><div class="gkw" data-testid="div-gkw-31">context.close()</div><div class="gdef" data-testid="div-gdef-32">Tears down the context, closes all its pages, clears cookies/storage. Must be awaited in teardown to prevent memory leaks.</div></div>
+          <div class="gitem" data-testid="div-gitem-33"><div class="gkw" data-testid="div-gkw-34">Page</div><div class="gdef" data-testid="div-gdef-35">A single tab/window inside a <span class="hl-kw">BrowserContext</span>. Created via <span class="hl-kw">context.newPage()</span>. Multiple pages can exist in one context sharing state.</div></div>
+          <div class="gitem" data-testid="div-gitem-36"><div class="gkw" data-testid="div-gkw-37">launch()</div><div class="gdef" data-testid="div-gdef-38">Opens the actual browser binary. Options: headless (true/false), slowMo, args (extra browser flags).</div></div>
+          <div class="gitem" data-testid="div-gitem-39"><div class="gkw" data-testid="div-gkw-40">chromium</div><div class="gdef" data-testid="div-gdef-41">One of Playwright's three browser engines. Others are firefox and webkit. Imported from the playwright package.</div></div>
+          <div class="gitem" data-testid="div-gitem-42"><div class="gkw" data-testid="div-gkw-43">headless</div><div class="gdef" data-testid="div-gdef-44">Browser runs without visible UI. Default true in CI. Set false for local debugging to watch the browser.</div></div>
+          <div class="gitem" data-testid="div-gitem-45"><div class="gkw" data-testid="div-gkw-46">viewport</div><div class="gdef" data-testid="div-gdef-47">Sets browser window size for the context. e.g. {width:1280, height:720}. Affects responsive layout tests.</div></div>
+          <div class="gitem" data-testid="div-gitem-48"><div class="gkw" data-testid="div-gkw-49">permissions</div><div class="gdef" data-testid="div-gdef-50">Array of browser permissions to grant: 'geolocation', 'notifications', 'camera', 'microphone'. Bypasses native browser prompts.</div></div>
+          <div class="gitem" data-testid="div-gitem-51"><div class="gkw" data-testid="div-gkw-52">context.addCookies()</div><div class="gdef" data-testid="div-gdef-53">Programmatically injects cookies into the context. Useful for pre-seeding session cookies without a real login flow.</div></div>
         </div>
       </div>
-    </div>
-    <div class="concept-block">
-      <h4>⬡ storageState — Auth Reuse Pattern</h4>
-      <div class="concept-body">
-        <p>The storageState feature is one of the most important optimizations in Playwright. Here's the flow:</p>
-        <div class="flow-diagram">
-          <div class="flow-row"><span class="flow-box green">global-setup.ts</span><span class="flow-arr">→</span><span class="flow-box">login once</span></div>
-          <div class="flow-row" style="margin-left:20px"><span class="flow-arr">→</span><span class="flow-box">context.storageState({path:'auth.json'})</span></div>
-          <div class="flow-row" style="margin-left:20px"><span class="flow-arr">→</span><span class="flow-box green">auth.json saved (cookies + localStorage)</span></div>
-          <div class="flow-row"><span class="flow-box blue">Each Test</span><span class="flow-arr">→</span><span class="flow-box">newContext({storageState:'auth.json'})</span></div>
-          <div class="flow-row" style="margin-left:20px"><span class="flow-arr">→</span><span class="flow-box green">Already logged in! ✓</span></div>
+
+      <div class="sec" data-testid="div-sec-54">
+        <h3 data-testid="h3-3">Interview One-Liners</h3>
+        <div class="ols" data-testid="div-ols-55">
+          <div class="oli" data-testid="div-oli-56"><span class="olab">Isolation</span>"A <span class="hl-kw">BrowserContext</span> in Playwright is like a private browser profile — it has its own cookies, storage, and auth state completely isolated from every other context running in the same browser process."</div>
+          <div class="oli" data-testid="div-oli-57"><span class="olab">Hierarchy</span>"Playwright's object hierarchy is <span class="hl-kw">Browser → BrowserContext → Page</span> — a single Browser can hold multiple contexts, and each context can hold multiple page tabs, all running simultaneously."</div>
+          <div class="oli" data-testid="div-oli-58"><span class="olab">Auth Reuse</span>"I use <span class="hl-kw">storageState</span> to save a logged-in session to a JSON file during a global setup step, then every test restores that state via <span class="hl-kw">newContext({storageState})</span>, avoiding repeated login flows that slow down the suite."</div>
+          <div class="oli" data-testid="div-oli-59"><span class="olab">Incognito</span>"Every Playwright <span class="hl-kw">BrowserContext</span> is essentially incognito by nature — there's no concept of a shared cookie jar across contexts unless you explicitly share <span class="hl-kw">storageState</span> between them."</div>
+          <div class="oli" data-testid="div-oli-60"><span class="olab">Multi-user</span>"For multi-user role testing, I spin up two <span class="hl-kw">BrowserContexts</span> in parallel — one for the admin user, one for the customer — and run both in the same test to verify real-time interactions like order notifications."</div>
+          <div class="oli" data-testid="div-oli-61"><span class="olab">Cleanup</span>"Not calling <span class="hl-kw">context.close()</span> is a resource leak — it keeps browser processes alive in memory. In Playwright Test, the context fixture handles teardown automatically, but in raw API usage I always close it in a finally block."</div>
+          <div class="oli" data-testid="div-oli-62"><span class="olab">Performance</span>"Launching a new Browser per test is expensive. The best practice is to launch one Browser, create a new <span class="hl-kw">BrowserContext</span> per test for isolation, then close only the context — keeping the browser process warm for reuse."</div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="panel" id="s1-bestpractices">
-    <div class="tag-section">Best Practices Checklist — Session 1</div>
-    <ul class="bp-list">
-      <li class="bp-item"><div class="bp-icon">✓</div><div>Always create a <strong style="color:var(--blue)">new BrowserContext per test</strong> — never share contexts between tests. This is the foundation of test isolation in Playwright.</div></li>
-      <li class="bp-item"><div class="bp-icon">✓</div><div>Use <strong style="color:var(--blue)">storageState</strong> for authentication — log in once in globalSetup, save state to JSON, restore in each test. Eliminates login overhead and test flakiness from login UI changes.</div></li>
-      <li class="bp-item"><div class="bp-icon">✓</div><div>Always <strong style="color:var(--blue)">await context.close()</strong> in a finally block or use Playwright Test fixtures. Unclosed contexts are silent memory leaks in long CI runs.</div></li>
-      <li class="bp-item"><div class="bp-icon">✓</div><div>Set <strong style="color:var(--blue)">viewport explicitly</strong> in context options for visual consistency. Never rely on browser defaults — they differ across environments and break responsive tests.</div></li>
-      <li class="bp-item"><div class="bp-icon">✓</div><div>Use <strong style="color:var(--blue)">context.grantPermissions()</strong> instead of clicking native browser permission dialogs — this is deterministic and works in all headless environments.</div></li>
-      <li class="bp-item"><div class="bp-icon">✓</div><div>Prefer <strong style="color:var(--blue)">browser.newContext()</strong> over launching a new browser per test. Launching a browser is ~1s overhead; creating a context is ~5ms.</div></li>
-      <li class="bp-item"><div class="bp-icon">✓</div><div>For <strong style="color:var(--blue)">multi-role tests</strong>, use descriptive variable names: adminContext, buyerContext — not context1, context2. Makes test logic readable.</div></li>
-      <li class="bp-item"><div class="bp-icon">✓</div><div>Set <strong style="color:var(--blue)">locale, timezoneId, geolocation</strong> in context options for internationalization tests — never mock at the code level when the browser itself can be configured.</div></li>
-    </ul>
-  </div>
+      <div class="sec" data-testid="div-sec-63">
+        <h3 data-testid="h3-4">Flows &amp; Core Concepts</h3>
+        
+        <div class="cb" data-testid="div-cb-64">
+          <h4 data-testid="h4-1">Browser Object Hierarchy</h4>
+          <div class="cbb" data-testid="div-cbb-65">
+            <p style="margin-bottom:10px" data-testid="p-2">Playwright uses a strict three-level hierarchy. A single browser binary process can spin up multiple contexts, and each context can open multiple pages (tabs). Hierarchy: <strong class="hl-kw">Browser → BrowserContext → Page</strong>.</p>
+            <div class="flowrow" data-testid="div-flowrow-66">
+              <div class="fstep n1" data-testid="div-fstep-67"><div class="fn" data-testid="div-fn-68">1. Launch</div><div class="fd" data-testid="div-fd-69">chromium.launch()<br>1 Browser Binary</div></div>
+              <div class="fstep n2" data-testid="div-fstep-70"><div class="fn" data-testid="div-fn-71">2. Context A</div><div class="fd" data-testid="div-fd-72">browser.newContext()<br>Isolated Profile A</div></div>
+              <div class="fstep n3" data-testid="div-fstep-73"><div class="fn" data-testid="div-fn-74">3. Page A</div><div class="fd" data-testid="div-fd-75">context.newPage()<br>Tab inside Profile A</div></div>
+              <div class="fstep n4" data-testid="div-fstep-76"><div class="fn" data-testid="div-fn-77">4. Context B</div><div class="fd" data-testid="div-fd-78">browser.newContext()<br>Isolated Profile B</div></div>
+              <div class="fstep n5" data-testid="div-fstep-79"><div class="fn" data-testid="div-fn-80">5. Page B</div><div class="fd" data-testid="div-fd-81">context.newPage()<br>Tab inside Profile B</div></div>
+            </div>
+          </div>
+        </div>
 
-  <div class="panel" id="s1-interview">
-    <div class="tag-section">Interview Prep — 5 SDET Q&amp;A</div>
-    <div class="qa-block" id="qa1-1">
-      <div class="qa-q" onclick="toggleQA('qa1-1')">Q1: What is the difference between a Browser, BrowserContext, and Page in Playwright? <span class="qa-toggle">▶</span></div>
-      <div class="qa-a">Browser is the actual browser process (Chromium/Firefox/WebKit). BrowserContext is an isolated session within that browser — it has its own cookies, storage, and auth state. Page is a single tab or window inside a context. The hierarchy is Browser → Context → Page. One browser can run many contexts; each context can have many pages. This design lets you test multi-user scenarios with one browser process instead of launching multiple browsers, saving significant time and resources.</div>
-    </div>
-    <div class="qa-block" id="qa1-2">
-      <div class="qa-q" onclick="toggleQA('qa1-2')">Q2: How do you avoid logging in on every test in Playwright? <span class="qa-toggle">▶</span></div>
-      <div class="qa-a">I use storageState. In globalSetup.ts, I launch a browser, log in once through the full UI flow, then call await context.storageState({path: 'playwright/.auth/user.json'}). This saves all cookies and localStorage to a file. Each test then creates a new context with: browser.newContext({ storageState: 'playwright/.auth/user.json' }) — restoring the session without any login steps. The test starts already authenticated, making the suite significantly faster and decoupled from login UI changes.</div>
-    </div>
-    <div class="qa-block" id="qa1-3">
-      <div class="qa-q" onclick="toggleQA('qa1-3')">Q3: How would you test a multi-user real-time feature — e.g., one user sends a message, another receives it? <span class="qa-toggle">▶</span></div>
-      <div class="qa-a">I create two separate BrowserContexts in the same test. adminContext gets created with admin storageState, buyerContext with buyer storageState. Each context gets its own page. I navigate both pages to the chat feature. Admin page sends a message via adminPage.fill() and click. Then on buyerPage, I use await expect(buyerPage.locator('.message')).toContainText('Hello') to verify the buyer receives it in real-time. Closing both contexts in a finally block at the end ensures cleanup. This avoids launching two separate browsers and runs in one test process.</div>
-    </div>
-    <div class="qa-block" id="qa1-4">
-      <div class="qa-q" onclick="toggleQA('qa1-4')">Q4: What happens if you don't close a BrowserContext? What are the implications? <span class="qa-toggle">▶</span></div>
-      <div class="qa-a">Unclosed contexts remain in memory for the lifetime of the browser process. In large test suites, this causes gradual memory growth, eventually leading to OOM (out of memory) crashes in CI environments. Additionally, open contexts may hold open network connections and service workers. In Playwright Test, the built-in context fixture handles cleanup automatically via its teardown lifecycle. In raw API usage, I always use try/finally: const context = await browser.newContext(); try { ... } finally { await context.close(); } — the finally block guarantees cleanup even when the test throws an error.</div>
-    </div>
-    <div class="qa-block" id="qa1-5">
-      <div class="qa-q" onclick="toggleQA('qa1-5')">Q5: How do you test browser geolocation permissions in Playwright? <span class="qa-toggle">▶</span></div>
-      <div class="qa-a">Playwright lets you set geolocation at the context level, which is far more reliable than trying to interact with native browser permission dialogs. I create a context with: const context = await browser.newContext({ geolocation: { latitude: 28.6139, longitude: 77.2090 }, permissions: ['geolocation'] }). This immediately grants the geolocation permission and provides a mock location. The page's navigator.geolocation.getCurrentPosition() call returns this fake location. I can also change geolocation mid-test using await context.setGeolocation({ latitude: 19.0760, longitude: 72.8777 }) to simulate the user moving.</div>
-    </div>
-  </div>
+        <div class="cb" data-testid="div-cb-82">
+          <h4 data-testid="h4-2">Context Isolation Model</h4>
+          <div class="cbb" data-testid="div-cbb-83">
+            <p style="margin-bottom:10px" data-testid="p-3">Each <span class="hl-kw">BrowserContext</span> maintains its own cookies, localStorage, sessionStorage, IndexedDB, and cache. There is zero leakage between contexts, guaranteeing that test cases run without state pollution.</p>
+            <div class="flowrow" data-testid="div-flowrow-84">
+              <div class="fstep n1" data-testid="div-fstep-85"><div class="fn" data-testid="div-fn-86">Context A (Admin)</div><div class="fd" data-testid="div-fd-87">Cookies: admin_token<br>Storage: role=admin</div></div>
+              <div class="fstep n3" data-testid="div-fstep-88"><div class="fn" data-testid="div-fn-89">⛔ NO LEAKAGE ⛔</div><div class="fd" data-testid="div-fd-90">Guaranteed Isolation<br>Same-Origin Policy</div></div>
+              <div class="fstep n5" data-testid="div-fstep-91"><div class="fn" data-testid="div-fn-92">Context B (Guest)</div><div class="fd" data-testid="div-fd-93">Cookies: empty<br>Storage: role=guest</div></div>
+            </div>
+          </div>
+        </div>
 
-  <div class="panel" id="s1-code">
-    <div class="code-tabs">
-      <div class="ctab active" data-c="c1-1"><span class="ficon">.ts</span> basic-context.ts</div>
-      <div class="ctab" data-c="c1-2"><span class="ficon">.ts</span> incognito-context.ts</div>
-      <div class="ctab" data-c="c1-3"><span class="ficon">.ts</span> storage-state.ts</div>
-      <div class="ctab" data-c="c1-4"><span class="ficon">.ts</span> multi-context.ts</div>
-      <div class="ctab" data-c="c1-5"><span class="ficon">.ts</span> permissions.ts</div>
-      <div class="ctab" data-c="c1-6"><span class="ficon">.ts</span> context-options.ts</div>
-    </div>
-    <div class="code-wrap">
-      <div class="code-panel active" id="c1-1">
-        <div class="code-header"><span class="code-filename">basic-context.ts</span><button class="copy-btn" onclick="copyCode('c1-1')">Copy</button></div>
-        <pre><code class="language-typescript">// ─────────────────────────────────────────────────────────────────
+        <div class="cb" data-testid="div-cb-94">
+          <h4 data-testid="h4-3">storageState — Auth Reuse Pattern</h4>
+          <div class="cbb" data-testid="div-cbb-95">
+            <p style="margin-bottom:10px" data-testid="p-4">By saving the cookies and local storage snapshot to a JSON file, Playwright allows subsequent contexts to restore the session immediately, bypassing expensive UI-based login steps.</p>
+            <div class="flowrow" data-testid="div-flowrow-96">
+              <div class="fstep n1" data-testid="div-fstep-97"><div class="fn" data-testid="div-fn-98">1. Setup Login</div><div class="fd" data-testid="div-fd-99">Navigate to login page &amp; authenticate</div></div>
+              <div class="fstep n2" data-testid="div-fstep-100"><div class="fn" data-testid="div-fn-101">2. Save Snapshot</div><div class="fd" data-testid="div-fd-102">context.storageState({path: 'auth.json'})</div></div>
+              <div class="fstep n4" data-testid="div-fstep-103"><div class="fn" data-testid="div-fn-104">3. Restore State</div><div class="fd" data-testid="div-fd-105">browser.newContext({storageState: 'auth.json'})</div></div>
+              <div class="fstep n5" data-testid="div-fstep-106"><div class="fn" data-testid="div-fn-107">4. Already Logged In</div><div class="fd" data-testid="div-fd-108">Tests run immediately on dashboard</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec" data-testid="div-sec-109">
+        <h3 data-testid="h3-5">Code Examples</h3>
+        <div class="cs" data-testid="div-cs-110">
+          <div class="csh" data-testid="div-csh-111">
+            <div class="dr2" data-testid="div-dr2-112"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div>
+            <span>CODE EXAMPLES — Session 1: Browser Contexts</span>
+          </div>
+          <div class="ctbar" data-testid="div-ctbar-113">
+            <button class="ct active" onclick="sc(0,0)" data-testid="button-ct-11"><span class="bdg" style="background:#3178c6;color:#fff">.ts</span> basic-context.ts</button>
+            <button class="ct" onclick="sc(0,1)" data-testid="button-ct-12"><span class="bdg" style="background:#3178c6;color:#fff">.ts</span> incognito-context.ts</button>
+            <button class="ct" onclick="sc(0,2)" data-testid="button-ct-13"><span class="bdg" style="background:#3178c6;color:#fff">.ts</span> storage-state.ts</button>
+            <button class="ct" onclick="sc(0,3)" data-testid="button-ct-14"><span class="bdg" style="background:#3178c6;color:#fff">.ts</span> multi-context.ts</button>
+            <button class="ct" onclick="sc(0,4)" data-testid="button-ct-15"><span class="bdg" style="background:#3178c6;color:#fff">.ts</span> permissions.ts</button>
+            <button class="ct" onclick="sc(0,5)" data-testid="button-ct-16"><span class="bdg" style="background:#3178c6;color:#fff">.ts</span> context-options.ts</button>
+          </div>
+
+          <div class="cp active" id="c1-1" data-testid="div-c1-1">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-115">
+              <span class="file-name"><span class="file-dot file-dot-typescript"></span>basic-context.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-17">Copy</button>
+            </div>
+            <pre class="line-numbers" data-testid="pre-line-numbers-1"><code class="language-typescript" data-testid="code-language-typescript-1">// ─────────────────────────────────────────────────────────────────
 // basic-context.ts
 // PURPOSE: Shows how to create and use a BrowserContext manually
 // USE CASE: Raw API usage (without Playwright Test fixture)
@@ -413,10 +800,14 @@ import { chromium, Browser, BrowserContext, Page } from '@playwright/test';
   await browser.close();
 
 })();</code></pre>
-      </div>
-      <div class="code-panel" id="c1-2">
-        <div class="code-header"><span class="code-filename">incognito-context.ts</span><button class="copy-btn" onclick="copyCode('c1-2')">Copy</button></div>
-        <pre><code class="language-typescript">// ─────────────────────────────────────────────────────────────────
+          </div>
+
+          <div class="cp" id="c1-2" data-testid="div-c1-2">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-117">
+              <span class="file-name"><span class="file-dot file-dot-typescript"></span>incognito-context.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-18">Copy</button>
+            </div>
+            <pre class="line-numbers" data-testid="pre-line-numbers-2"><code class="language-typescript" data-testid="code-language-typescript-2">// ─────────────────────────────────────────────────────────────────
 // incognito-context.ts
 // PURPOSE: Demonstrates that every newContext() IS incognito by default
 // KEY INSIGHT: Playwright contexts are always isolated — no shared cookies
@@ -454,10 +845,14 @@ test.describe('Incognito / Private Context Demo', () => {
     await contextB.close();
   });
 });</code></pre>
-      </div>
-      <div class="code-panel" id="c1-3">
-        <div class="code-header"><span class="code-filename">storage-state.ts</span><button class="copy-btn" onclick="copyCode('c1-3')">Copy</button></div>
-        <pre><code class="language-typescript">// ─────────────────────────────────────────────────────────────────
+          </div>
+
+          <div class="cp" id="c1-3" data-testid="div-c1-3">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-119">
+              <span class="file-name"><span class="file-dot file-dot-typescript"></span>storage-state.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-19">Copy</button>
+            </div>
+            <pre class="line-numbers" data-testid="pre-line-numbers-3"><code class="language-typescript" data-testid="code-language-typescript-3">// ─────────────────────────────────────────────────────────────────
 // storage-state.ts
 // PURPOSE: Save and restore auth session using storageState
 // PATTERN: globalSetup saves → each test restores (no re-login needed)
@@ -487,21 +882,15 @@ export default async function globalSetup(config: FullConfig) {
   console.log('✅ Auth state saved to playwright/.auth/admin.json');
 
   await browser.close();
-}
+}</code></pre>
+          </div>
 
-// ─── In each TEST FILE — restore session instantly ───────────────
-// In playwright.config.ts: use: { storageState: 'playwright/.auth/admin.json' }
-// OR create context manually in the test:
-//
-// const context = await browser.newContext({
-//   storageState: 'playwright/.auth/admin.json'
-// });
-// const page = await context.newPage();
-// await page.goto('/dashboard'); // ← Already logged in! No login form needed</code></pre>
-      </div>
-      <div class="code-panel" id="c1-4">
-        <div class="code-header"><span class="code-filename">multi-context.ts</span><button class="copy-btn" onclick="copyCode('c1-4')">Copy</button></div>
-        <pre><code class="language-typescript">// ─────────────────────────────────────────────────────────────────
+          <div class="cp" id="c1-4" data-testid="div-c1-4">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-121">
+              <span class="file-name"><span class="file-dot file-dot-typescript"></span>multi-context.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-20">Copy</button>
+            </div>
+            <pre class="line-numbers" data-testid="pre-line-numbers-4"><code class="language-typescript" data-testid="code-language-typescript-4">// ─────────────────────────────────────────────────────────────────
 // multi-context.ts
 // PURPOSE: Two users interact simultaneously in one test
 // USE CASE: Testing real-time features like chat, notifications, shared docs
@@ -541,10 +930,14 @@ test('admin sends message → buyer receives it in real-time', async ({ browser 
   await adminContext.close();
   await buyerContext.close();
 });</code></pre>
-      </div>
-      <div class="code-panel" id="c1-5">
-        <div class="code-header"><span class="code-filename">permissions.ts</span><button class="copy-btn" onclick="copyCode('c1-5')">Copy</button></div>
-        <pre><code class="language-typescript">// ─────────────────────────────────────────────────────────────────
+          </div>
+
+          <div class="cp" id="c1-5" data-testid="div-c1-5">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-123">
+              <span class="file-name"><span class="file-dot file-dot-typescript"></span>permissions.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-21">Copy</button>
+            </div>
+            <pre class="line-numbers" data-testid="pre-line-numbers-5"><code class="language-typescript" data-testid="code-language-typescript-5">// ─────────────────────────────────────────────────────────────────
 // permissions.ts
 // PURPOSE: Grant browser permissions at context level
 // AVOIDS: Clicking native browser permission popups (impossible in headless)
@@ -582,10 +975,14 @@ test('location-based feature works with mocked geolocation', async ({ browser })
 
   await context.close();
 });</code></pre>
-      </div>
-      <div class="code-panel" id="c1-6">
-        <div class="code-header"><span class="code-filename">context-options.ts</span><button class="copy-btn" onclick="copyCode('c1-6')">Copy</button></div>
-        <pre><code class="language-typescript">// ─────────────────────────────────────────────────────────────────
+          </div>
+
+          <div class="cp" id="c1-6" data-testid="div-c1-6">
+            <div class="cp-sub-header" data-testid="div-cp-sub-header-125">
+              <span class="file-name"><span class="file-dot file-dot-typescript"></span>context-options.ts</span>
+              <button class="cpbtn" onclick="copyPreText(this)" data-testid="button-cpbtn-22">Copy</button>
+            </div>
+            <pre class="line-numbers" data-testid="pre-line-numbers-6"><code class="language-typescript" data-testid="code-language-typescript-6">// ─────────────────────────────────────────────────────────────────
 // context-options.ts
 // PURPOSE: Full reference of ALL BrowserContextOptions
 // USE CASE: Context factory function used across your test framework
@@ -637,229 +1034,358 @@ async function createContext(overrides?: Partial&lt;BrowserContextOptions&gt;) {
   };
 
   return browser.newContext({ ...defaultOptions, ...overrides });
-}
+}</code></pre>
+          </div>
+        </div>
+      </div>
 
-// Usage examples:
-// const mobileCtx = await createContext({ isMobile: true, hasTouch: true, viewport: {width:390, height:844} });
-// const offlineCtx = await createContext({ offline: true });
-// const authCtx    = await createContext({ storageState: 'playwright/.auth/admin.json' });</code></pre>
+      <div class="sec" data-testid="div-sec-126">
+        <h3 data-testid="h3-6">Best Practices</h3>
+        <ul class="bpl">
+          <li data-testid="li-1"><span class="bpc">✓</span><div data-testid="div-127">Always create a <strong class="hl-kw">new BrowserContext per test</strong> — never share contexts between tests. This is the foundation of test isolation in Playwright.</div></li>
+          <li data-testid="li-2"><span class="bpc">✓</span><div data-testid="div-128">Use <strong class="hl-kw">storageState</strong> for authentication — log in once in globalSetup, save state to JSON, restore in each test. Eliminates login overhead and test flakiness from login UI changes.</div></li>
+          <li data-testid="li-3"><span class="bpc">✓</span><div data-testid="div-129">Always <strong class="hl-kw">await context.close()</strong> in a finally block or use Playwright Test fixtures. Unclosed contexts are silent memory leaks in long CI runs.</div></li>
+          <li data-testid="li-4"><span class="bpc">✓</span><div data-testid="div-130">Set <strong class="hl-kw">viewport explicitly</strong> in context options for visual consistency. Never rely on browser defaults — they differ across environments and break responsive tests.</div></li>
+          <li data-testid="li-5"><span class="bpc">✓</span><div data-testid="div-131">Use <strong class="hl-kw">context.grantPermissions()</strong> instead of clicking native browser permission dialogs — this is deterministic and works in all headless environments.</div></li>
+          <li data-testid="li-6"><span class="bpc">✓</span><div data-testid="div-132">Prefer <strong class="hl-kw">browser.newContext()</strong> over launching a new browser per test. Launching a browser is ~1s overhead; creating a context is ~5ms.</div></li>
+          <li data-testid="li-7"><span class="bpc">✓</span><div data-testid="div-133">For <strong class="hl-kw">multi-role tests</strong>, use descriptive variable names: <span class="hl-kw">adminContext</span>, <span class="hl-kw">buyerContext</span> — not <span class="hl-kw">context1</span>, <span class="hl-kw">context2</span>. Makes test logic readable.</div></li>
+          <li data-testid="li-8"><span class="bpc">✓</span><div data-testid="div-134">Set <strong class="hl-kw">locale, timezoneId, geolocation</strong> in context options for internationalization tests — never mock at the code level when the browser itself can be configured.</div></li>
+        </ul>
+      </div>
+
+      <div class="sec" style="border:none" data-testid="div-sec-135">
+        <h3 data-testid="h3-7">Interview Prep — Q&amp;A</h3>
+        <div class="ql" data-testid="div-ql-136">
+          <div class="qi" id="qa1-1" data-testid="div-qa1-1">
+            <div class="qq" onclick="toggleQA('qa1-1')" data-testid="div-qq-138">Q1: What is the difference between a Browser, BrowserContext, and Page in Playwright? <span class="chevron-icon">▼</span></div>
+            <div class="qa" data-testid="div-qa-139">Browser is the actual browser process (Chromium/Firefox/WebKit). BrowserContext is an isolated session within that browser — it has its own cookies, storage, and auth state. Page is a single tab or window inside a context. The hierarchy is Browser → Context → Page. One browser can run many contexts; each context can have many pages. This design lets you test multi-user scenarios with one browser process instead of launching multiple browsers, saving significant time and resources.</div>
+          </div>
+          <div class="qi" id="qa1-2" data-testid="div-qa1-2">
+            <div class="qq" onclick="toggleQA('qa1-2')" data-testid="div-qq-141">Q2: How do you avoid logging in on every test in Playwright? <span class="chevron-icon">▼</span></div>
+            <div class="qa" data-testid="div-qa-142">I use storageState. In globalSetup.ts, I launch a browser, log in once through the full UI flow, then call await context.storageState({path: 'playwright/.auth/user.json'}). This saves all cookies and localStorage to a file. Each test then creates a new context with: browser.newContext({ storageState: 'playwright/.auth/user.json' }) — restoring the session without any login steps. The test starts already authenticated, making the suite significantly faster and decoupled from login UI changes.</div>
+          </div>
+          <div class="qi" id="qa1-3" data-testid="div-qa1-3">
+            <div class="qq" onclick="toggleQA('qa1-3')" data-testid="div-qq-144">Q3: How would you test a multi-user real-time feature — e.g., one user sends a message, another receives it? <span class="chevron-icon">▼</span></div>
+            <div class="qa" data-testid="div-qa-145">I create two separate BrowserContexts in the same test. adminContext gets created with admin storageState, buyerContext with buyer storageState. Each context gets its own page. I navigate both pages to the chat feature. Admin page sends a message via adminPage.fill() and click. Then on buyerPage, I use await expect(buyerPage.locator('.message')).toContainText('Hello') to verify the buyer receives it in real-time. Closing both contexts in a finally block at the end ensures cleanup. This avoids launching two separate browsers and runs in one test process.</div>
+          </div>
+          <div class="qi" id="qa1-4" data-testid="div-qa1-4">
+            <div class="qq" onclick="toggleQA('qa1-4')" data-testid="div-qq-147">Q4: What happens if you don't close a BrowserContext? What are the implications? <span class="chevron-icon">▼</span></div>
+            <div class="qa" data-testid="div-qa-148">Unclosed contexts remain in memory for the lifetime of the browser process. In large test suites, this causes gradual memory growth, eventually leading to OOM (out of memory) crashes in CI environments. Additionally, open contexts may hold open network connections and service workers. In Playwright Test, the built-in context fixture handles cleanup automatically via its teardown lifecycle. In raw API usage, I always use try/finally: const context = await browser.newContext(); try { ... } finally { await context.close(); } — the finally block guarantees cleanup even when the test throws an error.</div>
+          </div>
+          <div class="qi" id="qa1-5" data-testid="div-qa1-5">
+            <div class="qq" onclick="toggleQA('qa1-5')" data-testid="div-qq-150">Q5: How do you test browser geolocation permissions in Playwright? <span class="chevron-icon">▼</span></div>
+            <div class="qa" data-testid="div-qa-151">Playwright lets you set geolocation at the context level, which is far more reliable than trying to interact with native browser permission dialogs. I create a context with: const context = await browser.newContext({ geolocation: { latitude: 28.6139, longitude: 77.2090 }, permissions: ['geolocation'] }). This immediately grants the geolocation permission and provides a mock location. The page's navigator.geolocation.getCurrentPosition() call returns this fake location. I can also change geolocation mid-test using await context.setGeolocation({ latitude: 19.0760, longitude: 72.8777 }) to simulate the user moving.</div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- ===================== PLACEHOLDER SESSIONS S2-S10 ===================== -->
-<div class="content" id="s2">
-  <div class="section-tabs">
-    <div class="sectab active" data-p="coming">Session Overview</div>
-  </div>
-  <div class="panel active" id="s2-coming">
-    <div class="def-box">
-      <div class="label">Session 2 · Pages, Tabs & Windows</div>
-      <p><strong style="color:var(--blue)">Click S2 in the nav above to load this session.</strong> This session covers: opening new tabs via context.newPage(), handling popup windows via page.waitForEvent('popup'), working with multiple pages, closing/switching between tabs, and page.bringToFront().</p>
+    <!-- ===================== S2 ===================== -->
+    <div class="section sc" id="s2" style="--pc:#6C5CE7" data-testid="div-s2">
+      <div class="obanner" data-testid="div-obanner-153">
+        <h2 data-testid="h2-3">Session 2 · Pages, Tabs &amp; Windows</h2>
+        <p data-testid="p-5">This session covers: opening new tabs via <code data-testid="code-7">context.newPage()</code>, handling popup windows via <code data-testid="code-8">page.waitForEvent('popup')</code>, working with multiple pages, closing/switching between tabs, and <code data-testid="code-9">page.bringToFront()</code>.</p>
+      </div>
+      <div class="sec" style="border:none" data-testid="div-sec-154">
+        <div class="fbox" data-testid="div-fbox-155">
+          💡 Type <strong>"Jarvis, teach me Session 2"</strong> in the chat to get the full interactive session for Pages &amp; Tabs with all 6 code examples, glossary, concepts, best practices, and interview prep!
+        </div>
+        <div class="fr" style="margin-top:12px" data-testid="div-fr-156">
+          <span class="fb fbi">context.newPage()</span>
+          <span class="fb fbi">page.waitForEvent('popup')</span>
+          <span class="fb fbi">page.bringToFront()</span>
+          <span class="fb fbg">Multi-tab workflows</span>
+          <span class="fb fbg">window.open() handling</span>
+          <span class="fb fbp">New window detection</span>
+        </div>
+      </div>
     </div>
-    <div class="info-box">💡 Type <strong>"Jarvis, teach me Session 2"</strong> in the chat to get the full interactive session for Pages &amp; Tabs with all 6 code examples, glossary, concepts, best practices, and interview prep!</div>
-    <div class="chip-row">
-      <span class="chip blue">context.newPage()</span>
-      <span class="chip blue">page.waitForEvent('popup')</span>
-      <span class="chip blue">page.bringToFront()</span>
-      <span class="chip green">Multi-tab workflows</span>
-      <span class="chip green">window.open() handling</span>
-      <span class="chip purple">New window detection</span>
+
+    <!-- ===================== S3 ===================== -->
+    <div class="section sc" id="s3" style="--pc:#6C5CE7" data-testid="div-s3">
+      <div class="obanner" data-testid="div-obanner-158">
+        <h2 data-testid="h2-4">Session 3 · All Frames Handling</h2>
+        <p data-testid="p-6">Covers iframe locating, frame.frameLocator(), nested frames, switching between frames, and interacting with cross-origin iframes.</p>
+      </div>
+      <div class="sec" style="border:none" data-testid="div-sec-159">
+        <div class="fbox" data-testid="div-fbox-160">
+          💡 Type <strong>"Jarvis, teach me Session 3"</strong> in the chat to get the full interactive session for Frames!
+        </div>
+        <div class="fr" style="margin-top:12px" data-testid="div-fr-161">
+          <span class="fb fbi">frameLocator()</span>
+          <span class="fb fbi">frame.locator()</span>
+          <span class="fb fbi">page.frames()</span>
+          <span class="fb fbg">Nested iframes</span>
+          <span class="fb fbp">Cross-origin frames</span>
+        </div>
+      </div>
     </div>
+
+    <!-- ===================== S4 ===================== -->
+    <div class="section sc" id="s4" style="--pc:#6C5CE7" data-testid="div-s4">
+      <div class="obanner" data-testid="div-obanner-163">
+        <h2 data-testid="h2-5">Session 4 · Alerts &amp; Dialogs</h2>
+        <p data-testid="p-7">Covers page.on('dialog'), alert/confirm/prompt/beforeunload handling, dialog.accept(), dialog.dismiss(), dialog.message(), dialog.defaultValue().</p>
+      </div>
+      <div class="sec" style="border:none" data-testid="div-sec-164">
+        <div class="fbox" data-testid="div-fbox-165">
+          💡 Type <strong>"Jarvis, teach me Session 4"</strong> in the chat to get the full interactive session for Alerts!
+        </div>
+        <div class="fr" style="margin-top:12px" data-testid="div-fr-166">
+          <span class="fb fbi">page.on('dialog')</span>
+          <span class="fb fbi">dialog.accept()</span>
+          <span class="fb fbi">dialog.dismiss()</span>
+          <span class="fb fbg">alert/confirm/prompt</span>
+          <span class="fb fbp">beforeunload</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== S5 ===================== -->
+    <div class="section sc" id="s5" style="--pc:#6C5CE7" data-testid="div-s5">
+      <div class="obanner" data-testid="div-obanner-168">
+        <h2 data-testid="h2-6">Session 5 · All Navigations</h2>
+        <p data-testid="p-8">Covers page.goto(), page.goBack(), page.goForward(), page.reload(), waitForNavigation(), waitForURL(), waitForLoadState().</p>
+      </div>
+      <div class="sec" style="border:none" data-testid="div-sec-169">
+        <div class="fbox" data-testid="div-fbox-170">
+          💡 Type <strong>"Jarvis, teach me Session 5"</strong> in the chat to get the full interactive session for Navigations!
+        </div>
+        <div class="fr" style="margin-top:12px" data-testid="div-fr-171">
+          <span class="fb fbi">page.goto()</span>
+          <span class="fb fbi">waitForURL()</span>
+          <span class="fb fbi">waitForLoadState()</span>
+          <span class="fb fbg">networkidle</span>
+          <span class="fb fbp">SPA navigation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== S6 ===================== -->
+    <div class="section sc" id="s6" style="--pc:#6C5CE7" data-testid="div-s6">
+      <div class="obanner" data-testid="div-obanner-173">
+        <h2 data-testid="h2-7">Session 6 · All Locators</h2>
+        <p data-testid="p-9">Covers page.locator(), getByRole(), getByText(), getByLabel(), getByPlaceholder(), getByTestId(), getByAltText(), CSS/XPath, filter(), nth().</p>
+      </div>
+      <div class="sec" style="border:none" data-testid="div-sec-174">
+        <div class="fbox" data-testid="div-fbox-175">
+          💡 Type <strong>"Jarvis, teach me Session 6"</strong> in the chat to get the full interactive session for Locators!
+        </div>
+        <div class="fr" style="margin-top:12px" data-testid="div-fr-176">
+          <span class="fb fbo">getByRole()</span>
+          <span class="fb fbo">getByText()</span>
+          <span class="fb fbo">getByLabel()</span>
+          <span class="fb fbo">getByTestId()</span>
+          <span class="fb fbo">filter()</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== S7 ===================== -->
+    <div class="section sc" id="s7" style="--pc:#6C5CE7" data-testid="div-s7">
+      <div class="obanner" data-testid="div-obanner-178">
+        <h2 data-testid="h2-8">Session 7 · All Actions</h2>
+        <p data-testid="p-10">Covers click, dblclick, fill, type, press, hover, check, uncheck, selectOption, dragAndDrop, scrollIntoViewIfNeeded, uploadFiles, tap, focus, clear.</p>
+      </div>
+      <div class="sec" style="border:none" data-testid="div-sec-179">
+        <div class="fbox" data-testid="div-fbox-180">
+          💡 Type <strong>"Jarvis, teach me Session 7"</strong> in the chat to get the full interactive session for Actions!
+        </div>
+        <div class="fr" style="margin-top:12px" data-testid="div-fr-181">
+          <span class="fb fbo">click()</span>
+          <span class="fb fbo">fill()</span>
+          <span class="fb fbo">dragAndDrop()</span>
+          <span class="fb fbo">uploadFiles()</span>
+          <span class="fb fbo">selectOption()</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== S8 ===================== -->
+    <div class="section sc" id="s8" style="--pc:#6C5CE7" data-testid="div-s8">
+      <div class="obanner" data-testid="div-obanner-183">
+        <h2 data-testid="h2-9">Session 8 · All Assertions</h2>
+        <p data-testid="p-11">Covers expect().toBeVisible(), toBeHidden(), toContainText(), toHaveText(), toHaveValue(), toBeChecked(), toBeEnabled(), toHaveURL(), toHaveTitle(), soft assertions.</p>
+      </div>
+      <div class="sec" style="border:none" data-testid="div-sec-184">
+        <div class="fbox" data-testid="div-fbox-185">
+          💡 Type <strong>"Jarvis, teach me Session 8"</strong> in the chat to get the full interactive session for Assertions!
+        </div>
+        <div class="fr" style="margin-top:12px" data-testid="div-fr-186">
+          <span class="fb fbg">toBeVisible()</span>
+          <span class="fb fbg">toContainText()</span>
+          <span class="fb fbg">toHaveURL()</span>
+          <span class="fb fbg">soft assertions</span>
+          <span class="fb fbg">toHaveCount()</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== S9 ===================== -->
+    <div class="section sc" id="s9" style="--pc:#6C5CE7" data-testid="div-s9">
+      <div class="obanner" data-testid="div-obanner-188">
+        <h2 data-testid="h2-10">Session 9 · All Waiting Strategies</h2>
+        <p data-testid="p-12">Covers auto-waiting, waitForSelector(), waitForResponse(), waitForRequest(), waitForFunction(), waitForEvent(), page.waitForTimeout(), polling.</p>
+      </div>
+      <div class="sec" style="border:none" data-testid="div-sec-189">
+        <div class="fbox" data-testid="div-fbox-190">
+          💡 Type <strong>"Jarvis, teach me Session 9"</strong> in the chat to get the full interactive session for Waiting!
+        </div>
+        <div class="fr" style="margin-top:12px" data-testid="div-fr-191">
+          <span class="fb fbp">auto-waiting</span>
+          <span class="fb fbp">waitForResponse()</span>
+          <span class="fb fbp">waitForFunction()</span>
+          <span class="fb fbp">network idle</span>
+          <span class="fb fbp">polling</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== S10 ===================== -->
+    <div class="section sc" id="s10" style="--pc:#6C5CE7" data-testid="div-s10">
+      <div class="obanner" data-testid="div-obanner-193">
+        <h2 data-testid="h2-11">Session 10 · Full Test Suite Integration</h2>
+        <p data-testid="p-13">Capstone session: combines all topics — POM pattern, fixtures, parallel execution, CI config, reporting, tracing, video, screenshot on fail, allure integration.</p>
+      </div>
+      <div class="sec" style="border:none" data-testid="div-sec-194">
+        <div class="fbox" data-testid="div-fbox-195">
+          💡 Type <strong>"Jarvis, teach me Session 10"</strong> in the chat to get the full Capstone session!
+        </div>
+        <div class="fr" style="margin-top:12px" data-testid="div-fr-196">
+          <span class="fb fbo">Page Object Model</span>
+          <span class="fb fbo">fixtures</span>
+          <span class="fb fbo">parallel tests</span>
+          <span class="fb fbo">CI/CD</span>
+          <span class="fb fbo">allure reports</span>
+        </div>
+      </div>
+    </div>
+
   </div>
-</div>
 
-<div class="content" id="s3">
-  <div class="section-tabs"><div class="sectab active" data-p="coming">Session Overview</div></div>
-  <div class="panel active" id="s3-coming">
-    <div class="def-box"><div class="label">Session 3 · All Frames Handling</div><p>Covers iframe locating, frame.frameLocator(), nested frames, switching between frames, and interacting with cross-origin iframes.</p></div>
-    <div class="info-box">💡 Type <strong>"Jarvis, teach me Session 3"</strong> in chat to get the full Frames session!</div>
-    <div class="chip-row"><span class="chip blue">frameLocator()</span><span class="chip blue">frame.locator()</span><span class="chip blue">page.frames()</span><span class="chip green">Nested iframes</span><span class="chip purple">Cross-origin frames</span></div>
-  </div>
-</div>
+  <script>
+    function toggleQA(id) {
+      var qi = document.getElementById(id);
+      if (qi) {
+        qi.classList.toggle('open');
+      }
+    }
 
-<div class="content" id="s4">
-  <div class="section-tabs"><div class="sectab active" data-p="coming">Session Overview</div></div>
-  <div class="panel active" id="s4-coming">
-    <div class="def-box"><div class="label">Session 4 · Alerts &amp; Dialogs</div><p>Covers page.on('dialog'), alert/confirm/prompt/beforeunload handling, dialog.accept(), dialog.dismiss(), dialog.message(), dialog.defaultValue().</p></div>
-    <div class="info-box">💡 Type <strong>"Jarvis, teach me Session 4"</strong> in chat to get the full Alerts session!</div>
-    <div class="chip-row"><span class="chip blue">page.on('dialog')</span><span class="chip blue">dialog.accept()</span><span class="chip blue">dialog.dismiss()</span><span class="chip green">alert/confirm/prompt</span><span class="chip purple">beforeunload</span></div>
-  </div>
-</div>
-
-<div class="content" id="s5">
-  <div class="section-tabs"><div class="sectab active" data-p="coming">Session Overview</div></div>
-  <div class="panel active" id="s5-coming">
-    <div class="def-box"><div class="label">Session 5 · All Navigations</div><p>Covers page.goto(), page.goBack(), page.goForward(), page.reload(), waitForNavigation(), waitForURL(), waitForLoadState().</p></div>
-    <div class="info-box">💡 Type <strong>"Jarvis, teach me Session 5"</strong> in chat for the full Navigations session!</div>
-    <div class="chip-row"><span class="chip blue">page.goto()</span><span class="chip blue">waitForURL()</span><span class="chip blue">waitForLoadState()</span><span class="chip green">networkidle</span><span class="chip purple">SPA navigation</span></div>
-  </div>
-</div>
-
-<div class="content" id="s6">
-  <div class="section-tabs"><div class="sectab active" data-p="coming">Session Overview</div></div>
-  <div class="panel active" id="s6-coming">
-    <div class="def-box"><div class="label">Session 6 · All Locators</div><p>Covers page.locator(), getByRole(), getByText(), getByLabel(), getByPlaceholder(), getByTestId(), getByAltText(), CSS/XPath, filter(), nth().</p></div>
-    <div class="info-box">💡 Type <strong>"Jarvis, teach me Session 6"</strong> in chat for the full Locators session!</div>
-    <div class="chip-row"><span class="chip orange">getByRole()</span><span class="chip orange">getByText()</span><span class="chip orange">getByLabel()</span><span class="chip orange">getByTestId()</span><span class="chip orange">filter()</span></div>
-  </div>
-</div>
-
-<div class="content" id="s7">
-  <div class="section-tabs"><div class="sectab active" data-p="coming">Session Overview</div></div>
-  <div class="panel active" id="s7-coming">
-    <div class="def-box"><div class="label">Session 7 · All Actions</div><p>Covers click, dblclick, fill, type, press, hover, check, uncheck, selectOption, dragAndDrop, scrollIntoViewIfNeeded, uploadFiles, tap, focus, clear.</p></div>
-    <div class="info-box">💡 Type <strong>"Jarvis, teach me Session 7"</strong> in chat for the full Actions session!</div>
-    <div class="chip-row"><span class="chip orange">click()</span><span class="chip orange">fill()</span><span class="chip orange">dragAndDrop()</span><span class="chip orange">uploadFiles()</span><span class="chip orange">selectOption()</span></div>
-  </div>
-</div>
-
-<div class="content" id="s8">
-  <div class="section-tabs"><div class="sectab active" data-p="coming">Session Overview</div></div>
-  <div class="panel active" id="s8-coming">
-    <div class="def-box"><div class="label">Session 8 · All Assertions</div><p>Covers expect().toBeVisible(), toBeHidden(), toContainText(), toHaveText(), toHaveValue(), toBeChecked(), toBeEnabled(), toHaveURL(), toHaveTitle(), soft assertions.</p></div>
-    <div class="info-box">💡 Type <strong>"Jarvis, teach me Session 8"</strong> in chat for the full Assertions session!</div>
-    <div class="chip-row"><span class="chip green">toBeVisible()</span><span class="chip green">toContainText()</span><span class="chip green">toHaveURL()</span><span class="chip green">soft assertions</span><span class="chip green">toHaveCount()</span></div>
-  </div>
-</div>
-
-<div class="content" id="s9">
-  <div class="section-tabs"><div class="sectab active" data-p="coming">Session Overview</div></div>
-  <div class="panel active" id="s9-coming">
-    <div class="def-box"><div class="label">Session 9 · All Waiting Strategies</div><p>Covers auto-waiting, waitForSelector(), waitForResponse(), waitForRequest(), waitForFunction(), waitForEvent(), page.waitForTimeout(), polling.</p></div>
-    <div class="info-box">💡 Type <strong>"Jarvis, teach me Session 9"</strong> in chat for the full Waiting session!</div>
-    <div class="chip-row"><span class="chip purple">auto-waiting</span><span class="chip purple">waitForResponse()</span><span class="chip purple">waitForFunction()</span><span class="chip purple">network idle</span><span class="chip purple">polling</span></div>
-  </div>
-</div>
-
-<div class="content" id="s10">
-  <div class="section-tabs"><div class="sectab active" data-p="coming">Session Overview</div></div>
-  <div class="panel active" id="s10-coming">
-    <div class="def-box"><div class="label">Session 10 · Full Test Suite Integration</div><p>Capstone session: combines all topics — POM pattern, fixtures, parallel execution, CI config, reporting, tracing, video, screenshot on fail, allure integration.</p></div>
-    <div class="info-box">💡 Type <strong>"Jarvis, teach me Session 10"</strong> in chat for the full Capstone session!</div>
-    <div class="chip-row"><span class="chip orange">Page Object Model</span><span class="chip orange">fixtures</span><span class="chip orange">parallel tests</span><span class="chip orange">CI/CD</span><span class="chip orange">allure reports</span></div>
-  </div>
-</div>
-
-<script>
-function toggleQA(id) {
-  const block = document.getElementById(id);
-  const answer = block.querySelector('.qa-a');
-  block.classList.toggle('open');
-  answer.classList.toggle('open');
-}
-
-function copyCode(panelId) {
-  const panel = document.getElementById(panelId);
-  const code = panel.querySelector('pre').innerText;
-  navigator.clipboard.writeText(code).then(() => {
-    const btn = panel.querySelector('.copy-btn');
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 2000);
-  });
-}
-
-// Session tab switching
-document.getElementById('snav').addEventListener('click', e => {
-  const tab = e.target.closest('.stab');
-  if (!tab) return;
-  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-  tab.classList.add('active');
-  document.getElementById(tab.dataset.s).classList.add('active');
-});
-
-// Section tab switching (within a session)
-document.addEventListener('click', e => {
-  const tab = e.target.closest('.sectab');
-  if (!tab) return;
-  const container = tab.closest('.content');
-  const sId = container.id;
-  container.querySelectorAll('.sectab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
-  const pId = tab.dataset.p;
-  container.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  const panel = document.getElementById(`${sId}-${pId}`);
-  if (panel) panel.classList.add('active');
-});
-
-// Code tab switching
-document.addEventListener('click', e => {
-  const ctab = e.target.closest('.ctab');
-  if (!ctab) return;
-  const cId = ctab.dataset.c;
-  const allTabs = ctab.closest('.code-tabs');
-  const wrap = allTabs.nextElementSibling;
-  allTabs.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
-  wrap.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
-  ctab.classList.add('active');
-  document.getElementById(cId).classList.add('active');
-});
-</script>
-
-<script>
-/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
-(function(){try{
-  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
-    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
-      btn.addEventListener('click',function(){
-        var t=this.nextElementSibling;
-        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
+    // Copy to clipboard helper
+    function copyPreText(btn) {
+      const cp = btn.closest('.cp');
+      const code = cp.querySelector('pre code') || cp.querySelector('pre');
+      const text = code.innerText || code.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
       });
     }
-  });
-  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
-    if(!tab.dataset.vTab){tab.dataset.vTab='1';
-      tab.addEventListener('click',function(){
-        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
-        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
-      });
-    }
-  });
-}catch(e){console.log('VE:',e)}})();
-</script>
+  </script>
 
-    <!-- Prism Syntax Highlighting JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <!-- Prism Syntax Highlighting JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+  <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
+  <script>
+  if (window.Prism) {
+      document.addEventListener('DOMContentLoaded', () => {
+          const observer = new MutationObserver((mutations) => {
+              let needsHighlight = false;
+              mutations.forEach(m => {
+                  if (m.addedNodes.length) {
+                      m.addedNodes.forEach(n => {
+                          if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
+                          if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
+                      });
+                  }
+              });
+              if (needsHighlight) {
+                  Prism.highlightAll();
+              }
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
+      });
+  }
+  </script>
+
+  <script src="../portal-enhance.js"></script>
+
+  <!-- Navigation and Session Control Script -->
+  <script>
+    var cur = 0;
+    var sNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+    // Code panel mapping array matching our layout structure:
+    var cP = [
+      ['c1-1', 'c1-2', 'c1-3', 'c1-4', 'c1-5', 'c1-6'], // Session 1
+      [], // Session 2
+      [], // Session 3
+      [], // Session 4
+      [], // Session 5
+      [], // Session 6
+      [], // Session 7
+      [], // Session 8
+      [], // Session 9
+      []  // Session 10
+    ];
 
-
-    <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
-    <script>
-    if (window.Prism) {
-        document.addEventListener('DOMContentLoaded', () => {
-            const observer = new MutationObserver((mutations) => {
-                let needsHighlight = false;
-                mutations.forEach(m => {
-                    if (m.addedNodes.length) {
-                        m.addedNodes.forEach(n => {
-                            if (n.nodeName === 'PRE' || n.nodeName === 'CODE') needsHighlight = true;
-                            if (n.querySelector && n.querySelector('pre')) needsHighlight = true;
-                        });
-                    }
-                });
-                if (needsHighlight) {
-                    Prism.highlightAll();
-                }
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
-        });
+    function sw(n) {
+      cur = n;
+      var sections = document.querySelectorAll('html body div.section');
+      sections.forEach(function(sec, i) {
+        sec.classList.toggle('active', i === n);
+      });
+      var tabs = document.getElementById('snav').children;
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.toggle('active', i === n);
+      }
+      upP();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    </script>
 
+    function sc(s, t) {
+      var panels = cP[s];
+      // Select the code section wrapper containing this tab bar
+      var sectionEl = document.querySelectorAll('html body div.section')[s];
+      if (!sectionEl) return;
+      var ctabs = sectionEl.querySelectorAll('.ct');
+      
+      panels.forEach(function(id, i) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.className = 'cp' + (i === t ? ' active' : '');
+        }
+      });
+      ctabs.forEach(function(tb, i) {
+        tb.classList.toggle('active', i === t);
+      });
+    }
 
-    <script src="../portal-enhance.js"></script>
+    function upP() {
+      var d = '';
+      for (var i = 0; i < 10; i++) {
+        var c = i < cur ? 'dn' : (i === cur ? 'ac' : 'td');
+        d += '<span class="dot ' + c + '"></span> ';
+      }
+      var pd = document.getElementById('pd');
+      if (pd) pd.innerHTML = d;
+      var pl = document.getElementById('pl');
+      if (pl) pl.textContent = 'Session ' + sNums[cur] + ' of 10';
+    }
+    
+    // Initial paint
+    upP();
+  </script>
 </body>
 </html>
-
-
