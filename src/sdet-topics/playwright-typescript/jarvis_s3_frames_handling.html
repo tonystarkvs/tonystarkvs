@@ -3,127 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jarvis Session 3: Frames & Iframes Handling</title>
+  <title>Playwright TypeScript: Frames & Iframes Handling (Session 3)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
-/* ===== VIKRANT VISUAL ENHANCEMENT LAYER v2.0 ===== */
-h1,h2{font-weight:700 !important;border-left:4px solid #6C5CE7 !important;padding-left:12px !important;background:rgba(108,92,231,0.07) !important;border-radius:0 8px 8px 0 !important;margin-top:1.2em !important;margin-bottom:0.6em !important;padding-top:6px !important;padding-bottom:6px !important}
-h3,h4{font-weight:700 !important;border-left:3px solid #00b894 !important;padding-left:10px !important;background:rgba(0,184,148,0.06) !important;border-radius:0 6px 6px 0 !important;margin-top:1em !important;margin-bottom:0.5em !important;padding-top:4px !important;padding-bottom:4px !important}
-h5,h6{font-weight:600 !important;border-left:2px solid #fdcb6e !important;padding-left:8px !important;background:rgba(253,203,110,0.08) !important;border-radius:0 4px 4px 0 !important}
-.section-title,.card-title,.topic-title,[class*="title"],[class*="heading"],.card h3,.card h4,summary,.panel-title,.accordion-header{font-weight:700 !important}
-pre,.code-block,.code-example,.code-container,[class*="code-block"],[class*="codeblock"]{background:#1e1e2e !important;color:#cdd6f4 !important;border-radius:10px !important;padding:16px 18px !important;overflow-x:auto !important;font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace !important;font-size:0.82rem !important;border-left:4px solid #6C5CE7 !important;line-height:1.7 !important;white-space:pre-wrap !important;word-wrap:break-word !important;margin:12px 0 !important;box-shadow:0 2px 12px rgba(0,0,0,0.15) !important;position:relative !important}
-pre code,.code-block code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border:none !important;font-size:inherit !important;border-left:none !important}
-code{background:rgba(108,92,231,0.12) !important;color:#6C5CE7 !important;padding:2px 6px !important;border-radius:4px !important;font-family:'JetBrains Mono','Fira Code',monospace !important;font-size:0.85em !important}
-pre code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border-left:none !important}
-.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{display:flex !important;flex-wrap:wrap !important;gap:8px !important;padding:8px !important}
-.tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"],.tab-button{padding:8px 18px !important;border-radius:20px !important;border:1.5px solid #ddd !important;background:#f8f9fa !important;color:#2d3436 !important;font-weight:600 !important;font-size:0.85rem !important;cursor:pointer !important;transition:all 0.25s ease !important;min-width:fit-content !important;text-align:center !important}
-.tab-btn:hover,.session-tab:hover,[class*="tab-btn"]:hover,button[class*="tab"]:hover{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;transform:translateY(-1px) !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
-.tab-btn.active,.session-tab.active,[class*="tab-btn"].active,button[class*="tab"].active{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
-.card,.section,.panel,[class*="card"]{border-radius:12px !important;box-shadow:0 2px 8px rgba(0,0,0,0.06) !important;border-top:3px solid #6C5CE7 !important;margin-bottom:16px !important;padding:16px !important}
-details{border-left:3px solid #00b894 !important;border-radius:8px !important;margin-bottom:12px !important;padding:8px 12px !important;box-shadow:0 1px 4px rgba(0,0,0,0.05) !important}
-details summary{font-weight:700 !important;cursor:pointer !important;padding:10px 12px !important;background:rgba(0,184,148,0.06) !important;border-radius:8px !important;transition:background 0.2s !important}
-details summary:hover{background:rgba(0,184,148,0.12) !important}
-table{width:100% !important;border-collapse:collapse !important;margin:12px 0 !important;border-radius:8px !important;overflow:hidden !important;box-shadow:0 1px 6px rgba(0,0,0,0.08) !important}
-thead th,table thead td{background:#6C5CE7 !important;color:#fff !important;font-weight:700 !important;padding:10px 14px !important;text-align:left !important}
-tbody td{padding:10px 14px !important;border-bottom:1px solid #eee !important}
-tbody tr:hover{background:rgba(108,92,231,0.04) !important}
-.toggle-btn,.accordion-btn,[class*="toggle"],[class*="collapsible"]{cursor:pointer !important;transition:all 0.3s ease !important}
-.toggle-content,.accordion-content,.collapsible-content{overflow:hidden !important;transition:max-height 0.4s ease,opacity 0.3s ease !important}
-@media(max-width:768px){
-  .tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{flex-wrap:wrap !important;justify-content:center !important}
-  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{font-size:0.78rem !important;padding:6px 14px !important;flex:1 1 auto !important;min-width:80px !important}
-  pre,.code-block,[class*="code-block"]{font-size:0.75rem !important;padding:12px !important}
-  h1{font-size:1.4rem !important}h2{font-size:1.2rem !important}h3{font-size:1.05rem !important}
-  .card,.section,.panel,[class*="card"]{padding:12px !important}
-  body{padding:8px !important}
-}
-@media(max-width:480px){
-  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{flex:1 1 100% !important;font-size:0.75rem !important;padding:8px 10px !important;border-radius:8px !important}
-  pre,.code-block{font-size:0.7rem !important;padding:10px !important;overflow-x:scroll !important}
-  h1{font-size:1.2rem !important}h2{font-size:1.05rem !important}h3{font-size:0.95rem !important}
-  table{font-size:0.8rem !important;display:block !important;overflow-x:auto !important}
-  body{padding:4px !important}
-}
-pre::-webkit-scrollbar{height:6px}pre::-webkit-scrollbar-track{background:#2a2a3e;border-radius:3px}pre::-webkit-scrollbar-thumb{background:#6C5CE7;border-radius:3px}
-/* ===== END ENHANCEMENT LAYER v2.0 ===== */
-
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;--border:#30363d;--border2:#484f58;--text:#e6edf3;--muted:#8b949e;--dim:#6e7681;--green:#3fb950;--blue:#79c0ff;--purple:#d2a8ff;--orange:#ffa657;--red:#ff7b72;--yellow:#e3b341;--cyan:#56d364}
-body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh}
-.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:18px 24px 14px;position:relative}
-.hero::after{content:'S3';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:60px;font-weight:800;color:rgba(86,211,100,0.06);pointer-events:none}
-.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(86,211,100,.1);border:1px solid rgba(86,211,100,.25);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.hero h1{font-size:21px;font-weight:800;margin-bottom:4px}.hero h1 span{color:var(--cyan)}
-.hero p{font-size:13px;color:var(--muted)}
-.phase-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.ph-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace;background:rgba(210,168,255,.1);color:var(--purple);border:1px solid rgba(210,168,255,.2)}
-
-.stabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
-.stabs::-webkit-scrollbar{display:none}
-.stab{padding:10px 16px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
-.stab:hover{color:var(--text)}.stab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
-.panel{display:none;padding:18px 20px}.panel.active{display:block}
-.def-box{background:var(--bg3);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:16px}
-.def-box .lbl{font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
-.def-box p{font-size:14px;color:var(--text);line-height:1.7}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px}
-.card h4{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.card h4::before{content:'';width:3px;height:12px;border-radius:2px;background:var(--cyan);display:inline-block}
-.card p{font-size:13px;color:var(--text);line-height:1.6}
-.full{grid-column:1/-1}
-.gitem{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
-.gitem:last-child{border-bottom:none}
-.gkw{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(227,179,65,.08);border:1px solid rgba(227,179,65,.18);padding:2px 8px;border-radius:4px;white-space:nowrap;height:fit-content;margin-top:2px;flex-shrink:0}
-.gdesc{font-size:13px;color:var(--muted);line-height:1.5}
-.oneliners{display:flex;flex-direction:column;gap:8px}
-.ol{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:var(--text);line-height:1.5;font-style:italic}
-.ol span{color:var(--cyan);font-weight:700;font-style:normal;font-size:10px;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
-.cb{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden}
-.cb h4{background:var(--bg3);padding:10px 14px;font-size:12px;font-weight:700;color:var(--cyan);border-bottom:1px solid var(--border)}
-.cb-body{padding:14px}
-.cb-body p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px}
-.cb-body p:last-child{margin-bottom:0}
-.flow{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px}
-.fr{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
-.fb{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;white-space:nowrap}
-.fb.b{color:var(--blue)}.fb.g{color:var(--green);border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.05)}
-.fb.p{color:var(--purple);border-color:rgba(210,168,255,.3);background:rgba(210,168,255,.05)}
-.fb.o{color:var(--orange);border-color:rgba(255,166,87,.3);background:rgba(255,166,87,.05)}
-.fb.c{color:var(--cyan);border-color:rgba(86,211,100,.3);background:rgba(86,211,100,.05)}
-.fb.r{color:var(--red);border-color:rgba(255,123,114,.3);background:rgba(255,123,114,.05)}
-.arr{color:var(--dim);font-size:13px}
-.bplist{list-style:none}
-.bpitem{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
-.bpitem:last-child{border-bottom:none}
-.bpicon{width:18px;height:18px;border-radius:50%;background:rgba(86,211,100,.1);border:1px solid rgba(86,211,100,.25);color:var(--cyan);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.qablock{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden}
-.qaq{background:var(--bg3);padding:10px 14px;font-size:13px;font-weight:600;color:var(--cyan);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-.qaa{background:var(--bg2);padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.6;display:none;border-top:1px solid var(--border)}
-.qaa.open{display:block}
-.qt{color:var(--dim);font-size:15px;transition:transform .2s;flex-shrink:0}
-.qablock.open .qt{transform:rotate(90deg)}
-.ctabs{display:flex;background:var(--bg);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;padding:0 16px}
-.ctabs::-webkit-scrollbar{display:none}
-.ctab{padding:8px 13px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:5px}
-.ctab:hover{color:var(--muted)}.ctab.active{color:var(--orange);border-bottom-color:var(--orange)}
-.fi{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--bg3);color:var(--dim);font-weight:700}
-.cpanel{display:none}.cpanel.active{display:block}
-.cwrap{background:#0d1117}
-.cheader{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--bg2);border-bottom:1px solid var(--border)}
-.cfname{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
-.cfname::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--cyan);display:inline-block}
-.copybtn{font-size:11px;padding:3px 10px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif}
-.copybtn:hover{color:var(--text)}
-pre{margin:0;padding:16px;overflow-x:auto;font-size:12.5px;line-height:1.75;font-family:'JetBrains Mono',monospace;background:#0d1117}
-.kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#6e7681;font-style:italic}
-.num{color:#79c0ff}.cls{color:#ffa657}.prop{color:#79c0ff}.val{color:#3fb950}.type{color:#ffa657}
-.tsec{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;margin-top:16px;display:flex;align-items:center;gap:8px}
-.tsec::after{content:'';flex:1;height:1px;background:var(--border)}
+.hub{padding:1rem 0;max-width:700px;font-family:var(--font-sans)}
+.pbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pp{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:500;border:1.5px solid}
+.ph1{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.stabs{display:flex;border-bottom:1.5px solid var(--color-border-tertiary);overflow-x:auto}
+.stab{padding:9px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--color-text-secondary);white-space:nowrap;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;font-family:var(--font-sans)}
+.stab.active{color:#3C3489;border-bottom-color:#7F77DD;background:#EEEDFE}
+.stab:hover:not(.active){background:var(--color-background-secondary)}
+.prow{display:flex;align-items:center;gap:8px;padding:8px 13px;background:#EEEDFE;border-bottom:0.5px solid #AFA9EC}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.dn{background:#1D9E75}.dot.ac{background:#7F77DD}.dot.td{background:#D3D1C7}
+.plbl{font-size:11px;color:#3C3489;font-weight:500}
+.obanner{background:#EEEDFE;padding:14px 16px;border-bottom:0.5px solid #AFA9EC}
+.obanner h2{font-size:11px;font-weight:500;color:#534AB7;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.obanner p{font-size:13px;color:#26215C;line-height:1.6}
+.sec{padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec h3{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qp{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px;color:var(--color-text-primary);line-height:1.5;border-left:3px solid #7F77DD}
+.abox{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;margin-bottom:8px}
+.aflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.an{padding:5px 10px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500;text-align:center;line-height:1.4}
+.n1{background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC}
+.n2{background:#E1F5EE;color:#085041;border:1px solid #5DCAA5}
+.n3{background:#FAECE7;color:#712B13;border:1px solid #F0997B}
+.n4{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
+.n5{background:#E6F1FB;color:#0C447C;border:1px solid #85B7EB}
+.arr{color:var(--color-text-secondary);font-size:13px;font-weight:500}
+.dr{font-size:12px;color:var(--color-text-secondary);padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;gap:6px}
+.glosgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.gitem{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px}
+.gkw{font-size:11px;font-weight:500;color:#3C3489;font-family:'Courier New',monospace;margin-bottom:3px}
+.gdef{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.cs{background:#fff;border:1.5px solid #e2e4e8;border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.csh{display:flex;align-items:flex-start !important;gap:8px;padding:8px 14px;background:#f6f8fa;border-bottom:1px solid #e2e4e8;flex-wrap:nowrap !important}
+.csh span{font-size:13px !important;font-weight:700 !important;color:#24292f;letter-spacing:.03em !important;text-transform:uppercase;font-family:'Outfit', sans-serif !important;line-height:1.4 !important}
+.dr2{display:flex;gap:5px;margin-top:4px !important;flex-shrink:0 !important}
+.md{width:11px;height:11px;border-radius:50%}
+.mr{background:#ff5f57}.my{background:#febc2e}.mg{background:#28c840}
+.ctbar{display:flex;background:#f0f2f5;border-bottom:1px solid #e2e4e8;overflow-x:auto}
+.ct{padding:7px 12px;font-size:11px;cursor:pointer;border:none;background:transparent;color:#57606a;white-space:nowrap;font-family:'Courier New',monospace;border-bottom:2px solid transparent;font-weight:500}
+.ct.active{color:#0969da;border-bottom-color:#0969da;background:#fff}
+.ct:hover:not(.active){background:#e8eaed;color:#24292f}
+.cp{display:none;padding:14px 18px;overflow-x:auto;background:#fff}
+.cp.active{display:block}
+pre{font-family:'Courier New',monospace;font-size:12px;line-height:2;white-space:pre;color:#24292f}
+.ln{color:#8c9198;font-size:11px;user-select:none;margin-right:14px;display:inline-block;width:22px;text-align:right}
+.kw{color:#cf222e;font-weight:500}.cm{color:#6e7781;font-style:italic}.st{color:#0a3069}
+.cl{color:#953800;font-weight:500}.mt{color:#8250df}.nm{color:#0550ae}
+.vr{color:#24292f}.bo{color:#116329;font-weight:500}
+.fb{background:#f0f2f5;border:0.5px solid #d0d7de;border-radius:4px;padding:3px 10px;font-size:11px;color:#57606a;font-family:'Courier New',monospace;display:inline-block;margin-bottom:8px}
+.bpl{list-style:none;display:grid;gap:6px}
+.bpl li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.bpc{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px}
+.kwd{color:#c0392b !important;font-weight:700 !important}
+.ql{display:grid;gap:10px}
+.qi{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.qq{font-size:12px;font-weight:500;color:#0969da;margin-bottom:4px}
+.qa{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.flowrow{display:flex;align-items:stretch;gap:0;margin:10px 0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.fstep{flex:1;padding:10px 8px;font-size:11px;text-align:center;border-right:0.5px solid var(--color-border-tertiary)}
+.fstep:last-child{border-right:none}
+.fstep .fn{font-weight:500;margin-bottom:3px;font-size:12px}
+.fstep .fd{color:var(--color-text-secondary);font-size:11px}
 </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../responsive.css">
 
     <!-- Prism Syntax Highlighting -->
@@ -131,153 +82,113 @@ pre{margin:0;padding:16px;overflow-x:auto;font-size:12.5px;line-height:1.75;font
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
 
-    
-
-
 </head>
 <body class="line-numbers">
-  <div class="hero">
-  <div class="badge"><div class="dot"></div>JARVIS · SESSION 3 · PHASE 1</div>
-  <h1>Jarvis Session 3: Frames & Iframes Handling</h1>
-  <p>iframes, frameLocator(), nested frames, cross-origin frames, frame switching</p>
-  <div class="phase-row"><span class="ph-badge">⬡ Phase 1 — Fundamentals</span><span class="ph-badge" style="background:rgba(86,211,100,.1);color:var(--cyan);border-color:rgba(86,211,100,.2)">S3 of 10</span></div>
+  <div class="hub" data-testid="div-hub-1">
+<div class="pbar" data-testid="div-pbar-2">
+  <span class="pp ph1">S3 · Frames &amp; Iframes Handling</span>
 </div>
 
-<div class="stabs" id="stabs3">
-  <div class="stab active" data-p="overview">Overview</div>
-  <div class="stab" data-p="glossary">Glossary</div>
-  <div class="stab" data-p="oneliners">Interview 1-Liners</div>
-  <div class="stab" data-p="concepts">Concepts</div>
-  <div class="stab" data-p="bp">Best Practices</div>
-  <div class="stab" data-p="interview">Interview Prep</div>
-  <div class="stab" data-p="code">Code Examples</div>
+<div class="stabs" id="sTabs" data-testid="div-sTabs">
+  <button class="stab active" onclick="sw(0)" data-testid="button-stab-1">S3 · Frames &amp; Iframes</button>
 </div>
 
-<div class="panel active" id="p3-overview">
-  <div class="def-box">
-    <div class="lbl">Session 3 · Core Definition</div>
-    <p>An <strong style="color:var(--cyan)">iframe (inline frame)</strong> is an HTML element that embeds another HTML document inside the current page. Playwright provides <code style="color:var(--orange)">frameLocator()</code> to locate elements inside iframes using a CSS/XPath selector for the frame itself, then chaining locators for elements inside it.</p>
+<div class="prow" data-testid="div-prow-4">
+  <span id="pd"></span>
+  <span class="plbl" id="pl">Session 3</span>
+</div>
+
+<div id="allS" data-testid="div-allS">
+
+<!-- ══════════════════════ SESSION 3 — FRAMES & IFRAMES ══════════════════════ -->
+<div id="s0" data-testid="div-s0">
+  <div class="obanner" data-testid="div-obanner-7">
+    <h2 data-testid="h2-1">Overview — Frames &amp; Iframes Handling in Playwright</h2>
+    <p data-testid="p-1">An <strong class="kwd">iframe</strong> (inline frame) is an <strong class="kwd">HTML</strong> element that embeds another <strong class="kwd">HTML</strong> document inside the current page. <strong class="kwd">Playwright</strong> provides <code data-testid="code-1">frameLocator()</code> to locate elements inside <strong class="kwd">iframes</strong> using a <strong class="kwd">CSS</strong>/<strong class="kwd">XPath</strong> selector for the frame itself, then chaining locators for elements inside it. Unlike <strong class="kwd">Selenium</strong> where you must <code data-testid="code-2">switchTo().frame()</code> and then <code data-testid="code-3">defaultContent()</code>, <strong class="kwd">Playwright</strong>'s <code data-testid="code-4">frameLocator()</code> is always scoped — no global state switching needed.</p>
   </div>
-  <div class="grid2">
-    <div class="card"><h4>WHAT is it?</h4><p>An iframe creates a nested browsing context — a separate DOM inside the parent page. Playwright's frameLocator() returns a FrameLocator that scopes all subsequent locators to inside that iframe's document.</p></div>
-    <div class="card"><h4>WHY handle it?</h4><p>Many apps embed third-party widgets in iframes: payment forms (Stripe, PayPal), CAPTCHA, video players, map embeds, rich text editors (TinyMCE, CKEditor), chat widgets. Automating them requires frame handling.</p></div>
-    <div class="card"><h4>WHEN to use it?</h4><p>Any time the element you need to interact with is inside an iframe. You can tell by inspecting the DOM — if an element is inside an &lt;iframe&gt; tag, you need frameLocator() to reach it.</p></div>
-    <div class="card"><h4>HOW to use it?</h4><p>Use <code style="color:var(--orange)">page.frameLocator('iframe selector')</code> to get a FrameLocator, then chain .locator(), .getByRole(), .getByText() etc. on it exactly like a regular page. All actions (fill, click, check) work the same way inside frames.</p></div>
-    <div class="card full"><h4>WHERE does it fit in architecture?</h4><p>Page → frameLocator('#payment-iframe') → locator('input[name="card"]'). Playwright handles the cross-frame boundary automatically. For nested iframes: page.frameLocator('outer') → .frameLocator('inner') → .locator('element').</p></div>
-  </div>
-</div>
 
-<div class="panel" id="p3-glossary">
-  <div class="tsec">Keyword Glossary — Session 3</div>
-  <div class="gitem"><span class="gkw">frameLocator()</span><span class="gdesc">Returns a FrameLocator object scoped to the iframe matching the selector. All locators chained on it resolve inside the frame's document. This is the modern Playwright API for frames.</span></div>
-  <div class="gitem"><span class="gkw">FrameLocator</span><span class="gdesc">A lazily-evaluated reference to an iframe. Supports all locator methods: .locator(), .getByRole(), .getByText(), .getByLabel(), .first(), .nth(). Does not make a network request itself.</span></div>
-  <div class="gitem"><span class="gkw">page.frames()</span><span class="gdesc">Returns an array of all Frame objects on the page (including the main frame). Useful for finding a frame by name or URL using the legacy Frame API.</span></div>
-  <div class="gitem"><span class="gkw">page.frame()</span><span class="gdesc">Returns a Frame object by name attribute or URL. e.g. page.frame({name: 'payment'}) or page.frame({url: /stripe/}). Legacy API — prefer frameLocator() for new code.</span></div>
-  <div class="gitem"><span class="gkw">Frame</span><span class="gdesc">The underlying Frame object representing an iframe or the main page frame. Has its own navigate(), fill(), click(), evaluate() etc. methods. Accessible via page.mainFrame() or page.frames().</span></div>
-  <div class="gitem"><span class="gkw">mainFrame()</span><span class="gdesc">Returns the Frame object for the main page document. All actions on `page` delegate to page.mainFrame() internally.</span></div>
-  <div class="gitem"><span class="gkw">frame.childFrames()</span><span class="gdesc">Returns an array of child frames (nested iframes) inside the current frame. Used to traverse a tree of nested iframes programmatically.</span></div>
-  <div class="gitem"><span class="gkw">frame.url()</span><span class="gdesc">Returns the URL currently loaded in this frame. Useful for identifying cross-origin frames by their domain.</span></div>
-  <div class="gitem"><span class="gkw">frame.name()</span><span class="gdesc">Returns the name attribute of the iframe element. e.g. &lt;iframe name="payment"&gt; → frame.name() returns 'payment'.</span></div>
-  <div class="gitem"><span class="gkw">cross-origin frame</span><span class="gdesc">An iframe whose src is a different domain than the parent page. Playwright can interact with cross-origin iframes using frameLocator() — the same API works regardless of origin policy.</span></div>
-  <div class="gitem"><span class="gkw">frameLocator.nth()</span><span class="gdesc">When multiple iframes match the selector, use .nth(0), .nth(1) to target a specific one. Zero-indexed.</span></div>
-</div>
-
-<div class="panel" id="p3-oneliners">
-  <div class="tsec">Interview One-Liners — Session 3</div>
-  <div class="oneliners">
-    <div class="ol"><span>Modern API</span>"In modern Playwright, frameLocator() is the preferred way to handle iframes — you chain locators on it exactly like a regular page, so there's no context switching, no frame reference management, and auto-waiting works exactly the same."</div>
-    <div class="ol"><span>vs Selenium</span>"In Selenium you call driver.switchTo().frame() to change the global driver context to inside the iframe, do your action, then must call driver.switchTo().defaultContent() to get back — Playwright has no such global state; frameLocator() is always scoped."</div>
-    <div class="ol"><span>Nested Frames</span>"For nested iframes, I chain frameLocator() calls: page.frameLocator('outer-iframe').frameLocator('inner-iframe').locator('button') — each frameLocator() drills one level deeper into the frame tree."</div>
-    <div class="ol"><span>Cross-Origin</span>"Playwright handles cross-origin iframes natively — frameLocator() works the same way regardless of whether the iframe is same-origin or cross-origin, unlike browser security policies that block JavaScript access."</div>
-    <div class="ol"><span>Payment Forms</span>"The most common real-world frame handling is payment forms — Stripe's card input is inside a cross-origin iframe. I use page.frameLocator('iframe[name=\"__privateStripeFrame\"]').locator('[placeholder=\"Card number\"]') to fill it."</div>
-    <div class="ol"><span>Detection</span>"I identify iframe elements in DevTools by looking for &lt;iframe&gt; tags in the DOM — once I find the frame's selector (by id, name, src, or title attribute), I can immediately use frameLocator() to scope my locators to it."</div>
-    <div class="ol"><span>Rich Text Editors</span>"TinyMCE and CKEditor render their editable area inside an iframe with designMode enabled. I use frameLocator('iframe.tox-edit-area__iframe').locator('body') and then .fill() or .type() to enter content into these rich text editors."</div>
-  </div>
-</div>
-
-<div class="panel" id="p3-concepts">
-  <div class="tsec">Core Concepts — Session 3</div>
-  <div class="cb">
-    <h4>⬡ Frame Tree Architecture</h4>
-    <div class="cb-body">
-      <p>Every page has a main frame. Iframes create child frames. Each child can have its own children — forming a tree. Playwright's frameLocator() lets you navigate this tree with chained calls.</p>
-      <div class="flow">
-        <div class="fr"><span class="fb c">Page (main frame)</span><span class="arr">url: myapp.com</span></div>
-        <div class="fr" style="margin-left:20px"><span class="fb b">iframe#payment</span><span class="arr">url: stripe.com/v3/elements</span></div>
-        <div class="fr" style="margin-left:40px"><span class="fb g">input[placeholder="Card number"]</span></div>
-        <div class="fr" style="margin-left:20px"><span class="fb p">iframe#recaptcha</span><span class="arr">url: google.com/recaptcha</span></div>
-        <div class="fr" style="margin-left:20px"><span class="fb o">iframe#chat-widget</span><span class="arr">url: intercom.io</span></div>
-        <div class="fr" style="margin-left:40px"><span class="fb o">iframe#chat-inner</span><span class="arr">nested iframe!</span></div>
-      </div>
+  <div class="sec" data-testid="div-sec-8">
+    <h3 data-testid="h3-1">What / Why / When / Where / How</h3>
+    <div class="abox" data-testid="div-abox-9">
+      <div class="dr" data-testid="div-dr-10"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>An <strong class="kwd">iframe</strong> creates a nested browsing context — a separate <strong class="kwd">DOM</strong> inside the parent page. <strong class="kwd">Playwright</strong>'s <code data-testid="code-5">frameLocator()</code> returns a <strong class="kwd">FrameLocator</strong> that scopes all subsequent locators to inside that <strong class="kwd">iframe</strong>'s document.</span></div>
+      <div class="dr" data-testid="div-dr-11"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>Many apps embed third-party widgets in <strong class="kwd">iframes</strong>: payment forms (<strong class="kwd">Stripe</strong>, <strong class="kwd">PayPal</strong>), <strong class="kwd">CAPTCHA</strong>, video players, map embeds, rich text editors (<strong class="kwd">TinyMCE</strong>, <strong class="kwd">CKEditor</strong>), chat widgets. Automating them requires frame handling.</span></div>
+      <div class="dr" data-testid="div-dr-12"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Any time the element you need to interact with is inside an <strong class="kwd">iframe</strong>. You can tell by inspecting the <strong class="kwd">DOM</strong> — if an element is inside an <code data-testid="code-6">&lt;iframe&gt;</code> tag, you need <code data-testid="code-7">frameLocator()</code> to reach it.</span></div>
+      <div class="dr" data-testid="div-dr-13"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Page → <code data-testid="code-8">frameLocator('#payment-iframe')</code> → <code data-testid="code-9">locator('input[name="card"]')</code>. <strong class="kwd">Playwright</strong> handles the cross-frame boundary automatically. For nested <strong class="kwd">iframes</strong>: <code data-testid="code-10">page.frameLocator('outer')</code> → <code data-testid="code-11">.frameLocator('inner')</code> → <code data-testid="code-12">.locator('element')</code>.</span></div>
+      <div class="dr" style="border:none" data-testid="div-dr-14"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span>Use <code data-testid="code-13">page.frameLocator('iframe selector')</code> to get a <strong class="kwd">FrameLocator</strong>, then chain <code data-testid="code-14">.locator()</code>, <code data-testid="code-15">.getByRole()</code>, <code data-testid="code-16">.getByText()</code> etc. on it exactly like a regular page. All actions (<code data-testid="code-17">fill</code>, <code data-testid="code-18">click</code>, <code data-testid="code-19">check</code>) work the same way inside frames.</span></div>
     </div>
   </div>
-  <div class="cb">
-    <h4>⬡ frameLocator() vs Legacy frame() API</h4>
-    <div class="cb-body">
-      <p>Playwright has two frame APIs. Always prefer frameLocator() for new code — it supports auto-waiting and works with all modern locator methods.</p>
-      <div class="flow">
-        <div class="fr"><span class="fb r">❌ LEGACY: page.frame({name:'payment'})</span></div>
-        <div class="fr" style="margin-left:10px"><span class="fb" style="color:var(--muted)">Returns Frame object synchronously — no auto-waiting</span></div>
-        <div class="fr" style="margin-left:10px"><span class="fb" style="color:var(--muted)">Must use await frame.fill(), frame.click() directly</span></div>
-        <div class="fr" style="margin-left:10px"><span class="fb" style="color:var(--muted)">Frame might not exist yet → throws immediately</span></div>
-        <div class="fr" style="margin-top:8px"><span class="fb g">✅ MODERN: page.frameLocator('iframe[name="payment"]')</span></div>
-        <div class="fr" style="margin-left:10px"><span class="fb g">Returns FrameLocator — lazy, supports auto-waiting</span></div>
-        <div class="fr" style="margin-left:10px"><span class="fb g">Chain .locator(), .getByRole() etc. — same as page</span></div>
-        <div class="fr" style="margin-left:10px"><span class="fb g">Waits for iframe to appear in DOM automatically</span></div>
-      </div>
+
+  <div class="sec" data-testid="div-sec-15">
+    <h3 data-testid="h3-2">Keyword Glossary</h3>
+    <div class="glosgrid" data-testid="div-glosgrid-16">
+      <div class="gitem" data-testid="div-gitem-17"><div class="gkw" data-testid="div-gkw-18">frameLocator()</div><div class="gdef" data-testid="div-gdef-19">Returns a <strong class="kwd">FrameLocator</strong> object scoped to the <strong class="kwd">iframe</strong> matching the selector. All locators chained on it resolve inside the frame's document. This is the modern <strong class="kwd">Playwright</strong> <strong class="kwd">API</strong> for frames.</div></div>
+      <div class="gitem" data-testid="div-gitem-20"><div class="gkw" data-testid="div-gkw-21">FrameLocator</div><div class="gdef" data-testid="div-gdef-22">A lazily-evaluated reference to an <strong class="kwd">iframe</strong>. Supports all locator methods: <code data-testid="code-20">.locator()</code>, <code data-testid="code-21">.getByRole()</code>, <code data-testid="code-22">.getByText()</code>, <code data-testid="code-23">.getByLabel()</code>, <code data-testid="code-24">.first()</code>, <code data-testid="code-25">.nth()</code>. Does not make a network request itself.</div></div>
+      <div class="gitem" data-testid="div-gitem-23"><div class="gkw" data-testid="div-gkw-24">page.frames()</div><div class="gdef" data-testid="div-gdef-25">Returns an array of all <strong class="kwd">Frame</strong> objects on the page (including the main frame). Useful for finding a frame by name or <strong class="kwd">URL</strong> using the legacy <strong class="kwd">Frame API</strong>.</div></div>
+      <div class="gitem" data-testid="div-gitem-26"><div class="gkw" data-testid="div-gkw-27">page.frame()</div><div class="gdef" data-testid="div-gdef-28">Returns a <strong class="kwd">Frame</strong> object by name attribute or <strong class="kwd">URL</strong>. e.g. <code data-testid="code-26">page.frame({name: 'payment'})</code> or <code data-testid="code-27">page.frame({url: /stripe/})</code>. Legacy <strong class="kwd">API</strong> — prefer <code data-testid="code-28">frameLocator()</code> for new code.</div></div>
+      <div class="gitem" data-testid="div-gitem-29"><div class="gkw" data-testid="div-gkw-30">Frame</div><div class="gdef" data-testid="div-gdef-31">The underlying <strong class="kwd">Frame</strong> object representing an <strong class="kwd">iframe</strong> or the main page frame. Has its own <code data-testid="code-29">navigate()</code>, <code data-testid="code-30">fill()</code>, <code data-testid="code-31">click()</code>, <code data-testid="code-32">evaluate()</code> methods. Accessible via <code data-testid="code-33">page.mainFrame()</code> or <code data-testid="code-34">page.frames()</code>.</div></div>
+      <div class="gitem" data-testid="div-gitem-32"><div class="gkw" data-testid="div-gkw-33">mainFrame()</div><div class="gdef" data-testid="div-gdef-34">Returns the <strong class="kwd">Frame</strong> object for the main page document. All actions on <code data-testid="code-35">page</code> delegate to <code data-testid="code-36">page.mainFrame()</code> internally.</div></div>
+      <div class="gitem" data-testid="div-gitem-35"><div class="gkw" data-testid="div-gkw-36">frame.childFrames()</div><div class="gdef" data-testid="div-gdef-37">Returns an array of child frames (nested <strong class="kwd">iframes</strong>) inside the current frame. Used to traverse a tree of nested <strong class="kwd">iframes</strong> programmatically.</div></div>
+      <div class="gitem" data-testid="div-gitem-38"><div class="gkw" data-testid="div-gkw-39">frame.url()</div><div class="gdef" data-testid="div-gdef-40">Returns the <strong class="kwd">URL</strong> currently loaded in this frame. Useful for identifying cross-origin frames by their domain.</div></div>
+      <div class="gitem" data-testid="div-gitem-41"><div class="gkw" data-testid="div-gkw-42">frame.name()</div><div class="gdef" data-testid="div-gdef-43">Returns the name attribute of the <strong class="kwd">iframe</strong> element. e.g. <code data-testid="code-37">&lt;iframe name="payment"&gt;</code> → <code data-testid="code-38">frame.name()</code> returns <code data-testid="code-39">'payment'</code>.</div></div>
+      <div class="gitem" data-testid="div-gitem-44"><div class="gkw" data-testid="div-gkw-45">cross-origin frame</div><div class="gdef" data-testid="div-gdef-46">An <strong class="kwd">iframe</strong> whose src is a different domain than the parent page. <strong class="kwd">Playwright</strong> can interact with cross-origin <strong class="kwd">iframes</strong> using <code data-testid="code-40">frameLocator()</code> — the same <strong class="kwd">API</strong> works regardless of origin policy.</div></div>
+      <div class="gitem" data-testid="div-gitem-47"><div class="gkw" data-testid="div-gkw-48">frameLocator.nth()</div><div class="gdef" data-testid="div-gdef-49">When multiple <strong class="kwd">iframes</strong> match the selector, use <code data-testid="code-41">.nth(0)</code>, <code data-testid="code-42">.nth(1)</code> to target a specific one. Zero-indexed.</div></div>
     </div>
   </div>
-  <div class="cb">
-    <h4>⬡ How to Identify Iframes in DevTools</h4>
-    <div class="cb-body">
-      <p>Open DevTools → Elements tab. Look for &lt;iframe&gt; tags. Common selectors to identify them:</p>
-      <div class="flow">
-        <div class="fr"><span class="fb b">by id</span><span class="arr">→</span><span class="fb c">iframe#payment-frame</span></div>
-        <div class="fr"><span class="fb b">by name attr</span><span class="arr">→</span><span class="fb c">iframe[name="stripe"]</span></div>
-        <div class="fr"><span class="fb b">by src</span><span class="arr">→</span><span class="fb c">iframe[src*="stripe.com"]</span></div>
-        <div class="fr"><span class="fb b">by title</span><span class="arr">→</span><span class="fb c">iframe[title="Payment Form"]</span></div>
-        <div class="fr"><span class="fb b">by class</span><span class="arr">→</span><span class="fb c">iframe.payment-widget</span></div>
-        <div class="fr"><span class="fb b">nth of type</span><span class="arr">→</span><span class="fb c">page.frameLocator('iframe').nth(0)</span></div>
-      </div>
+
+  <div class="sec" data-testid="div-sec-50">
+    <h3 data-testid="h3-3">Interview One-Liners</h3>
+    <div class="igrid" data-testid="div-igrid-51">
+      <div class="qp" data-testid="div-qp-52">In modern <strong class="kwd">Playwright</strong>, <code data-testid="code-43">frameLocator()</code> is the preferred way to handle <strong class="kwd">iframes</strong> — you chain locators on it exactly like a regular page, so there's no context switching or frame reference management.</div>
+      <div class="qp" data-testid="div-qp-53">In <strong class="kwd">Selenium</strong> you call <code data-testid="code-44">driver.switchTo().frame()</code> and then <code data-testid="code-45">defaultContent()</code> — <strong class="kwd">Playwright</strong> has no such global state; <code data-testid="code-46">frameLocator()</code> is always scoped.</div>
+      <div class="qp" data-testid="div-qp-54">For nested <strong class="kwd">iframes</strong>, I chain <code data-testid="code-47">frameLocator()</code> calls: <code data-testid="code-48">page.frameLocator('outer-iframe').frameLocator('inner-iframe').locator('button')</code> to drill down.</div>
+      <div class="qp" data-testid="div-qp-55"><strong class="kwd">Playwright</strong> handles cross-origin <strong class="kwd">iframes</strong> natively — <code data-testid="code-49">frameLocator()</code> works the same way regardless of same-origin or cross-origin restrictions.</div>
+      <div class="qp" data-testid="div-qp-56"><strong class="kwd">Stripe</strong>'s card input is inside a cross-origin <strong class="kwd">iframe</strong>. I use <code data-testid="code-50">page.frameLocator('iframe[name*="__privateStripeFrame"]')</code> to fill it.</div>
+      <div class="qp" data-testid="div-qp-57">I identify <strong class="kwd">iframe</strong> elements in <strong class="kwd">DevTools</strong> by looking for <code data-testid="code-51">&lt;iframe&gt;</code> tags and finding a stable id, name, src, or title selector.</div>
+      <div class="qp" data-testid="div-qp-58"><strong class="kwd">TinyMCE</strong> and <strong class="kwd">CKEditor</strong> render their editable area inside an <strong class="kwd">iframe</strong>. I use <code data-testid="code-52">frameLocator('iframe.tox-edit-area__iframe').locator('body').fill('text')</code> to input content.</div>
     </div>
   </div>
-</div>
 
-<div class="panel" id="p3-bp">
-  <div class="tsec">Best Practices — Session 3</div>
-  <ul class="bplist">
-    <li class="bpitem"><div class="bpicon">✓</div><div>Always use <strong style="color:var(--cyan)">frameLocator()</strong> over the legacy frame() API — it supports auto-waiting, works with all modern locator methods, and eliminates frame-not-found errors on slow-loading iframes.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>Identify frames by <strong style="color:var(--cyan)">stable attributes</strong> like id, name, or title — never by array index from page.frames() alone, as iframe order can change when the page renders differently.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>For <strong style="color:var(--cyan)">rich text editors</strong> (TinyMCE, CKEditor): use frameLocator to get the iframe, then locator('body') to target the editable content area — the body element itself receives the text input.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>For <strong style="color:var(--cyan)">Stripe payment iframes</strong>: each card field (number, expiry, CVC) is a separate iframe. Use frameLocator with the specific field's iframe selector for each one — don't assume one iframe contains all fields.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>Use <strong style="color:var(--cyan)">frame.waitForLoadState()</strong> on the Frame object if you need to ensure the iframe's content has fully loaded before proceeding with assertions inside it.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>For <strong style="color:var(--cyan)">CAPTCHA iframes</strong>: in test environments, configure your app to disable CAPTCHA rather than trying to automate it. If you must test the UI, verify the iframe is present without solving it.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>Use <strong style="color:var(--cyan)">page.frames()</strong> to debug — log all frame URLs and names to understand the frame tree before writing selectors.</div></li>
-  </ul>
-</div>
-
-<div class="panel" id="p3-interview">
-  <div class="tsec">Interview Prep — 5 SDET Q&A</div>
-  <div class="qablock" id="q3-1"><div class="qaq" onclick="tq3('q3-1')">Q1: What is the difference between frameLocator() and page.frame() in Playwright? <span class="qt">▶</span></div><div class="qaa">page.frame({name, url}) is the legacy API — it returns a Frame object synchronously without waiting. If the iframe hasn't loaded yet, it returns null immediately. You then call methods directly on the Frame (frame.fill(), frame.click()). frameLocator() is the modern API — it returns a FrameLocator which is lazy and supports auto-waiting. It integrates with Playwright's locator system: you can chain getByRole(), getByLabel(), filter(), nth() etc. on it. The FrameLocator waits for the iframe to appear in the DOM before acting. For new tests, always use frameLocator().</div></div>
-  <div class="qablock" id="q3-2"><div class="qaq" onclick="tq3('q3-2')">Q2: How do you handle Stripe's payment iframe in Playwright? <span class="qt">▶</span></div><div class="qaa">Stripe renders each field (card number, expiry, CVC) in a separate iframe. I inspect the DOM to find each iframe's selector. Then: const cardFrame = page.frameLocator('iframe[name="__privateStripeFrame__cardNumber"]'). await cardFrame.locator('[placeholder="Card number"]').fill('4242424242424242'). For expiry: const expiryFrame = page.frameLocator('iframe[name="__privateStripeFrame__cardExpiry"]'). await expiryFrame.locator('[placeholder="MM / YY"]').fill('12/28'). The exact iframe name attributes depend on the Stripe Elements version — always inspect the live DOM. Playwright handles cross-origin frames transparently.</div></div>
-  <div class="qablock" id="q3-3"><div class="qaq" onclick="tq3('q3-3')">Q3: How do you interact with a TinyMCE rich text editor inside an iframe? <span class="qt">▶</span></div><div class="qaa">TinyMCE renders an iframe with a body element that has contenteditable or designMode enabled. First find the iframe: const editorFrame = page.frameLocator('iframe.tox-edit-area__iframe') — the class name varies by TinyMCE version, check DevTools. Then target the body: await editorFrame.locator('body').fill('My test content'). If fill() doesn't work (some editors intercept it), use .click() first then page.keyboard.type('My test content'). For formatted input (bold, lists), I click the toolbar buttons in the main page, not inside the iframe — toolbar buttons are in the parent DOM.</div></div>
-  <div class="qablock" id="q3-4"><div class="qaq" onclick="tq3('q3-4')">Q4: How do you handle nested iframes in Playwright? <span class="qt">▶</span></div><div class="qaa">I chain frameLocator() calls. If there's an outer iframe containing an inner iframe: const outerFrame = page.frameLocator('iframe#outer'). const innerFrame = outerFrame.frameLocator('iframe#inner'). await innerFrame.locator('button#submit').click(). Each frameLocator() call descends one level. Alternatively with the legacy API: const outerFrameObj = page.frame({name: 'outer'}). const innerFrameObj = outerFrameObj.childFrames()[0]. I prefer the chained frameLocator() approach as it's cleaner and supports auto-waiting at each level.</div></div>
-  <div class="qablock" id="q3-5"><div class="qaq" onclick="tq3('q3-5')">Q5: How do you debug an unknown frame structure you've never seen before? <span class="qt">▶</span></div><div class="qaa">My debugging workflow: First, console.log all frames: console.log(page.frames().map(f => ({name: f.name(), url: f.url()})). This reveals every iframe's name and URL. Second, I use DevTools to inspect the element I want — if it's inside an iframe, I look at the parent iframe's id, name, src, and title attributes. Third, I try frameLocator with different selectors until one resolves. Fourth, I log the frame tree with frame.childFrames() recursively to understand nesting. Finally I use page.pause() in headed mode and the Playwright Inspector to visually inspect and generate locators interactively.</div></div>
-</div>
-
-<div class="panel" id="p3-code">
-  <div class="ctabs" id="ctabs3">
-    <div class="ctab active" data-c="c3-1"><span class="fi">.ts</span> basic-frame.ts</div>
-    <div class="ctab" data-c="c3-2"><span class="fi">.ts</span> stripe-payment.ts</div>
-    <div class="ctab" data-c="c3-3"><span class="fi">.ts</span> nested-frames.ts</div>
-    <div class="ctab" data-c="c3-4"><span class="fi">.ts</span> rich-text-editor.ts</div>
-    <div class="ctab" data-c="c3-5"><span class="fi">.ts</span> debug-frames.ts</div>
-    <div class="ctab" data-c="c3-6"><span class="fi">.ts</span> legacy-frame-api.ts</div>
+  <div class="sec" data-testid="div-sec-59">
+    <h3 data-testid="h3-4">Concepts — Flow Visuals</h3>
+    <div class="flowrow" data-testid="div-flowrow-60">
+      <div class="fstep n1" data-testid="div-fstep-61"><div class="fn" data-testid="div-fn-62">1. Identify Frame</div><div class="fd" data-testid="div-fd-63">Find <strong class="kwd">iframe</strong> element<br>Select id/name/title</div></div>
+      <div class="fstep n2" data-testid="div-fstep-64"><div class="fn" data-testid="div-fn-65">2. frameLocator()</div><div class="fd" data-testid="div-fd-66"><code data-testid="code-53">page.frameLocator('iframe')</code><br>Lazy reference</div></div>
+      <div class="fstep n3" data-testid="div-fstep-67"><div class="fn" data-testid="div-fn-68">3. Chain Locator</div><div class="fd" data-testid="div-fd-69"><code data-testid="code-54">frame.locator('input')</code><br>Scope to frame <strong class="kwd">DOM</strong></div></div>
+      <div class="fstep n4" data-testid="div-fstep-70"><div class="fn" data-testid="div-fn-71">4. Perform Action</div><div class="fd" data-testid="div-fd-72"><code data-testid="code-55">.fill()</code> / <code data-testid="code-56">.click()</code><br>Auto-waits automatically</div></div>
+      <div class="fstep n5" data-testid="div-fstep-73"><div class="fn" data-testid="div-fn-74">5. Assert Result</div><div class="fd" data-testid="div-fd-75"><code data-testid="code-57">expect(frame.locator)</code><br>Validates inner <strong class="kwd">DOM</strong></div></div>
+    </div>
+    <div class="abox" style="margin-top:10px" data-testid="div-abox-76">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px" data-testid="div-77">Frame Tree Architecture</div>
+      <div class="dr" data-testid="div-dr-78"><span style="color:#3C3489;font-weight:500;width:120px;flex-shrink:0">Main Frame</span><span>Every page has a main frame. <strong class="kwd">Iframes</strong> create child frames. Each child can have its own children — forming a tree.</span></div>
+      <div class="dr" data-testid="div-dr-79"><span style="color:#085041;font-weight:500;width:120px;flex-shrink:0">frameLocator()</span><span>Modern <strong class="kwd">API</strong> — lazy, supports auto-waiting. Chain <code data-testid="code-58">.locator()</code>, <code data-testid="code-59">.getByRole()</code> etc. Waits for <strong class="kwd">iframe</strong> to appear in <strong class="kwd">DOM</strong>.</span></div>
+      <div class="dr" data-testid="div-dr-80"><span style="color:#712B13;font-weight:500;width:120px;flex-shrink:0">Legacy frame()</span><span>Returns <strong class="kwd">Frame</strong> object synchronously — no auto-waiting. Frame might not exist yet → returns null or throws immediately.</span></div>
+      <div class="dr" style="border:none" data-testid="div-dr-81"><span style="color:#0C447C;font-weight:500;width:120px;flex-shrink:0">Cross-origin</span><span><strong class="kwd">Playwright</strong> handles cross-origin <strong class="kwd">iframes</strong> transparently — same <code data-testid="code-60">frameLocator()</code> <strong class="kwd">API</strong> works regardless of origin policy.</span></div>
+    </div>
+    <div class="abox" style="margin-top:10px" data-testid="div-abox-82">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px" data-testid="div-83">How to Identify Iframes in DevTools</div>
+      <div class="dr" data-testid="div-dr-84"><span style="color:#0969da;font-weight:500;width:120px;flex-shrink:0">by id</span><span><code data-testid="code-61">iframe#payment-frame</code></span></div>
+      <div class="dr" data-testid="div-dr-85"><span style="color:#0969da;font-weight:500;width:120px;flex-shrink:0">by name attr</span><span><code data-testid="code-62">iframe[name="stripe"]</code></span></div>
+      <div class="dr" data-testid="div-dr-86"><span style="color:#0969da;font-weight:500;width:120px;flex-shrink:0">by src</span><span><code data-testid="code-63">iframe[src*="stripe.com"]</code></span></div>
+      <div class="dr" data-testid="div-dr-87"><span style="color:#0969da;font-weight:500;width:120px;flex-shrink:0">by title</span><span><code data-testid="code-64">iframe[title="Payment Form"]</code></span></div>
+      <div class="dr" data-testid="div-dr-88"><span style="color:#0969da;font-weight:500;width:120px;flex-shrink:0">by class</span><span><code data-testid="code-65">iframe.payment-widget</code></span></div>
+      <div class="dr" style="border:none" data-testid="div-dr-89"><span style="color:#0969da;font-weight:500;width:120px;flex-shrink:0">nth of type</span><span><code data-testid="code-66">page.frameLocator('iframe').nth(0)</code></span></div>
+    </div>
   </div>
-  <div class="cwrap">
-    <div class="cpanel active" id="c3-1">
-      <div class="cheader"><span class="cfname">basic-frame.ts</span><button class="copybtn" onclick="cp3('c3-1')">Copy</button></div>
-      <pre><code class="language-typescript">// basic-frame.ts
+
+  <div class="sec" data-testid="div-sec-90">
+    <h3 data-testid="h3-5">Code Examples</h3>
+    <div class="cs" data-testid="div-cs-91">
+      <div class="csh" data-testid="div-csh-92"><div class="dr2" data-testid="div-dr2-93"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S3 · Handling Frames &amp; Iframes in Playwright</span></div>
+      <div class="ctbar" data-testid="div-ctbar-94">
+        <button class="ct active" onclick="sc(0,0)" data-testid="button-ct-2">1. Basic Frame</button>
+        <button class="ct" onclick="sc(0,1)" data-testid="button-ct-3">2. Stripe Payment</button>
+        <button class="ct" onclick="sc(0,2)" data-testid="button-ct-4">3. Nested Frames</button>
+        <button class="ct" onclick="sc(0,3)" data-testid="button-ct-5">4. Rich Text Editor</button>
+        <button class="ct" onclick="sc(0,4)" data-testid="button-ct-6">5. Debug Frames</button>
+        <button class="ct" onclick="sc(0,5)" data-testid="button-ct-7">6. Legacy Frame API</button>
+      </div>
+
+      <div class="cp active" id="c0-0" data-testid="div-c0-0"><div class="fb" data-testid="div-fb-96">basic-frame.ts</div><pre data-testid="pre-1"><code class="language-typescript" data-testid="code-language-typescript-67">// basic-frame.ts
 // PURPOSE: Interact with elements inside an iframe using frameLocator()
 // USE CASE: Any embedded widget, embedded form, or embedded content
 
@@ -288,7 +199,7 @@ test('interact with elements inside iframe', async ({ page }) => {
   await page.goto('https://myapp.com/checkout');
 
   // ── Locate the iframe first ──────────────────────────────────────
-  // frameLocator() accepts any CSS selector that points to the &lt;iframe&gt; element
+  // frameLocator() accepts any CSS selector that points to the <iframe> element
   const paymentFrame = page.frameLocator('iframe#payment-widget');
 
   // ── All locator methods work inside the frame ────────────────────
@@ -309,11 +220,9 @@ test('interact with elements inside iframe', async ({ page }) => {
 
   // You can also assert on the parent page simultaneously
   await expect(page.locator('h1')).toContainText('Checkout');
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c3-2">
-      <div class="cheader"><span class="cfname">stripe-payment.ts</span><button class="copybtn" onclick="cp3('c3-2')">Copy</button></div>
-      <pre><code class="language-typescript">// stripe-payment.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-1" data-testid="div-c0-1"><div class="fb" data-testid="div-fb-98">stripe-payment.ts</div><pre data-testid="pre-2"><code class="language-typescript" data-testid="code-language-typescript-68">// stripe-payment.ts
 // PURPOSE: Fill Stripe Elements payment form (multiple iframes)
 // INSIGHT: Each Stripe field is a SEPARATE iframe
 
@@ -357,11 +266,9 @@ test('complete Stripe payment with card details', async ({ page }) => {
   // Assert success on parent page
   await page.waitForURL('**/order-success');
   await expect(page.locator('.order-confirmed')).toBeVisible();
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c3-3">
-      <div class="cheader"><span class="cfname">nested-frames.ts</span><button class="copybtn" onclick="cp3('c3-3')">Copy</button></div>
-      <pre><code class="language-typescript">// nested-frames.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-2" data-testid="div-c0-2"><div class="fb" data-testid="div-fb-100">nested-frames.ts</div><pre data-testid="pre-3"><code class="language-typescript" data-testid="code-language-typescript-69">// nested-frames.ts
 // PURPOSE: Navigate nested iframes (iframe inside an iframe)
 // USE CASE: Complex embeds like analytics dashboards or ad tech
 
@@ -393,11 +300,9 @@ test('interact with deeply nested iframe', async ({ page }) => {
       console.log(`  ↳ ${cf.name()} — ${cf.url()}`)
     );
   }
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c3-4">
-      <div class="cheader"><span class="cfname">rich-text-editor.ts</span><button class="copybtn" onclick="cp3('c3-4')">Copy</button></div>
-      <pre><code class="language-typescript">// rich-text-editor.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-3" data-testid="div-c0-3"><div class="fb" data-testid="div-fb-102">rich-text-editor.ts</div><pre data-testid="pre-4"><code class="language-typescript" data-testid="code-language-typescript-70">// rich-text-editor.ts
 // PURPOSE: Type into TinyMCE / CKEditor rich text editors
 // INSIGHT: These editors use iframe with a contenteditable body
 
@@ -407,7 +312,7 @@ test('type into TinyMCE rich text editor', async ({ page }) => {
 
   await page.goto('https://myapp.com/create-post');
 
-  // TinyMCE renders an &lt;iframe class="tox-edit-area__iframe"&gt;
+  // TinyMCE renders an <iframe class="tox-edit-area__iframe">
   // The body inside has contenteditable="true"
   const editorFrame = page.frameLocator('iframe.tox-edit-area__iframe');
 
@@ -435,11 +340,9 @@ test('type into TinyMCE rich text editor', async ({ page }) => {
   // Submit the form containing the editor
   await page.click('button#publish-post');
   await expect(page.locator('.post-published')).toBeVisible();
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c3-5">
-      <div class="cheader"><span class="cfname">debug-frames.ts</span><button class="copybtn" onclick="cp3('c3-5')">Copy</button></div>
-      <pre><code class="language-typescript">// debug-frames.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-4" data-testid="div-c0-4"><div class="fb" data-testid="div-fb-104">debug-frames.ts</div><pre data-testid="pre-5"><code class="language-typescript" data-testid="code-language-typescript-71">// debug-frames.ts
 // PURPOSE: Debug utilities to discover all frames on a page
 // USE CASE: When you first encounter an unfamiliar page with unknown iframes
 
@@ -474,11 +377,9 @@ test('discover all iframes on a page', async ({ page }) => {
   // Method 4: Count total iframes
   const iframeCount = page.frames().length - 1; // -1 for main frame
   console.log(`Total iframes: ${iframeCount}`);
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c3-6">
-      <div class="cheader"><span class="cfname">legacy-frame-api.ts</span><button class="copybtn" onclick="cp3('c3-6')">Copy</button></div>
-      <pre><code class="language-typescript">// legacy-frame-api.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-5" data-testid="div-c0-5"><div class="fb" data-testid="div-fb-106">legacy-frame-api.ts</div><pre data-testid="pre-6"><code class="language-typescript" data-testid="code-language-typescript-72">// legacy-frame-api.ts
 // PURPOSE: Legacy Frame API usage (page.frame() / page.mainFrame())
 // NOTE: Prefer frameLocator() for new code — this shows legacy for reference
 
@@ -488,7 +389,7 @@ test('using legacy Frame API', async ({ page }) => {
 
   await page.goto('https://myapp.com/embed');
 
-  // Get frame by name attribute: &lt;iframe name="myFrame"&gt;
+  // Get frame by name attribute: <iframe name="myFrame">
   const frameByName: Frame | null = page.frame({ name: 'myFrame' });
 
   // Get frame by URL pattern
@@ -517,66 +418,93 @@ test('using legacy Frame API', async ({ page }) => {
   // Parent frame access
   const parent = frameByName.parentFrame();
   console.log(`Parent frame: ${parent?.url()}`);
-});</code></pre>
+});</code></pre></div>
     </div>
   </div>
+
+  <div class="sec" data-testid="div-sec-107">
+    <h3 data-testid="h3-6">Best Practices</h3>
+    <ul class="bpl">
+      <li data-testid="li-1"><span class="bpc">✓</span>Always use <code data-testid="code-73">frameLocator()</code> over the legacy <code data-testid="code-74">frame()</code> <strong class="kwd">API</strong> — it supports auto-waiting, works with all modern locator methods, and eliminates frame-not-found errors on slow-loading <strong class="kwd">iframes</strong>.</li>
+      <li data-testid="li-2"><span class="bpc">✓</span>Identify frames by stable attributes like id, name, or title — never by array index from <code data-testid="code-75">page.frames()</code> alone, as <strong class="kwd">iframe</strong> order can change.</li>
+      <li data-testid="li-3"><span class="bpc">✓</span>For rich text editors (<strong class="kwd">TinyMCE</strong>, <strong class="kwd">CKEditor</strong>): use <code data-testid="code-76">frameLocator</code> to get the <strong class="kwd">iframe</strong>, then <code data-testid="code-77">locator('body')</code> to target the editable content area.</li>
+      <li data-testid="li-4"><span class="bpc">✓</span>For <strong class="kwd">Stripe</strong> payment <strong class="kwd">iframes</strong>: each card field (number, expiry, CVC) is a separate <strong class="kwd">iframe</strong>. Use a dedicated <code data-testid="code-78">frameLocator</code> for each one.</li>
+      <li data-testid="li-5"><span class="bpc">✓</span>Use <code data-testid="code-79">frame.waitForLoadState()</code> on the <strong class="kwd">Frame</strong> object if you need to ensure the <strong class="kwd">iframe</strong>'s content has fully loaded before <strong class="kwd">assertions</strong>.</li>
+      <li data-testid="li-6"><span class="bpc">✓</span>For <strong class="kwd">CAPTCHA</strong> <strong class="kwd">iframes</strong>: configure your app to disable <strong class="kwd">CAPTCHA</strong> in test environments rather than trying to automate it.</li>
+      <li data-testid="li-7"><span class="bpc">✓</span>Use <code data-testid="code-80">page.frames()</code> to debug — log all frame <strong class="kwd">URLs</strong> and names to understand the frame tree before writing selectors.</li>
+    </ul>
+  </div>
+
+  <div class="sec" style="border:none" data-testid="div-sec-108">
+    <h3 data-testid="h3-7">Interview Prep — 5 SDET Q&amp;A</h3>
+    <div class="ql" data-testid="div-ql-109">
+      <div class="qi" data-testid="div-qi-110">
+        <div class="qq" data-testid="div-qq-111">Q1: What is the difference between frameLocator() and page.frame() in Playwright?</div>
+        <div class="qa" data-testid="div-qa-112">A: <code data-testid="code-81">page.frame({name, url})</code> is the legacy <strong class="kwd">API</strong> — it returns a <strong class="kwd">Frame</strong> object synchronously without waiting. If the <strong class="kwd">iframe</strong> hasn't loaded yet, it returns null immediately. You then call methods directly on the <strong class="kwd">Frame</strong> (<code data-testid="code-82">frame.fill()</code>, <code data-testid="code-83">frame.click()</code>). <code data-testid="code-84">frameLocator()</code> is the modern <strong class="kwd">API</strong> — it returns a <strong class="kwd">FrameLocator</strong> which is lazy and supports auto-waiting. It integrates with <strong class="kwd">Playwright</strong>'s locator system: you can chain locator methods on it. The <strong class="kwd">FrameLocator</strong> waits for the <strong class="kwd">iframe</strong> to appear in the <strong class="kwd">DOM</strong> before acting. For new tests, always use <code data-testid="code-85">frameLocator()</code>.</div>
+      </div>
+      <div class="qi" data-testid="div-qi-113">
+        <div class="qq" data-testid="div-qq-114">Q2: How do you handle Stripe's payment iframe in Playwright?</div>
+        <div class="qa" data-testid="div-qa-115">A: <strong class="kwd">Stripe</strong> renders each field (card number, expiry, CVC) in a separate <strong class="kwd">iframe</strong>. I inspect the <strong class="kwd">DOM</strong> to find each <strong class="kwd">iframe</strong>'s selector. Then: <code data-testid="code-86">const cardFrame = page.frameLocator('iframe[name*="__privateStripeFrame"][name*="cardNumber"]')</code> and then fill the card number field. For expiry: <code data-testid="code-87">const expiryFrame = page.frameLocator('iframe[name*="__privateStripeFrame"][name*="cardExpiry"]')</code> and then fill the date. The exact <strong class="kwd">iframe</strong> name attributes depend on the <strong class="kwd">Stripe Elements</strong> version — always inspect the live <strong class="kwd">DOM</strong>. <strong class="kwd">Playwright</strong> handles cross-origin frames transparently.</div>
+      </div>
+      <div class="qi" data-testid="div-qi-116">
+        <div class="qq" data-testid="div-qq-117">Q3: How do you interact with a TinyMCE rich text editor inside an iframe?</div>
+        <div class="qa" data-testid="div-qa-118">A: <strong class="kwd">TinyMCE</strong> renders an <strong class="kwd">iframe</strong> with a body element that has <code data-testid="code-88">contenteditable</code> or <code data-testid="code-89">designMode</code> enabled. First find the <strong class="kwd">iframe</strong>: <code data-testid="code-90">const editorFrame = page.frameLocator('iframe.tox-edit-area__iframe')</code>. Then target the body: <code data-testid="code-91">await editorFrame.locator('body').fill('My test content')</code>. If <code data-testid="code-92">fill()</code> doesn't work, use <code data-testid="code-93">.click()</code> first then <code data-testid="code-94">page.keyboard.type()</code>. Toolbar buttons are in the parent <strong class="kwd">DOM</strong>, not inside the <strong class="kwd">iframe</strong>.</div>
+      </div>
+      <div class="qi" data-testid="div-qi-119">
+        <div class="qq" data-testid="div-qq-120">Q4: How do you handle nested iframes in Playwright?</div>
+        <div class="qa" data-testid="div-qa-121">A: I chain <code data-testid="code-95">frameLocator()</code> calls. If there's an outer <strong class="kwd">iframe</strong> containing an inner <strong class="kwd">iframe</strong>: <code data-testid="code-96">const outerFrame = page.frameLocator('iframe#outer')</code>, and then <code data-testid="code-97">const innerFrame = outerFrame.frameLocator('iframe#inner')</code>. Finally: <code data-testid="code-98">await innerFrame.locator('button#submit').click()</code>. Each <code data-testid="code-99">frameLocator()</code> call descends one level. I prefer this chained approach as it is cleaner and supports auto-waiting.</div>
+      </div>
+      <div class="qi" data-testid="div-qi-122">
+        <div class="qq" data-testid="div-qq-123">Q5: How do you debug an unknown frame structure you've never seen before?</div>
+        <div class="qa" data-testid="div-qa-124">A: First, console.log all frames: <code data-testid="code-100">console.log(page.frames().map(f => ({name: f.name(), url: f.url()})))</code>. This reveals every <strong class="kwd">iframe</strong>'s name and <strong class="kwd">URL</strong>. Second, inspect the target element in <strong class="kwd">DevTools</strong> to find the parent <strong class="kwd">iframe</strong>'s id, name, src, or title. Third, try <code data-testid="code-101">frameLocator()</code> with different selectors until one resolves. Fourth, log the frame tree with <code data-testid="code-102">frame.childFrames()</code> recursively. Finally, use <code data-testid="code-103">page.pause()</code> and the <strong class="kwd">Playwright Inspector</strong> to interactively debug.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
 </div>
 
 <script>
-function tq3(id){const b=document.getElementById(id);const a=b.querySelector('.qaa');b.classList.toggle('open');a.classList.toggle('open')}
-function cp3(id){const p=document.getElementById(id);const c=p.querySelector('pre').innerText;navigator.clipboard.writeText(c).then(()=>{const b=p.querySelector('.copybtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000)})}
-document.getElementById('stabs3').addEventListener('click',e=>{
-  const t=e.target.closest('.stab');if(!t)return;
-  document.querySelectorAll('#stabs3 .stab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  const pid='p3-'+t.dataset.p;
-  document.querySelectorAll('[id^="p3-"]').forEach(x=>x.classList.remove('active'));
-  document.getElementById(pid).classList.add('active');
-});
-document.getElementById('ctabs3').addEventListener('click',e=>{
-  const t=e.target.closest('.ctab');if(!t)return;
-  document.querySelectorAll('#ctabs3 .ctab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  document.querySelectorAll('[id^="c3-"]').forEach(x=>x.classList.remove('active'));
-  document.getElementById(t.dataset.c).classList.add('active');
-});
-</script>
-
-<script>
-/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
-(function(){try{
-  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
-    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
-      btn.addEventListener('click',function(){
-        var t=this.nextElementSibling;
-        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
-      });
-    }
+var cur=0;
+var cP=[
+  ['c0-0','c0-1','c0-2','c0-3','c0-4','c0-5']
+];
+var sNums=[3];
+function sw(n){
+  document.getElementById('s'+cur).style.display='none';
+  document.getElementById('s'+n).style.display='block';
+  var tabs=document.getElementById('sTabs').children;
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active',i===n);
+  cur=n; upP();
+}
+function sc(s,t){
+  var panels=cP[s];
+  var ctabs=document.getElementById('s'+s).querySelectorAll('.ct');
+  panels.forEach(function(id,i){
+    var el=document.getElementById(id);
+    if(el) el.className='cp'+(i===t?' active':'');
   });
-  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
-    if(!tab.dataset.vTab){tab.dataset.vTab='1';
-      tab.addEventListener('click',function(){
-        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
-        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
-      });
-    }
-  });
-}catch(e){console.log('VE:',e)}})();
+  ctabs.forEach(function(tb,i){tb.classList.toggle('active',i===t);});
+}
+function upP(){
+  var d='';
+  for(var i=0;i<1;i++){
+    var c=i<cur?'dn':(i===cur?'ac':'td');
+    d+='<span class="dot '+c+'"></span> ';
+  }
+  document.getElementById('pd').innerHTML=d;
+  document.getElementById('pl').textContent='Session '+sNums[cur];
+}
+upP();
 </script>
 
     <!-- Prism Syntax Highlighting JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
-
 
     <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
     <script>
@@ -601,8 +529,6 @@ document.getElementById('ctabs3').addEventListener('click',e=>{
     }
     </script>
 
-
     <script src="../portal-enhance.js"></script>
 </body>
 </html>
-

@@ -3,132 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jarvis Session 4: Alerts, Dialogs & Popups Handling</title>
+  <title>Playwright TypeScript: Alerts, Dialogs & Popups Handling (Session 4)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
-/* ===== VIKRANT VISUAL ENHANCEMENT LAYER v2.0 ===== */
-h1,h2{font-weight:700 !important;border-left:4px solid #6C5CE7 !important;padding-left:12px !important;background:rgba(108,92,231,0.07) !important;border-radius:0 8px 8px 0 !important;margin-top:1.2em !important;margin-bottom:0.6em !important;padding-top:6px !important;padding-bottom:6px !important}
-h3,h4{font-weight:700 !important;border-left:3px solid #00b894 !important;padding-left:10px !important;background:rgba(0,184,148,0.06) !important;border-radius:0 6px 6px 0 !important;margin-top:1em !important;margin-bottom:0.5em !important;padding-top:4px !important;padding-bottom:4px !important}
-h5,h6{font-weight:600 !important;border-left:2px solid #fdcb6e !important;padding-left:8px !important;background:rgba(253,203,110,0.08) !important;border-radius:0 4px 4px 0 !important}
-.section-title,.card-title,.topic-title,[class*="title"],[class*="heading"],.card h3,.card h4,summary,.panel-title,.accordion-header{font-weight:700 !important}
-pre,.code-block,.code-example,.code-container,[class*="code-block"],[class*="codeblock"]{background:#1e1e2e !important;color:#cdd6f4 !important;border-radius:10px !important;padding:16px 18px !important;overflow-x:auto !important;font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace !important;font-size:0.82rem !important;border-left:4px solid #6C5CE7 !important;line-height:1.7 !important;white-space:pre-wrap !important;word-wrap:break-word !important;margin:12px 0 !important;box-shadow:0 2px 12px rgba(0,0,0,0.15) !important;position:relative !important}
-pre code,.code-block code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border:none !important;font-size:inherit !important;border-left:none !important}
-code{background:rgba(108,92,231,0.12) !important;color:#6C5CE7 !important;padding:2px 6px !important;border-radius:4px !important;font-family:'JetBrains Mono','Fira Code',monospace !important;font-size:0.85em !important}
-pre code{background:transparent !important;color:#cdd6f4 !important;padding:0 !important;border-left:none !important}
-.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{display:flex !important;flex-wrap:wrap !important;gap:8px !important;padding:8px !important}
-.tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"],.tab-button{padding:8px 18px !important;border-radius:20px !important;border:1.5px solid #ddd !important;background:#f8f9fa !important;color:#2d3436 !important;font-weight:600 !important;font-size:0.85rem !important;cursor:pointer !important;transition:all 0.25s ease !important;min-width:fit-content !important;text-align:center !important}
-.tab-btn:hover,.session-tab:hover,[class*="tab-btn"]:hover,button[class*="tab"]:hover{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;transform:translateY(-1px) !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
-.tab-btn.active,.session-tab.active,[class*="tab-btn"].active,button[class*="tab"].active{background:#6C5CE7 !important;color:#fff !important;border-color:#6C5CE7 !important;box-shadow:0 3px 10px rgba(108,92,231,0.3) !important}
-.card,.section,.panel,[class*="card"]{border-radius:12px !important;box-shadow:0 2px 8px rgba(0,0,0,0.06) !important;border-top:3px solid #6C5CE7 !important;margin-bottom:16px !important;padding:16px !important}
-details{border-left:3px solid #00b894 !important;border-radius:8px !important;margin-bottom:12px !important;padding:8px 12px !important;box-shadow:0 1px 4px rgba(0,0,0,0.05) !important}
-details summary{font-weight:700 !important;cursor:pointer !important;padding:10px 12px !important;background:rgba(0,184,148,0.06) !important;border-radius:8px !important;transition:background 0.2s !important}
-details summary:hover{background:rgba(0,184,148,0.12) !important}
-table{width:100% !important;border-collapse:collapse !important;margin:12px 0 !important;border-radius:8px !important;overflow:hidden !important;box-shadow:0 1px 6px rgba(0,0,0,0.08) !important}
-thead th,table thead td{background:#6C5CE7 !important;color:#fff !important;font-weight:700 !important;padding:10px 14px !important;text-align:left !important}
-tbody td{padding:10px 14px !important;border-bottom:1px solid #eee !important}
-tbody tr:hover{background:rgba(108,92,231,0.04) !important}
-.toggle-btn,.accordion-btn,[class*="toggle"],[class*="collapsible"]{cursor:pointer !important;transition:all 0.3s ease !important}
-.toggle-content,.accordion-content,.collapsible-content{overflow:hidden !important;transition:max-height 0.4s ease,opacity 0.3s ease !important}
-@media(max-width:768px){
-  .tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"],[class*="tab-bar"]{flex-wrap:wrap !important;justify-content:center !important}
-  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{font-size:0.78rem !important;padding:6px 14px !important;flex:1 1 auto !important;min-width:80px !important}
-  pre,.code-block,[class*="code-block"]{font-size:0.75rem !important;padding:12px !important}
-  h1{font-size:1.4rem !important}h2{font-size:1.2rem !important}h3{font-size:1.05rem !important}
-  .card,.section,.panel,[class*="card"]{padding:12px !important}
-  body{padding:8px !important}
-}
-@media(max-width:480px){
-  .tab-btn,.session-tab,[class*="tab-btn"],button[class*="tab"]{flex:1 1 100% !important;font-size:0.75rem !important;padding:8px 10px !important;border-radius:8px !important}
-  pre,.code-block{font-size:0.7rem !important;padding:10px !important;overflow-x:scroll !important}
-  h1{font-size:1.2rem !important}h2{font-size:1.05rem !important}h3{font-size:0.95rem !important}
-  table{font-size:0.8rem !important;display:block !important;overflow-x:auto !important}
-  body{padding:4px !important}
-}
-pre::-webkit-scrollbar{height:6px}pre::-webkit-scrollbar-track{background:#2a2a3e;border-radius:3px}pre::-webkit-scrollbar-thumb{background:#6C5CE7;border-radius:3px}
-/* ===== END ENHANCEMENT LAYER v2.0 ===== */
-
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;--border2:#484f58;--text:#e6edf3;--muted:#8b949e;--dim:#6e7681;--green:#3fb950;--blue:#79c0ff;--purple:#d2a8ff;--orange:#ffa657;--red:#ff7b72;--yellow:#e3b341;--cyan:#56d364}
-body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh}
-.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:18px 24px 14px;position:relative}
-.hero::after{content:'S4';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:60px;font-weight:800;color:rgba(255,166,87,0.07);pointer-events:none}
-.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,166,87,.1);border:1px solid rgba(255,166,87,.25);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.hero h1{font-size:21px;font-weight:800;margin-bottom:4px}.hero h1 span{color:var(--orange)}
-.hero p{font-size:13px;color:var(--muted)}
-.phase-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.ph-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace;background:rgba(210,168,255,.1);color:var(--purple);border:1px solid rgba(210,168,255,.2)}
-
-.stabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
-.stabs::-webkit-scrollbar{display:none}
-.stab{padding:10px 16px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
-.stab:hover{color:var(--text)}.stab.active{color:var(--orange);border-bottom-color:var(--orange)}
-.panel{display:none;padding:18px 20px}.panel.active{display:block}
-.def-box{background:var(--bg3);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:16px}
-.def-box .lbl{font-size:10px;font-weight:700;color:var(--orange);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
-.def-box p{font-size:14px;color:var(--text);line-height:1.7}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px}
-.card h4{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.card h4::before{content:'';width:3px;height:12px;border-radius:2px;background:var(--orange);display:inline-block}
-.card p{font-size:13px;color:var(--text);line-height:1.6}
-.full{grid-column:1/-1}
-.gitem{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
-.gitem:last-child{border-bottom:none}
-.gkw{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--yellow);background:rgba(227,179,65,.08);border:1px solid rgba(227,179,65,.18);padding:2px 8px;border-radius:4px;white-space:nowrap;height:fit-content;margin-top:2px;flex-shrink:0}
-.gdesc{font-size:13px;color:var(--muted);line-height:1.5}
-.oneliners{display:flex;flex-direction:column;gap:8px}
-.ol{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:var(--text);line-height:1.5;font-style:italic}
-.ol span{color:var(--orange);font-weight:700;font-style:normal;font-size:10px;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
-.cb{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden}
-.cb h4{background:var(--bg3);padding:10px 14px;font-size:12px;font-weight:700;color:var(--orange);border-bottom:1px solid var(--border)}
-.cb-body{padding:14px}
-.cb-body p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px}
-.cb-body p:last-child{margin-bottom:0}
-.flow{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px}
-.fr{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
-.fb{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;white-space:nowrap}
-.fb.b{color:var(--blue)}.fb.g{color:var(--green);border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.05)}
-.fb.p{color:var(--purple);border-color:rgba(210,168,255,.3);background:rgba(210,168,255,.05)}
-.fb.o{color:var(--orange);border-color:rgba(255,166,87,.3);background:rgba(255,166,87,.05)}
-.fb.r{color:var(--red);border-color:rgba(255,123,114,.3);background:rgba(255,123,114,.05)}
-.fb.y{color:var(--yellow);border-color:rgba(227,179,65,.3);background:rgba(227,179,65,.05)}
-.arr{color:var(--dim);font-size:13px}
-.bplist{list-style:none}
-.bpitem{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
-.bpitem:last-child{border-bottom:none}
-.bpicon{width:18px;height:18px;border-radius:50%;background:rgba(255,166,87,.1);border:1px solid rgba(255,166,87,.25);color:var(--orange);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.qablock{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden}
-.qaq{background:var(--bg3);padding:10px 14px;font-size:13px;font-weight:600;color:var(--orange);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-.qaa{background:var(--bg2);padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.6;display:none;border-top:1px solid var(--border)}
-.qaa.open{display:block}
-.qt{color:var(--dim);font-size:15px;transition:transform .2s;flex-shrink:0}
-.qablock.open .qt{transform:rotate(90deg)}
-.ctabs{display:flex;background:var(--bg);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;padding:0 16px}
-.ctabs::-webkit-scrollbar{display:none}
-.ctab{padding:8px 13px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:5px}
-.ctab:hover{color:var(--muted)}.ctab.active{color:var(--blue);border-bottom-color:var(--blue)}
-.fi{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--bg3);color:var(--dim);font-weight:700}
-.cpanel{display:none}.cpanel.active{display:block}
-.cwrap{background:#0d1117}
-.cheader{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--bg2);border-bottom:1px solid var(--border)}
-.cfname{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
-.cfname::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--orange);display:inline-block}
-.copybtn{font-size:11px;padding:3px 10px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif}
-.copybtn:hover{color:var(--text)}
-pre{margin:0;padding:16px;overflow-x:auto;font-size:12.5px;line-height:1.75;font-family:'JetBrains Mono',monospace;background:#0d1117}
-.kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#6e7681;font-style:italic}
-.num{color:#79c0ff}.cls{color:#ffa657}.prop{color:#79c0ff}.val{color:#3fb950}.type{color:#ffa657}
-.tsec{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;margin-top:16px;display:flex;align-items:center;gap:8px}
-.tsec::after{content:'';flex:1;height:1px;background:var(--border)}
-.dialog-types{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
-.dtype{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
-.dtype h5{font-size:12px;font-weight:700;margin-bottom:6px}
-.dtype p{font-size:12px;color:var(--muted);line-height:1.5}
-.dtype.alert h5{color:var(--red)}.dtype.confirm h5{color:var(--orange)}.dtype.prompt h5{color:var(--yellow)}.dtype.before h5{color:var(--purple)}
+.hub{padding:1rem 0;max-width:700px;font-family:var(--font-sans)}
+.pbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pp{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:500;border:1.5px solid}
+.ph1{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.stabs{display:flex;border-bottom:1.5px solid var(--color-border-tertiary);overflow-x:auto}
+.stab{padding:9px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--color-text-secondary);white-space:nowrap;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;font-family:var(--font-sans)}
+.stab.active{color:#3C3489;border-bottom-color:#7F77DD;background:#EEEDFE}
+.stab:hover:not(.active){background:var(--color-background-secondary)}
+.prow{display:flex;align-items:center;gap:8px;padding:8px 13px;background:#EEEDFE;border-bottom:0.5px solid #AFA9EC}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.dn{background:#1D9E75}.dot.ac{background:#7F77DD}.dot.td{background:#D3D1C7}
+.plbl{font-size:11px;color:#3C3489;font-weight:500}
+.obanner{background:#EEEDFE;padding:14px 16px;border-bottom:0.5px solid #AFA9EC}
+.obanner h2{font-size:11px;font-weight:500;color:#534AB7;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.obanner p{font-size:13px;color:#26215C;line-height:1.6}
+.sec{padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec h3{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qp{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px;color:var(--color-text-primary);line-height:1.5;border-left:3px solid #7F77DD}
+.abox{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;margin-bottom:8px}
+.aflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.an{padding:5px 10px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500;text-align:center;line-height:1.4}
+.n1{background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC}
+.n2{background:#E1F5EE;color:#085041;border:1px solid #5DCAA5}
+.n3{background:#FAECE7;color:#712B13;border:1px solid #F0997B}
+.n4{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
+.n5{background:#E6F1FB;color:#0C447C;border:1px solid #85B7EB}
+.arr{color:var(--color-text-secondary);font-size:13px;font-weight:500}
+.dr{font-size:12px;color:var(--color-text-secondary);padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;gap:6px}
+.glosgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.gitem{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px}
+.gkw{font-size:11px;font-weight:500;color:#3C3489;font-family:'Courier New',monospace;margin-bottom:3px}
+.gdef{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.cs{background:#fff;border:1.5px solid #e2e4e8;border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.csh{display:flex;align-items:flex-start !important;gap:8px;padding:8px 14px;background:#f6f8fa;border-bottom:1px solid #e2e4e8;flex-wrap:nowrap !important}
+.csh span{font-size:13px !important;font-weight:700 !important;color:#24292f;letter-spacing:.03em !important;text-transform:uppercase;font-family:'Outfit', sans-serif !important;line-height:1.4 !important}
+.dr2{display:flex;gap:5px;margin-top:4px !important;flex-shrink:0 !important}
+.md{width:11px;height:11px;border-radius:50%}
+.mr{background:#ff5f57}.my{background:#febc2e}.mg{background:#28c840}
+.ctbar{display:flex;background:#f0f2f5;border-bottom:1px solid #e2e4e8;overflow-x:auto}
+.ct{padding:7px 12px;font-size:11px;cursor:pointer;border:none;background:transparent;color:#57606a;white-space:nowrap;font-family:'Courier New',monospace;border-bottom:2px solid transparent;font-weight:500}
+.ct.active{color:#0969da;border-bottom-color:#0969da;background:#fff}
+.ct:hover:not(.active){background:#e8eaed;color:#24292f}
+.cp{display:none;padding:14px 18px;overflow-x:auto;background:#fff}
+.cp.active{display:block}
+pre{font-family:'Courier New',monospace;font-size:12px;line-height:2;white-space:pre;color:#24292f}
+.ln{color:#8c9198;font-size:11px;user-select:none;margin-right:14px;display:inline-block;width:22px;text-align:right}
+.kw{color:#cf222e;font-weight:500}.cm{color:#6e7781;font-style:italic}.st{color:#0a3069}
+.cl{color:#953800;font-weight:500}.mt{color:#8250df}.nm{color:#0550ae}
+.vr{color:#24292f}.bo{color:#116329;font-weight:500}
+.fb{background:#f0f2f5;border:0.5px solid #d0d7de;border-radius:4px;padding:3px 10px;font-size:11px;color:#57606a;font-family:'Courier New',monospace;display:inline-block;margin-bottom:8px}
+.bpl{list-style:none;display:grid;gap:6px}
+.bpl li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.bpc{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px}
+.kwd{color:#c0392b !important;font-weight:700 !important}
+.ql{display:grid;gap:10px}
+.qi{background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.qq{font-size:12px;font-weight:500;color:#0969da;margin-bottom:4px}
+.qa{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.flowrow{display:flex;align-items:stretch;gap:0;margin:10px 0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.fstep{flex:1;padding:10px 8px;font-size:11px;text-align:center;border-right:0.5px solid var(--color-border-tertiary)}
+.fstep:last-child{border-right:none}
+.fstep .fn{font-weight:500;margin-bottom:3px;font-size:12px}
+.fstep .fd{color:var(--color-text-secondary);font-size:11px}
 </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../responsive.css">
 
     <!-- Prism Syntax Highlighting -->
@@ -136,157 +82,108 @@ pre{margin:0;padding:16px;overflow-x:auto;font-size:12.5px;line-height:1.75;font
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
 
-    
-
-
 </head>
 <body class="line-numbers">
-  <div class="hero">
-  <div class="badge"><div class="dot"></div>JARVIS · SESSION 4 · PHASE 1</div>
-  <h1>Jarvis Session 4: Alerts, Dialogs & Popups Handling</h1>
-  <p>alert, confirm, prompt, beforeunload — page.on('dialog'), accept, dismiss, fill</p>
-  <div class="phase-row"><span class="ph-badge">⬡ Phase 1 — Fundamentals</span><span class="ph-badge" style="background:rgba(255,166,87,.1);color:var(--orange);border-color:rgba(255,166,87,.2)">S4 of 10</span></div>
+  <div class="hub" data-testid="div-hub-1">
+<div class="pbar" data-testid="div-pbar-2">
+  <span class="pp ph1">S4 · Alerts, Dialogs &amp; Popups</span>
 </div>
 
-<div class="stabs" id="stabs4">
-  <div class="stab active" data-p="overview">Overview</div>
-  <div class="stab" data-p="glossary">Glossary</div>
-  <div class="stab" data-p="oneliners">Interview 1-Liners</div>
-  <div class="stab" data-p="concepts">Concepts</div>
-  <div class="stab" data-p="bp">Best Practices</div>
-  <div class="stab" data-p="interview">Interview Prep</div>
-  <div class="stab" data-p="code">Code Examples</div>
+<div class="stabs" id="sTabs" data-testid="div-sTabs">
+  <button class="stab active" onclick="sw(0)" data-testid="button-stab-1">S4 · Alerts, Dialogs &amp; Popups</button>
 </div>
 
-<div class="panel active" id="p4-overview">
-  <div class="def-box">
-    <div class="lbl">Session 4 · Core Definition</div>
-    <p>Browser <strong style="color:var(--orange)">dialogs</strong> are native browser pop-ups triggered by JavaScript: <code>alert()</code>, <code>confirm()</code>, <code>prompt()</code>, and the page unload warning (beforeunload). They block page execution until dismissed. Playwright handles them via the <code style="color:var(--orange)">page.on('dialog', handler)</code> event listener.</p>
+<div class="prow" data-testid="div-prow-4">
+  <span id="pd"></span>
+  <span class="plbl" id="pl">Session 4</span>
+</div>
+
+<div id="allS" data-testid="div-allS">
+
+<!-- ══════════════════════ SESSION 4 — ALERTS, DIALOGS & POPUPS ══════════════════════ -->
+<div id="s0" data-testid="div-s0">
+  <div class="obanner" data-testid="div-obanner-7">
+    <h2 data-testid="h2-1">Overview — Alerts, Dialogs &amp; Popups Handling in Playwright</h2>
+    <p data-testid="p-1">Browser <strong class="kwd">dialogs</strong> are native browser pop-ups triggered by <strong class="kwd">JavaScript</strong>: <code data-testid="code-1">alert()</code>, <code data-testid="code-2">confirm()</code>, <code data-testid="code-3">prompt()</code>, and the page unload warning (<strong class="kwd">beforeunload</strong>). They block page execution until dismissed. <strong class="kwd">Playwright</strong> handles them via the <code data-testid="code-4">page.on('dialog', handler)</code> event listener. If no handler is registered, <strong class="kwd">Playwright</strong> auto-dismisses <strong class="kwd">dialogs</strong> by default — your test won't hang, but you won't verify dialog content either.</p>
   </div>
-  <div class="dialog-types">
-    <div class="dtype alert"><h5>alert()</h5><p>Shows a message with one OK button. No return value. Used to notify users. Action: dialog.accept()</p></div>
-    <div class="dtype confirm"><h5>confirm()</h5><p>Shows a message with OK + Cancel. Returns true/false. Used for "Are you sure?" prompts. Actions: accept() or dismiss()</p></div>
-    <div class="dtype prompt"><h5>prompt()</h5><p>Shows a message + text input. Returns user's text or null. Used to collect input. Action: dialog.accept(text)</p></div>
-    <div class="dtype before"><h5>beforeunload</h5><p>Fires when user tries to leave page. Browser shows "Leave site?" warning. Action: dismiss() to stay, accept() to leave</p></div>
-  </div>
-  <div class="grid2">
-    <div class="card"><h4>WHY handle dialogs?</h4><p>If a dialog appears and no handler is registered, Playwright auto-dismisses it by default. If your test needs to verify dialog content, accept it, or input text into a prompt — you must register a handler.</p></div>
-    <div class="card"><h4>HOW to handle?</h4><p>Register <code style="color:var(--orange)">page.on('dialog', handler)</code> BEFORE triggering the action that opens the dialog. The handler receives a Dialog object with methods: accept(), dismiss(), message(), type(), defaultValue().</p></div>
-  </div>
-</div>
 
-<div class="panel" id="p4-glossary">
-  <div class="tsec">Keyword Glossary — Session 4</div>
-  <div class="gitem"><span class="gkw">page.on('dialog')</span><span class="gdesc">Registers an event listener that fires whenever a browser dialog (alert/confirm/prompt/beforeunload) appears. The handler receives a Dialog object. Must be registered before the action that triggers the dialog.</span></div>
-  <div class="gitem"><span class="gkw">Dialog</span><span class="gdesc">The Playwright object representing an open browser dialog. Provides: type(), message(), defaultValue(), accept(), dismiss(). Dialogs block page execution until handled.</span></div>
-  <div class="gitem"><span class="gkw">dialog.accept()</span><span class="gdesc">Clicks the OK/Accept button on the dialog. For prompt dialogs, pass a string: dialog.accept('my input text') to fill the text field before accepting.</span></div>
-  <div class="gitem"><span class="gkw">dialog.dismiss()</span><span class="gdesc">Clicks the Cancel/Dismiss button. For alert dialogs (which have no Cancel), dismiss() behaves like accept(). For confirm/prompt, returns false/null to the calling JS code.</span></div>
-  <div class="gitem"><span class="gkw">dialog.message()</span><span class="gdesc">Returns the text content of the dialog. e.g. for alert('Are you sure?'), dialog.message() returns 'Are you sure?'. Use this to assert the dialog shows the correct message.</span></div>
-  <div class="gitem"><span class="gkw">dialog.type()</span><span class="gdesc">Returns the type of dialog as a string: 'alert', 'confirm', 'prompt', or 'beforeunload'. Useful in a single handler that processes multiple dialog types differently.</span></div>
-  <div class="gitem"><span class="gkw">dialog.defaultValue()</span><span class="gdesc">Returns the default value pre-filled in a prompt dialog's input field. e.g. prompt('Enter name', 'John') → defaultValue() returns 'John'.</span></div>
-  <div class="gitem"><span class="gkw">page.waitForEvent('dialog')</span><span class="gdesc">Alternative to page.on() — returns a Promise that resolves with the Dialog object when it appears. Useful when you need to handle a dialog exactly once without a persistent listener.</span></div>
-  <div class="gitem"><span class="gkw">beforeunload</span><span class="gdesc">A special dialog type that fires when the user navigates away from a page with unsaved changes. The app calls window.onbeforeunload. Browser shows a warning. dialog.accept() lets the user leave; dismiss() keeps them on the page.</span></div>
-  <div class="gitem"><span class="gkw">page.removeListener()</span><span class="gdesc">Removes a previously registered event listener. Use to remove dialog handlers after a specific test scenario so they don't interfere with subsequent test steps.</span></div>
-</div>
-
-<div class="panel" id="p4-oneliners">
-  <div class="tsec">Interview One-Liners — Session 4</div>
-  <div class="oneliners">
-    <div class="ol"><span>Default Behavior</span>"Playwright auto-dismisses dialogs by default if no handler is registered — this means your test won't hang on an unexpected alert, but it also means you won't see the dialog message or verify its content unless you set up page.on('dialog')."</div>
-    <div class="ol"><span>Ordering</span>"Just like popup detection, dialog handling requires the listener to be set up BEFORE the action that triggers the dialog — otherwise you miss the event and the dialog auto-dismisses before your code can inspect it."</div>
-    <div class="ol"><span>Types</span>"There are four browser dialog types in Playwright: alert (one button), confirm (two buttons — OK/Cancel), prompt (text input), and beforeunload (leave/stay warning) — dialog.type() tells you which one you're dealing with."</div>
-    <div class="ol"><span>Prompt</span>"For prompt dialogs, dialog.accept('my text') fills the text field and clicks OK in one call — you don't interact with the input separately, you just pass the value directly to accept()."</div>
-    <div class="ol"><span>beforeunload</span>"Testing the beforeunload dialog is tricky — I register the handler, then call page.close() or navigate away, and the handler dismisses or accepts it. Just navigating with goto() doesn't always trigger it depending on app implementation."</div>
-    <div class="ol"><span>Assertion</span>"I always assert dialog.message() in my handler before calling accept() or dismiss() — this verifies the app is showing the right message text, not just that a dialog appeared."</div>
-    <div class="ol"><span>Multiple Dialogs</span>"If a test scenario involves multiple sequential dialogs, I use page.on() with a counter or a queue of responses — each call to the handler consumes one dialog and pops the next expected response."</div>
-  </div>
-</div>
-
-<div class="panel" id="p4-concepts">
-  <div class="tsec">Core Concepts — Session 4</div>
-  <div class="cb">
-    <h4>⬡ Dialog Event Flow</h4>
-    <div class="cb-body">
-      <p>Dialogs are synchronous in the browser — they block all JS execution. Playwright intercepts them via the 'dialog' event and lets you handle them asynchronously in your test code.</p>
-      <div class="flow">
-        <div class="fr"><span class="fb o">Test registers page.on('dialog', handler)</span></div>
-        <div class="fr" style="margin-left:10px"><span class="arr">↓</span></div>
-        <div class="fr"><span class="fb b">Test action triggers dialog (click delete btn)</span></div>
-        <div class="fr" style="margin-left:10px"><span class="arr">↓</span></div>
-        <div class="fr"><span class="fb y">Browser fires 'dialog' event</span></div>
-        <div class="fr" style="margin-left:10px"><span class="arr">↓</span></div>
-        <div class="fr"><span class="fb o">Playwright calls handler(dialog)</span></div>
-        <div class="fr" style="margin-left:10px"><span class="arr">↓</span></div>
-        <div class="fr"><span class="fb g">handler: assert message → accept() or dismiss()</span></div>
-        <div class="fr" style="margin-left:10px"><span class="arr">↓</span></div>
-        <div class="fr"><span class="fb g">Browser dialog closes → page JS continues</span></div>
-      </div>
+  <div class="sec" data-testid="div-sec-8">
+    <h3 data-testid="h3-1">What / Why / When / Where / How</h3>
+    <div class="abox" data-testid="div-abox-9">
+      <div class="dr" data-testid="div-dr-10"><span style="color:#3C3489;font-weight:500;width:55px;flex-shrink:0">What</span><span>Native browser <strong class="kwd">dialogs</strong> (<code data-testid="code-5">alert</code>, <code data-testid="code-6">confirm</code>, <code data-testid="code-7">prompt</code>, <strong class="kwd">beforeunload</strong>) that block <strong class="kwd">JavaScript</strong> execution until the user responds. They are NOT <strong class="kwd">DOM</strong> elements — they're browser chrome.</span></div>
+      <div class="dr" data-testid="div-dr-11"><span style="color:#085041;font-weight:500;width:55px;flex-shrink:0">Why</span><span>If a <strong class="kwd">dialog</strong> appears and no handler is registered, <strong class="kwd">Playwright</strong> auto-dismisses it. If your test needs to verify dialog content, accept it, or input text into a <strong class="kwd">prompt</strong> — you must register a handler.</span></div>
+      <div class="dr" data-testid="div-dr-12"><span style="color:#712B13;font-weight:500;width:55px;flex-shrink:0">When</span><span>Delete confirmations (<code data-testid="code-8">confirm()</code>), save notifications (<code data-testid="code-9">alert()</code>), user input collection (<code data-testid="code-10">prompt()</code>), and unsaved changes warnings (<strong class="kwd">beforeunload</strong>).</span></div>
+      <div class="dr" data-testid="div-dr-13"><span style="color:#633806;font-weight:500;width:55px;flex-shrink:0">Where</span><span>Register <code data-testid="code-11">page.on('dialog', handler)</code> BEFORE the action that triggers the <strong class="kwd">dialog</strong>. The handler receives a <strong class="kwd">Dialog</strong> object with <code data-testid="code-12">accept()</code>, <code data-testid="code-13">dismiss()</code>, <code data-testid="code-14">message()</code>, <code data-testid="code-15">type()</code>.</span></div>
+      <div class="dr" style="border:none" data-testid="div-dr-14"><span style="color:#0C447C;font-weight:500;width:55px;flex-shrink:0">How</span><span><code data-testid="code-16">page.on('dialog', async (dialog) => { await dialog.accept(); })</code> for persistent handlers, or <code data-testid="code-17">page.waitForEvent('dialog')</code> for one-time <strong class="kwd">dialogs</strong>.</span></div>
     </div>
   </div>
-  <div class="cb">
-    <h4>⬡ Dialog Types — Accept vs Dismiss Behavior</h4>
-    <div class="cb-body">
-      <div class="flow">
-        <div class="fr"><span class="fb r">alert('msg')</span><span class="arr">→</span><span class="fb g">accept()</span><span class="arr">→</span><span class="fb" style="color:var(--muted)">OK clicked, no return</span></div>
-        <div class="fr"><span class="fb r">alert('msg')</span><span class="arr">→</span><span class="fb g">dismiss()</span><span class="arr">→</span><span class="fb" style="color:var(--muted)">same as accept (no cancel btn)</span></div>
-        <div class="fr" style="margin-top:6px"><span class="fb o">confirm('sure?')</span><span class="arr">→</span><span class="fb g">accept()</span><span class="arr">→</span><span class="fb g">JS gets true</span></div>
-        <div class="fr"><span class="fb o">confirm('sure?')</span><span class="arr">→</span><span class="fb r">dismiss()</span><span class="arr">→</span><span class="fb r">JS gets false</span></div>
-        <div class="fr" style="margin-top:6px"><span class="fb y">prompt('name?', 'default')</span><span class="arr">→</span><span class="fb g">accept('Alice')</span><span class="arr">→</span><span class="fb g">JS gets 'Alice'</span></div>
-        <div class="fr"><span class="fb y">prompt('name?', 'default')</span><span class="arr">→</span><span class="fb r">dismiss()</span><span class="arr">→</span><span class="fb r">JS gets null</span></div>
-        <div class="fr" style="margin-top:6px"><span class="fb p">beforeunload</span><span class="arr">→</span><span class="fb g">accept()</span><span class="arr">→</span><span class="fb g">user leaves page</span></div>
-        <div class="fr"><span class="fb p">beforeunload</span><span class="arr">→</span><span class="fb r">dismiss()</span><span class="arr">→</span><span class="fb r">user stays on page</span></div>
-      </div>
+
+  <div class="sec" data-testid="div-sec-15">
+    <h3 data-testid="h3-2">Keyword Glossary</h3>
+    <div class="glosgrid" data-testid="div-glosgrid-16">
+      <div class="gitem" data-testid="div-gitem-17"><div class="gkw" data-testid="div-gkw-18">page.on('dialog')</div><div class="gdef" data-testid="div-gdef-19">Registers an event listener that fires whenever a browser <strong class="kwd">dialog</strong> (<code data-testid="code-18">alert</code>/<code data-testid="code-19">confirm</code>/<code data-testid="code-20">prompt</code>/<strong class="kwd">beforeunload</strong>) appears. Must be registered before the triggering action.</div></div>
+      <div class="gitem" data-testid="div-gitem-20"><div class="gkw" data-testid="div-gkw-21">Dialog</div><div class="gdef" data-testid="div-gdef-22">The <strong class="kwd">Playwright</strong> object representing an open browser <strong class="kwd">dialog</strong>. Provides: <code data-testid="code-21">type()</code>, <code data-testid="code-22">message()</code>, <code data-testid="code-23">defaultValue()</code>, <code data-testid="code-24">accept()</code>, <code data-testid="code-25">dismiss()</code>.</div></div>
+      <div class="gitem" data-testid="div-gitem-23"><div class="gkw" data-testid="div-gkw-24">dialog.accept()</div><div class="gdef" data-testid="div-gdef-25">Clicks the OK/Accept button. For <code data-testid="code-26">prompt</code> <strong class="kwd">dialogs</strong>, pass a string: <code data-testid="code-27">dialog.accept('my input text')</code> to fill the text field before accepting.</div></div>
+      <div class="gitem" data-testid="div-gitem-26"><div class="gkw" data-testid="div-gkw-27">dialog.dismiss()</div><div class="gdef" data-testid="div-gdef-28">Clicks the Cancel/Dismiss button. For <code data-testid="code-28">alert</code> (no Cancel), <code data-testid="code-29">dismiss()</code> behaves like <code data-testid="code-30">accept()</code>. For <code data-testid="code-31">confirm</code>/<code data-testid="code-32">prompt</code>, returns <code data-testid="code-33">false</code>/<code data-testid="code-34">null</code> to <strong class="kwd">JS</strong>.</div></div>
+      <div class="gitem" data-testid="div-gitem-29"><div class="gkw" data-testid="div-gkw-30">dialog.message()</div><div class="gdef" data-testid="div-gdef-31">Returns the text content of the <strong class="kwd">dialog</strong>. Use to assert the <strong class="kwd">dialog</strong> shows the correct message before accepting/dismissing.</div></div>
+      <div class="gitem" data-testid="div-gitem-32"><div class="gkw" data-testid="div-gkw-33">dialog.type()</div><div class="gdef" data-testid="div-gdef-34">Returns the type as a string: <code data-testid="code-35">'alert'</code>, <code data-testid="code-36">'confirm'</code>, <code data-testid="code-37">'prompt'</code>, or <code data-testid="code-38">'beforeunload'</code>. Useful in a single handler that routes different types.</div></div>
+      <div class="gitem" data-testid="div-gitem-35"><div class="gkw" data-testid="div-gkw-36">dialog.defaultValue()</div><div class="gdef" data-testid="div-gdef-37">Returns the default value pre-filled in a <code data-testid="code-39">prompt</code> <strong class="kwd">dialog</strong>'s input. e.g. <code data-testid="code-40">prompt('Name', 'John')</code> → <code data-testid="code-41">defaultValue()</code> returns <code data-testid="code-42">'John'</code>.</div></div>
+      <div class="gitem" data-testid="div-gitem-38"><div class="gkw" data-testid="div-gkw-39">waitForEvent('dialog')</div><div class="gdef" data-testid="div-gdef-40">Alternative to <code data-testid="code-43">page.on()</code> — returns a <strong class="kwd">Promise</strong> that resolves with the <strong class="kwd">Dialog</strong> object when it appears. Useful for one-time <strong class="kwd">dialogs</strong>.</div></div>
+      <div class="gitem" data-testid="div-gitem-41"><div class="gkw" data-testid="div-gkw-42">beforeunload</div><div class="gdef" data-testid="div-gdef-43">A special <strong class="kwd">dialog</strong> type that fires when the user navigates away from a page with unsaved changes. <code data-testid="code-44">accept()</code> lets the user leave; <code data-testid="code-45">dismiss()</code> keeps them on the page.</div></div>
+      <div class="gitem" data-testid="div-gitem-44"><div class="gkw" data-testid="div-gkw-45">page.removeListener()</div><div class="gdef" data-testid="div-gdef-46">Removes a previously registered event listener. Use to remove <strong class="kwd">dialog</strong> handlers after a specific test scenario.</div></div>
     </div>
   </div>
-  <div class="cb">
-    <h4>⬡ One-time vs Persistent Handler</h4>
-    <div class="cb-body">
-      <p>Use page.on() for dialogs that appear multiple times in a test. Use page.waitForEvent('dialog') for a one-time dialog you want to handle exactly once without a persistent listener.</p>
-      <div class="flow">
-        <div class="fr"><span class="fb o">page.on('dialog', handler)</span><span class="arr">→</span><span class="fb" style="color:var(--muted)">fires every time a dialog appears</span></div>
-        <div class="fr"><span class="fb b">page.waitForEvent('dialog')</span><span class="arr">→</span><span class="fb" style="color:var(--muted)">resolves once, returns Dialog object</span></div>
-        <div class="fr" style="margin-top:6px"><span class="fb" style="color:var(--muted)">Remove persistent listener:</span></div>
-        <div class="fr" style="margin-left:10px"><span class="fb g">page.removeListener('dialog', handler)</span></div>
-      </div>
+
+  <div class="sec" data-testid="div-sec-47">
+    <h3 data-testid="h3-3">Interview One-Liners</h3>
+    <div class="igrid" data-testid="div-igrid-48">
+      <div class="qp" data-testid="div-qp-49"><strong class="kwd">Playwright</strong> auto-dismisses <strong class="kwd">dialogs</strong> by default if no handler is registered — your test won't hang on an unexpected alert, but you won't verify its content unless you set up <code data-testid="code-46">page.on('dialog')</code>.</div>
+      <div class="qp" data-testid="div-qp-50">Just like popup detection, <strong class="kwd">dialog</strong> handling requires the listener to be set up BEFORE the action that triggers it — otherwise you miss the event and the <strong class="kwd">dialog</strong> auto-dismisses.</div>
+      <div class="qp" data-testid="div-qp-51">There are four browser <strong class="kwd">dialog</strong> types: <code data-testid="code-47">alert</code> (one button), <code data-testid="code-48">confirm</code> (OK/Cancel), <code data-testid="code-49">prompt</code> (text input), and <strong class="kwd">beforeunload</strong> (leave/stay) — <code data-testid="code-50">dialog.type()</code> tells you which one.</div>
+      <div class="qp" data-testid="div-qp-52">For <code data-testid="code-51">prompt</code> <strong class="kwd">dialogs</strong>, <code data-testid="code-52">dialog.accept('my text')</code> fills the text field and clicks OK in one call — you don't interact with the input separately.</div>
+      <div class="qp" data-testid="div-qp-53">I always assert <code data-testid="code-53">dialog.message()</code> in my handler before calling <code data-testid="code-54">accept()</code> or <code data-testid="code-55">dismiss()</code> — this verifies the app shows the right message text, not just that a <strong class="kwd">dialog</strong> appeared.</div>
+      <div class="qp" data-testid="div-qp-54">If a test involves multiple sequential <strong class="kwd">dialogs</strong>, I use <code data-testid="code-56">page.on()</code> with a response queue — each call to the handler consumes one <strong class="kwd">dialog</strong> and pops the next expected response.</div>
+      <div class="qp" data-testid="div-qp-55">Testing <strong class="kwd">beforeunload</strong> is tricky — I register the handler, then call <code data-testid="code-57">page.close()</code> or navigate away. The handler <code data-testid="code-58">dismiss()</code> keeps the user on the page, <code data-testid="code-59">accept()</code> lets them leave.</div>
     </div>
   </div>
-</div>
 
-<div class="panel" id="p4-bp">
-  <div class="tsec">Best Practices — Session 4</div>
-  <ul class="bplist">
-    <li class="bpitem"><div class="bpicon">✓</div><div>Always register dialog handlers <strong style="color:var(--orange)">before</strong> the action that triggers them. The 'dialog' event fires synchronously in the browser, so a late-registered handler will never catch it.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>Always <strong style="color:var(--orange)">assert dialog.message()</strong> inside the handler before accepting/dismissing — this verifies the dialog shows the correct text, not just that one appeared.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>Use <strong style="color:var(--orange)">dialog.type()</strong> to write a single handler that routes different dialog types: alert → accept(), confirm → check expected flow, prompt → accept with test data.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>For one-time dialogs, prefer <strong style="color:var(--orange)">page.waitForEvent('dialog')</strong> over page.on() — it's cleaner, doesn't need cleanup with removeListener(), and makes the test flow more readable.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>If your test has multiple dialogs in sequence, maintain a <strong style="color:var(--orange)">response queue array</strong> in the handler and shift() one response per dialog call — this handles multi-step dialog flows cleanly.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>Always <strong style="color:var(--orange)">await</strong> dialog.accept() and dialog.dismiss() — they return Promises even though the dialog appears synchronous. Not awaiting causes test instability.</div></li>
-    <li class="bpitem"><div class="bpicon">✓</div><div>For <strong style="color:var(--orange)">beforeunload</strong> testing, note that calling page.goto() from a page with unsaved changes may or may not trigger it depending on browser behavior — use page.close() with a registered handler for reliable beforeunload testing.</div></li>
-  </ul>
-</div>
-
-<div class="panel" id="p4-interview">
-  <div class="tsec">Interview Prep — 5 SDET Q&A</div>
-  <div class="qablock" id="q4-1"><div class="qaq" onclick="tq4('q4-1')">Q1: What happens if a dialog appears and no handler is registered in Playwright? <span class="qt">▶</span></div><div class="qaa">Playwright auto-dismisses dialogs if no 'dialog' event handler is registered. For alert — it's like clicking OK. For confirm — it's like clicking Cancel (returns false to JS). For prompt — it's like clicking Cancel (returns null). For beforeunload — it's like staying on the page. This default behavior means your tests won't hang unexpectedly on an unhandled dialog. However, it also means you won't be able to verify the dialog message, test confirm acceptance flows, or provide prompt input — for those scenarios you must register a handler explicitly.</div></div>
-  <div class="qablock" id="q4-2"><div class="qaq" onclick="tq4('q4-2')">Q2: How do you test a delete confirmation flow that uses window.confirm()? <span class="qt">▶</span></div><div class="qaa">I set up the handler before clicking Delete: page.on('dialog', async (dialog) => { expect(dialog.type()).toBe('confirm'); expect(dialog.message()).toContain('Are you sure you want to delete'); await dialog.accept(); // clicks OK }). Then I click the delete button: await page.click('#delete-btn'). Then assert the item is gone: await expect(page.locator('.item-row')).toHaveCount(0). For the dismiss case (user clicks Cancel), I use dialog.dismiss() and verify the item still exists. Two separate test cases cover both paths.</div></div>
-  <div class="qablock" id="q4-3"><div class="qaq" onclick="tq4('q4-3')">Q3: How do you handle a window.prompt() dialog in Playwright? <span class="qt">▶</span></div><div class="qaa">prompt() dialogs have an input field. I handle them like this: page.on('dialog', async (dialog) => { expect(dialog.type()).toBe('prompt'); expect(dialog.message()).toBe('Enter your name:'); expect(dialog.defaultValue()).toBe('Guest'); // check pre-filled value await dialog.accept('Alice'); // fills the input AND clicks OK }). Calling dialog.accept('Alice') fills the prompt's input field with 'Alice' and confirms — the calling JS code receives 'Alice' as the return value. Calling dialog.dismiss() instead makes JS receive null regardless of any input.</div></div>
-  <div class="qablock" id="q4-4"><div class="qaq" onclick="tq4('q4-4')">Q4: How do you handle multiple sequential dialogs in one test? <span class="qt">▶</span></div><div class="qaa">I use a response queue pattern: const responses = ['accept', 'dismiss', 'accept']; page.on('dialog', async (dialog) => { const response = responses.shift(); if (response === 'accept') { await dialog.accept(); } else { await dialog.dismiss(); } }). Each dialog invocation pops one response from the queue. This is clean and deterministic. For prompts in the queue, I'd use objects: [{action:'accept', text:'Alice'}, {action:'dismiss'}]. Then in the handler: if (r.action === 'accept') await dialog.accept(r.text ?? ''). This scales to any number of dialogs in any order.</div></div>
-  <div class="qablock" id="q4-5"><div class="qaq" onclick="tq4('q4-5')">Q5: How do you test the beforeunload dialog — the "Leave site?" warning? <span class="qt">▶</span></div><div class="qaa">beforeunload dialogs appear when a user tries to navigate away from a page with unsaved changes. Testing it: First, navigate to the form page and start filling it (triggering the unsaved state). Register handler: page.on('dialog', async (dialog) => { expect(dialog.type()).toBe('beforeunload'); await dialog.dismiss(); // dismiss = stay on page }). Then trigger navigation: await page.close() or await page.goBack(). If the dialog appears, the handler dismisses it and the page stays. To test the "leave" path: await dialog.accept() — this confirms navigation and the page unloads. Note: Some frameworks use custom confirm() dialogs instead of real beforeunload — those are handled identically to confirm() dialogs.</div></div>
-</div>
-
-<div class="panel" id="p4-code">
-  <div class="ctabs" id="ctabs4">
-    <div class="ctab active" data-c="c4-1"><span class="fi">.ts</span> alert-handling.ts</div>
-    <div class="ctab" data-c="c4-2"><span class="fi">.ts</span> confirm-dialog.ts</div>
-    <div class="ctab" data-c="c4-3"><span class="fi">.ts</span> prompt-dialog.ts</div>
-    <div class="ctab" data-c="c4-4"><span class="fi">.ts</span> beforeunload.ts</div>
-    <div class="ctab" data-c="c4-5"><span class="fi">.ts</span> multi-dialog.ts</div>
-    <div class="ctab" data-c="c4-6"><span class="fi">.ts</span> dialog-types-router.ts</div>
+  <div class="sec" data-testid="div-sec-56">
+    <h3 data-testid="h3-4">Concepts — Flow Visuals</h3>
+    <div class="flowrow" data-testid="div-flowrow-57">
+      <div class="fstep n1" data-testid="div-fstep-58"><div class="fn" data-testid="div-fn-59">1. Register Handler</div><div class="fd" data-testid="div-fd-60"><code data-testid="code-60">page.on('dialog')</code><br>Set up listener</div></div>
+      <div class="fstep n2" data-testid="div-fstep-61"><div class="fn" data-testid="div-fn-62">2. Trigger Action</div><div class="fd" data-testid="div-fd-63"><code data-testid="code-61">page.click(btn)</code><br>Fires <strong class="kwd">dialog</strong></div></div>
+      <div class="fstep n3" data-testid="div-fstep-64"><div class="fn" data-testid="div-fn-65">3. Handler Called</div><div class="fd" data-testid="div-fd-66"><strong class="kwd">Playwright</strong> passes<br><strong class="kwd">Dialog</strong> object</div></div>
+      <div class="fstep n4" data-testid="div-fstep-67"><div class="fn" data-testid="div-fn-68">4. Assert + Respond</div><div class="fd" data-testid="div-fd-69"><code data-testid="code-62">dialog.message()</code><br><code data-testid="code-63">accept()</code>/<code data-testid="code-64">dismiss()</code></div></div>
+      <div class="fstep n5" data-testid="div-fstep-70"><div class="fn" data-testid="div-fn-71">5. Page Continues</div><div class="fd" data-testid="div-fd-72"><strong class="kwd">JS</strong> execution<br>resumes on page</div></div>
+    </div>
+    <div class="abox" style="margin-top:10px" data-testid="div-abox-73">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px" data-testid="div-74">Dialog Types — Accept vs Dismiss Behavior</div>
+      <div class="dr" data-testid="div-dr-75"><span style="color:#dc2626;font-weight:500;width:120px;flex-shrink:0">alert('msg')</span><span><code data-testid="code-65">accept()</code> → OK clicked, no return. <code data-testid="code-66">dismiss()</code> → same as accept (no Cancel button).</span></div>
+      <div class="dr" data-testid="div-dr-76"><span style="color:#ea580c;font-weight:500;width:120px;flex-shrink:0">confirm('sure?')</span><span><code data-testid="code-67">accept()</code> → <strong class="kwd">JS</strong> gets <code data-testid="code-68">true</code>. <code data-testid="code-69">dismiss()</code> → <strong class="kwd">JS</strong> gets <code data-testid="code-70">false</code>.</span></div>
+      <div class="dr" data-testid="div-dr-77"><span style="color:#ca8a04;font-weight:500;width:120px;flex-shrink:0">prompt('name?')</span><span><code data-testid="code-71">accept('Alice')</code> → <strong class="kwd">JS</strong> gets <code data-testid="code-72">'Alice'</code>. <code data-testid="code-73">dismiss()</code> → <strong class="kwd">JS</strong> gets <code data-testid="code-74">null</code>.</span></div>
+      <div class="dr" style="border:none" data-testid="div-dr-78"><span style="color:#7c3aed;font-weight:500;width:120px;flex-shrink:0">beforeunload</span><span><code data-testid="code-75">accept()</code> → user leaves page. <code data-testid="code-76">dismiss()</code> → user stays on page.</span></div>
+    </div>
+    <div class="abox" style="margin-top:10px" data-testid="div-abox-79">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px" data-testid="div-80">One-time vs Persistent Handler</div>
+      <div class="dr" data-testid="div-dr-81"><span style="color:#3C3489;font-weight:500;width:140px;flex-shrink:0">page.on('dialog')</span><span>Persistent — fires every time a <strong class="kwd">dialog</strong> appears. Remove with <code data-testid="code-77">page.removeListener()</code>.</span></div>
+      <div class="dr" style="border:none" data-testid="div-dr-82"><span style="color:#085041;font-weight:500;width:140px;flex-shrink:0">waitForEvent('dialog')</span><span>One-time — resolves once, returns <strong class="kwd">Dialog</strong> object. Cleaner for single-use scenarios.</span></div>
+    </div>
   </div>
-  <div class="cwrap">
-    <div class="cpanel active" id="c4-1">
-      <div class="cheader"><span class="cfname">alert-handling.ts</span><button class="copybtn" onclick="cp4('c4-1')">Copy</button></div>
-      <pre><code class="language-typescript">// alert-handling.ts
+
+  <div class="sec" data-testid="div-sec-83">
+    <h3 data-testid="h3-5">Code Examples</h3>
+    <div class="cs" data-testid="div-cs-84">
+      <div class="csh" data-testid="div-csh-85"><div class="dr2" data-testid="div-dr2-86"><span class="md mr"></span><span class="md my"></span><span class="md mg"></span></div><span>CODE EXAMPLES — S4 · Alerts, Dialogs &amp; Popups in Playwright</span></div>
+      <div class="ctbar" data-testid="div-ctbar-87">
+        <button class="ct active" onclick="sc(0,0)" data-testid="button-ct-2">1. Alert Handling</button>
+        <button class="ct" onclick="sc(0,1)" data-testid="button-ct-3">2. Confirm Dialog</button>
+        <button class="ct" onclick="sc(0,2)" data-testid="button-ct-4">3. Prompt Dialog</button>
+        <button class="ct" onclick="sc(0,3)" data-testid="button-ct-5">4. Beforeunload</button>
+        <button class="ct" onclick="sc(0,4)" data-testid="button-ct-6">5. Multi-Dialog</button>
+        <button class="ct" onclick="sc(0,5)" data-testid="button-ct-7">6. Dialog Router</button>
+      </div>
+
+      <div class="cp active" id="c0-0" data-testid="div-c0-0"><div class="fb" data-testid="div-fb-89">alert-handling.ts</div><pre data-testid="pre-1"><code class="language-typescript" data-testid="code-language-typescript-78">// alert-handling.ts
 // PURPOSE: Handle window.alert() dialogs in Playwright
 // alert() has one button (OK) — it just notifies the user
 
@@ -319,11 +216,9 @@ test('handle alert dialog', async ({ page }) => {
   // STEP 4: Assert page state after dialog is dismissed
   await expect(page.locator('.settings-status'))
     .toContainText('Saved');
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c4-2">
-      <div class="cheader"><span class="cfname">confirm-dialog.ts</span><button class="copybtn" onclick="cp4('c4-2')">Copy</button></div>
-      <pre><code class="language-typescript">// confirm-dialog.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-1" data-testid="div-c0-1"><div class="fb" data-testid="div-fb-91">confirm-dialog.ts</div><pre data-testid="pre-2"><code class="language-typescript" data-testid="code-language-typescript-79">// confirm-dialog.ts
 // PURPOSE: Handle window.confirm() — OK returns true, Cancel returns false
 // USE CASE: Delete confirmations, dangerous action warnings
 
@@ -364,11 +259,9 @@ test.describe('Delete confirmation dialog', () => {
     // Nothing deleted — still 3 items
     await expect(page.locator('.item-row')).toHaveCount(3);
   });
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c4-3">
-      <div class="cheader"><span class="cfname">prompt-dialog.ts</span><button class="copybtn" onclick="cp4('c4-3')">Copy</button></div>
-      <pre><code class="language-typescript">// prompt-dialog.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-2" data-testid="div-c0-2"><div class="fb" data-testid="div-fb-93">prompt-dialog.ts</div><pre data-testid="pre-3"><code class="language-typescript" data-testid="code-language-typescript-80">// prompt-dialog.ts
 // PURPOSE: Handle window.prompt() — passes text input to dialog
 // KEY: dialog.accept('text') fills input AND clicks OK in one call
 
@@ -413,11 +306,9 @@ test('dismiss prompt → no rename happens', async ({ page }) => {
   // Title unchanged since user cancelled
   await expect(page.locator('.project-title'))
     .toHaveText('Default Name');
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c4-4">
-      <div class="cheader"><span class="cfname">beforeunload.ts</span><button class="copybtn" onclick="cp4('c4-4')">Copy</button></div>
-      <pre><code class="language-typescript">// beforeunload.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-3" data-testid="div-c0-3"><div class="fb" data-testid="div-fb-95">beforeunload.ts</div><pre data-testid="pre-4"><code class="language-typescript" data-testid="code-language-typescript-81">// beforeunload.ts
 // PURPOSE: Handle the beforeunload "Leave site?" dialog
 // TRIGGER: User navigates away from a page with unsaved form data
 
@@ -461,11 +352,9 @@ test('beforeunload: accept lets user leave', async ({ page }) => {
 
   // Should be on previous page now
   await expect(page).toHaveURL(/\/articles/);
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c4-5">
-      <div class="cheader"><span class="cfname">multi-dialog.ts</span><button class="copybtn" onclick="cp4('c4-5')">Copy</button></div>
-      <pre><code class="language-typescript">// multi-dialog.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-4" data-testid="div-c0-4"><div class="fb" data-testid="div-fb-97">multi-dialog.ts</div><pre data-testid="pre-5"><code class="language-typescript" data-testid="code-language-typescript-82">// multi-dialog.ts
 // PURPOSE: Handle multiple sequential dialogs in one test
 // PATTERN: Response queue — shifts one response per dialog
 
@@ -511,11 +400,9 @@ test('multi-step flow with sequential dialogs', async ({ page }) => {
   await expect(page.locator('.archive-status'))
     .toContainText('Archived as: archive-2024');
   expect(responses.length).toBe(0); // all responses were consumed
-});</code></pre>
-    </div>
-    <div class="cpanel" id="c4-6">
-      <div class="cheader"><span class="cfname">dialog-types-router.ts</span><button class="copybtn" onclick="cp4('c4-6')">Copy</button></div>
-      <pre><code class="language-typescript">// dialog-types-router.ts
+});</code></pre></div>
+
+      <div class="cp" id="c0-5" data-testid="div-c0-5"><div class="fb" data-testid="div-fb-99">dialog-types-router.ts</div><pre data-testid="pre-6"><code class="language-typescript" data-testid="code-language-typescript-83">// dialog-types-router.ts
 // PURPOSE: Single smart handler that routes all dialog types
 // USE CASE: Reusable utility for test frameworks
 
@@ -575,66 +462,93 @@ test('smart dialog router handles all types', async ({ page }) => {
 
   await page.click('#trigger-all-dialogs');
   console.log(`All dialog messages: ${messages.join(' | ')}`);
-});</code></pre>
+});</code></pre></div>
     </div>
   </div>
+
+  <div class="sec" data-testid="div-sec-100">
+    <h3 data-testid="h3-6">Best Practices</h3>
+    <ul class="bpl">
+      <li data-testid="li-1"><span class="bpc">✓</span>Always register <strong class="kwd">dialog</strong> handlers before the action that triggers them. The 'dialog' event fires synchronously in the browser — a late-registered handler will never catch it.</li>
+      <li data-testid="li-2"><span class="bpc">✓</span>Always assert <code data-testid="code-84">dialog.message()</code> inside the handler before accepting/dismissing — this verifies the <strong class="kwd">dialog</strong> shows the correct text, not just that one appeared.</li>
+      <li data-testid="li-3"><span class="bpc">✓</span>Use <code data-testid="code-85">dialog.type()</code> to write a single handler that routes different <strong class="kwd">dialog</strong> types: <code data-testid="code-86">alert</code> → <code data-testid="code-87">accept()</code>, <code data-testid="code-88">confirm</code> → check expected flow, <code data-testid="code-89">prompt</code> → <code data-testid="code-90">accept</code> with test data.</li>
+      <li data-testid="li-4"><span class="bpc">✓</span>For one-time <strong class="kwd">dialogs</strong>, prefer <code data-testid="code-91">page.waitForEvent('dialog')</code> over <code data-testid="code-92">page.on()</code> — it's cleaner, doesn't need cleanup with <code data-testid="code-93">removeListener()</code>.</li>
+      <li data-testid="li-5"><span class="bpc">✓</span>If your test has multiple <strong class="kwd">dialogs</strong> in sequence, maintain a response queue array in the handler and <code data-testid="code-94">shift()</code> one response per <strong class="kwd">dialog</strong> call.</li>
+      <li data-testid="li-6"><span class="bpc">✓</span>Always <code data-testid="code-95">await</code> <code data-testid="code-96">dialog.accept()</code> and <code data-testid="code-97">dialog.dismiss()</code> — they return <strong class="kwd">Promises</strong> even though the <strong class="kwd">dialog</strong> appears synchronous. Not awaiting causes test instability.</li>
+      <li data-testid="li-7"><span class="bpc">✓</span>For <strong class="kwd">beforeunload</strong> testing, use <code data-testid="code-98">page.close()</code> with a registered handler for reliable triggering — <code data-testid="code-99">page.goto()</code> may not always trigger it depending on browser behavior.</li>
+    </ul>
+  </div>
+
+  <div class="sec" style="border:none" data-testid="div-sec-101">
+    <h3 data-testid="h3-7">Interview Prep — 5 SDET Q&amp;A</h3>
+    <div class="ql" data-testid="div-ql-102">
+      <div class="qi" data-testid="div-qi-103">
+        <div class="qq" data-testid="div-qq-104">Q1: What happens if a dialog appears and no handler is registered in Playwright?</div>
+        <div class="qa" data-testid="div-qa-105">A: <strong class="kwd">Playwright</strong> auto-dismisses <strong class="kwd">dialogs</strong> if no 'dialog' event handler is registered. For <code data-testid="code-100">alert</code> — it's like clicking OK. For <code data-testid="code-101">confirm</code> — it's like clicking Cancel (returns <code data-testid="code-102">false</code> to <strong class="kwd">JS</strong>). For <code data-testid="code-103">prompt</code> — returns <code data-testid="code-104">null</code>. For <strong class="kwd">beforeunload</strong> — stays on the page. This means tests won't hang on unhandled <strong class="kwd">dialogs</strong>, but you also can't verify dialog content or test acceptance flows without an explicit handler.</div>
+      </div>
+      <div class="qi" data-testid="div-qi-106">
+        <div class="qq" data-testid="div-qq-107">Q2: How do you test a delete confirmation flow that uses window.confirm()?</div>
+        <div class="qa" data-testid="div-qa-108">A: I set up the handler before clicking Delete: <code data-testid="code-105">page.on('dialog', async (dialog) => { expect(dialog.type()).toBe('confirm'); expect(dialog.message()).toContain('Are you sure'); await dialog.accept(); })</code>. Then click the delete button. Then assert the item is gone. For the dismiss case (user clicks Cancel), I use <code data-testid="code-106">dialog.dismiss()</code> and verify the item still exists. Two separate test cases cover both paths.</div>
+      </div>
+      <div class="qi" data-testid="div-qi-109">
+        <div class="qq" data-testid="div-qq-110">Q3: How do you handle a window.prompt() dialog in Playwright?</div>
+        <div class="qa" data-testid="div-qa-111">A: <code data-testid="code-107">prompt()</code> <strong class="kwd">dialogs</strong> have an input field. <code data-testid="code-108">dialog.accept('Alice')</code> fills the <strong class="kwd">prompt</strong>'s input field with 'Alice' and confirms — the calling <strong class="kwd">JS</strong> code receives 'Alice' as the return value. I also check <code data-testid="code-109">dialog.defaultValue()</code> to verify the pre-filled value. Calling <code data-testid="code-110">dialog.dismiss()</code> instead makes <strong class="kwd">JS</strong> receive <code data-testid="code-111">null</code> regardless of any input.</div>
+      </div>
+      <div class="qi" data-testid="div-qi-112">
+        <div class="qq" data-testid="div-qq-113">Q4: How do you handle multiple sequential dialogs in one test?</div>
+        <div class="qa" data-testid="div-qa-114">A: I use a response queue pattern: <code data-testid="code-112">const responses = [{action:'accept'}, {action:'dismiss'}, {action:'accept', text:'data'}]</code>. In <code data-testid="code-113">page.on('dialog')</code>, each invocation calls <code data-testid="code-114">responses.shift()</code> to pop one response. This is clean and deterministic. It scales to any number of <strong class="kwd">dialogs</strong> in any order.</div>
+      </div>
+      <div class="qi" data-testid="div-qi-115">
+        <div class="qq" data-testid="div-qq-116">Q5: How do you test the beforeunload dialog — the "Leave site?" warning?</div>
+        <div class="qa" data-testid="div-qa-117">A: <strong class="kwd">Beforeunload</strong> <strong class="kwd">dialogs</strong> appear when navigating away from a page with unsaved changes. I navigate to the form, start filling it (triggering unsaved state), register the handler, then call <code data-testid="code-115">page.close()</code> or <code data-testid="code-116">page.goBack()</code>. <code data-testid="code-117">dialog.dismiss()</code> keeps the user on the page. <code data-testid="code-118">dialog.accept()</code> lets them leave. Note: Some frameworks use custom <code data-testid="code-119">confirm()</code> <strong class="kwd">dialogs</strong> instead of real <strong class="kwd">beforeunload</strong> — those are handled identically.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
 </div>
 
 <script>
-function tq4(id){const b=document.getElementById(id);const a=b.querySelector('.qaa');b.classList.toggle('open');a.classList.toggle('open')}
-function cp4(id){const p=document.getElementById(id);const c=p.querySelector('pre').innerText;navigator.clipboard.writeText(c).then(()=>{const b=p.querySelector('.copybtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000)})}
-document.getElementById('stabs4').addEventListener('click',e=>{
-  const t=e.target.closest('.stab');if(!t)return;
-  document.querySelectorAll('#stabs4 .stab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  const pid='p4-'+t.dataset.p;
-  document.querySelectorAll('[id^="p4-"]').forEach(x=>x.classList.remove('active'));
-  document.getElementById(pid).classList.add('active');
-});
-document.getElementById('ctabs4').addEventListener('click',e=>{
-  const t=e.target.closest('.ctab');if(!t)return;
-  document.querySelectorAll('#ctabs4 .ctab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  document.querySelectorAll('[id^="c4-"]').forEach(x=>x.classList.remove('active'));
-  document.getElementById(t.dataset.c).classList.add('active');
-});
-</script>
-
-<script>
-/* === VIKRANT TOGGLE & TAB FIX v2.0 === */
-(function(){try{
-  document.querySelectorAll('[class*="toggle-btn"],[class*="accordion-btn"],[class*="collapsible-header"]').forEach(function(btn){
-    if(!btn.dataset.vEnhanced){btn.dataset.vEnhanced='1';
-      btn.addEventListener('click',function(){
-        var t=this.nextElementSibling;
-        if(t){if(t.style.display==='none'||t.classList.contains('hidden')){t.style.display='block';t.classList.remove('hidden');t.style.maxHeight=t.scrollHeight+'px';t.style.opacity='1'}else{t.style.display='none';t.classList.add('hidden');t.style.maxHeight='0';t.style.opacity='0'}}
-      });
-    }
+var cur=0;
+var cP=[
+  ['c0-0','c0-1','c0-2','c0-3','c0-4','c0-5']
+];
+var sNums=[4];
+function sw(n){
+  document.getElementById('s'+cur).style.display='none';
+  document.getElementById('s'+n).style.display='block';
+  var tabs=document.getElementById('sTabs').children;
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active',i===n);
+  cur=n; upP();
+}
+function sc(s,t){
+  var panels=cP[s];
+  var ctabs=document.getElementById('s'+s).querySelectorAll('.ct');
+  panels.forEach(function(id,i){
+    var el=document.getElementById(id);
+    if(el) el.className='cp'+(i===t?' active':'');
   });
-  document.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(tab){
-    if(!tab.dataset.vTab){tab.dataset.vTab='1';
-      tab.addEventListener('click',function(){
-        var p=this.closest('.tab-container,.tabs,.session-tabs,.tab-bar,[class*="tab-container"]');
-        if(p){p.querySelectorAll('.tab-btn,.session-tab,[class*="tab-btn"]').forEach(function(t){t.classList.remove('active')});this.classList.add('active')}
-      });
-    }
-  });
-}catch(e){console.log('VE:',e)}})();
+  ctabs.forEach(function(tb,i){tb.classList.toggle('active',i===t);});
+}
+function upP(){
+  var d='';
+  for(var i=0;i<1;i++){
+    var c=i<cur?'dn':(i===cur?'ac':'td');
+    d+='<span class="dot '+c+'"></span> ';
+  }
+  document.getElementById('pd').innerHTML=d;
+  document.getElementById('pl').textContent='Session '+sNums[cur];
+}
+upP();
 </script>
 
     <!-- Prism Syntax Highlighting JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
-
 
     <!-- PRISM DYNAMIC HIGHLIGHT FIX -->
     <script>
@@ -659,8 +573,6 @@ document.getElementById('ctabs4').addEventListener('click',e=>{
     }
     </script>
 
-
     <script src="../portal-enhance.js"></script>
 </body>
 </html>
-

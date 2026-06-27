@@ -616,40 +616,46 @@ body .cs pre[class*="language-"] {
   border-radius: 2px !important;
 }
 
-/* Tabs */
-.ct, .ctb {
-  padding: 6px 14px !important;
+/* Tabs (.stab, .ct, .ctb, .tb, .tbtn) */
+.stab, .ct, .ctb, .tb, .tbtn {
+  padding: 6px 16px !important;
   font-size: 11px !important;
   cursor: pointer !important;
-  border: 1.5px solid #cbd5e1 !important;
-  border-bottom: none !important;
-  background: #f8fafc !important;
-  color: #475569 !important;
+  border: 2px solid #0969da !important; /* Blue border */
+  background: #ffffff !important;        /* Pure white background */
+  color: #0969da !important;             /* Blue text */
   white-space: nowrap !important;
   font-family: var(--font-sans), sans-serif !important;
-  border-radius: 6px 6px 0 0 !important;
-  margin-bottom: -1.5px !important;
+  border-radius: 30px !important;        /* Fully rounded pill */
+  margin-bottom: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
   gap: 6px !important;
-  transition: all 0.1s ease !important;
-  font-weight: 700 !important;
+  transition: all 0.2s ease !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
 }
-body .ct.active, body .ctb.active {
-  color: #000000 !important;
-  border: 1.5px solid #1e293b !important;
-  border-bottom: 3.5px solid var(--pc, #6C5CE7) !important;
-  background: #ffffff !important;
-  font-weight: 800 !important;
-  z-index: 1 !important;
+
+body .stab.active,
+body .stabs .stab.active,
+body .ct.active,
+body .ctb.active,
+body .tb.on,
+body .tb.act,
+body .tb.active,
+body .tbtn.on,
+body .tbtn.active {
+  border: 2px solid #d97706 !important;     /* Orange outline border */
+  background: #fffbeb !important;          /* Soft cream/amber background */
+  color: #78350f !important;                /* Dark brown-orange text */
+  font-weight: 700 !important;
+  border-bottom: 2px solid #d97706 !important;
 }
 
 /* Active tabs on all pages (dynamic theme border colors) */
-body .tb.active,
-body .stab.active,
 body .tab-btn.active,
-body .phase-btn.active,
-body .stabs .stab.active {
+body .phase-btn.active {
   background: var(--pc, #6C5CE7) !important;
   border-color: var(--pc, #6C5CE7) !important;
   color: #ffffff !important;
@@ -660,11 +666,16 @@ body .tab.active {
   border-bottom-color: var(--pc, #6C5CE7) !important;
   color: var(--pc, #6C5CE7) !important;
 }
-.ct:hover:not(.active), .ctb:hover:not(.active) {
-  background: #eaecef !important;
-  color: #1e293b !important;
-  border-color: #cbd5e1 !important;
+
+.stab:hover:not(.active), .ct:hover:not(.active), .ctb:hover:not(.active),
+.tb:hover:not(.active):not(.on):not(.act), .tbtn:hover:not(.active):not(.on):not(.act) {
+  background: #f0f7ff !important;        /* Light blue hover bg */
+  border-color: #0056b3 !important;      /* Darker blue hover border */
+  color: #0056b3 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08) !important;
 }
+
 
 /* Language pills */
 .lang-pill, .fxt {
@@ -874,6 +885,70 @@ body .vr-diagram-scroll svg, body .arch-box svg, body .da svg, body .diagram-are
 .qa-item.open .chevron,
 .vr-qa-wrap.open .qa-toggle {
   transform: rotate(180deg) !important;
+}
+
+/* Mobile optimizations to prevent double-border nesting and squishing of .sec containers */
+@media (max-width: 768px) {
+  html body .section,
+  html body div.section {
+    padding: 0 !important;
+    border-radius: 8px !important;
+  }
+  html body .sec,
+  html body div.sec {
+    border: none !important;
+    border-bottom: 1.5px solid var(--color-border-tertiary, #cbd5e1) !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    padding: 16px 12px !important;
+  }
+  html body .sec:last-child,
+  html body div.sec:last-child {
+    border-bottom: none !important;
+  }
+  
+  /* Spacing and wrapping alignment fixes for titles on mobile */
+  html body .sec h3,
+  html body div.sec h3 {
+    margin-top: 8px !important;
+    margin-bottom: 18px !important;
+    line-height: 1.4 !important;
+  }
+  
+  .flow-title,
+  .sec > div[style*="uppercase"],
+  .sec > div[style*="text-transform"] {
+    margin-top: 16px !important;
+    margin-bottom: 12px !important;
+    line-height: 1.4 !important;
+  }
+  
+  .flowrow + .flow-title,
+  .abox + .flow-title,
+  .flowrow + div[style*="uppercase"],
+  .abox + div[style*="uppercase"],
+  .flowrow + div[style*="text-transform"],
+  .abox + div[style*="text-transform"] {
+    margin-top: 28px !important; /* Generous gap before subsequent flow subsections */
+  }
+
+  /* Stack What/Why/When/Where/How and Note rows vertically on mobile/tablet */
+  html body .dr,
+  html body div.dr {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+    padding: 10px 0 !important;
+  }
+  
+  html body .dr > span:first-child,
+  html body div.dr > span:first-child {
+    width: auto !important;
+    flex-shrink: 1 !important;
+    margin-bottom: 4px !important;
+    font-weight: 700 !important;
+    display: inline-block !important;
+  }
 }
 `;
     document.head.appendChild(s);
